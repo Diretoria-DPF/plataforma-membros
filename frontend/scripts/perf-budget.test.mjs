@@ -8,7 +8,7 @@
 // "Shell" = o index.html + todo <script src> e <link rel=stylesheet> LOCAL que ele carrega de imediato.
 // Mede os arquivos-fonte (app.js sai ofuscado no build, ~15-20% maior; o teto abaixo tem folga para isso
 // ser tratado no e2e de build, e o objetivo aqui é pegar regressão grande: alguém voltar a pôr
-// admin/Lia/módulo pesado no carregamento inicial).
+// admin/Guia/módulo pesado no carregamento inicial).
 //
 // Como os tetos foram escolhidos (medição em 2026-11-01, depois do MOB-04):
 //   shell gzip   = 273 KB  -> teto 295 KB (+8%: cabe um módulo pequeno novo, não um painel inteiro)
@@ -61,7 +61,7 @@ test('orçamento: o precache do service worker cabe em 950 KB (só o shell)', ()
   assert.ok(total <= BUDGET.precacheRawBytes, `precache com ${(total / 1024).toFixed(1)} KB; teto ${BUDGET.precacheRawBytes / 1024} KB`);
 });
 
-test('orçamento: o shell não volta a carregar admin, Lia nem Atlas no início', () => {
+test('orçamento: o shell não volta a carregar admin, Guia nem Atlas no início', () => {
   const files = shellFiles();
   const pesados = files.filter((f) => f.endsWith('.js')).filter((f) => /^admin-|^assistant(?!-sources)|selection-admin|privacy-admin|lia\/lia|anatomia-3d|\.wasm$/.test(f));
   assert.deepEqual(pesados, [], 'carregue sob demanda por lazy-bundles.js');

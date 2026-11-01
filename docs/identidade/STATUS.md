@@ -22,7 +22,7 @@ Plano: `PLANO.md`. Contrato: `CONTRATO.md`. Fichas e ondas: `fichas/ORDEM.md`. C
 - Revisão visual da sessão principal em recortes de 375 e 1280 px (topo, quem somos, áreas, como funciona, processo, instituição, tela inicial, Voltar no app): sem defeito aberto.
 
 ## 3. Ao mesclar
-- **Conflito esperado com a PR #46 (Lia)**: `frontend/scripts/build.js` (lista de arquivos) e `frontend/sw.js` (PRECACHE) ganham itens nas mesmas linhas nas duas PRs. Resolver mantendo os itens das duas. Mesclar a #46 primeiro.
+- **Conflito esperado com a PR #46 (Guia)**: `frontend/scripts/build.js` (lista de arquivos) e `frontend/sw.js` (PRECACHE) ganham itens nas mesmas linhas nas duas PRs. Resolver mantendo os itens das duas. Mesclar a #46 primeiro.
 - O `sw.js` sobe para `laift-shell-v4`; o `blog-sw.js` usa `laift-blog-v1`.
 - Depois do deploy, conferir: `curl -I https://laift.com.br/favicon.ico`, `/blog-sw.js` (cabeçalho de cache curto), `/blog/manifest.webmanifest` (tipo `application/manifest+json`), `/processo-seletivo` e `/edital` com 200.
 

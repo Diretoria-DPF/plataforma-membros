@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-/* Dica contextual da Lia (assistant-hints.js): balão curto e dispensável, logo acima da bolha da Lia.
+/* Dica contextual da Guia (assistant-hints.js): balão curto e dispensável, logo acima da bolha da Guia.
    Superfície opaca (tom --layer-2), sem desfoque, porque o balão pode ficar sobre o Atlas 3D.
    Cores pelos tokens do tema; alvos de toque de 44 px; foco visível. */
 .lia-hint {

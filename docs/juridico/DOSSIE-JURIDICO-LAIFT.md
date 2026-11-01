@@ -21,11 +21,11 @@ Preparado em 20/10/2026 para a reunião do presidente (Daniel Pires Francisco) c
 | Dado | Finalidade | Base legal sugerida (a validar) | Onde fica |
 |---|---|---|---|
 | Endereço IP, navegador, página, país, desempenho (tratados pela Cloudflare) | Entregar o site, proteger contra ataques, medir audiência de forma agregada | Legítimo interesse (art. 7º, IX) | Cloudflare |
-| IP, em forma de código (hash), para limitar abuso | Limite de tentativas e de uso da Lia | Legítimo interesse | Banco, tabela `rate_limit_buckets`, apagada após 8 dias |
-| Texto da pergunta à Lia (prévia de IA, se a flag `lia_visitor_ai_enabled` estiver ligada, o que o doc de continuidade de 17/10 diz estar) | Responder dúvidas sobre a plataforma | Legítimo interesse / execução de contrato: A CONFIRMAR | Enviado ao Workers AI (Cloudflare); proteção Turnstile |
+| IP, em forma de código (hash), para limitar abuso | Limite de tentativas e de uso da Guia | Legítimo interesse | Banco, tabela `rate_limit_buckets`, apagada após 8 dias |
+| Texto da pergunta à Guia (prévia de IA, se a flag `lia_visitor_ai_enabled` estiver ligada, o que o doc de continuidade de 17/10 diz estar) | Responder dúvidas sobre a plataforma | Legítimo interesse / execução de contrato: A CONFIRMAR | Enviado ao Workers AI (Cloudflare); proteção Turnstile |
 | Resposta do desafio Turnstile | Distinguir pessoa de robô | Legítimo interesse | Cloudflare |
 
-Fonte: `docs/SECURITY.md`, `worker/src/services/assistantService.js`, `sql/003_rate_limits.sql`. Detalhe de armazenamento da pergunta do visitante: A CONFIRMAR (a Política só descreve a Lia para quem tem conta).
+Fonte: `docs/SECURITY.md`, `worker/src/services/assistantService.js`, `sql/003_rate_limits.sql`. Detalhe de armazenamento da pergunta do visitante: A CONFIRMAR (a Política só descreve a Guia para quem tem conta).
 
 ### 2.2 Visitante com conta e membro
 
@@ -37,7 +37,7 @@ Fonte: `docs/SECURITY.md`, `worker/src/services/assistantService.js`, `sql/003_r
 | Inscrições em eventos, propostas, votos, tarefas, comentários, feedback | Uso | Governança da liga | Execução de contrato |
 | Presença em eventos (data, hora, forma do check-in) | Uso | Registrar presença | Execução de contrato |
 | Resultados de simulados e casos clínicos, formulações do laboratório | Uso | Estatísticas e conquistas | Execução de contrato |
-| Textos digitados nos recursos de IA (paciente virtual, preceptor, laboratório, Lia) | Uso | Gerar a resposta da IA | Execução de contrato; métricas: legítimo interesse |
+| Textos digitados nos recursos de IA (paciente virtual, preceptor, laboratório, Guia) | Uso | Gerar a resposta da IA | Execução de contrato; métricas: legítimo interesse |
 | Consentimentos (documento, versão, data) | Sim | Prova do aceite | Cumprimento de obrigação / exercício de direitos: A CONFIRMAR |
 | Sessão (código do token em hash, navegador, validade) | Sim | Manter o login | Execução de contrato |
 | Mensagens entre membros | Uso | Comunicação; criptografia ponta a ponta (E2EE: só os participantes leem), chave privada fica no aparelho (`docs/riscos-residuais.md` S9) | Execução de contrato |
@@ -49,7 +49,7 @@ Fontes: `sql/001_schema.sql`, `005`, `007`, `009`, `012`, `013`, `029`, `036`, `
 
 ### 2.3 Administrador e comissão
 
-Além do acima, administradores **veem**: nome, e-mail e todas as respostas dos candidatos do processo seletivo; lista de usuários; auditoria; painel de moderação da Lia (sem nome; só trecho do identificador). Ações administrativas ficam em `audit_logs`. Exigência de MFA: conferida pela flag `mfa_required`, que em 17/10 estava **desligada** (`docs/CONTINUIDADE.md`); cargos funcionais privilegiados exigem MFA sempre. Se todos os administradores atuais usam MFA: A CONFIRMAR.
+Além do acima, administradores **veem**: nome, e-mail e todas as respostas dos candidatos do processo seletivo; lista de usuários; auditoria; painel de moderação da Guia (sem nome; só trecho do identificador). Ações administrativas ficam em `audit_logs`. Exigência de MFA: conferida pela flag `mfa_required`, que em 17/10 estava **desligada** (`docs/CONTINUIDADE.md`); cargos funcionais privilegiados exigem MFA sempre. Se todos os administradores atuais usam MFA: A CONFIRMAR.
 
 ## 3. Processo seletivo contínuo (candidatos)
 
@@ -76,8 +76,8 @@ Além do acima, administradores **veem**: nome, e-mail e todas as respostas dos 
 | Recurso | Quem aciona | O que a IA recebe | Provedor | Estado |
 |---|---|---|---|---|
 | Paciente virtual, preceptor da clínica, geração de casos, preceptor do laboratório | Visitante, membro, admin (com cota diária) | Texto digitado e contexto do caso fictício; **sem** nome/e-mail/ID | Groq | Em uso (Política) |
-| Lia (assistente da plataforma) | Qualquer logado; visitante em prévia | Pergunta, últimas mensagens, trechos da base de conhecimento; **sem** nome/e-mail/ID | Groq; vetor da pergunta pelo Workers AI (Cloudflare); prévia do visitante no Workers AI | Em uso |
-| Moderação da Lia (juiz) | Automático quando há termo ofensivo | Texto da mensagem ofensiva | Groq | Em uso (Política) |
+| Guia (assistente da plataforma) | Qualquer logado; visitante em prévia | Pergunta, últimas mensagens, trechos da base de conhecimento; **sem** nome/e-mail/ID | Groq; vetor da pergunta pelo Workers AI (Cloudflare); prévia do visitante no Workers AI | Em uso |
+| Moderação da Guia (juiz) | Automático quando há termo ofensivo | Texto da mensagem ofensiva | Groq | Em uso (Política) |
 | Resumo de artigos na Biblioteca | Curadoria | Resumo **público** do artigo (não é dado de pessoa) | Workers AI | Flag ligada |
 | **Triagem do processo seletivo** | Comissão (botão), flag `selection_ai_enabled` | Perfil resumido (curso, semestre, áreas, horas, motivação), análise de cenário, respostas abertas e de conduta; **sem nome, e-mail, telefone** | Groq (modelo "inteligente") | Código pronto; **estado da flag A CONFIRMAR** |
 | Tutor e agentes, simulação clínica, memória | Maiores de 18 | Texto do estudo | Groq | Desligados por flag (`agents_*`, `clinical_sim_enabled`, `memory_enabled`), exceto se ligados depois: A CONFIRMAR |
@@ -100,7 +100,7 @@ Fundamento adotado: não há decisão **unicamente** automatizada, pois toda dec
 
 ### 4.4 Cuidados já existentes nos recursos de IA
 
-Cotas diárias por pessoa; orçamento global de tokens; textos da conversa **não são gravados** (só métrica: recurso, quando, tokens, sucesso) nos simuladores; na Lia a pergunta é guardada **só como código (hash)** e a resposta por 180 dias; avisos "não escreva dados pessoais" nos formulários e na Política.
+Cotas diárias por pessoa; orçamento global de tokens; textos da conversa **não são gravados** (só métrica: recurso, quando, tokens, sucesso) nos simuladores; na Guia a pergunta é guardada **só como código (hash)** e a resposta por 180 dias; avisos "não escreva dados pessoais" nos formulários e na Política.
 
 ## 5. Para onde os dados vão (operadores e subprocessadores)
 
@@ -113,7 +113,7 @@ Conferido em `worker/wrangler.toml`, `worker/src/ai/*`, `worker/src/mailer.js`, 
 | **Cloudflare** (Workers, rede/CDN, DNS) | Hospeda site e API | Trafega tudo | Rede global (a execução pode ocorrer fora do Brasil) | Em uso |
 | **Cloudflare KV** | Cache temporário (60 s) de leituras públicas e contadores | Não deve guardar texto de usuário: A CONFIRMAR | Global | Em uso |
 | **Cloudflare R2** | Fotos de perfil, imagens de eventos (**URL pública**) e backups cifrados (bucket privado separado) | Fotos sim | Global | Em uso |
-| **Cloudflare Workers AI** | Vetores das perguntas da Lia; prévia do visitante; resumos de artigos | Sim (pergunta) | Global | Em uso |
+| **Cloudflare Workers AI** | Vetores das perguntas da Guia; prévia do visitante; resumos de artigos | Sim (pergunta) | Global | Em uso |
 | **Cloudflare Turnstile** | Antirrobô | Dados técnicos do navegador | Global | Em uso (prévia do visitante) |
 | **Groq, Inc.** | IA generativa | **Sim**: texto digitado, incluindo o da triagem do seletivo | **EUA** (transferência internacional, art. 33) | Em uso |
 | **Brevo** | E-mail transacional | E-mail do usuário e, quando usado, nome | **A CONFIRMAR** (país dos servidores) | Em uso; remetente Gmail (OPS-04) |
@@ -138,10 +138,10 @@ Prazos aplicados por rotina diária (03:17 de Brasília, `worker/src/maintenance
 | `audit_logs` (ações administrativas e de segurança, com ID do autor e detalhes) | **730 dias (2 anos)** | **Não** (risco J4) |
 | `error_logs` (diagnóstico técnico) | **30 dias** | **Não** (J4) |
 | `ai_usage_log` (métricas de IA, sem texto) | 180 dias | Parcial (180 dias de exclusão geral) |
-| Resposta registrada da Lia | 180 dias | Sim |
-| Comentário de avaliação da Lia | texto apagado aos 90 dias | Sim |
+| Resposta registrada da Guia | 180 dias | Sim |
+| Comentário de avaliação da Guia | texto apagado aos 90 dias | Sim |
 | Avaliação (polegar, categoria) | 365 dias | Sim |
-| Incidentes de moderação da Lia (sem texto) | 365 dias na tabela; **mas a cópia em `audit_logs` fica 730 dias** | Política diz 365 (risco O22) |
+| Incidentes de moderação da Guia (sem texto) | 365 dias na tabela; **mas a cópia em `audit_logs` fica 730 dias** | Política diz 365 (risco O22) |
 | Rastros dos agentes | 90 dias | Não |
 | Telemetria do Atlas 3D (anônima) | 90 dias | Não: A CONFIRMAR |
 | Dias de atividade e contadores | 400 dias | Aviso na tela de admin; Política: não |
@@ -198,7 +198,7 @@ Lacunas: **nada sobre IA** (limites, erro clínico, dever de não inserir dados 
 
 ### 10.2 Política de Privacidade (versão 2026-10-08)
 
-Cobre: controlador, dados, finalidades e base legal por dado (tabela), o que não fazemos, onde ficam e operadores, Lia, Biblioteca, retenção da Lia, direitos do art. 18, revisão humana da suspensão da Lia (art. 20), ANPD.
+Cobre: controlador, dados, finalidades e base legal por dado (tabela), o que não fazemos, onde ficam e operadores, Guia, Biblioteca, retenção da Guia, direitos do art. 18, revisão humana da suspensão da Guia (art. 20), ANPD.
 
 Lacunas conhecidas:
 1. **Processo seletivo** não consta (nem dados, nem IA do seletivo, nem recurso, nem prazo de 12 meses).

@@ -481,7 +481,7 @@ test('higiene: sem innerHTML, estilo inline nem handler inline; só actions apiL
   assert.ok(names.every((n) => n.startsWith('apiLearnLibrary')));
 });
 
-// ---------- Lia: "Ver na Biblioteca" com a busca pronta ----------
+// ---------- Guia: "Ver na Biblioteca" com a busca pronta ----------
 
 test('searchFor deixa a busca pronta: o painel abre já filtrado, com UM pedido e filtros antigos limpos', async () => {
   await openCatalog([item('a', 'Artigo A')]);

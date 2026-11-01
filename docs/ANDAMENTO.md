@@ -3,11 +3,11 @@
 **Atualizado em 2026-10-08.** Para retomar: leia as seções "Atualização de 2026-10-08" e "Atualização de 2026-10-08 (rodada 2)" (logo antes de "Pull requests"), depois `docs/AMBIENTES.md` (runbook de ativação) e `docs/riscos-residuais.md`. O plano completo, com DoD e rollback por fase, está em `C:\Users\Administrador\.claude\plans\c-users-administrador-desktop-an-lise-c-merry-reddy.md`.
 
 ## Em uma frase
-A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação foram **mesclados na `main` pela #38 em 2026-10-08 (10:38 UTC)**, atrás de feature flags, e o Worker e o site foram publicados. **O banco de produção ainda precisa do runbook de `docs/AMBIENTES.md`** (backup Neon, migrações 020–022 e 024, reindexação e, por último, a 023). Até lá os recursos novos ficam inertes: a migração 023 só liga as flags da renovação quando for aplicada, e ela não religa o que um admin já desligou.
+A UX v2 (fases A a E), a Guia viva, o RAG, o feedback e a moderação foram **mesclados na `main` pela #38 em 2026-10-08 (10:38 UTC)**, atrás de feature flags, e o Worker e o site foram publicados. **O banco de produção ainda precisa do runbook de `docs/AMBIENTES.md`** (backup Neon, migrações 020–022 e 024, reindexação e, por último, a 023). Até lá os recursos novos ficam inertes: a migração 023 só liga as flags da renovação quando for aplicada, e ela não religa o que um admin já desligou.
 
 **Pós-fusão (2026-10-08):** a #38 foi mesclada com dois checks vermelhos, e a `main` ficou com o workflow "Segurança" falhando. Os dois foram corrigidos na PR `fix/ci-pos-fusao`: cabeçalho de copyright em 3 testes novos (`lia-anim`, `nav-a11y`, `ux-v2`) e `sharp` 0.35.4 → 0.35.5 no lock de `tools/atlas-pipeline` (GHSA-wq5f-xc86-pv6w). **Pendência do dono:** o workflow "Backup do banco" falha todo dia desde 2026-10-05 porque faltam os secrets `BACKUP_DATABASE_URL`, `BACKUP_AGE_PUBLIC_KEY`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` e `R2_BACKUP_BUCKET` (`docs/BACKUP_RESTORE.md`).
 
-**Lia híbrida (2026-10-12, branch `feat/lia-hibrida`, tudo desligado):** guarda de intenção, árvore de seções (PageIndex), resposta extrativa e prévia de IA para visitante (Workers AI + Turnstile), atrás de `lia_hibrida_enabled` e `lia_visitor_ai_enabled` (migração 033); ordem de ativação em `docs/lia/PLANO.md` §7.
+**Guia híbrida (2026-10-12, branch `feat/lia-hibrida`, tudo desligado):** guarda de intenção, árvore de seções (PageIndex), resposta extrativa e prévia de IA para visitante (Workers AI + Turnstile), atrás de `lia_hibrida_enabled` e `lia_visitor_ai_enabled` (migração 033); ordem de ativação em `docs/lia/PLANO.md` §7.
 
 ## Atualização de 2026-10-05 — por que o laift.com.br não refletia a F2/F3
 - **A #27 foi mesclada** (02:32 UTC). A **API** de produção foi republicada na hora (`deploy-worker.yml` dispara em push na `main`).
@@ -15,38 +15,38 @@ A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação foram **mes
 - **Novo:** `tools/db/migrate.mjs` (runner com `schema_migrations`, `--dry-run`, `--baseline-through`) e `tools/ci/smoke.mjs`, ambos com testes (18 + 13).
 - **Os bancos ainda não têm as migrações 016–018** (produção `plataforma-membros` e staging `laift-staging` estão na 015). Por isso flags, MFA e orquestrador seguem desligados. Rode o `--baseline-through 015` e depois o runner (`docs/AMBIENTES.md`).
 - **Google Ads:** o commit `847ecc2` (script do AdSense no `index.html`) quebrava o e2e `csp` e barraria a publicação do site. Por decisão do usuário (2026-10-06) o script **saiu do `index.html`** por enquanto; para recolocar, o texto está no `847ecc2`, mas antes é preciso liberar `pagead2.googlesyndication.com` (e os demais domínios do AdSense) no CSP da página e ter aviso de consentimento + Privacidade atualizados.
-- **Fora deste lote (próximos passos):** chave do OpenRouter (`gh secret set` pelo script), `MFA_ENCRYPTION_KEY`, ligar `use_orchestrator`, guia "Lia", atalho de promoção, RAG híbrido.
+- **Fora deste lote (próximos passos):** chave do OpenRouter (`gh secret set` pelo script), `MFA_ENCRYPTION_KEY`, ligar `use_orchestrator`, guia "Guia", atalho de promoção, RAG híbrido.
 
-## Atualização de 2026-10-07 — Lia, crachá virtual e orquestrador (branch `feat/v5-lia-cracha`)
-- **Lia** (guia da plataforma; orienta e leva às telas, **nunca altera dados**): `worker/src/assistant/{targets,kb}.js`, `services/assistantService.js`, action `apiAssistantChat` (sessão opcional), flag `chatbot_enabled`, migração **019**. Intenção por regra primeiro (sem IA); eventos com dado vivo só do que a própria pessoa já vê; IA só para quem está logado, tem cota (`assistant`: membro 25, admin 100, visitante 0; valores atuais em `AI_QUOTAS`) e fez pergunta sem intenção; botões só da lista branca por papel; texto da IA nunca vira botão. Front: `frontend/assistant.js`.
-- **Crachá virtual**: `frontend/credential.js` (cartão com papel, "membro desde", QR assinado, ampliar QR, salvar imagem PNG). Abre pelo hub, por qualquer `[data-open-credential]` e pela Lia.
+## Atualização de 2026-10-07 — Guia, crachá virtual e orquestrador (branch `feat/v5-lia-cracha`)
+- **Guia** (guia da plataforma; orienta e leva às telas, **nunca altera dados**): `worker/src/assistant/{targets,kb}.js`, `services/assistantService.js`, action `apiAssistantChat` (sessão opcional), flag `chatbot_enabled`, migração **019**. Intenção por regra primeiro (sem IA); eventos com dado vivo só do que a própria pessoa já vê; IA só para quem está logado, tem cota (`assistant`: membro 25, admin 100, visitante 0; valores atuais em `AI_QUOTAS`) e fez pergunta sem intenção; botões só da lista branca por papel; texto da IA nunca vira botão. Front: `frontend/assistant.js`.
+- **Crachá virtual**: `frontend/credential.js` (cartão com papel, "membro desde", QR assinado, ampliar QR, salvar imagem PNG). Abre pelo hub, por qualquer `[data-open-credential]` e pela Guia.
 - **Orquestrador**: o código está pronto desde a #27; falta ligar. Ver o passo a passo em `docs/AMBIENTES.md` ("Ligar e desligar recursos") e o script `tools/ci/gerar-segredo-mfa.ps1`.
-- **Revisões** (`code-reviewer` + `security-reviewer`) feitas e corrigidas: cache compartilhado só para membro, injeção também no histórico, sessão expirada com a Lia aberta, contraste do cartão no tema escuro, QR ampliado a 375 px, corrida no envio, colisões de palavra-chave. Riscos aceitos: O13–O16 em `docs/riscos-residuais.md`.
+- **Revisões** (`code-reviewer` + `security-reviewer`) feitas e corrigidas: cache compartilhado só para membro, injeção também no histórico, sessão expirada com a Guia aberta, contraste do cartão no tema escuro, QR ampliado a 375 px, corrida no envio, colisões de palavra-chave. Riscos aceitos: O13–O16 em `docs/riscos-residuais.md`.
 - **Números**: Worker 997 testes, 19 migrações válidas, front 115 unitários (+2 falhas só no Windows por fim de linha), e2e `assistant credential csp smoke fase2 mfa home` verdes.
 - **Ativação feita em 2026-10-07**:
-  - **Staging** (`laift-staging`): migrações 016–019 + ledger `schema_migrations` (19 linhas), `MFA_ENCRYPTION_KEY` própria, flags `use_orchestrator` e `chatbot_enabled` ligadas; API e site publicados a partir da branch `feat/v5-lia-cracha` (deploy manual); Lia respondendo em `staging.laift.com.br`.
+  - **Staging** (`laift-staging`): migrações 016–019 + ledger `schema_migrations` (19 linhas), `MFA_ENCRYPTION_KEY` própria, flags `use_orchestrator` e `chatbot_enabled` ligadas; API e site publicados a partir da branch `feat/v5-lia-cracha` (deploy manual); Guia respondendo em `staging.laift.com.br`.
   - **Produção** (`plataforma-membro`): branch de backup `backup-pre-016-019-2026-10-07` no Neon, migrações 016–019 + ledger, `MFA_ENCRYPTION_KEY` própria cadastrada e **`use_orchestrator` ligada** (registrada em `audit_logs`). 6 perfis intactos, 0 erros depois. `chatbot_enabled` **segue desligada em produção** até as PRs #35 e #36 serem mescladas e o site/API novos publicados.
   - Cópias das chaves do MFA em `Desktop\segredo-mfa-staging.txt` e `segredo-mfa-producao.txt`: guardar no cofre e apagar.
-- **Depois de mesclar #35 e #36** (nessa ordem, a #36 reapontada para a `main`): conferir o site em `laift.com.br` e ligar a Lia com `UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'` (ver `docs/AMBIENTES.md`).
+- **Depois de mesclar #35 e #36** (nessa ordem, a #36 reapontada para a `main`): conferir o site em `laift.com.br` e ligar a Guia com `UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'` (ver `docs/AMBIENTES.md`).
 - **Pendências**: o Environment `staging` do GitHub só aceita as branches `feat/*`, `fix/*` e `main` (a branch `staging` foi recusada: adicionar `staging` à regra para o deploy por push funcionar); o Trivy acusava `sharp` HIGH em `tools/atlas-pipeline` (GHSA-wq5f-xc86-pv6w), corrigido para a 0.35.5 na PR `fix/ci-pos-fusao` (2026-10-08); apagar a branch de backup do Neon depois de alguns dias.
 
 ## Atualização de 2026-10-13 — Atlas 3D: cliques, fáscias, Separar peças
 
 PR #68 (`chore/atlas-auditoria`). Causa raiz de "o clique só sinaliza em metade do corpo" corrigida (peças espelhadas em batch próprio), camada Fáscias com clique que prefere a estrutura sob a fáscia, vista Separar peças e relatório de varredura (`docs/atlas-qa/varredura-2026-10-13.md`). **Licenças dos modelos (NC e desconhecidas): só registradas, nada aplicado** — ver [`docs/ATLAS_LICENCAS_PENDENTES.md`](ATLAS_LICENCAS_PENDENTES.md) e o checklist "antes de cobrar". Detalhes no `CHANGELOG.md`.
 
-## Atualização de 2026-10-08 — UX v2, Lia viva, RAG, feedback e moderação (branch `feat/v5-ux-fundacao`)
+## Atualização de 2026-10-08 — UX v2, Guia viva, RAG, feedback e moderação (branch `feat/v5-ux-fundacao`)
 
-**Entrega única.** Um PR só, a partir de `feat/v5-ux-fundacao` (100 commits acima da `main`), aberto como **#38** e mesclado na `main` em 2026-10-08. Tudo está atrás de feature flags. A ativação é do dono, pelo runbook de `docs/AMBIENTES.md`, seção "Ativação da UX v2, Lia viva, RAG, feedback e moderação".
+**Entrega única.** Um PR só, a partir de `feat/v5-ux-fundacao` (100 commits acima da `main`), aberto como **#38** e mesclado na `main` em 2026-10-08. Tudo está atrás de feature flags. A ativação é do dono, pelo runbook de `docs/AMBIENTES.md`, seção "Ativação da UX v2, Guia viva, RAG, feedback e moderação".
 
 ### O que entrou
 - **Fase A, fundação visual** (`ux_v2_enabled`): tokens de cor, movimento e vidro v5 (`frontend/modulos/shared/laift-tokens.css`, `frontend/ux-glass.css`, com teste de contraste WCAG); visual sem borda de cartão sob `:root[data-flag-ux-v2-enabled]`; hover só com ponteiro fino.
 - **Fase B, Início editorial e séries** (`frontend/home-editorial.css`, `frontend/dashboardAdapter.js`): layout sem cards; séries temporais em `worker/src/services/timeseriesService.js`, entregues numa chamada (`apiGetMyDashboardSeries`) e limitadas por perfil. Uma série com falha vem como `null`. Gráficos em SVG, sem biblioteca (`frontend/modulos/shared/charts.js`).
-- **Fase C, Lia viva** (`chatbot_enabled`): personagem SVG em `frontend/modulos/shared/lia/` (`lia.svg`; núcleo em `lia.js`; animações WAAPI em `lia-anim.js`; estados em `lia-states.js`; humor e variações de fala em `lia-mood.js`). Micro-card de feedback em `frontend/assistant-feedback.js`. A moderação aparece na conversa como resposta da própria Lia.
+- **Fase C, Guia viva** (`chatbot_enabled`): personagem SVG em `frontend/modulos/shared/lia/` (`lia.svg`; núcleo em `lia.js`; animações WAAPI em `lia-anim.js`; estados em `lia-states.js`; humor e variações de fala em `lia-mood.js`). Micro-card de feedback em `frontend/assistant-feedback.js`. A moderação aparece na conversa como resposta da própria Guia.
 - **Fase D, RAG, feedback, moderação e retenção**:
   - RAG híbrido: trigramas e vetor (`@cf/baai/bge-m3` no pgvector), fundidos por RRF com piso por lista, atrás de `rag_enabled` (`worker/src/services/ragService.js`; migração 020). As fontes aparecem como texto, sem link.
-  - Feedback por resposta (polegar, categoria e comentário de até 500 caracteres) e painel "Satisfação da Lia" em `frontend/admin-ai.js` (migração 021; `feedback_enabled`).
+  - Feedback por resposta (polegar, categoria e comentário de até 500 caracteres) e painel "Satisfação da Guia" em `frontend/admin-ai.js` (migração 021; `feedback_enabled`).
   - Moderação com 4 níveis (0 a 3); juiz por LLM só quando há termo ofensivo; redenção com reivindicação atômica e intervalo de 1 h; decaimento de 1 nível a cada 30 dias (`worker/src/services/moderationService.js`, `worker/src/assistant/moderationGate.js`; migração 022; `moderation_enabled`).
-  - Retenção da Lia (ADR 0005) em tarefas isoladas da faxina diária (`worker/src/maintenance.js`).
+  - Retenção da Guia (ADR 0005) em tarefas isoladas da faxina diária (`worker/src/maintenance.js`).
 - **Fase E, polimento e QA visual**: esqueleto e estado de erro com nova tentativa nas listas; navegação inferior (8 abas em 375 px na época; reduzida a 4 itens na PR #48, ver `docs/CONTINUIDADE.md` §2); `frontend/scripts/e2e/visual-qa.e2e.js` (claro e escuro, 375×812 e 1280×800).
 - **Banco**: 020 (RAG, `kb_chunks`), 021 (feedback e mensagens), 022 (moderação), 023 (flags da renovação) e 024 (índices de `rate_limit_buckets`, `event_registrations`, `task_signups` e `learning_attempts`).
 
@@ -54,7 +54,7 @@ PR #68 (`chore/atlas-auditoria`). Causa raiz de "o clique só sinaliza em metade
 - **Front** (`frontend/`): `assistant-moderation.js`, `assistant-feedback.js` (+ `.css`), `assistant-hints.js` (+ `.css`), `assistant-mood-glue.js`, `dashboardAdapter.js`, `home-editorial.css`, `ux-glass.css`, `ux-v2.js`, `splash.js`, `splash.css`; `modulos/shared/charts.js`, `charts-core.js`, `charts.css`; `modulos/shared/lia/` com `lia.js`, `lia-art.js`, `lia-states.js`, `lia-anim.js`, `lia-mood.js`, `lia.css`, `lia.svg`, e as ferramentas da arte (`lab.html`, `lab.js`, `lab.css`, `preview.html`, `preview.js`, `build-lab.mjs`, `build-lia-art.mjs`, `README.md`). Testes novos em `frontend/scripts/` e o e2e `visual-qa.e2e.js`.
 - **Worker** (`worker/src/`): `services/ragService.js`, `services/assistantFeedbackService.js`, `services/timeseriesService.js`, `assistant/moderationGate.js`, `assistant/moderationRules.js`, `assistant/docs.js`. Actions novas no `API_REGISTRY`: `apiGetMyTimeseries`, `apiGetMyDashboardSeries`, `apiAssistantFeedback`, `apiAdminListAssistantFeedback`, `apiAdminUpdateAssistantFeedback`, `apiAdminAssistantStats`, `apiAssistantSources`, `apiAdminReindexKb`, `apiAssistantRedeem`, `apiAssistantModerationState`, `apiAdminAssistantModeration`.
 - **Banco:** `sql/020` a `sql/024`, com reversões em `sql/down/`.
-- **Decisões:** `docs/adr/0001` a `0005` (o ADR 0003 é a arte da Lia).
+- **Decisões:** `docs/adr/0001` a `0005` (o ADR 0003 é a arte da Guia).
 
 ### Números
 - **Worker:** 48 suítes (48 arquivos `*.test.js` em `worker/test`); 117 actions no `API_REGISTRY` (`worker/src/handlers.js`, linhas 88 a 271); **1424 testes verdes** (execução final de 2026-10-08, `cd worker && npm test`, serial; contagem estática: 827+ blocos `test(`/`it(` e chamadas `.each(`).
@@ -66,10 +66,10 @@ PR #68 (`chore/atlas-auditoria`). Causa raiz de "o clique só sinaliza em metade
 ### Decisões do dono
 - Um PR único.
 - As cinco flags da renovação nascem **ligadas**, mas a 023 **nunca religa o que um admin desligou**: `ux_v2_enabled` e `chatbot_enabled` só são ligadas se `updated_by` for NULL e não houver `SET_FEATURE_FLAG` para a chave em `audit_logs`. As outras três só entram se estiverem ausentes. Regra completa em `sql/023_flags_v2.sql`.
-- Arte da Lia aprovada em 2026-10-08 (ADR 0003): cabeça:corpo ≈ 1:3,1, mecha lateral no lugar dos óculos, traço único de 2,2, cantos de 8 px, paleta da marca.
+- Arte da Guia aprovada em 2026-10-08 (ADR 0003): cabeça:corpo ≈ 1:3,1, mecha lateral no lugar dos óculos, traço único de 2,2, cantos de 8 px, paleta da marca.
 
 ### O que você precisa fazer
-Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva, RAG, feedback e moderação"** (pré-requisitos na seção 1, passos 2.1 a 2.4, validação na seção 4, rollback na seção 5). Checklist curto, na ordem:
+Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Guia viva, RAG, feedback e moderação"** (pré-requisitos na seção 1, passos 2.1 a 2.4, validação na seção 4, rollback na seção 5). Checklist curto, na ordem:
 1. ~~Mesclar o PR~~ **Feito:** a #38 entrou direto na `main` em 2026-10-08 10:38 UTC (sem passar pela `staging`).
 2. ~~Deploy do Worker e do site~~ **Feito:** os workflows de publicação da `main` passaram em 2026-10-08. Conferir `apiGetFeatureFlags` (seção 2.1).
 3. Backup no Neon: branch `backup-pre-020-024-AAAA-MM-DD` (seção 1). O runbook o põe entre os pré-requisitos, antes da mescla; aqui ele vem antes da migração, que é o ponto que importa. Não migre sem ele.
@@ -77,7 +77,7 @@ Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva,
 5. Reindexar o acervo: `apiAdminReindexKb`, conferindo `embeddingAvailable: true` (seção 2.3).
 6. Aplicar a 023, por último (seção 2.4): snapshot das flags, dry-run e depois a migração.
 7. Smoke test: `tools/ci/smoke.mjs` (seção 4).
-8. Testar com conta de teste: Lia, feedback, moderação e Início (seção 4).
+8. Testar com conta de teste: Guia, feedback, moderação e Início (seção 4).
 9. Ligar e conferir as flags (`apiAdminListFeatureFlags`); desligar pela API o que tiver de ficar desligado (`apiAdminSetFeatureFlag`, seções 2.4 e 5.1).
 10. Segredos antigos: guardar no cofre e apagar `Desktop\segredo-mfa-staging.txt` e `Desktop\segredo-mfa-producao.txt` (citados em 2026-10-07), e `Desktop\segredos-openrouter.json`, se ainda existir.
 
@@ -97,25 +97,25 @@ Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva,
 - **Desligar por SQL não grava auditoria.** Um `UPDATE` de `feature_flags` não grava `updated_by` nem auditoria, mas o gatilho `trg_feature_flags_updated_at` (criado na 023) marca `updated_at`, e a 023 só liga `ux_v2_enabled` e `chatbot_enabled` em linha intocada. Limite (O30): um `UPDATE` feito antes de a 023 existir no banco não deixa marca. Antes da primeira 023 em produção, confira `apiAdminListFeatureFlags` e, para decisões que devem durar, use `apiAdminSetFeatureFlag`.
 - **Documentação:** `docs/DEPLOYMENT.md` (seção 1) foi corrigida na passada final de 2026-10-08: migrações 001 a 024, e a 023 não religa o que um admin desligou.
 - **Staging aplica tudo antes da API.** Se `STAGING_DATABASE_URL` existir, o push em `staging` roda o runner inteiro, incluindo a 023, antes de publicar a API (`.github/workflows/deploy-staging.yml`).
-- **Riscos novos** registrados em `docs/riscos-residuais.md` (O17 a O43; O28 e O31 corrigidos na passada final e na rodada 2). Itens adiados com gatilho, em `docs/backlog-futuro.md`, seção "Lia e RAG".
+- **Riscos novos** registrados em `docs/riscos-residuais.md` (O17 a O43; O28 e O31 corrigidos na passada final e na rodada 2). Itens adiados com gatilho, em `docs/backlog-futuro.md`, seção "Guia e RAG".
 
 ## Atualização de 2026-10-08 (rodada 2, fechamento da Onda 1)
 
 **O que entrou em `feat/v5-fechamento`.**
-- **Moderação da Lia:** a suspensão é relida do banco quando a leitura do estado falha. Sem banco e sem memória, a Lia pausa para todos (falha segura). Detalhes no ADR 0004, seção "Portão do chat" (O17 mitigado).
+- **Moderação da Guia:** a suspensão é relida do banco quando a leitura do estado falha. Sem banco e sem memória, a Guia pausa para todos (falha segura). Detalhes no ADR 0004, seção "Portão do chat" (O17 mitigado).
 - **RAG:** reindexação sem embeddings grava `ASSISTANT_RAG_REINDEX_DEGRADED` em `error_logs` (O20 mitigado). Resposta com fontes nunca entra no cache (O27 resolvido).
-- **Admin:** seção "Moderação da Lia" com agregados e, por pessoa, nível, suspensão, última detecção e última redenção, sem nome (`frontend/admin-moderation.js`, O28 resolvido).
+- **Admin:** seção "Moderação da Guia" com agregados e, por pessoa, nível, suspensão, última detecção e última redenção, sem nome (`frontend/admin-moderation.js`, O28 resolvido).
 - **Front:** Chart.js saiu do painel de administração (O31 mitigado). As páginas de módulo ainda usam jsDelivr com SRI (O31b).
 - **Acessibilidade:** `.lia-close` com área de toque de 44 px (O35 resolvido). O checkbox do e-mail fica como está (O34 aceito).
-- **Lia viva:** ondas 2 a 4 aceitas em 2026-10-08 (ADR 0003). `lia-props.js` carrega `lia-props-art.js` sob demanda (uma vez, com cache; se falhar, a Lia segue na base). Cenas em `frontend/modulos/shared/lia/lia-scenes.js`. O dono aprovou as 7 cenas e escolheu o rosto mais leve, variante A.
-- **Hero da Lia:** só aparece com `ux_v2_enabled` e `chatbot_enabled` ligadas (O39).
+- **Guia viva:** ondas 2 a 4 aceitas em 2026-10-08 (ADR 0003). `lia-props.js` carrega `lia-props-art.js` sob demanda (uma vez, com cache; se falhar, a Guia segue na base). Cenas em `frontend/modulos/shared/lia/lia-scenes.js`. O dono aprovou as 7 cenas e escolheu o rosto mais leve, variante A.
+- **Hero da Guia:** só aparece com `ux_v2_enabled` e `chatbot_enabled` ligadas (O39).
 - **Login:** o hero saiu do fluxo (`frontend/ux.css`, linhas 539 a 540). O CLS ficou em 0 nas medições do QA, exceto um deslocamento inicial de 0,11 marcado `hadRecentInput` em cerca de 2 de 14 cargas frias (O43). O `axe-gate` espera as animações finitas (`frontend/scripts/e2e/axe-gate.js`).
-- **Lia (cobertura e voz):** intenções para propostas, equipe, mensagens, feedback, redenção, limite de IA e 10 telas de admin. Intenções de admin só respondem a admin (sem papel, só uso geral). Golden set de RAG: recall@4 de 5 em 14 (0,357) para 13 em 24 (0,542), sem falsos positivos; piso do teste, 0,472 (`worker/test/ragEval.test.js`). A digitação dura até 2,5 s e o leitor de tela recebe o texto completo (`frontend/assistant-typing.js`). Lacunas da cobertura: tutorial (`onboarding.js`), atalhos de teclado e PWA.
+- **Guia (cobertura e voz):** intenções para propostas, equipe, mensagens, feedback, redenção, limite de IA e 10 telas de admin. Intenções de admin só respondem a admin (sem papel, só uso geral). Golden set de RAG: recall@4 de 5 em 14 (0,357) para 13 em 24 (0,542), sem falsos positivos; piso do teste, 0,472 (`worker/test/ragEval.test.js`). A digitação dura até 2,5 s e o leitor de tela recebe o texto completo (`frontend/assistant-typing.js`). Lacunas da cobertura: tutorial (`onboarding.js`), atalhos de teclado e PWA.
 - **API (aditiva):** `profile.id` (id do próprio perfil) vem em `apiLogin`, `apiLoginMfa` e `apiGetMyProfile` e fica em `state.profile.id`, para o onboarding abrir em produção. O cache de sessão guarda só token e validade.
 - **Lighthouse mobile** (build local, antes do ajuste do hero, sem alteração de código): Performance 81, Acessibilidade 100, Boas práticas 96, SEO 100, CLS 0,113 na tela de entrada. Relatório em `docs/LIGHTHOUSE_2026-10-08.md`. Nova rodada: pendência do dono.
 - **Decisões novas:** ADR 0006 (animação sem biblioteca, `docs/adr/0006-animacao-sem-biblioteca.md`) e minutas da F4 em `docs/F4_DECISOES_JURIDICAS.md`, que dependem de revisão do advogado.
 
-**Atalhos de teclado.** A ajuda passou de `?` para `Ctrl/Cmd+/` (WCAG 2.1.4). `frontend/keyboard-shortcuts.js` (`HELP_COMBO`, linha 17) ignora tecla segurada (`evt.repeat`), e `register()` recusa combinação já registrada. Ctrl/Cmd+K segue abrindo a Lia e cancelando o atalho padrão do navegador. O teste com NVDA, JAWS e VoiceOver é do dono.
+**Atalhos de teclado.** A ajuda passou de `?` para `Ctrl/Cmd+/` (WCAG 2.1.4). `frontend/keyboard-shortcuts.js` (`HELP_COMBO`, linha 17) ignora tecla segurada (`evt.repeat`), e `register()` recusa combinação já registrada. Ctrl/Cmd+K segue abrindo a Guia e cancelando o atalho padrão do navegador. O teste com NVDA, JAWS e VoiceOver é do dono.
 
 **Segurança.** `window.App.getState()` (`frontend/app.js`, linha 2500) devolve o `sessionToken`, e qualquer script da mesma origem pode lê-lo (O37). Aceito nesta rodada por ser mudança grande, com o item registrado em `docs/backlog-futuro.md` (seção "Segurança e produto").
 
@@ -128,7 +128,7 @@ Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva,
 - Testes com NVDA, JAWS e VoiceOver.
 - Nova rodada de Lighthouse (O43).
 - Decidir se a F4 segue já ou depois da mescla.
-- Fonte única dos desenhos da Lia no preview (ADR 0003).
+- Fonte única dos desenhos da Guia no preview (ADR 0003).
 - Revisão jurídica da Política seção 6 e do Código de Conduta (J5 e J6), antes da F4.
 
 **Fora desta PR:** a branch `feat/v5-f4-acervo` (local) tem o rascunho da migração 025 (`sql/025_shared_assets.sql`) e testes em andamento. `feat/v5-f4-arte` tem `search-icons.js` e `.css`. A próxima migração livre continua 025.
@@ -161,8 +161,8 @@ Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva,
 | #26 | `feat/v5-seguranca` | F2 + F3 + pipeline de segurança + backup | Mesclada **na branch `feat/v5-ux-base`, não na `main`** (a #25 já tinha entrado, a base empilhada ficou para trás). Não vale mais |
 | **#27** | `feat/v5-seguranca` | Os mesmos F2 + F3, mais as correções finais, direto para a `main` | **Mesclada na `main` em 2026-10-05** |
 | **#35** | `feat/v5-ativacao` | Deploy automático do site, runner de migrações e smoke test | **Mesclada na `main`** |
-| **#36** | `feat/v5-lia-cracha` | Lia (guia da plataforma), crachá virtual e flag `chatbot_enabled` | **Mesclada na `main`** |
-| **#38** | `feat/v5-ux-fundacao` | UX v2, Lia viva, RAG, feedback e moderação (128 arquivos) | **Mesclada na `main` em 2026-10-08 10:38 UTC** (merge `21dce33`); Worker e site publicados; banco de produção aguarda o runbook |
+| **#36** | `feat/v5-lia-cracha` | Guia (guia da plataforma), crachá virtual e flag `chatbot_enabled` | **Mesclada na `main`** |
+| **#38** | `feat/v5-ux-fundacao` | UX v2, Guia viva, RAG, feedback e moderação (128 arquivos) | **Mesclada na `main` em 2026-10-08 10:38 UTC** (merge `21dce33`); Worker e site publicados; banco de produção aguarda o runbook |
 | — | `fix/ci-pos-fusao` | Cabeçalho de copyright em 3 testes e `sharp` 0.35.5 (CI verde na `main`) | Aberta para a `main` |
 
 Lição: com PRs empilhadas, depois de mesclar a de baixo, **reaponte a de cima para a `main`** antes de mesclar (ou mescle a de cima primeiro).
@@ -179,7 +179,7 @@ Lição: com PRs empilhadas, depois de mesclar a de baixo, **reaponte a de cima 
 3. **Aviso `degraded` no front** (`frontend/modulos/laboratorio/js/lab-preceptor.js`): hoje a resposta aproximada aparece como "recuperada do acervo". Mostrar "resposta aproximada, a IA está indisponível".
 4. **Polimentos do painel de métricas:** dia como DD/MM; ignorar resposta atrasada ao alternar 7/30 dias; e2e sem `check(true)` vazio.
 5. **Reserva do orçamento por papel** (risco O10) e **orçamento da NVIDIA** (O11): só se o gatilho de `docs/riscos-residuais.md` disparar.
-6. **F1 restante** (conferido no código em 2026-10-08; na rodada 2 já entraram onboarding, hero, `openConfirm` com o e2e `confirm-a11y`, atalhos `Ctrl/Cmd+/` e a medição Lighthouse local): credencial virtual (`credential.js`), Equipe em árvore (`renderOrgChartTree`, `app.js`) e PWA **já existem**. Feitos na rodada 2: onboarding, hero no login (a cabeça da Lia, sem `laift-orb.js`), `openConfirm`, atalhos e a medição Lighthouse local. O `axe-gate` reprova violações serious e critical. Não conferido nesta rodada: `h1` único por tela. NVDA, JAWS e VoiceOver são do dono. **Sem `noindex` em `/`:** login e app são o mesmo `index.html`, e `noindex` tiraria o site do Google.
+6. **F1 restante** (conferido no código em 2026-10-08; na rodada 2 já entraram onboarding, hero, `openConfirm` com o e2e `confirm-a11y`, atalhos `Ctrl/Cmd+/` e a medição Lighthouse local): credencial virtual (`credential.js`), Equipe em árvore (`renderOrgChartTree`, `app.js`) e PWA **já existem**. Feitos na rodada 2: onboarding, hero no login (a cabeça da Guia, sem `laift-orb.js`), `openConfirm`, atalhos e a medição Lighthouse local. O `axe-gate` reprova violações serious e critical. Não conferido nesta rodada: `h1` único por tela. NVDA, JAWS e VoiceOver são do dono. **Sem `noindex` em `/`:** login e app são o mesmo `index.html`, e `noindex` tiraria o site do Google.
 
 ## Passos que só você pode fazer
 1. **Chave do OpenRouter** (a chave nunca passa pelo chat): `powershell -ExecutionPolicy Bypass -File tools\ci\registrar-segredo-openrouter.ps1 -Arquivo "$env:USERPROFILE\Desktop\segredos-openrouter.json"`, depois apague o arquivo. Defina um **limite de gasto baixo** na chave no painel do OpenRouter (risco O9). Sem a chave o Strix é pulado com aviso. Modelo padrão: Nemotron 3 Super gratuito; o `z-ai/glm-5.3:free` do roteiro **não existe** — para o GLM pago: `gh variable set STRIX_LLM --body "openrouter/z-ai/glm-5.3"`.
@@ -195,7 +195,7 @@ git switch main && git pull
 cd worker && npm ci && npm test && npm run validate:sql      # 48 suítes, 24 migrações e 1424 testes (execução final de 2026-10-08)
 cd ../frontend && npm ci && node scripts/build.js && node scripts/e2e/run.js csp smoke home assistant credential visual-qa
 ```
-Próximo passo técnico depois das mesclas: terminar a **F1** (itens acima) e seguir para a **F4** (acervo, bibliografia, mentores, casos clínicos, busca global). A Lia já entrou (ver 2026-10-08). A próxima migração livre é a **025** (`docs/TIME_CONTRATO.md`).
+Próximo passo técnico depois das mesclas: terminar a **F1** (itens acima) e seguir para a **F4** (acervo, bibliografia, mentores, casos clínicos, busca global). A Guia já entrou (ver 2026-10-08). A próxima migração livre é a **025** (`docs/TIME_CONTRATO.md`).
 
 ## Observações de trabalho
 - Cada fase termina com `code-reviewer` + `security-reviewer`; as duas rodadas da F2 e da F3 já foram feitas e corrigidas (ver histórico dos commits `fix(seguranca)` e `fix(ia)`).

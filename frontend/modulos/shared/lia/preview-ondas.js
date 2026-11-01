@@ -1,4 +1,4 @@
-/* Preview das ondas 2-4 da Lia (revisao de arte; nao entra no build, ver LIA_REVIEW_ONLY em scripts/build.js).
+/* Preview das ondas 2-4 da Guia (revisao de arte; nao entra no build, ver LIA_REVIEW_ONLY em scripts/build.js).
    A arte vem de LiaArt (lia-art.js, gerado de lia.svg) e e montada com createElementNS (sem innerHTML).
    Cada cena e uma linha do tempo WAAPI: so transform e opacity; duracoes e curvas vem de --dur-* e --ease-*.
    Movimento reduzido mostra a pose final parada. */
@@ -119,7 +119,7 @@
     ]);
   }
 
-  /* Costas da Lia (suspensa): mesma silhueta da frente, sem rosto, sem mecha, sem lapela. */
+  /* Costas da Guia (suspensa): mesma silhueta da frente, sem rosto, sem mecha, sem lapela. */
   function criaCostas() {
     var lia = criaLia({ 'data-state': 'suspended', 'data-pv': 'costas' });
     var s = raizSvg(lia);
@@ -190,7 +190,7 @@
     return {
       id: 'laboratorio',
       titulo: 'Laboratório',
-      legenda: 'Segura o frasco vazio. O líquido sobe (escala Y); a Lia mistura e o líquido troca de cor por opacidade; termina com brilhos.',
+      legenda: 'Segura o frasco vazio. O líquido sobe (escala Y); a Guia mistura e o líquido troca de cor por opacidade; termina com brilhos.',
       monta: cenaFrasco,
       anima: [
         { sel: '#lia-prop-flask > path.a', frames: [{ transform: 'scaleY(0)' }, { transform: 'scaleY(1)' }], at: 2 * D.base, dur: D.lazy, ease: E.out },
@@ -221,7 +221,7 @@
     return {
       id: 'clinica',
       titulo: 'Clínica',
-      legenda: 'O estetoscópio aproxima do peito; a Lia aponta para o monitor e o ECG desenha a linha; depois o termômetro sobe o mercúrio.',
+      legenda: 'O estetoscópio aproxima do peito; a Guia aponta para o monitor e o ECG desenha a linha; depois o termômetro sobe o mercúrio.',
       monta: cenaClinica,
       anima: [
         { sel: '#lia-prop-stethoscope', frames: [{ transform: 'translate(-18px, -26px)', opacity: 0.2 }, { transform: 'translate(0px, 0px)', opacity: 1 }], at: 0, dur: D.lazy, ease: E.out },
@@ -261,7 +261,7 @@
     return {
       id: 'aprender',
       titulo: 'Aprender',
-      legenda: 'Vira a página; lê com o olhar acompanhando a linha; um "?" surge sobre a cabeça e a Lia aponta para a tela.',
+      legenda: 'Vira a página; lê com o olhar acompanhando a linha; um "?" surge sobre a cabeça e a Guia aponta para a tela.',
       monta: cenaAprender,
       anima: [
         { sel: '#lia-eyes-focused > *', frames: [{ transform: 'translateX(0px)' }, { transform: 'translateX(-1.6px)' }, { transform: 'translateX(1.6px)' }, { transform: 'translateX(-1.6px)' }, { transform: 'translateX(1.6px)' }, { transform: 'translateX(0px)' }], at: 2 * D.base, dur: 3 * D.lazy, ease: E.inOut },
@@ -281,7 +281,7 @@
     return {
       id: 'aviso',
       titulo: 'Moderação: aviso',
-      legenda: 'Braços cruzados e balão vermelho com "!"; o fundo escurece suavemente (até 35%) e a Lia fica preocupada.',
+      legenda: 'Braços cruzados e balão vermelho com "!"; o fundo escurece suavemente (até 35%) e a Guia fica preocupada.',
       monta: cenaAviso,
       anima: [
         { sel: '.veu', frames: [{ opacity: 0 }, { opacity: 0.35 }], at: 0, dur: D.lazy, ease: E.out },

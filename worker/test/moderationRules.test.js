@@ -117,7 +117,7 @@ describe('sincerityHeuristic endurecida (achado 1a)', () => {
   const HONEST = [
     'Peço desculpas, eu estava irritado com um erro e passei do limite com palavras que não devia usar.',
     'Errei feio ontem: fiquei com raiva do robô e xinguei sem motivo. Prometo me comportar daqui em diante.',
-    'Perdão pelo que escrevi. Não foi certo, eu estava estressado com a prova e descontei na Lia. Não vai se repetir.',
+    'Perdão pelo que escrevi. Não foi certo, eu estava estressado com a prova e descontei na Guia. Não vai se repetir.',
     'Me arrependo do que disse na conversa. Reconheço que ofendi sem necessidade e vou respeitar todo mundo aqui.',
     'Lamento muito! Foi errado da minha parte usar aquelas palavras. Vou escolher melhor o que escrevo, prometo.',
     'Desculpe pelo meu comportamento. Eu estava cansado e acabei passando do limite; daqui pra frente, mais respeito.',

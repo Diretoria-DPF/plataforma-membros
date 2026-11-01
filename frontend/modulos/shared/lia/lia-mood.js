@@ -1,5 +1,5 @@
 /*
- * Lia - humor e variações de fala (L5). Funções puras e imutáveis: sem DOM, sem armazenamento e sem timers.
+ * Guia - humor e variações de fala (L5). Funções puras e imutáveis: sem DOM, sem armazenamento e sem timers.
  * Quem chama: assistant.js (integração pelo orquestrador, via window.LiaMood) e frontend/scripts/lia-mood.test.mjs.
  * Eixos do humor em 0..1. As poses idle são overrides validados contra LiaStates (lia-states.js) no teste.
  * Aleatoriedade sempre injetada: rand() devolve um número em [0, 1). Rand inválida cai no meio do intervalo.

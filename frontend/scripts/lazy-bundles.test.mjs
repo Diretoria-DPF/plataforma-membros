@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Carga sob demanda do painel admin e da Lia (MOB-04) e service worker enxuto (MOB-07).
+// Carga sob demanda do painel admin e da Guia (MOB-04) e service worker enxuto (MOB-07).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -84,7 +84,7 @@ test('pacotes: sem repetição, todos os arquivos existem e o build os publica',
   assert.equal(new Set(all).size, all.length, 'arquivo em dois pacotes (ou repetido)');
   for (const file of all) {
     assert.ok(fs.existsSync(path.join(frontend, file)), `${file} não existe`);
-    // Os da Lia em modulos/ vão pela cópia recursiva de modulos/; os demais precisam estar na lista do build.
+    // Os da Guia em modulos/ vão pela cópia recursiva de modulos/; os demais precisam estar na lista do build.
     if (!file.startsWith('modulos/')) assert.ok(build.includes(`'${file}'`), `build.js não publica ${file}`);
   }
   assert.ok(build.includes("'lazy-bundles.js'"), 'build.js não publica lazy-bundles.js');
@@ -101,7 +101,7 @@ test('pacotes: nada do que é sob demanda vira <script> do index.html nem entra 
   assert.ok(html.indexOf('lazy-bundles.js') < html.indexOf('<script src="app.js"'), 'lazy-bundles.js antes do app.js');
 });
 
-test('index.html: sem script inline novo (CSP) e as dependências do shell que a Lia/admin usam continuam eager', () => {
+test('index.html: sem script inline novo (CSP) e as dependências do shell que a Guia/admin usam continuam eager', () => {
   const html = read('index.html');
   assert.doesNotMatch(html, /<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>/);
   // agents-tutor.js lê assistant-sources.js ao carregar; os painéis admin usam LaiftDom (safe-dom.js).
@@ -111,7 +111,7 @@ test('index.html: sem script inline novo (CSP) e as dependências do shell que a
   assert.ok(html.indexOf('src="privacy.js"') > 0, 'privacy-admin.js usa LaiftPrivacy (shell)');
 });
 
-test('app.js: todo painel admin garante o pacote antes de chamar o módulo; a Lia sobe no login', () => {
+test('app.js: todo painel admin garante o pacote antes de chamar o módulo; a Guia sobe no login', () => {
   const app = read('app.js');
   assert.match(app, /function withBundle\(name, fn\)/);
   for (const panel of ['panel-admin-dashboard', 'panel-admin-ai', 'panel-admin-selection', 'panel-admin-privacy', 'panel-admin-library', 'panel-admin-roles']) {
@@ -124,12 +124,12 @@ test('app.js: todo painel admin garante o pacote antes de chamar o módulo; a Li
   assert.match(app, /if \(window\.LaiftAssistant\) window\.LaiftAssistant\.refresh\(\)/);
 });
 
-test('assistant.js: sobe mesmo quando o DOM já está pronto (carga sob demanda) e o atalho espera a Lia chegar', () => {
+test('assistant.js: sobe mesmo quando o DOM já está pronto (carga sob demanda) e o atalho espera a Guia chegar', () => {
   assert.match(read('assistant.js'), /readyState !== 'loading'\) start\(\)/);
   assert.match(read('keyboard-shortcuts.js'), /LaiftLazy\.isRequested\('lia'\)/);
 });
 
-test('sw.js MOB-07: o precache é só o shell; nada de admin, Lia, Atlas 3D, WASM ou módulos', () => {
+test('sw.js MOB-07: o precache é só o shell; nada de admin, Guia, Atlas 3D, WASM ou módulos', () => {
   const pre = precache();
   assert.ok(pre.includes('./') && pre.includes('app.js') && pre.includes('lazy-bundles.js'));
   for (const item of pre) {

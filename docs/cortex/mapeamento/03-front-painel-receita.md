@@ -45,7 +45,7 @@ Branch feat/cortex-biblioteca. Caminhos relativos a `frontend/`, salvo quando in
 24. `scripts/build.js:101` (cópia separada de `admin-ai.js`) e `build.js:56`: incluir `admin-library.js`. `sw.js:25` PRECACHE: incluir.
 25. `index.html` (perto de 1061-1064): `<script src="admin-library.js" defer></script>` depois de `safe-dom.js` (1063), se usar `LaiftDom`.
 26. Worker (fora do front): ação nova no mapa de `worker/src/handlers.js` (ex.: linha 264, `apiAdminLearnListPendingCases`) com checagem de papel admin no service.
-27. Opcional: `assistant.js:16-24` (ACTION_KEYS), só se a Lia puder navegar para o painel. Exige espelho em `worker/src/assistant/targets.js`.
+27. Opcional: `assistant.js:16-24` (ACTION_KEYS), só se a Guia puder navegar para o painel. Exige espelho em `worker/src/assistant/targets.js`.
 
 ### E. Tokens, estados e componentes a reutilizar
 28. Cores e movimento: `modulos/shared/laift-tokens.css` (`--laift-*`: claro 134-148, escuro 210-269; `--dur-*` e `--ease-*` 91-98). `styles.css:13-26` já aliasa `--primary`, `--admin`, `--danger`, `--muted`, `--border`, `--surface-alt`. Não criar hex novo.

@@ -212,7 +212,7 @@ INSERT INTO feature_flags (key, enabled, description) VALUES
   ('library_enabled', FALSE, 'Biblioteca LAIFT: painel do membro e catálogo público'),
   ('library_member_suggest', FALSE, 'Biblioteca: membros sugerem artigos (com aprovação)'),
   ('library_ai_summary', FALSE, 'Biblioteca: resumo sugerido por IA (B3)'),
-  ('lia_library_enabled', FALSE, 'Lia cita artigos publicados da Biblioteca (B4)')
+  ('lia_library_enabled', FALSE, 'Guia cita artigos publicados da Biblioteca (B4)')
 ON CONFLICT (key) DO NOTHING;
 ```
 

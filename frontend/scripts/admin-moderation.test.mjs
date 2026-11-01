@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Seção "Moderação da Lia" do painel admin (frontend/admin-moderation.js, ADR 0004, O28):
+// Seção "Moderação da Guia" do painel admin (frontend/admin-moderation.js, ADR 0004, O28):
 // funções puras, estados carregando/erro com nova tentativa/vazio, aria-busy, respostas
 // fora de ordem, logout, foco, data-action e higiene (sem innerHTML, sem handler inline).
 import { test, beforeEach } from 'node:test';
@@ -415,13 +415,13 @@ test('o arquivo nunca converte texto em HTML nem usa handler inline', () => {
   assert.ok(src.split('\n').length < 800, 'arquivo abaixo do teto de 800 linhas');
 });
 
-test('index.html: cartão "Moderação da Lia" dentro do painel de IA, com botão por data-action e safe-dom antes do módulo', () => {
+test('index.html: cartão "Moderação da Guia" dentro do painel de IA, com botão por data-action e safe-dom antes do módulo', () => {
   const html = read('index.html');
   const panel = /<section id="panel-admin-ai"[\s\S]*?<\/section>/.exec(html);
   assert.ok(panel, 'painel de IA do admin existe');
   // data-cap (ROL-03): o cartão aparece para o admin e para o cargo moderador.
   assert.match(panel[0], /<div class="card" id="admin-moderation-card" data-cap="reports\.moderate">/);
-  assert.match(panel[0], /<h2 id="h-admin-moderation">Moderação da Lia<\/h2>/);
+  assert.match(panel[0], /<h2 id="h-admin-moderation">Moderação da Guia<\/h2>/);
   assert.match(panel[0], /<button type="button" class="secondary" data-action="LaiftAdminModeration\.reload">Atualizar<\/button>/);
   assert.match(panel[0], /<div id="admin-moderation"><\/div>/);
   // safe-dom.js continua no index (antes do app.js); admin-moderation.js vem no pacote admin, depois dele.

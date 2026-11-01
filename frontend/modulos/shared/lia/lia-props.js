@@ -1,8 +1,8 @@
 /*
- * Lia - props e poses sob demanda (ondas 2-4). Carrega lia-props-art.js (window.LIA_PROPS_ART) só quando um
- * contexto pede peças extras e monta essas peças no <svg> da Lia com createElementNS (nunca innerHTML).
+ * Guia - props e poses sob demanda (ondas 2-4). Carrega lia-props-art.js (window.LIA_PROPS_ART) só quando um
+ * contexto pede peças extras e monta essas peças no <svg> da Guia com createElementNS (nunca innerHTML).
  * CSP: o <script> é injetado com src da MESMA origem; não há fetch nem código inline.
- * Falha de carga (rede, arquivo ausente, arte inválida) = Lia base sem as peças, sem erro visível;
+ * Falha de carga (rede, arquivo ausente, arte inválida) = Guia base sem as peças, sem erro visível;
  * a falha é lembrada por um tempo para não repetir o pedido a cada troca de estado.
  * Quem chama: lia.js (createSet/ready/load) e frontend/scripts/lia-props.test.mjs.
  */
@@ -23,7 +23,7 @@
   var MAX_DEPTH = 8;
   var TAGS = Object.freeze(['g', 'path', 'rect', 'circle', 'ellipse']);
   var PARENT_FORMAT = /^(svg|#[A-Za-z][\w-]*)$/;
-  var FIRST = 'primeiro'; // data-posicao: antes de #lia-body (atrás da Lia)
+  var FIRST = 'primeiro'; // data-posicao: antes de #lia-body (atrás da Guia)
 
   // Script que carregou este arquivo: o de props fica na mesma pasta.
   var ownSrc = typeof document !== 'undefined' && document.currentScript && document.currentScript.src ? document.currentScript.src : '';
@@ -99,7 +99,7 @@
     });
   }
 
-  /** Pede o carregamento (uma única vez, com cache). Nunca rejeita: resolve true (pronto) ou false (Lia base). */
+  /** Pede o carregamento (uma única vez, com cache). Nunca rejeita: resolve true (pronto) ou false (Guia base). */
   function load(doc) {
     var d = doc || scope.document || null;
     if (state.status === 'ready') return Promise.resolve(true);
@@ -138,7 +138,7 @@
   }
 
   /**
-   * Conjunto de peças de UM <svg> de Lia. add(nomes) monta as que faltam e devolve as que entraram;
+   * Conjunto de peças de UM <svg> de Guia. add(nomes) monta as que faltam e devolve as que entraram;
    * remove(nomes)/clear() tiram do DOM (as peças não têm regra display no CSS: fora da cena, não existem).
    */
   function createSet(svg, doc) {

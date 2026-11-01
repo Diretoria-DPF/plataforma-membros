@@ -43,8 +43,8 @@ Resultado: 223 verificações ok e 2 avisos não bloqueantes. Axe (serious e cri
 | Propostas | ok | ok | ok |
 | Aprender | ok | ok | ok |
 | Perfil | ok | ok | ok |
-| Lia fechada | ok | ok | ok |
-| Lia aberta | ok | ok | ok |
+| Guia fechada | ok | ok | ok |
+| Guia aberta | ok | ok | ok |
 | Admin: IA | ok | ok | ok |
 
 - **Avisos (não bloqueiam):** "pref-email-notif" em Perfil, 13x44 px, abaixo de 44x44, nos temas claro e escuro, em 375x812.
@@ -53,7 +53,7 @@ Resultado: 223 verificações ok e 2 avisos não bloqueantes. Axe (serious e cri
 ## Sem evidência automática nesta rodada
 
 - **Cadastro, recuperação de senha, redefinição de senha:** nenhum cenário rodado cobre estas telas.
-- **Onboarding, Lia (estados de aviso e suspensão), assistente:** têm axe-gate em `onboarding.e2e.js`, `lia-estados.e2e.js` e `assistant.e2e.js`, mas não foram executados nesta rodada (a ficha pede um cenário só).
+- **Onboarding, Guia (estados de aviso e suspensão), assistente:** têm axe-gate em `onboarding.e2e.js`, `lia-estados.e2e.js` e `assistant.e2e.js`, mas não foram executados nesta rodada (a ficha pede um cenário só).
 - **Atalhos de teclado (Ctrl/Cmd+/ e Ctrl/Cmd+K):** sem cenário com axe.
 - **Confirmações (`#modal-confirm`):** `confirm-a11y.e2e.js` não usa axe; sem evidência automática.
 - **A Liga:** a página ainda não existe.

@@ -3,10 +3,10 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Lia: sugestões de abertura por CONTEXTO (extraído de assistant.js, que tem teto de linhas).
+// Guia: sugestões de abertura por CONTEXTO (extraído de assistant.js, que tem teto de linhas).
 //   - sem sessão (tela de entrada): dúvidas gerais sobre a plataforma como um todo;
 //   - logado: 3 a 4 perguntas coerentes com a tela aberta (id do painel); admin ganha as da gestão nas telas Admin.
-// Cada pergunta foi escolhida por ter RESPOSTA BOA na base da Lia (regra ou acervo): o teste
+// Cada pergunta foi escolhida por ter RESPOSTA BOA na base da Guia (regra ou acervo): o teste
 // worker/test/liaSugestoes.test.js confere isso, e a lista do visitante é IGUAL à do servidor
 // (worker/src/assistant/kb.js, VISITOR_SUGGESTIONS), que a devolve depois das respostas a quem não tem login.
 // São só textos: o clique envia a pergunta como se a pessoa a tivesse digitado. Expõe window.LaiftAssistantSuggestions.
@@ -30,7 +30,7 @@
     'panel-orgchart': ['Onde vejo a equipe da liga?', 'Como envio um pedido de amizade?', 'Como denuncio alguém?'],
     'panel-admin-library': ['Como publico um artigo na Biblioteca?', 'Como faço a curadoria da Biblioteca?'],
     'panel-admin-events': ['Como crio um evento?', 'Como funciona o terminal fiscal?'],
-    'panel-admin-ai': ['Como funciona o painel de IA?', 'Como funciona a moderação da Lia?'],
+    'panel-admin-ai': ['Como funciona o painel de IA?', 'Como funciona a moderação da Guia?'],
   };
 
   /** Cópia das sugestões da tela. Sem sessão: as do visitante. Tela Admin sem lista própria: as de gestão. */

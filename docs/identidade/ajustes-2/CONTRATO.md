@@ -4,12 +4,12 @@ Branch `feat/ajustes-login-blog` (de `origin/main` c132c0f). Caminhos a partir d
 `fichas/ORDEM.md`. Tudo aqui foi **ensaiado** numa cópia de `frontend/` (fora do repositório): com estes textos, os três
 verificadores de `verificadores/` passam (H1 34/34; S1 e S2 em tudo, menos as checagens dos testes que as próprias fichas escrevem,
 que no ensaio eram vazios) e `node --test scripts/*.test.mjs` só mantém as 2 falhas antigas de `_headers` (CRLF no Windows).
-No código atual os verificadores ficam vermelhos onde devem (ex.: "nenhuma Lia dentro da tela de entrada (achou 3)").
+No código atual os verificadores ficam vermelhos onde devem (ex.: "nenhuma Guia dentro da tela de entrada (achou 3)").
 
 ## 0. Pedido do dono → decisão → ficha
 | # | Pedido (resumo) | Decisão | Ficha |
 |---|---|---|---|
-| 1 | Tirar a cabeça da Lia de cima das opções de login; manter só a Lia de baixo | **Remover** o hero (`#hero-lia`, `hero.js`, regras `.hero`). O botão flutuante `#lia-launcher` (assistant.js) fica como está | S1 |
+| 1 | Tirar a cabeça da Guia de cima das opções de login; manter só a Guia de baixo | **Remover** o hero (`#hero-lia`, `hero.js`, regras `.hero`). O botão flutuante `#lia-launcher` (assistant.js) fica como está | S1 |
 | 2 | Dividir a tela; links viram botões grandes; "Acessar blog" | Três blocos: cartão de login, cartão de atalhos (2 botões ≥ 56 px, largura total) e cartão da publicação | S1 |
 | 3 | Prévia da publicação com imagem; laço rosa discreto (Outubro Rosa); trocar "Do blog" por imagem | Miniatura com o ícone do sprite do blog; série `campanhas` em rosa discreto; selo "Do blog" deixa de existir | S2 |
 | 4 | Endereço da instituição | "UNINASSAU - Salvador, Rua dos Maçons, 364, Salvador-Bahia, 41810, Brasil"; coordenadas do OSM (§4) | H1 |
@@ -19,10 +19,10 @@ No código atual os verificadores ficam vermelhos onde devem (ex.: "nenhuma Lia 
 ## 1. Tela de entrada (S1)
 
 ### 1.1 Por que remover o hero e não só escondê-lo
-`#hero-lia` existe só em `#screen-welcome`. Esconder por CSS ainda montaria a Lia (SVG, estados e animação) para nada. Remover tira
+`#hero-lia` existe só em `#screen-welcome`. Esconder por CSS ainda montaria a Guia (SVG, estados e animação) para nada. Remover tira
 código morto: `index.html` (o `<div>` e o `<script src="hero.js" defer>`), `hero.js`, `scripts/hero.test.mjs`,
 `scripts/e2e/hero-ux2.e2e.js`, a entrada `'hero.js', ` de `scripts/build.js` e do `PRECACHE` de `sw.js`, e as regras `.hero` de `ux.css`.
-O `sw.js` é "rede primeiro" e ignora item ausente: **não** sobe a versão do cache. A Lia de baixo (`#lia-launcher`) não muda.
+O `sw.js` é "rede primeiro" e ignora item ausente: **não** sobe a versão do cache. A Guia de baixo (`#lia-launcher`) não muda.
 Voltar atrás = `git revert` do commit.
 
 ### 1.2 Marcação exata de `#screen-welcome` (index.html, hoje linhas 86-122)
@@ -38,7 +38,7 @@ Voltar atrás = `git revert` do commit.
         </nav>
         <div class="blog-novidade blog-novidade--faixa" data-blog-novidade="1" hidden></div>
 ```
-- Apague `  <script src="hero.js" defer></script>` (hoje linha 1007). Os scripts da Lia (`modulos/shared/lia/*`) ficam: o botão flutuante usa.
+- Apague `  <script src="hero.js" defer></script>` (hoje linha 1007). Os scripts da Guia (`modulos/shared/lia/*`) ficam: o botão flutuante usa.
 - Ordem final dentro da `<section>`: `div.auth-card` (login) → `nav.auth-card.welcome-liga` → `div.blog-novidade--faixa`. Um só `h1` ("Entrar").
 - Caminho do sprite **relativo** (`blog/icones.svg`), como o resto do `index.html`. Classes `welcome-liga__link`, `welcome-liga__blog` e
   `welcome-liga__aviso` ficam (os e2e `liga` e `campanha` usam). A classe `link-btn` sai desses dois links.
@@ -51,7 +51,7 @@ Apague a linha `  :root[data-flag-ux-v2-enabled] .hero,` (dentro do `@supports` 
 /* ---------- Tela de entrada em cartões (index.html, #screen-welcome) ---------- */
 /* Três blocos separados: login, atalhos (Liga e blog) e a publicação do blog. Celular: uma coluna.
    A partir de 960 px: login à esquerda; atalhos e publicação à direita. A margem de baixo deixa a
-   Lia flutuante (#lia-launcher, fixa a 16 px do canto) longe dos botões no fim da rolagem. Sem flag.
+   Guia flutuante (#lia-launcher, fixa a 16 px do canto) longe dos botões no fim da rolagem. Sem flag.
    Movimento reduzido: o bloco único de laift-tokens.css zera as transições (ux.css não repete o @media). */
 #screen-welcome.auth-pilha {
   display: grid;

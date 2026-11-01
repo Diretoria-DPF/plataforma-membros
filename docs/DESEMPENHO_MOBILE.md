@@ -6,14 +6,14 @@ Data: 2026-11-01. Branch `perf/mob-04-07-09`. Fonte dos achados: `docs/AUDITORIA
 
 | Item | Antes | Depois |
 |---|---|---|
-| MOB-04 | Todo o JS do painel admin (~216 KB, 64 KB gzip) e o da Lia (~200 KB, 65 KB gzip) vinha no `index.html` para todo mundo | `frontend/lazy-bundles.js` injeta esses scripts sob demanda, em ordem (`async=false`), sem script inline (CSP intacta) |
-| MOB-07 | `sw.js` pré-cacheava 94 itens (1.586 KB) | Pré-cacheia 66 itens (879 KB): só o que o `index.html` carrega de imediato. Admin, Lia e o PNG grande do crachá entram no cache ao serem usados (o `fetch` do SW, rede primeiro, já grava toda resposta 200 do próprio site). Atlas 3D/WASM continuam fora (têm SW e cache próprios). `CACHE_NAME` e `data-app-version` em v25 |
+| MOB-04 | Todo o JS do painel admin (~216 KB, 64 KB gzip) e o da Guia (~200 KB, 65 KB gzip) vinha no `index.html` para todo mundo | `frontend/lazy-bundles.js` injeta esses scripts sob demanda, em ordem (`async=false`), sem script inline (CSP intacta) |
+| MOB-07 | `sw.js` pré-cacheava 94 itens (1.586 KB) | Pré-cacheia 66 itens (879 KB): só o que o `index.html` carrega de imediato. Admin, Guia e o PNG grande do crachá entram no cache ao serem usados (o `fetch` do SW, rede primeiro, já grava toda resposta 200 do próprio site). Atlas 3D/WASM continuam fora (têm SW e cache próprios). `CACHE_NAME` e `data-app-version` em v25 |
 | MOB-09 (parte feita) | Orçamento só no Atlas | `frontend/scripts/perf-budget.test.mjs` (roda no `node --test` do CI) e `Cache-Control: public, max-age=31536000, immutable` nas pastas de vendor com versão no caminho (`smiles-drawer-2.1.7`, `smiles-drawer-2.3.0`) |
 
 ## Quando cada pacote carrega
 
 - **admin**: ao abrir qualquer painel administrativo (`withBundle('admin', ...)` em `PANEL_LOADERS` de `app.js`). Quem não é admin nem cargo com acesso nunca baixa. Os `reset()` no logout já conferiam `if (window.X)`, então continuam seguros com o pacote ausente.
-- **lia**: logo depois do login (antes do onboarding, que cita a Lia) e, para visitante ou sessão restaurada, quando o navegador fica ocioso após o evento `load` (`requestIdleCallback`, teto de 3 s). Ou seja, o visitante ainda baixa a Lia (ela atende visitantes quando a flag está ligada), mas fora do caminho crítico. O atalho de teclado que abre a Lia espera o pacote chegar.
+- **lia**: logo depois do login (antes do onboarding, que cita a Guia) e, para visitante ou sessão restaurada, quando o navegador fica ocioso após o evento `load` (`requestIdleCallback`, teto de 3 s). Ou seja, o visitante ainda baixa a Guia (ela atende visitantes quando a flag está ligada), mas fora do caminho crítico. O atalho de teclado que abre a Guia espera o pacote chegar.
 - Ficaram no shell de propósito: `assistant-sources.js` (o `agents-tutor.js` o lê ao carregar), `safe-dom.js`, `library-cite.js`, `privacy.js`, `roles-ui.js`, `orgchart-edit.js` e os CSS (evita piscada sem estilo).
 
 ## Números (arquivos-fonte; `app.js` sai ofuscado e maior no build)
@@ -31,7 +31,7 @@ Ganho real em tempo (LCP/TBT) não foi medido aqui; precisa de Lighthouse logado
 ## Orçamento (teto = medição + ~8%)
 
 - Shell: 295 KB gzip. JS inicial: 700 KB. Pré-cache: 950 KB. Estourou? Primeiro tente carregar sob demanda; só suba o teto justificando na PR.
-- O teste também falha se admin, Lia, Atlas ou `.wasm` voltarem para o `index.html`, e se `immutable` aparecer num caminho sem versão ou em HTML/`sw.js`.
+- O teste também falha se admin, Guia, Atlas ou `.wasm` voltarem para o `index.html`, e se `immutable` aparecer num caminho sem versão ou em HTML/`sw.js`.
 
 ## Por que NÃO foram feitos nomes de arquivo com hash no shell
 

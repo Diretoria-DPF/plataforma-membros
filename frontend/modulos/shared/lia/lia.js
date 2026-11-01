@@ -1,5 +1,5 @@
 /*
- * Lia - montagem do personagem (ADR 0003). API pública: window.Lia.
+ * Guia - montagem do personagem (ADR 0003). API pública: window.Lia.
  * Monta o SVG a partir de LiaArt (árvore de dados) com createElementNS; nunca innerHTML (CSP).
  * Quem chama: a UI do chat e dos módulos. Depende de lia-art.js e lia-states.js.
  * Animações opcionais: window.LiaAnim (lia-anim.js). Sob prefers-reduced-motion, nada roda.
@@ -19,7 +19,7 @@
   var live = []; // instâncias montadas; a última recebe os atalhos globais
 
   function warn(message, detail) {
-    console.warn('[Lia] ' + message, detail === undefined ? '' : detail);
+    console.warn('[Guia] ' + message, detail === undefined ? '' : detail);
   }
 
   /** true quando o usuário pede movimento reduzido (ou quando não dá para saber: fica conservador). */
@@ -67,7 +67,7 @@
   }
 
   function renderNode(doc, node) {
-    if (SVG_TAGS.indexOf(node.tag) < 0) throw new Error('Lia: elemento SVG não permitido: ' + node.tag);
+    if (SVG_TAGS.indexOf(node.tag) < 0) throw new Error('Guia: elemento SVG não permitido: ' + node.tag);
     var el = doc.createElementNS(SVG_NS, node.tag);
     Object.keys(node.attrs).forEach(function (name) { el.setAttribute(name, node.attrs[name]); });
     node.children.forEach(function (child) { el.appendChild(renderNode(doc, child)); });
@@ -148,7 +148,7 @@
         slot.stop = result;
       } else if (result && typeof result.then === 'function') {
         var release = function () {
-          // Roda depois da Promise: se a Lia foi destruída ou outra animação tomou o lugar, não mexe em nada.
+          // Roda depois da Promise: se a Guia foi destruída ou outra animação tomou o lugar, não mexe em nada.
           if (alive && transient === slot) transient = null;
         };
         result.then(release, release);
@@ -201,8 +201,8 @@
   }
 
   /**
-   * Peças extras (LiaProps, sob demanda) e cena (LiaScenes) do contexto, ondas 2-4. A Lia de recorte (bolha de 48 px)
-   * nunca as recebe. Sem LiaProps/LiaScenes, ou com a arte ainda carregando, a Lia base segue como está.
+   * Peças extras (LiaProps, sob demanda) e cena (LiaScenes) do contexto, ondas 2-4. A Guia de recorte (bolha de 48 px)
+   * nunca as recebe. Sem LiaProps/LiaScenes, ou com a arte ainda carregando, a Guia base segue como está.
    * O atributo data-extras do host lista as peças que estão na tela: é o gancho do lia.css (costas, braços cruzados).
    */
   function createStage(host, svg, cropped, motion) {
@@ -266,7 +266,7 @@
         return false;
       }
       if (stage.propsReady()) return showPlan(plan, wanted, reduced);
-      stage.clear(); // até a arte chegar, vale a Lia base
+      stage.clear(); // até a arte chegar, vale a Guia base
       if (plan.late) loadThen(plan, wanted, reduced, core.version);
       return false;
     }
@@ -351,13 +351,13 @@
     live = live.filter(function (item) { return item !== instance; });
   }
 
-  /** Monta a Lia dentro de `target` (elemento ou seletor). Devolve a instância, ou null se não der. */
+  /** Monta a Guia dentro de `target` (elemento ou seletor). Devolve a instância, ou null se não der. */
   function mount(target, options) {
     var doc = root.document;
     var art = root.LiaArt;
     var parent = typeof target === 'string' && doc ? doc.querySelector(target) : target;
     if (!States || !art || !doc || !parent || typeof parent.appendChild !== 'function') {
-      warn('Lia não montada: arte, estados ou alvo ausente');
+      warn('Guia não montada: arte, estados ou alvo ausente');
       return null;
     }
     var opts = options && typeof options === 'object' ? options : {};

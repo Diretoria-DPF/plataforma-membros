@@ -3,7 +3,7 @@
 -- Licença proprietária: ver LICENSE na raiz do repositório.
 -- Reversão da 019_assistant.sql. Não é aplicada no deploy: só à mão, em caso de
 -- rollback, e verificada por `npm run validate:sql`.
--- Apaga os registros de uso da Lia (a restrição antiga não os aceita) e a flag.
+-- Apaga os registros de uso da Guia (a restrição antiga não os aceita) e a flag.
 -- Antes de reverter, desligue a flag chatbot_enabled.
 
 DELETE FROM ai_usage_log WHERE feature = 'assistant';

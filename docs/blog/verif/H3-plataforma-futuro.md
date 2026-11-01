@@ -32,11 +32,11 @@ Leitura do repositorio. Producao: 1 chamada de flags (2026-10-09 03:37:35 UTC) e
 | 016 | sql/016_feature_flags.sql:4 | Chaves liga/desliga (feature_flags) | APLICADA em 2026-10-07 (docs/ANDAMENTO.md:26, :179) |
 | 017 | sql/017_mfa.sql:4 | Verificacao em duas etapas (TOTP) | APLICADA em 2026-10-07 (docs/ANDAMENTO.md:26) |
 | 018 | sql/018_ai_orchestrator.sql:4 | Metricas diarias da IA e cache semantico | APLICADA em 2026-10-07 (docs/ANDAMENTO.md:26) |
-| 019 | sql/019_assistant.sql:4 | Lia, guia da plataforma | APLICADA em 2026-10-07 (docs/ANDAMENTO.md:26) |
-| 020 | sql/020_rag.sql:4 | Base de conhecimento da Lia (busca hibrida) | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
-| 021 | sql/021_assistant_feedback.sql:4 | Respostas da Lia e feedback | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
-| 022 | sql/022_assistant_moderation.sql:4 | Moderacao da Lia (niveis, decaimento e redencao) | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
-| 023 | sql/023_flags_v2.sql:4 | Flags da renovacao (UX v2, Lia, RAG, feedback, moderacao) | PENDENTE, por ultimo (docs/ANDAMENTO.md:6, :71; docs/AMBIENTES.md:212) |
+| 019 | sql/019_assistant.sql:4 | Guia, guia da plataforma | APLICADA em 2026-10-07 (docs/ANDAMENTO.md:26) |
+| 020 | sql/020_rag.sql:4 | Base de conhecimento da Guia (busca hibrida) | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
+| 021 | sql/021_assistant_feedback.sql:4 | Respostas da Guia e feedback | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
+| 022 | sql/022_assistant_moderation.sql:4 | Moderacao da Guia (niveis, decaimento e redencao) | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
+| 023 | sql/023_flags_v2.sql:4 | Flags da renovacao (UX v2, Guia, RAG, feedback, moderacao) | PENDENTE, por ultimo (docs/ANDAMENTO.md:6, :71; docs/AMBIENTES.md:212) |
 | 024 | sql/024_indices.sql:4 | Indices da faxina diaria e das series do Inicio | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
 
 - Resumo: aplicadas 19 (001 a 019); pendentes 5 (020 a 024). Fonte unica: docs; sem acesso ao banco.
@@ -135,7 +135,7 @@ Contagem: 56 riscos abertos (inclui os com status "Aceito"). Fora da lista: S5, 
 | O13 | Desligar chatbot_enabled em emergencia leva ate 60 s | Aceito | docs/riscos-residuais.md:55 |
 | O14 | Cracha: a imagem PNG carrega o QR assinado, sem validade | A mitigar (QR com validade) | docs/riscos-residuais.md:56 |
 | O15 | Filtro de injecao de prompt e contornavel por parafrase | Aceito | docs/riscos-residuais.md:57 |
-| O16 | Lia anonima cria linha em rate_limit_buckets por IP novo | Aceito | docs/riscos-residuais.md:58 |
+| O16 | Guia anonima cria linha em rate_limit_buckets por IP novo | Aceito | docs/riscos-residuais.md:58 |
 | O18 | Claim orfao de redencao (espera de 1 h) | Aceito; gatilho de revisao | docs/riscos-residuais.md:62 |
 | O19 | Juiz LLM envia o texto ofensivo ao Groq (e a NVIDIA, se ligada) | Aceito; gatilho de revisao | docs/riscos-residuais.md:63 |
 | O21 | Limiar de recuperacao conservador derruba o recall | A mitigar (calibrar) | docs/riscos-residuais.md:65 |
@@ -189,7 +189,7 @@ Contagens de testes (escritas nos docs, com data):
 - Ledger: docs/ANDAMENTO.md:14 (2026-10-05) diz que 016 a 018 estao pendentes; docs/ANDAMENTO.md:26 (2026-10-07) diz que estao aplicadas. Usei a segunda.
 - chatbot_enabled: docs/ANDAMENTO.md:26 (2026-10-07) diz desligada em producao; a API devolve true as 03:37 UTC de 2026-10-09. Nenhum doc registra quando ou por quem foi ligada.
 - Testes do worker: 1424 (docs/CHANGELOG.md:62, #38) e 1506 (docs/CHANGELOG.md:40, #40), ambos de 2026-10-08. docs/ANDAMENTO.md:188 ainda cita 1424 como execucao final. (inferencia: sao PRs diferentes, nao medicoes contraditorias.)
-- Termo "relatorios": o item de roadmap "Lia e relatorios ativos" nao tem o termo em docs/ANDAMENTO.md nem em docs/TIME_CONTRATO.md. Usei os recursos das migracoes 020 a 024 (inferencia).
+- Termo "relatorios": o item de roadmap "Guia e relatorios ativos" nao tem o termo em docs/ANDAMENTO.md nem em docs/TIME_CONTRATO.md. Usei os recursos das migracoes 020 a 024 (inferencia).
 
 ## 6. ROADMAP
 
@@ -197,8 +197,8 @@ Selos: EM PRODUCAO; PRONTO AGUARDANDO ATIVACAO; PLANEJADO; EM ESTUDO. Sem datas 
 
 | Item | Selo | Fonte | O que falta |
 |---|---|---|---|
-| Lia, guia da plataforma (migracao 019) | EM PRODUCAO | sql/019_assistant.sql:21; docs/ANDAMENTO.md:26 | nada no escopo; chatbot_enabled volta true na API (03:37 UTC) |
-| RAG, feedback e moderacao da Lia (migracoes 020 a 024) | PRONTO AGUARDANDO ATIVACAO | docs/CHANGELOG.md:57; docs/ANDAMENTO.md:69-71 | aplicar 020 a 022 e 024, reindexar, por ultimo 023; as flags rag_enabled, moderation_enabled e feedback_enabled nascem na 023 (sql/023_flags_v2.sql:49-51) |
+| Guia, guia da plataforma (migracao 019) | EM PRODUCAO | sql/019_assistant.sql:21; docs/ANDAMENTO.md:26 | nada no escopo; chatbot_enabled volta true na API (03:37 UTC) |
+| RAG, feedback e moderacao da Guia (migracoes 020 a 024) | PRONTO AGUARDANDO ATIVACAO | docs/CHANGELOG.md:57; docs/ANDAMENTO.md:69-71 | aplicar 020 a 022 e 024, reindexar, por ultimo 023; as flags rag_enabled, moderation_enabled e feedback_enabled nascem na 023 (sql/023_flags_v2.sql:49-51) |
 | Inscricao nativa na Liga (migracao 025, Etapa 2) | PLANEJADO | docs/TIME_CONTRATO.md:65; docs/liga/fontes/forms-processo-seletivo.md:3 | sem sql/025 no main; sem action de inscricao em worker/src/handlers.js; CTA externo em frontend/liga.js:6 |
 | Acervo e busca global (F4) | EM ESTUDO | docs/F4_DECISOES_JURIDICAS.md:123, :145 | decisoes (a) a (e) do dono e do advogado; branches feat/v5-f4-acervo (ceeb467) e feat/v5-f4-arte (f106b86) fora do main; migracao 026 quando retomada |
 | Contas de jovens com responsavel | EM ESTUDO | docs/riscos-residuais.md:40; docs/TIME_CONTRATO.md:67 | - |

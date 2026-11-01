@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-app-version="v26">
+<html lang="pt-BR" data-app-version="v27">
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
@@ -493,7 +493,7 @@
             <li>
               <button type="button" class="app-menu__item hidden" data-panel="panel-admin-ai" data-cap="content.review assistant.feedback.moderate reports.moderate" data-cap-cargo>
                 <svg class="app-menu__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-                <span class="app-menu__texto"><span class="app-menu__titulo">Revisões e Lia</span><span class="app-menu__info">Casos clínicos e avaliações</span></span>
+                <span class="app-menu__texto"><span class="app-menu__titulo">Revisões e Guia</span><span class="app-menu__info">Casos clínicos e avaliações</span></span>
               </button>
             </li>
             <li>
@@ -1053,13 +1053,13 @@
           </div>
           <div class="card" data-cap="assistant.feedback.moderate">
             <div class="ai-admin-head">
-              <h2 id="h-admin-ai-sat">Satisfação da Lia</h2>
+              <h2 id="h-admin-ai-sat">Satisfação da Guia</h2>
               <span role="group" aria-labelledby="h-admin-ai-sat">
                 <button type="button" class="secondary" id="btn-admin-ai-sat-7" aria-pressed="true">7 dias</button>
                 <button type="button" class="secondary" id="btn-admin-ai-sat-30" aria-pressed="false">30 dias</button>
               </span>
             </div>
-            <p class="muted">Respostas da Lia marcadas como úteis ou não úteis pelos membros. Revise cada item. Os comentários são apagados depois de 90 dias.</p>
+            <p class="muted">Respostas da Guia marcadas como úteis ou não úteis pelos membros. Revise cada item. Os comentários são apagados depois de 90 dias.</p>
             <div id="msg-admin-ai-sat" class="status-msg" role="status" aria-live="polite"></div>
             <div id="admin-ai-sat-totals"></div>
             <div id="admin-ai-sat-categories"></div>
@@ -1086,10 +1086,10 @@
           </div>
           <div class="card" id="admin-moderation-card" data-cap="reports.moderate">
             <div class="ai-admin-head">
-              <h2 id="h-admin-moderation">Moderação da Lia</h2>
+              <h2 id="h-admin-moderation">Moderação da Guia</h2>
               <button type="button" class="secondary" data-action="LaiftAdminModeration.reload">Atualizar</button>
             </div>
-            <p class="muted">Incidentes de moderação da Lia, situação atual e taxa de redenção. Só tipo de detecção, nível e data: o texto das mensagens nunca é guardado nem aparece aqui.</p>
+            <p class="muted">Incidentes de moderação da Guia, situação atual e taxa de redenção. Só tipo de detecção, nível e data: o texto das mensagens nunca é guardado nem aparece aqui.</p>
             <div id="admin-moderation"></div>
           </div>
           <div class="card" data-cap="metrics.read">
@@ -1274,7 +1274,7 @@
   <script src="home.js" defer></script>
   <script src="mfa.js" defer></script>
   <script src="credential.js" defer></script>
-  <!-- Lia (assistente) e painel admin NÃO são carregados aqui: lazy-bundles.js os injeta sob demanda (MOB-04). assistant-sources.js fica porque agents-tutor.js o lê ao carregar. -->
+  <!-- Guia (assistente) e painel admin NÃO são carregados aqui: lazy-bundles.js os injeta sob demanda (MOB-04). assistant-sources.js fica porque agents-tutor.js o lê ao carregar. -->
   <script src="assistant-sources.js" defer></script>
   <script src="lazy-bundles.js" defer></script>
   <script src="keyboard-shortcuts.js" defer></script>

@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Posição livre da Lia (frontend/assistant-drag.js): contas de posição, guarda no navegador e fiação no app.
+// Posição livre da Guia (frontend/assistant-drag.js): contas de posição, guarda no navegador e fiação no app.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

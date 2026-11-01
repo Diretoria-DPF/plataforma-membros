@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Lia (L7): cola do humor no chat (assistant-mood-glue.js). Funções puras, timers falsos e sem navegador.
+// Guia (L7): cola do humor no chat (assistant-mood-glue.js). Funções puras, timers falsos e sem navegador.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -107,9 +107,9 @@ test('saudação: troca o "Oi!" fixo por uma variação, nunca repete a anterior
 
 test('saudação: tom reflexivo usa pausa; rapport alto acrescenta a forma calorosa', () => {
   const calm = Glue.greeting(Glue.newSession({ energy: 0.2 }), constantRand(0));
-  assert.match(calm.text, /^Oi… Eu sou a Lia/);
+  assert.match(calm.text, /^Oi… Eu sou a Guia/);
   const warm = Glue.greeting(Glue.newSession({ energy: 0.5, rapport: 0.9 }), constantRand(0.99));
-  assert.match(warm.text, /^Que bom te ver! Eu sou a Lia/);
+  assert.match(warm.text, /^Que bom te ver! Eu sou a Guia/);
 });
 
 test('frases fixas: fora do tom reflexivo ficam iguais; no reflexivo ganham variação e não repetem a anterior', () => {
@@ -159,7 +159,7 @@ test('idle: um único timer entre 10 e 30 s; desarmar cancela o pendente e não 
   assert.equal(idle.isArmed(), false);
 });
 
-test('idle: cada disparo aplica uma pose válida para a Lia e reagenda; fora do repouso, não aplica nem reagenda', () => {
+test('idle: cada disparo aplica uma pose válida para a Guia e reagenda; fora do repouso, não aplica nem reagenda', () => {
   const timers = fakeTimers();
   const mood = Glue.newSession(NEUTRAL).mood;
   const poses = [];

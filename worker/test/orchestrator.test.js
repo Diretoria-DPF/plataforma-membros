@@ -278,7 +278,7 @@ describe('provedor indisponível', () => {
   });
 });
 
-describe('modelo da Lia do membro (AI_MODEL_TIER): inteligente só com folga', () => {
+describe('modelo da Guia do membro (AI_MODEL_TIER): inteligente só com folga', () => {
   const ASSISTANT = { feature: 'assistant', messages: [{ role: 'user', content: 'pergunta' }], profileId: MEMBER.profileId };
   const SMART = 'openai/gpt-oss-120b';
   const FAST = 'openai/gpt-oss-20b';
@@ -319,7 +319,7 @@ describe('modelo da Lia do membro (AI_MODEL_TIER): inteligente só com folga', (
     expect(sentModel()).toBe(FAST);
   });
 
-  test('só a Lia do membro pede o inteligente: sem a opção (árvore de seções, moderação) fica no rápido', async () => {
+  test('só a Guia do membro pede o inteligente: sem a opção (árvore de seções, moderação) fica no rápido', async () => {
     await complete(world(), env(), MEMBER, ASSISTANT, {});
     expect(sentModel()).toBe(FAST);
     await complete(world(), env(), MEMBER, ASSISTANT);

@@ -30,7 +30,7 @@ já ficam no banco por outros motivos. O resultado mostrado ao administrador é 
 
 ## O que NÃO é coletado
 
-- Conteúdo de mensagens, perguntas à Lia, respostas de simulados ou casos clínicos.
+- Conteúdo de mensagens, perguntas à Guia, respostas de simulados ou casos clínicos.
 - Páginas visitadas, cliques, tempo de tela, rolagem ou qualquer rastro de navegação.
 - Endereço IP, aparelho, navegador, localização ou identificadores de publicidade.
 - Nada de quem não tem conta ou não está com sessão aberta.

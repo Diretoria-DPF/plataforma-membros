@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Lia (frontend/assistant.js): lista branca de destinos, histórico enviado,
+// Guia (frontend/assistant.js): lista branca de destinos, histórico enviado,
 // condição de exibição e fiação da página. O DOM é coberto pelo e2e assistant.e2e.js.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -59,7 +59,7 @@ test('sanitizeActions: descarta o inválido, repetidos e limita a 4; rótulo vir
   assert.deepEqual(Lia.sanitizeActions('panel-events'), []);
 });
 
-test('pickHistory: só as últimas 8 perguntas da PESSOA, nunca as respostas da Lia', () => {
+test('pickHistory: só as últimas 8 perguntas da PESSOA, nunca as respostas da Guia', () => {
   const messages = [];
   for (let i = 1; i <= 8; i += 1) {
     messages.push({ role: 'user', text: 'pergunta ' + i });
@@ -106,7 +106,7 @@ test('o front não abre URL nem navega por endereço vindo da resposta', () => {
   hrefs.forEach((h) => assert.match(h, /(PUBLIC_PATHS|CTA_PATHS)\[(PUBLIC_PATHS|CTA_PATHS)\.indexOf\(|REFERENCE_HOSTS\[REFERENCE_HOSTS\.indexOf\(/));
 });
 
-test('assistant.js está no pacote da Lia (sob demanda) e na lista do build; fora do index e do precache', () => {
+test('assistant.js está no pacote da Guia (sob demanda) e na lista do build; fora do index e do precache', () => {
   assertSobDemanda('lia', 'assistant.js');
 });
 
@@ -130,17 +130,17 @@ test('sanitizeSources: no máximo 4 fontes, só texto curto, sem vazias', () => 
   assert.deepEqual(Lia.sanitizeSources('Manual'), []);
 });
 
-test('fontes e avisos da Lia são texto (só fonte com url da allowlist vira link), e o card de feedback é opcional', () => {
+test('fontes e avisos da Guia são texto (só fonte com url da allowlist vira link), e o card de feedback é opcional', () => {
   const src = read('frontend/assistant.js');
   assert.doesNotMatch(src, /node\(doc, 'a'|el\(doc, 'a'|\.href\s*=/);
   const sources = read('frontend/assistant-sources.js');
   assert.equal((sources.match(/node\(doc, 'a'/g) || []).length, 3); // a fonte com url, o convite e o artigo da Biblioteca, nada mais
   assert.doesNotMatch(sources, /\.href\s*=|innerHTML/);
-  // sem o módulo carregado, a Lia segue funcionando (sem card)
+  // sem o módulo carregado, a Guia segue funcionando (sem card)
   assert.match(src, /root\.LaiftAssistantFeedback \|\| null/);
 });
 
-test('o app avisa a Lia ao entrar e ao sair da conta', () => {
+test('o app avisa a Guia ao entrar e ao sair da conta', () => {
   const app = read('frontend/app.js');
   assert.match(app, /LaiftAssistant/);
   assert.match(app, /LaiftAssistant\.refresh\(\)/);
@@ -148,7 +148,7 @@ test('o app avisa a Lia ao entrar e ao sair da conta', () => {
   assert.ok((app.match(/LaiftAssistant\.refresh\(\)/g) || []).length >= 3, 'faltam chamadas de refresh em app.js');
 });
 
-test('a Lia é montada com window.Lia: recorte da cabeça na bolha, corpo inteiro no painel, desmontada ao fechar', () => {
+test('a Guia é montada com window.Lia: recorte da cabeça na bolha, corpo inteiro no painel, desmontada ao fechar', () => {
   const src = read('frontend/assistant.js');
   assert.match(src, /mountLia\(ui\.launcherFigure, \{ crop: 'head' \}\)/);
   assert.match(src, /mountLia\(ui\.headFigure, \{ size: PANEL_LIA_SIZE \}\)/);
@@ -157,7 +157,7 @@ test('a Lia é montada com window.Lia: recorte da cabeça na bolha, corpo inteir
   assert.doesNotMatch(src, /'lia-orb'/, 'o orb "L" saiu');
 });
 
-test('reações da Lia: pensa ao enviar, fala ao responder, fica confusa em degradação ou erro, comemora o 👍', () => {
+test('reações da Guia: pensa ao enviar, fala ao responder, fica confusa em degradação ou erro, comemora o 👍', () => {
   const src = read('frontend/assistant.js');
   assert.match(src, /reactLia\('think'\)/);
   assert.match(src, /speakThenRest\(\)/);
@@ -282,9 +282,9 @@ test('constantes da moderação batem com o bloco MODERATION de worker/src/const
   assert.equal(Number(block.match(/MAX_LEVEL:\s*(\d+)/)[1]), Moderation.SUSPEND_LEVEL);
 });
 
-test('contextos da Lia usados pela moderação existem em lia-states.js com os rótulos certos', () => {
+test('contextos da Guia usados pela moderação existem em lia-states.js com os rótulos certos', () => {
   const States = require('../modulos/shared/lia/lia-states.js');
-  assert.equal(States.resolve('suspended').ariaLabel, 'Lia está suspensa');
+  assert.equal(States.resolve('suspended').ariaLabel, 'Guia está suspensa');
   assert.equal(States.resolve('alert').context, 'alert');
   assert.equal(States.resolve('warning').context, 'warning');
 });
@@ -301,7 +301,7 @@ test('moderação na tela: aviso com papel de status, um só relógio (sem setIn
   assert.equal((chat.match(/'apiAssistantModerationState'/g) || []).length, 0);
 });
 
-test('a cola da Lia delega a moderação ao módulo: cria uma vez, consulta ao abrir, pinta e para o relógio', () => {
+test('a cola da Guia delega a moderação ao módulo: cria uma vez, consulta ao abrir, pinta e para o relógio', () => {
   const src = read('frontend/assistant.js');
   assert.match(src, /var moderation = modLib\(\)\.createModeration\(moderationContext\(app, doc, composer\.input, panel\)\);/);
   assert.match(src, /root\.AssistantModeration/);
@@ -340,12 +340,12 @@ test('tocar na dica abre o painel com a pergunta no campo e NÃO envia', () => {
   assert.doesNotMatch(body, /callApi/);
 });
 
-test('o painel da Lia abre no contexto da tela ou do módulo (react com o prop certo)', () => {
+test('o painel da Guia abre no contexto da tela ou do módulo (react com o prop certo)', () => {
   const src = read('frontend/assistant.js');
   assert.match(src, /reactLia\('react', hint\('context'\) \|\| moduleOf\(currentPanel\(\)\)\)/);
 });
 
-test('a dica some ao abrir a Lia, ao sair da conta e quando a Lia é desligada; a cola não guarda nada', () => {
+test('a dica some ao abrir a Guia, ao sair da conta e quando a Guia é desligada; a cola não guarda nada', () => {
   const src = read('frontend/assistant.js');
   assert.match(bodyOf(src, 'function openPanel() {'), /hint\('hide'\)/);
   assert.match(bodyOf(src, 'function resetConversation() {'), /hint\('reset'\)/);
@@ -363,7 +363,7 @@ test('app.js emite laift:panelchange só quando a tela muda de fato; learning.js
   assert.match(learning, /if \(wasOpen\) emitModuleChange\(''\);/);
 });
 
-// ---------- Humor da Lia (L7): cola em assistant.js (lógica em assistant-mood-glue.js) ----------
+// ---------- Humor da Guia (L7): cola em assistant.js (lógica em assistant-mood-glue.js) ----------
 
 test('a cola do humor: sessão só na memória, zerada ao trocar de conta, eventos ligados nos pontos certos', () => {
   const src = read('frontend/assistant.js');
@@ -379,7 +379,7 @@ test('a cola do humor: sessão só na memória, zerada ao trocar de conta, event
   assert.doesNotMatch(src, /setInterval/);
 });
 
-test('idle da Lia: uma pose por vez, só em repouso, parada ao fechar e ao reagir', () => {
+test('idle da Guia: uma pose por vez, só em repouso, parada ao fechar e ao reagir', () => {
   const src = read('frontend/assistant.js');
   const body = (name, next) => src.slice(src.indexOf(`function ${name}`), src.indexOf(`function ${next}`));
   assert.match(src, /ui\.idle = moodLib\(\)\.createIdle\(/);
@@ -441,7 +441,7 @@ test('assistant-sources.js: fonte vira <a> só com href da allowlist; sem url, t
 
 test('assistant-sources.js está no index.html (antes de assistant.js), no build e no precache do service worker', () => {
   const html = read('frontend/index.html');
-  // Fica no shell (agents-tutor.js o lê ao carregar), portanto sempre antes do pacote da Lia, que vem sob demanda.
+  // Fica no shell (agents-tutor.js o lê ao carregar), portanto sempre antes do pacote da Guia, que vem sob demanda.
   assert.ok(html.indexOf('<script src="assistant-sources.js" defer></script>') !== -1);
   assert.ok(html.indexOf('assistant-sources.js') < html.indexOf('<script src="lazy-bundles.js"'));
   assert.ok(read('frontend/scripts/build.js').includes("'assistant-sources.js'"));
@@ -479,7 +479,7 @@ test('toda lista tem de 2 a 4 sugestões curtas e sem repetição', () => {
   });
 });
 
-test('assistant-suggestions.js: só texto (sem innerHTML), no pacote da Lia antes de assistant.js e no build; cache do SW subiu', () => {
+test('assistant-suggestions.js: só texto (sem innerHTML), no pacote da Guia antes de assistant.js e no build; cache do SW subiu', () => {
   assertSobDemanda('lia', 'assistant-suggestions.js');
   assertAntes('lia', 'assistant-suggestions.js', 'assistant.js');
   // v9: memory (ADR 0007, etapa 7); v8: agents-tutor (etapa 5). Exige o mínimo: novas subidas não quebram o teste.

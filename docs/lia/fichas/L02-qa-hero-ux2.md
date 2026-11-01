@@ -1,8 +1,8 @@
-# L02: QA visual do Início com `ux_v2_enabled` ligada (hero da Lia)
+# L02: QA visual do Início com `ux_v2_enabled` ligada (hero da Guia)
 
-**Objetivo.** Dar à sessão principal provas visuais para decidir se liga `ux_v2_enabled` em produção: capturas do Início com o hero da Lia em 375 e 1280 px, nos temas claro e escuro, com flags **simuladas** no harness e2e. Nada de produção é tocado.
+**Objetivo.** Dar à sessão principal provas visuais para decidir se liga `ux_v2_enabled` em produção: capturas do Início com o hero da Guia em 375 e 1280 px, nos temas claro e escuro, com flags **simuladas** no harness e2e. Nada de produção é tocado.
 
-**Passo 0.** Leia `frontend/hero.js` (condições de montagem: `ux_v2_enabled` e `chatbot_enabled` ligadas e a Lia carregada), `frontend/scripts/e2e/harness.js` (`startApp({ role, theme, viewport, workerHandlers })`) e `frontend/scripts/e2e/visual-qa.e2e.js` (linhas 28-45: `FLAGS_ON`, viewports, temas; linhas 140-160: `memberHandlers()` com `apiGetFeatureFlags` e `apiGetHomeSummary`). Copie esses padrões; não importe de `visual-qa`.
+**Passo 0.** Leia `frontend/hero.js` (condições de montagem: `ux_v2_enabled` e `chatbot_enabled` ligadas e a Guia carregada), `frontend/scripts/e2e/harness.js` (`startApp({ role, theme, viewport, workerHandlers })`) e `frontend/scripts/e2e/visual-qa.e2e.js` (linhas 28-45: `FLAGS_ON`, viewports, temas; linhas 140-160: `memberHandlers()` com `apiGetFeatureFlags` e `apiGetHomeSummary`). Copie esses padrões; não importe de `visual-qa`.
 
 **Arquivo-dono (novo).** `frontend/scripts/e2e/hero-ux2.e2e.js`, até 200 linhas, no mesmo formato dos outros `*.e2e.js` (`module.exports = async function () {...}`).
 

@@ -11,7 +11,7 @@ import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js'
 const PERSON = { profileId: '11111111-1111-4111-8111-111111111111', role: 'membro' };
 const CID = '22222222-2222-4222-8222-222222222222';
 const TOPIC = 'efeitos hepáticos do paracetamol';
-const ADVISORY = 'Referências de base externa; a Lia não resume artigos nem dá orientação de saúde.';
+const ADVISORY = 'Referências de base externa; a Guia não resume artigos nem dá orientação de saúde.';
 const ONE_HIT = [{
   title: 'Paracetamol e fígado', journalTitle: 'Rev Tox', pubYear: '2021',
   pmid: '123', pmcid: 'PMC999', doi: '10.1000/abc',

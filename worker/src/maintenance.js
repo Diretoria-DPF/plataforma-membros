@@ -26,19 +26,19 @@
  *    pelo prazo mínimo necessário) e error_logs com mais de 30 dias (só
  *    diagnóstico técnico). O corte é sempre por created_at — nunca um
  *    DELETE sem filtro de idade.
- *  - Lia (ADR 0005): comentário de avaliação com mais de 90 dias é
+ *  - Guia (ADR 0005): comentário de avaliação com mais de 90 dias é
  *    apagado (comment vira NULL; ganha comment_anonymized_at); avaliação
  *    com mais de 365 dias sai; resposta registrada (assistant_messages) com
  *    mais de 180 dias sai — e o CASCADE de sql/021 leva junto a avaliação
  *    dela; incidente de moderação (assistant_incidents, sem texto) com mais
  *    de 365 dias sai.
- *  - Base da Lia (ragService.reindex, tarefa ragReindex): reindexa o que mudou
+ *  - Base da Guia (ragService.reindex, tarefa ragReindex): reindexa o que mudou
  *    (hash = modelo + conteúdo) só quando há env (Workers AI) e a flag rag_enabled
  *    está ligada. Exceção consciente à regra "corte por idade": trechos que saíram
  *    de kb.js/docs.js somem, porque a base é a fonte da verdade e não um histórico.
- *    Sem embeddings (embeddingAvailable: false) a busca da Lia cai para trigramas: o cron registra o
+ *    Sem embeddings (embeddingAvailable: false) a busca da Guia cai para trigramas: o cron registra o
  *    aviso ASSISTANT_RAG_REINDEX_DEGRADED em error_logs e segue (risco O20).
- *  - Lia, registro de pesquisas (sql/026, tarefa liaResearchPurge): apaga as linhas com
+ *  - Guia, registro de pesquisas (sql/026, tarefa liaResearchPurge): apaga as linhas com
  *    validade vencida (expires_at: 30 dias a base, 7 os provedores externos). Aqui o corte é a
  *    própria validade, não created_at; sem a tabela (026 não aplicada) a tarefa devolve 0.
  *  - Agentes (ADR 0007, sql/035, tarefa agentTracesPurge): rastros (agent_traces) com mais de 90
@@ -146,13 +146,13 @@ function coreTasks(sql, correlationId, env) {
       RETURNING 1`,
     // Alertas da IA (tokens, 429, cache) por e-mail aos admins; devolve os alertas enviados.
     aiAlerts: () => (env ? runAiAlerts(sql, env, correlationId) : []),
-    // Moderação da Lia (ADR 0004): -1 nível a cada 30 dias sem incidente; devolve { checked, lowered }.
+    // Moderação da Guia (ADR 0004): -1 nível a cada 30 dias sem incidente; devolve { checked, lowered }.
     assistantModeration: () => ModerationService.decayAssistantModeration(sql),
   };
 }
 
 /**
- * Retenção da Lia (ADR 0005). Cada tarefa tem corte por idade parametrizado
+ * Retenção da Guia (ADR 0005). Cada tarefa tem corte por idade parametrizado
  * e RETURNING 1 para a contagem. Sem DELETE/UPDATE sem filtro de idade.
  */
 function assistantRetentionTasks(sql) {
@@ -190,19 +190,19 @@ function embeddingGapReason(env) {
 }
 
 /**
- * O20: reindexação sem embeddings degrada a busca da Lia para trigramas. Deixa um aviso estruturado em
+ * O20: reindexação sem embeddings degrada a busca da Guia para trigramas. Deixa um aviso estruturado em
  * error_logs (motivo e contagens, nunca o texto da base nem a mensagem do erro). logError não lança, então
  * o aviso nunca derruba o cron.
  */
 async function warnIfEmbeddingUnavailable(sql, env, correlationId, report) {
   if (report.embeddingAvailable !== false) return;
-  await Logging.logError(sql, correlationId, 'ASSISTANT_RAG_REINDEX_DEGRADED', 'Reindexação sem embeddings: a busca da Lia segue só por trigramas.', {
+  await Logging.logError(sql, correlationId, 'ASSISTANT_RAG_REINDEX_DEGRADED', 'Reindexação sem embeddings: a busca da Guia segue só por trigramas.', {
     reason: embeddingGapReason(env), total: report.total, upserted: report.upserted, embedded: report.embedded,
   });
 }
 
 /**
- * Reindexa a base da Lia (ver o cabeçalho). Sem env ou com a flag desligada, não toca em nada.
+ * Reindexa a base da Guia (ver o cabeçalho). Sem env ou com a flag desligada, não toca em nada.
  * Devolve quantos trechos foram gravados (upserted); o hash deixa de fora o que não mudou.
  */
 async function ragReindexIfEnabled(sql, env, correlationId) {
@@ -222,7 +222,7 @@ export async function runMaintenance(sql, correlationId, env) {
     ...coreTasks(sql, correlationId, env),
     ...assistantRetentionTasks(sql),
     ragReindex: () => ragReindexIfEnabled(sql, env, correlationId),
-    // Registro de pesquisas da Lia (L04): só linhas vencidas. purgeExpired já engole falhas e devolve 0.
+    // Registro de pesquisas da Guia (L04): só linhas vencidas. purgeExpired já engole falhas e devolve 0.
     liaResearchPurge: () => ResearchLog.purgeExpired(sql),
     // Rastros dos agentes (sql/035, ADR 0007): sem texto do usuário; 90 dias, corte por created_at.
     agentTracesPurge: () => sql`

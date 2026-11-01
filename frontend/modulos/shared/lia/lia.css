@@ -1,6 +1,6 @@
-/* Lia - visibilidade dos grupos por data-*, cores por --lia-* e animacoes CSS.
+/* Guia - visibilidade dos grupos por data-*, cores por --lia-* e animacoes CSS.
    Host: <div class="lia" data-state="idle" ...> contendo o <svg class="lia-svg"> do lia.svg.
-   Geometria por --lia-* (ver README, secao "Lia Lab"). Padrao = configuracao escolhida pelo dono em 2026-10-08
+   Geometria por --lia-* (ver README, secao "Guia Lab"). Padrao = configuracao escolhida pelo dono em 2026-10-08
    (cabeca:corpo ~1:3,1, mecha lateral, traco 2,2). */
 
 .lia {
@@ -179,7 +179,7 @@
 .lia-svg .vu { fill: var(--lia-shadow, #1a2b28); stroke: none; }
 /* Bracos cruzados (cena 5): os bracos ociosos saem; os cruzados vem de lia-pv-cruzados. */
 .lia[data-extras~="cruzados"] [id^="lia-arm-"] { display: none !important; }
-/* Veu (cena 5): o retangulo cobre o palco, entao o host recorta no proprio cartao da Lia. */
+/* Veu (cena 5): o retangulo cobre o palco, entao o host recorta no proprio cartao da Guia. */
 .lia[data-extras~="veu"] { overflow: hidden; border-radius: var(--lia-radius, 8px); }
 /* Costas (suspensa, cena 6): somem rosto, mecha, oculos, blush e lapela; as sobreposicoes da cabeca e do casaco ficam. */
 .lia[data-extras~="costas-cabeca"] :is([id^="lia-eyes-"], [id^="lia-brows-"], [id^="lia-mouth-"], #lia-lock, #lia-glasses, .bl, #lia-coat > .a) { display: none !important; }

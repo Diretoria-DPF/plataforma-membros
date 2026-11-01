@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * A Lia só fala da Biblioteca (resposta e botões) quando a flag library_enabled está ligada.
+ * A Guia só fala da Biblioteca (resposta e botões) quando a flag library_enabled está ligada.
  */
 import { jest } from '@jest/globals';
 import * as Assistant from '../src/services/assistantService.js';
@@ -42,7 +42,7 @@ const ask = (rows) => Assistant.chat(
   'cid-00000000-0000-4000-8000-000000000000',
 );
 
-describe('Lia — flag library_enabled', () => {
+describe('Guia — flag library_enabled', () => {
   test('ligada: responde pela base fixa e oferece o botão da Biblioteca', async () => {
     const res = await ask([FLAG_ROW('chatbot_enabled'), FLAG_ROW('library_enabled')]);
     expect(res.source).toBe('kb');

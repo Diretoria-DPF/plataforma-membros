@@ -16,7 +16,7 @@
         "frontend/index.html:348 (Início)",
         "worker/src/handlers.js:132 (resumo e atalhos)",
         "frontend/app.js:1044 (áreas de gestão só para admin)",
-        "frontend/assistant.js:620-623 (Lia)",
+        "frontend/assistant.js:620-623 (Guia)",
         "frontend/manifest.webmanifest:10 (instalável)",
         "frontend/shared-states.js:109-121 (aviso offline)",
         "frontend/learning.js:60-86 (cinco módulos)"
@@ -34,7 +34,7 @@
         { "t": "h2", "texto": "Como usar" },
         { "t": "p", "texto": "Entre com a sua conta, pela [página inicial](/index.html). Use Início para ter uma visão geral e seguir para a área que procura." },
         { "t": "p", "texto": "Membros veem as áreas do membro. Administradores veem também a área de gestão." },
-        { "t": "p", "texto": "Ficou com dúvida sobre onde achar uma tela? Pergunte à Lia, a guia da plataforma. Ela orienta você e leva às telas. O chat dela funciona para quem está logado." },
+        { "t": "p", "texto": "Ficou com dúvida sobre onde achar uma tela? Pergunte à Guia da plataforma. Ela orienta você e leva às telas. O chat dela funciona para quem está logado." },
         { "t": "p", "texto": "Sem conexão, a plataforma não carrega dados novos. Um aviso mostra que você está offline." },
         { "t": "p", "texto": "Quer seguir a série? Leia o próximo post, sobre [Farmacologia Básica](/blog/modulo-farmacologia.html)." },
         { "t": "contato", "titulo": "Tire dúvidas com a Liga" }

@@ -52,4 +52,4 @@ Comandos de aceite: a partir de `frontend/`, no Bash (Git Bash). Cada arquivo te
 - Falhou o aceite? Devolver a mesma ficha ao mesmo Haiku com a saída do erro (SendMessage), não abrir outra ficha para o mesmo arquivo.
 - `dist/` é compartilhado: só I1, I2, I3, F1 e Q1 rodam `node scripts/build.js`. Ninguém gera `--incluir-exemplo` em `dist/` (M2/M3 usam
   `frontend/.tmp-m2`/`.tmp-m3`). Um e2e que falhar com arquivo ausente/truncado em `dist/` por build simultâneo: rodar de novo antes de investigar.
-- Fora do plano (a sessão principal cuida): Lia, migrações de banco, commits, deploy.
+- Fora do plano (a sessão principal cuida): Guia, migrações de banco, commits, deploy.

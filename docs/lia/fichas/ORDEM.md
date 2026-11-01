@@ -1,4 +1,4 @@
-# Fichas da Lia: ordem, ondas e regras (2026-10-09)
+# Fichas da Guia: ordem, ondas e regras (2026-10-09)
 
 Plano: `docs/lia/PLANO.md`. A sessão principal dispara os executores Haiku 5.5, no máximo 3 ao mesmo tempo, e dá a cada um o caminho da sua ficha. Subagente não cria subagente.
 

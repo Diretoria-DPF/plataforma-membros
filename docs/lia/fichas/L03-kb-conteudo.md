@@ -1,4 +1,4 @@
-# L03: Conteúdo novo da base da Lia (`kb_chunks` sai do código)
+# L03: Conteúdo novo da base da Guia (`kb_chunks` sai do código)
 
 **Objetivo.** Acrescentar 25 a 40 seções de conhecimento **factual** sobre a plataforma, os módulos, o blog e as publicações, o processo seletivo, as perguntas frequentes e os avisos de saúde. A reindexação (`apiAdminReindexKb` ou cron) grava tudo em `kb_chunks`. Linha inserida à mão no banco é apagada na próxima reindexação; por isso o conteúdo mora no código.
 
@@ -15,8 +15,8 @@
 1. `docsConteudo.js` exporta `CONTENT_DOCS`: uma lista `{ source, markdown }` no mesmo formato de `GUIDE_MARKDOWN`, com as fontes **exatamente** `plataforma`, `modulos`, `publicacoes`, `processo`, `faq` e `saude` (L08 usa esses ids nos rótulos).
 2. Cada `## Seção` tem título único **em todo o corpus** (o golden set casa por título de seção), corpo de até 1000 caracteres, frase direta e afirmativa, sem imperativo dirigido à IA ("responda", "ignore", "diga que").
 3. **Só fato que esteja nas fontes do passo 0.** O que for desconhecido vira "a definir pela diretoria". Nenhum nome de pessoa; nenhum e-mail além de `laiftligauninassau@gmail.com`; telefone só de serviço público de saúde que esteja nas fontes; nenhuma data ou vaga inventada.
-4. `saude`: a Lia orienta sobre a plataforma e **não** faz diagnóstico, dose nem conduta. Em emergência, procure atendimento (use os serviços citados nas fontes). Conteúdo de estudo não substitui orientação profissional. As campanhas (por exemplo, Outubro Rosa) aparecem como publicações informativas.
-5. `faq`: de 8 a 12 perguntas de uso, como conta, senha, crachá, eventos, módulos, cota da Lia, privacidade e onde ficam o blog e as publicações.
+4. `saude`: a Guia orienta sobre a plataforma e **não** faz diagnóstico, dose nem conduta. Em emergência, procure atendimento (use os serviços citados nas fontes). Conteúdo de estudo não substitui orientação profissional. As campanhas (por exemplo, Outubro Rosa) aparecem como publicações informativas.
+5. `faq`: de 8 a 12 perguntas de uso, como conta, senha, crachá, eventos, módulos, cota da Guia, privacidade e onde ficam o blog e as publicações.
 6. Em `docs.js`, importe `CONTENT_DOCS` e processe `GUIDE_MARKDOWN.concat(CONTENT_DOCS)` no mesmo laço, sem outra mudança de comportamento.
 7. Teste (`docsConteudo.test.js`, Jest e ESM como os vizinhos):
    - as fontes estão na lista permitida;

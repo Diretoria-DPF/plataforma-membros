@@ -5,7 +5,7 @@
  */
 /**
  * treeSelectService.js
- * Lia híbrida (flag lia_hibrida_enabled): depois da busca (RAG, para o recall), UMA chamada curta ao modelo
+ * Guia híbrida (flag lia_hibrida_enabled): depois da busca (RAG, para o recall), UMA chamada curta ao modelo
  * rápido escolhe, na árvore de seções (assistant/tree.js), quais trechos a resposta deve ler, e diz se a base
  * cobre a pergunta (answerable). Quem lê e responde continua sendo o fluxo de sempre.
  *

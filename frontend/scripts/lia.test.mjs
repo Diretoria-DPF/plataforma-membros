@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Lia (ADR 0003): matriz de estados, allowlists, arte gerada (sincronia com lia.svg)
+// Guia (ADR 0003): matriz de estados, allowlists, arte gerada (sincronia com lia.svg)
 // e montagem (mount, setState, ciclo de vida) com um DOM mínimo.
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -81,7 +81,7 @@ function fakeWaapiAnimation(frames, options) {
   };
 }
 
-/** DOM mínimo. innerHTML lança: a Lia nunca pode converter texto em marcação. */
+/** DOM mínimo. innerHTML lança: a Guia nunca pode converter texto em marcação. */
 function fakeEl(tag, ns, ownerDocument = null) {
   const el = {
     tag,
@@ -105,7 +105,7 @@ function fakeEl(tag, ns, ownerDocument = null) {
       child.parentNode = null;
       return child;
     },
-    /** Só seletores #id: é o que a Lia usa para achar olhos e braços. */
+    /** Só seletores #id: é o que a Guia usa para achar olhos e braços. */
     querySelector(selector) { return selector.startsWith('#') ? findById(el, selector.slice(1)) : null; },
     animate(frames, options) {
       const anim = fakeWaapiAnimation(frames, options);
@@ -199,7 +199,7 @@ function fakeAnim(log, failing = null) {
   };
 }
 
-/** Monta a Lia numa seção nova e devolve o host (o <div class="lia">) junto com a instância. */
+/** Monta a Guia numa seção nova e devolve o host (o <div class="lia">) junto com a instância. */
 function mountLia(opts) {
   const doc = fakeDocument();
   const stage = fakeEl('section', null);
@@ -212,7 +212,7 @@ function mountLia(opts) {
 
 // ---------- matriz de estados (lia-states.js) ----------
 
-test('idle: rosto neutro, braços parados, sem acessório, rótulo "Lia"', () => {
+test('idle: rosto neutro, braços parados, sem acessório, rótulo "Guia"', () => {
   const s = States.resolve('idle');
   assert.equal(s.state, 'idle');
   assert.equal(s.emotion, 'neutral');
@@ -220,13 +220,13 @@ test('idle: rosto neutro, braços parados, sem acessório, rótulo "Lia"', () =>
   assert.equal(s.armLeft, 'idle');
   assert.equal(s.armRight, 'idle');
   assert.equal(s.prop, 'none');
-  assert.equal(s.ariaLabel, 'Lia');
+  assert.equal(s.ariaLabel, 'Guia');
 });
 
 test('thinking: curiosa, boca reta, braço direito no queixo, cenário de bolha', () => {
   const s = States.resolve('thinking');
   assert.deepEqual([s.state, s.emotion, s.mouth, s.armRight, s.scene], ['thinking', 'curious', 'flat', 'chin', 'bubble']);
-  assert.equal(s.ariaLabel, 'Lia está pensando');
+  assert.equal(s.ariaLabel, 'Guia está pensando');
 });
 
 test('speaking: boca aberta, braço direito apontando, emoção omitida para valer o CSS', () => {
@@ -235,14 +235,14 @@ test('speaking: boca aberta, braço direito apontando, emoção omitida para val
   assert.equal(s.emotion, null);
   assert.equal(s.mouth, 'open');
   assert.equal(s.armRight, 'point');
-  assert.equal(s.ariaLabel, 'Lia está respondendo');
+  assert.equal(s.ariaLabel, 'Guia está respondendo');
 });
 
 test('celebrating: feliz, sorriso, braços em coração e cenário completo', () => {
   const s = States.resolve('celebrating');
   assert.deepEqual([s.emotion, s.mouth, s.armLeft, s.armRight], ['happy', 'smile', 'heart', 'heart']);
   assert.equal(s.scene, 'glow heart sparkles');
-  assert.equal(s.ariaLabel, 'Lia está celebrando');
+  assert.equal(s.ariaLabel, 'Guia está celebrando');
 });
 
 test('confused: curiosa e simpática, sem cara de tristeza (erro ou pergunta não entendida)', () => {
@@ -257,14 +257,14 @@ test('alert e warning: focada no nível 1; preocupada de braços cruzados no ní
   const warning = States.resolve('warning');
   assert.deepEqual([alert.emotion, alert.mouth], ['focused', 'neutral']);
   assert.deepEqual([warning.emotion, warning.mouth], ['worried', 'worried']);
-  assert.equal(warning.ariaLabel, 'Lia emitiu um alerta');
+  assert.equal(warning.ariaLabel, 'Guia emitiu um alerta');
 });
 
 test('redeem: feliz, sorrindo, com brilho e coração (pose final da cena 6)', () => {
   const s = States.resolve('redeem');
   assert.deepEqual([s.state, s.emotion, s.mouth, s.armLeft, s.armRight], ['idle', 'happy', 'smile', 'idle', 'idle']);
   assert.equal(s.scene, 'glow heart');
-  assert.equal(s.ariaLabel, 'Lia', 'volta ao repouso: o rótulo é o de sempre');
+  assert.equal(s.ariaLabel, 'Guia', 'volta ao repouso: o rótulo é o de sempre');
 });
 
 test('planFor: peças e cena de cada contexto das ondas 2-4; os demais não têm plano', () => {
@@ -295,10 +295,10 @@ test('planFor: toda peça pedida está na lista de nomes conhecidos e o plano é
   });
 });
 
-test('suspended: estado suspended com rótulo "Lia está suspensa"', () => {
+test('suspended: estado suspended com rótulo "Guia está suspensa"', () => {
   const s = States.resolve('suspended');
   assert.equal(s.state, 'suspended');
-  assert.equal(s.ariaLabel, 'Lia está suspensa');
+  assert.equal(s.ariaLabel, 'Guia está suspensa');
 });
 
 test('módulos: cada um com o prop e a emoção do mapa', () => {
@@ -370,11 +370,11 @@ test('cena: só tokens inválidos mantém o padrão; "none" desliga o cenário',
 });
 
 test('rótulo ARIA: aceita texto limpo e rejeita vazio, longo ou não-texto', () => {
-  assert.equal(States.resolve('idle', { ariaLabel: '  Lia feliz  ' }).ariaLabel, 'Lia feliz');
-  assert.equal(States.resolve('idle', { ariaLabel: 'Lia\u0000 ok' }).ariaLabel, 'Lia ok');
-  assert.equal(States.resolve('thinking', { ariaLabel: '   ' }).ariaLabel, 'Lia está pensando');
-  assert.equal(States.resolve('thinking', { ariaLabel: 'x'.repeat(121) }).ariaLabel, 'Lia está pensando');
-  assert.equal(States.resolve('thinking', { ariaLabel: 42 }).ariaLabel, 'Lia está pensando');
+  assert.equal(States.resolve('idle', { ariaLabel: '  Guia feliz  ' }).ariaLabel, 'Guia feliz');
+  assert.equal(States.resolve('idle', { ariaLabel: 'Guia\u0000 ok' }).ariaLabel, 'Guia ok');
+  assert.equal(States.resolve('thinking', { ariaLabel: '   ' }).ariaLabel, 'Guia está pensando');
+  assert.equal(States.resolve('thinking', { ariaLabel: 'x'.repeat(121) }).ariaLabel, 'Guia está pensando');
+  assert.equal(States.resolve('thinking', { ariaLabel: 42 }).ariaLabel, 'Guia está pensando');
 });
 
 test('contexto desconhecido, inclusive nomes de Object.prototype, cai em idle', () => {
@@ -383,9 +383,9 @@ test('contexto desconhecido, inclusive nomes de Object.prototype, cai em idle', 
   });
 });
 
-test('ariaLabelFor: rótulo do contexto, ou "Lia" para contexto desconhecido', () => {
-  assert.equal(States.ariaLabelFor('celebrating'), 'Lia está celebrando');
-  assert.equal(States.ariaLabelFor('nada'), 'Lia');
+test('ariaLabelFor: rótulo do contexto, ou "Guia" para contexto desconhecido', () => {
+  assert.equal(States.ariaLabelFor('celebrating'), 'Guia está celebrando');
+  assert.equal(States.ariaLabelFor('nada'), 'Guia');
 });
 
 test('isModule reconhece só os seis módulos', () => {
@@ -490,7 +490,7 @@ test('gerador aceita instrução <?xml e comentários, e ignora-os na árvore', 
   assert.ok(!source.includes('x --'));
 });
 
-// ---------- higiene: nenhum innerHTML nos arquivos da Lia ----------
+// ---------- higiene: nenhum innerHTML nos arquivos da Guia ----------
 
 test('build-lia-art, lia-art, lia-states e lia não usam innerHTML, outerHTML, insertAdjacentHTML ou DOMParser', () => {
   const forbidden = /innerHTML|outerHTML|insertAdjacentHTML|DOMParser|document\.write/;
@@ -508,7 +508,7 @@ test('mount cria host .lia com role img, aria-label e data-state idle', () => {
   const { host } = mountLia();
   assert.equal(host.attrs.class, 'lia');
   assert.equal(host.attrs.role, 'img');
-  assert.equal(host.attrs['aria-label'], 'Lia');
+  assert.equal(host.attrs['aria-label'], 'Guia');
   assert.equal(host.attrs['data-state'], 'idle');
   assert.equal(host.attrs['data-prop'], 'none');
 });
@@ -560,7 +560,7 @@ test('react(modulo) troca prop e rótulo; módulo desconhecido volta para idle',
   const { lia, host } = mountLia();
   lia.react('events');
   assert.equal(host.attrs['data-prop'], 'calendar');
-  assert.equal(host.attrs['aria-label'], 'Lia, assistente de Eventos');
+  assert.equal(host.attrs['aria-label'], 'Guia, assistente de Eventos');
   lia.react('nope');
   assert.equal(host.attrs['data-state'], 'idle');
   assert.equal(host.attrs['data-prop'], 'none');
@@ -607,12 +607,12 @@ test('suspend muda para suspensa; redeem (sem a arte das cenas) volta ao idle fe
   const { lia, host } = mountLia();
   lia.suspend();
   assert.equal(host.attrs['data-state'], 'suspended');
-  assert.equal(host.attrs['aria-label'], 'Lia está suspensa');
+  assert.equal(host.attrs['aria-label'], 'Guia está suspensa');
   lia.redeem();
   assert.equal(host.attrs['data-state'], 'idle');
   assert.equal(host.attrs['data-arm-right'], 'wave');
   assert.equal(host.attrs['data-emotion'], 'happy');
-  assert.equal(host.attrs['aria-label'], 'Lia');
+  assert.equal(host.attrs['aria-label'], 'Guia');
 });
 
 test('destroy remove o host, cancela o retorno do celebrate e deixa as chamadas inertes', () => {
@@ -730,7 +730,7 @@ test('crop head: o recorte sobrevive às mudanças de estado e o tom admin conti
 
 // ---------- integração: lia-anim.js real (sem stub), documento e janela falsos ----------
 
-/** Monta a Lia com o LiaAnim de verdade; o host herda o documento (ownerDocument) como no navegador. */
+/** Monta a Guia com o LiaAnim de verdade; o host herda o documento (ownerDocument) como no navegador. */
 function mountWithRealAnim(opts) {
   const win = fakeWindow();
   const doc = fakeDocument(win);

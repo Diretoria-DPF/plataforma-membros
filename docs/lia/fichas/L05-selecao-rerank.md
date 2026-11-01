@@ -1,6 +1,6 @@
 # L05: Camada de seleção ("escolha mais assertiva"): rerank e decisão de "dá para responder"
 
-**Objetivo.** Depois da fusão RRF, reordenar os candidatos com um reranker, dar uma nota a cada trecho e decidir `answerable` (há trecho bom o bastante?). Assim a Lia corta a busca antes do LLM quando a base não cobre a pergunta. A camada é **neutra de provedor**: Workers AI agora; o Jev (TypeSafe AI) depois do OK do dono (ficha futura). Só roda com `opts.rerank === true`, que L09 liga pela flag `rag_rerank_enabled`.
+**Objetivo.** Depois da fusão RRF, reordenar os candidatos com um reranker, dar uma nota a cada trecho e decidir `answerable` (há trecho bom o bastante?). Assim a Guia corta a busca antes do LLM quando a base não cobre a pergunta. A camada é **neutra de provedor**: Workers AI agora; o Jev (TypeSafe AI) depois do OK do dono (ficha futura). Só roda com `opts.rerank === true`, que L09 liga pela flag `rag_rerank_enabled`.
 
 **Passo 0.** Leia:
 - `docs/lia/pesquisa/SELECAO.md` (de L01): o modelo, o formato de entrada e saída e a escala da nota. Se o arquivo não existir, use `@cf/baai/bge-reranker-base` com entrada `{ query, contexts: [{ text }] }` e saída `{ response: [{ id, score }] }`, e marque a hipótese no relatório;
@@ -31,6 +31,6 @@
 cd "C:/Users/Administrador/Desktop/plataforma membro/worker" && npm test -- -i test/rerankService.test.js test/ragService.test.js test/ragEval.test.js
 ```
 
-**Regras.** Sem git, sem banco, sem flag, sem segredo. Cabeçalho de copyright; LF; funções com menos de 50 linhas; imutabilidade (não ordene a lista recebida no lugar). GateGuard: se o hook pedir fatos, escreva 2 linhas (quem usa: `assistantService.retrieveContext` via `Rag.retrieve`, ligado por L09; a instrução: "possibilidade de escolha mais assertiva com a tecnologia 'jev', oferecendo uma visão mais ampla para a Lia") e repita a mesma chamada.
+**Regras.** Sem git, sem banco, sem flag, sem segredo. Cabeçalho de copyright; LF; funções com menos de 50 linhas; imutabilidade (não ordene a lista recebida no lugar). GateGuard: se o hook pedir fatos, escreva 2 linhas (quem usa: `assistantService.retrieveContext` via `Rag.retrieve`, ligado por L09; a instrução: "possibilidade de escolha mais assertiva com a tecnologia 'jev', oferecendo uma visão mais ampla para a Guia") e repita a mesma chamada.
 
 **Relatório (até 12 linhas).** O modelo usado e a fonte dele, a assinatura, o resultado do aceite, as hipóteses não confirmadas e o que falta para calibrar no staging.

@@ -165,7 +165,7 @@
       if (window.LaiftLearning) window.LaiftLearning.reset();
       // Fase 3 — painel admin de IA: descarta respostas pendentes e dados exibidos.
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
-      if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+      if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Guia: some da tela com a sessão
       if (window.LaiftAdminRoles) window.LaiftAdminRoles.reset();
       if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.reset();
       if (window.LaiftPrivacy) window.LaiftPrivacy.reset();
@@ -179,7 +179,7 @@
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
       showPublicScreen('screen-welcome');
-      // Lia: a conversa da conta que expirou não pode ficar à vista na tela de login.
+      // Guia: a conversa da conta que expirou não pode ficar à vista na tela de login.
       if (window.LaiftAssistant) window.LaiftAssistant.refresh();
       setStatus('msg-login', 'Sua sessão expirou. Faça login novamente.', 'info');
     }, msLeft);
@@ -381,7 +381,7 @@
   // ===========================================================================
   // >>> api-fetch (puro)
   // Toda chamada tem tempo limite: sem ele, uma requisição presa deixava
-  // "Carregando…" para sempre. A Lia e a reindexação da base podem demorar
+  // "Carregando…" para sempre. A Guia e a reindexação da base podem demorar
   // mais (IA), por isso têm um limite maior. Os erros saem em português.
   var API_TIMEOUT_MS = 20000;
   var API_LONG_TIMEOUT_MS = 90000;
@@ -1101,7 +1101,7 @@
     if (window.LaiftLearning) window.LaiftLearning.reset();
     // Fase 3 — painel admin de IA
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
-    if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+    if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Guia: some da tela com a sessão
     if (window.LaiftAdminRoles) window.LaiftAdminRoles.reset();
     if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.reset();
     if (window.LaiftPrivacy) window.LaiftPrivacy.reset();
@@ -1164,14 +1164,14 @@
     // nunca ter aberto a aba "Mensagens" (pedido: "sem precisar alterar de
     // tela") — por isso começa aqui, não só dentro do painel de mensagens.
     if (window.LaiftMessaging) window.LaiftMessaging.startBackgroundSync();
-    // Lia: relê a flag e zera a conversa da conta anterior. Se o pacote acabou de chegar, o start()
-    // da própria Lia já leu a flag com a sessão nova (não repetir a chamada).
+    // Guia: relê a flag e zera a conversa da conta anterior. Se o pacote acabou de chegar, o start()
+    // da própria Guia já leu a flag com a sessão nova (não repetir a chamada).
     var liaJaCarregada = !!window.LaiftAssistant;
     var perfilEntrada = state.profile;
     withBundle('lia', function () {
       if (!state.profile) return; // saiu da conta enquanto o pacote chegava
       if (liaJaCarregada && window.LaiftAssistant) window.LaiftAssistant.refresh();
-      // Primeira entrada da pessoa: apresentação curta por papel (a Lia e o crachá); depois da Lia, que ela cita.
+      // Primeira entrada da pessoa: apresentação curta por papel (a Guia e o crachá); depois da Guia, que ela cita.
       if (window.LaiftOnboarding) window.LaiftOnboarding.maybeShow({ role: perfilEntrada.role, profileId: perfilEntrada.id });
     });
   }
@@ -1314,7 +1314,7 @@
   document.getElementById('btn-enter-admin-mode').addEventListener('click', function () { setAdminMode(true); });
   document.getElementById('btn-exit-admin-mode').addEventListener('click', function () { setAdminMode(false); });
 
-  // MOB-04: o código do painel admin e o da Lia não vêm no carregamento inicial (lazy-bundles.js).
+  // MOB-04: o código do painel admin e o da Guia não vêm no carregamento inicial (lazy-bundles.js).
   // Roda fn depois que o pacote chegar; se falhar (sem rede e sem cache), roda mesmo assim: cada
   // chamada abaixo já confere se o módulo existe e o painel fica no vazio de sempre.
   function withBundle(name, fn) {
@@ -1352,7 +1352,7 @@
     'panel-admin-ai': function () {
       withBundle('admin', function () {
         if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel();
-        // moderação da Lia (ADR 0004, O28): só para quem modera (admin ou cargo moderador).
+        // moderação da Guia (ADR 0004, O28): só para quem modera (admin ou cargo moderador).
         if (window.LaiftAdminModeration && window.LaiftRoles && window.LaiftRoles.has('reports.moderate')) window.LaiftAdminModeration.load(window.App);
       });
     },
@@ -1392,7 +1392,7 @@
       else btn.removeAttribute('aria-current');
     });
     window.scrollTo(0, 0);
-    // Dica da Lia (assistant-hints.js): só avisa quando a tela muda de fato.
+    // Dica da Guia (assistant-hints.js): só avisa quando a tela muda de fato.
     if (previousPanelId !== panelId) document.dispatchEvent(new CustomEvent('laift:panelchange', { detail: { panel: panelId } }));
   }
 
@@ -2795,7 +2795,7 @@
     UPDATE_EVENT_STATUS: 'Mudança de status de evento', UPDATE_EVENT_IMAGE: 'Imagem de evento atualizada',
     CREATE_TASK: 'Criação de tarefa', UPDATE_TASK_STATUS: 'Mudança de status de tarefa',
     CHANGE_USER_ROLE: 'Alteração de papel de usuário', BAN_USER: 'Banimento de conta', UNBAN_USER: 'Reativação de conta',
-    assistant_moderation_alert: 'Alerta de moderação da Lia (nível 2)', assistant_auto_report: 'Denúncia automática da Lia (nível 3)',
+    assistant_moderation_alert: 'Alerta de moderação da Guia (nível 2)', assistant_auto_report: 'Denúncia automática da Guia (nível 3)',
   };
 
   var adminAuditState = { action: '', result: '' };
@@ -2855,13 +2855,13 @@
   // Administração — denúncias
   // ===========================================================================
   var REPORT_STATUS_LABELS = { open: 'Aberta', under_review: 'Em análise', resolved: 'Resolvida', dismissed: 'Arquivada' };
-  // Denúncia sem denunciante: a automática da Lia traz o aviso do servidor em details; as demais são de ex-membro.
-  var AUTO_REPORT_PREFIX = 'Denúncia automática da Lia:';
+  // Denúncia sem denunciante: a automática da Guia traz o aviso do servidor em details; as demais são de ex-membro.
+  var AUTO_REPORT_PREFIX = 'Denúncia automática da Guia:';
   function reporterLabel(item) {
     if (item.reporterName) return item.reporterName;
     if (item.reporterHidden) return 'Oculto (só o administrador vê)'; // moderador decide pelo conteúdo (ADR 0010)
     var isAutomatic = String(item.details || '').indexOf(AUTO_REPORT_PREFIX) === 0;
-    return isAutomatic ? 'Lia (automático)' : 'Ex-membro';
+    return isAutomatic ? 'Guia (automático)' : 'Ex-membro';
   }
 
   var REPORT_CATEGORY_LABELS = {

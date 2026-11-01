@@ -1,7 +1,7 @@
 -- Plataforma de Membros LAIFT
 -- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
 -- Licença proprietária: ver LICENSE na raiz do repositório.
--- 023_flags_v2.sql — flags da renovação (ux v2, Lia, RAG, feedback, moderação).
+-- 023_flags_v2.sql — flags da renovação (ux v2, Guia, RAG, feedback, moderação).
 --
 -- Decisão do responsável: as 5 flags nascem LIGADAS, mas esta migração NUNCA desfaz uma
 -- decisão do admin nem um desligamento feito à mão. Reaplicá-la (pelo runner, depois de um
@@ -45,10 +45,10 @@ RESET lock_timeout;
 
 INSERT INTO feature_flags (key, enabled, description) VALUES
   ('ux_v2_enabled',      TRUE, 'Interface renovada (Início, onboarding, hero)'),
-  ('chatbot_enabled',    TRUE, 'Lia, guia da plataforma (chat que orienta e leva às telas)'),
-  ('rag_enabled',        TRUE, 'Lia consulta a base de conhecimento (busca híbrida) antes de responder'),
-  ('feedback_enabled',   TRUE, 'Polegar e comentário sobre as respostas da Lia'),
-  ('moderation_enabled', TRUE, 'Moderação da Lia (alerta, aviso, suspensão e redenção)')
+  ('chatbot_enabled',    TRUE, 'Guia, guia da plataforma (chat que orienta e leva às telas)'),
+  ('rag_enabled',        TRUE, 'Guia consulta a base de conhecimento (busca híbrida) antes de responder'),
+  ('feedback_enabled',   TRUE, 'Polegar e comentário sobre as respostas da Guia'),
+  ('moderation_enabled', TRUE, 'Moderação da Guia (alerta, aviso, suspensão e redenção)')
 ON CONFLICT (key) DO NOTHING;
 
 -- Liga as herdadas só se estiverem intocadas (regra 2). Não grava updated_at: o gatilho faz isso,

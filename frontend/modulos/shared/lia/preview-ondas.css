@@ -1,4 +1,4 @@
-/* Preview das ondas 2-4 da Lia (revisao de arte; nao entra no build, ver LIA_REVIEW_ONLY).
+/* Preview das ondas 2-4 da Guia (revisao de arte; nao entra no build, ver LIA_REVIEW_ONLY).
    Cores por tokens (laift-tokens.css) e por --lia-*; traco unico = --lia-stroke. Animacoes em transform e opacity. */
 
 body {
@@ -57,7 +57,7 @@ body {
 .legenda { margin: 0; font-size: 14px; color: var(--laift-muted); }
 .reproduzir { justify-self: start; }
 
-/* Palco: a Lia e as pecas extras empilhadas na mesma celula da grade */
+/* Palco: a Guia e as pecas extras empilhadas na mesma celula da grade */
 .palco {
   position: relative;
   display: grid;

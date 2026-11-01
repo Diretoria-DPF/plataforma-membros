@@ -23,7 +23,7 @@ Use `apiAdminSetFeatureFlag` (formato na seção 5). Confira cada etapa antes da
 | `library_enabled` | Menu "Estudo", painel do membro e catálogo público | sim | Menu e painel saem em até 60 s (quem tem a página aberta recarrega); `/biblioteca` continua no ar e mostra "Nenhum artigo publicado ainda." na próxima visita (até 60 s) |
 | `library_member_suggest` | Botão "Sugerir artigo" | sim | O botão some |
 | `library_ai_summary` | Resumo sugerido por IA na curadoria (seção 7) | não | "Gerar resumo(s)" responde "desligado"; resumos já gravados ficam e continuam exigindo aprovação |
-| `lia_library_enabled` | Lia cita artigos publicados (B4) | não | Sem efeito até o B4 |
+| `lia_library_enabled` | Guia cita artigos publicados (B4) | não | Sem efeito até o B4 |
 
 ## 3. Equipe: curadores e revisor clínico
 - Só admin vê a aba "Equipe" (painel de administração, Biblioteca).

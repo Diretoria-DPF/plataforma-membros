@@ -20,7 +20,7 @@ frequente), **Baixa** (polimento). Esforço: P (≤ 1 ficha), M (2–3 fichas), 
 | E3 | Sem "Mostrar senha" | `index.html:96-98` | Jakob | Média | P | B |
 | E4 | Trocar de tela não leva foco nem rolagem: depois de "Criar conta" com a página rolada 300 px, o foco fica no `<body>` e o título do cadastro a **−118 px** (fora da tela) | `app.js:474-481`, `:516-520` | Orientação, a11y | Média | P | B |
 | E5 | Duas frases antes do formulário empurram o e-mail para y = 295 px a 375 | `index.html:90` | Hierarquia | Baixa | P | B |
-| E6 | Lia flutuante (fixa no canto) passa por cima da borda direita de "Conheça a LAIFT" durante a rolagem (captura `capturas/entrada-claro-375.png`); o e2e só confere o fim da rolagem | `assistant.js` (lançador) | Fitts | Baixa | P | C |
+| E6 | Guia flutuante (fixa no canto) passa por cima da borda direita de "Conheça a LAIFT" durante a rolagem (captura `capturas/entrada-claro-375.png`); o e2e só confere o fim da rolagem | `assistant.js` (lançador) | Fitts | Baixa | P | C |
 | E7 | Atalhos "Conheça a LAIFT" e "Acessar blog": 56 px, largura total — **bom** (manter) | `ux.css` (ajustes-2) | Fitts | — | — | — |
 
 ## 2. Cadastro (`#screen-register`)

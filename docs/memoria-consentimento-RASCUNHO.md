@@ -34,7 +34,7 @@ Se este texto mudar, pediremos um novo aceite antes de voltar a usar ou gravar a
 
 ## B. Política de Privacidade: texto proposto para a seção 5 ("Onde os dados ficam e como são protegidos")
 
-Acrescentar, depois do parágrafo "Lia, assistente da plataforma":
+Acrescentar, depois do parágrafo "Guia, assistente da plataforma":
 
 **Tutor Clínico e memória de estudo.** O Tutor Clínico, na área "Aprender", ajuda você a estudar farmacologia e toxicologia e é destinado a maiores de 18 anos. Ele não atende casos reais e não orienta condutas. Quando você o usa:
 
@@ -46,7 +46,7 @@ Acrescentar, depois do parágrafo "Lia, assistente da plataforma":
 
 ## C. Política de Privacidade: texto proposto para a seção 7 ("Retenção e exclusão dos seus dados")
 
-Acrescentar, depois do trecho sobre a Lia:
+Acrescentar, depois do trecho sobre a Guia:
 
 **Tutor Clínico e memória de estudo.**
 

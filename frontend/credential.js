@@ -333,7 +333,7 @@
       byId(doc, 'learn-credential-save').disabled = chosen.kind !== 'v2';
     }).catch(function () {
       if (id !== requestId) return;
-      // O erro fica no próprio modal: ele abre do Perfil, do Início, da Lia e do
+      // O erro fica no próprio modal: ele abre do Perfil, do Início, da Guia e do
       // onboarding, e um status no painel Aprender ficaria invisível.
       showQrError(doc);
     });

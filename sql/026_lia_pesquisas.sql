@@ -1,7 +1,7 @@
 -- Plataforma de Membros LAIFT
 -- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
 -- Licença proprietária: ver LICENSE na raiz do repositório.
--- 026_lia_pesquisas.sql — registro de pesquisas da Lia (respostas e resultados já obtidos).
+-- 026_lia_pesquisas.sql — registro de pesquisas da Guia (respostas e resultados já obtidos).
 --
 -- lia_pesquisas  uma linha por (provedor, pergunta normalizada, versão da base):
 --                provider 'kb' guarda a resposta da base com as fontes (validade 30 dias);

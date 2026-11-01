@@ -75,7 +75,7 @@
         { "t": "h2", "texto": "Instalar e usar sem internet" },
         { "t": "lista", "itens": [
           "Instalação: o app pode ser adicionado à tela inicial do celular. Ele se chama LAIFT e abre como um app, sem a barra do navegador.",
-          "Pré-carregamento: os arquivos principais do app, como estilos, scripts, a Lia, o ícone e a tela de abertura, ficam guardados no aparelho.",
+          "Pré-carregamento: os arquivos principais do app, como estilos, scripts, a Guia, o ícone e a tela de abertura, ficam guardados no aparelho.",
           "Sem conexão, o app usa o que já está guardado, e aparece um aviso de que você está offline."
         ] },
         { "t": "p", "texto": "Envios de dados e consultas ao servidor precisam de internet. Sem conexão, esses recursos não funcionam." },
@@ -91,7 +91,7 @@
     {
       "slug": "o-que-mudou",
       "titulo": "O que mudou na plataforma",
-      "resumo": "Mudanças recentes na Lia, o passo a passo para o seu papel, a página da Liga e cuidados de acessibilidade.",
+      "resumo": "Mudanças recentes na Guia, o passo a passo para o seu papel, a página da Liga e cuidados de acessibilidade.",
       "data": "2026-10-09",
       "atualizado_em": "2026-10-09",
       "tags": ["novidades", "lia", "liga"],
@@ -102,19 +102,19 @@
       "leitura_min": 1,
       "status": "ativo",
       "fontes": [
-        "docs/CHANGELOG.md:27-30 (Lia, onboarding e assuntos da Lia)",
-        "docs/CHANGELOG.md:33-35 (rosto da Lia, foco e alvos)",
+        "docs/CHANGELOG.md:27-30 (Guia, onboarding e assuntos da Guia)",
+        "docs/CHANGELOG.md:33-35 (rosto da Guia, foco e alvos)",
         "docs/CHANGELOG.md:21 (proteção contra clickjacking)",
         "frontend/liga.html:23-121 (página da Liga)",
         "docs/blog/FATOS_VERIFICADOS_2026-10-09.md:29 (visual novo fora do ar)"
       ],
       "blocos": [
         { "t": "p", "texto": "A plataforma muda com frequência. Esta página reúne o que já está no ar hoje." },
-        { "t": "h2", "texto": "Na Lia e logo ao entrar" },
+        { "t": "h2", "texto": "Na Guia e logo ao entrar" },
         { "t": "lista", "itens": [
-          "A Lia ganhou cenas novas para o laboratório, a clínica, o Atlas e o Aprender.",
-          "A Lia passou a responder sobre propostas, equipe e mensagens.",
-          "A Lia ficou com um rosto mais leve.",
+          "A Guia ganhou cenas novas para o laboratório, a clínica, o Atlas e o Aprender.",
+          "A Guia passou a responder sobre propostas, equipe e mensagens.",
+          "A Guia ficou com um rosto mais leve.",
           "Ao entrar, você vê os primeiros passos para o seu papel na Liga."
         ] },
         { "t": "h2", "texto": "Na página da Liga e na acessibilidade" },

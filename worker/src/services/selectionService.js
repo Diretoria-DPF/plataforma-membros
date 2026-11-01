@@ -67,7 +67,7 @@ async function readSettings(sql) {
   }
 }
 
-/** As inscrições estão abertas agora (selection_settings.is_open)? Usado pela Lia para não afirmar o que não é. */
+/** As inscrições estão abertas agora (selection_settings.is_open)? Usado pela Guia para não afirmar o que não é. */
 export async function isSelectionOpen(sql) {
   return (await readSettings(sql)).isOpen;
 }

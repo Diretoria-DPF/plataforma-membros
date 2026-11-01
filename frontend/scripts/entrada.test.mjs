@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Tela de entrada em cartões (index.html, #screen-welcome): sem a Lia do hero, três blocos separados
+// Tela de entrada em cartões (index.html, #screen-welcome): sem a Guia do hero, três blocos separados
 // (login, atalhos, publicação do blog) e dois botões grandes com os textos do dono.
 // Só lê arquivos: o comportamento em tela é conferido por scripts/e2e/entrada.e2e.js.
 import { test } from 'node:test';
@@ -34,7 +34,7 @@ function regraCss(css, seletor) {
   return css.slice(inicio, css.indexOf('}', inicio));
 }
 
-test('index.html não monta mais a Lia do hero na tela de entrada', () => {
+test('index.html não monta mais a Guia do hero na tela de entrada', () => {
   assert.ok(!HTML.includes('hero-lia'), 'sobrou #hero-lia no index.html');
   assert.ok(!HTML.includes('src="hero.js"'), 'sobrou <script src="hero.js"> no index.html');
   assert.ok(!/class="[^"]*\bhero\b/.test(HTML), 'sobrou uma classe hero no index.html');

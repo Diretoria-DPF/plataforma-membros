@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Carga sob demanda (MOB-04): o código do painel admin e o da Lia (assistente)
+// Carga sob demanda (MOB-04): o código do painel admin e o da Guia (assistente)
 // não entram mais no carregamento inicial. Cada pacote (bundle) é uma lista
 // ORDENADA de scripts do próprio site, injetados como <script src> (a CSP já
 // permite 'self'; nada de inline) com async=false, o que garante a execução na
@@ -35,7 +35,7 @@
     ],
   };
 
-  /** Espera de ociosidade para quem só visita (a Lia sobe depois do load, sem disputar a primeira pintura). */
+  /** Espera de ociosidade para quem só visita (a Guia sobe depois do load, sem disputar a primeira pintura). */
   var IDLE_TIMEOUT_MS = 3000;
 
   /** Cria um carregador ligado a um documento (a página usa o real; os testes usam um falso). */
@@ -84,7 +84,7 @@
   var loader = createLoader(root.document, BUNDLES);
   root.LaiftLazy = { load: loader.load, isRequested: loader.isRequested };
 
-  // Visitante (ou sessão restaurada): a Lia sobe depois da primeira pintura. Quem faz login a pede antes, em app.js.
+  // Visitante (ou sessão restaurada): a Guia sobe depois da primeira pintura. Quem faz login a pede antes, em app.js.
   function scheduleLia() { whenIdle(root, function () { loader.load('lia').catch(function () { /* sem rede: tenta no login */ }); }); }
   if (root.document.readyState === 'complete') scheduleLia();
   else root.addEventListener('load', scheduleLia);

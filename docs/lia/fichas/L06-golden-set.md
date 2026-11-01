@@ -1,4 +1,4 @@
-# L06: Golden set ampliado da Lia (depois de L03)
+# L06: Golden set ampliado da Guia (depois de L03)
 
 **Objetivo.** Medir a recuperação sobre o conteúdo novo de L03 e travar regressões: perguntas positivas para as fontes novas, mais perguntas negativas, e baseline atualizado.
 

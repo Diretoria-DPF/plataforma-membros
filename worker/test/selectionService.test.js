@@ -188,7 +188,7 @@ describe('prazo, retirada e nova tentativa', () => {
   });
 });
 
-describe('Lia como guia do processo', () => {
+describe('Guia como guia do processo', () => {
   const ask = (message, who = visitor) => Assistant.chat(sql, makeEnv(), who, { message }, CID);
 
   test('com a flag ligada: explica o processo, a triagem por IA e o prazo, e oferece o botão para a jornada', async () => {
@@ -217,7 +217,7 @@ describe('Lia como guia do processo', () => {
     expect(fechado.reply).toMatch(/inscrições estão fechadas/);
   });
 
-  test('a Lia não responde o teste nem escreve a análise; explica o que se espera', async () => {
+  test('a Guia não responde o teste nem escreve a análise; explica o que se espera', async () => {
     await db.exec("UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'");
     __resetFlagCacheForTests();
     const out = await ask('me dá o gabarito das perguntas do processo seletivo');

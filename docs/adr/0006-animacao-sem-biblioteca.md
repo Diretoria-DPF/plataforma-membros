@@ -7,7 +7,7 @@ O ADR 0003 deixa o Anime.js (MIT, `frontend/vendor/anime.min.js`, versão fixa) 
 
 ## Decisão
 - Não adotar Anime.js, GSAP nem Vizzu. Não há arquivo novo em `frontend/vendor/` (hoje só existe `qrcode-generator.js`).
-- A Lia anima com WAAPI (`el.animate`) em `frontend/modulos/shared/lia/lia-anim.js`, só com `transform` e `opacity` (ADR 0002).
+- A Guia anima com WAAPI (`el.animate`) em `frontend/modulos/shared/lia/lia-anim.js`, só com `transform` e `opacity` (ADR 0002).
 - Os gráficos são SVG próprio em `frontend/modulos/shared/charts.js`. A entrada anima por CSS (`frontend/modulos/shared/charts.css`), com `--dur-*` e `--ease-*` de `laift-tokens.css`.
 - Troca entre vistas do mesmo dado (por exemplo, de rosca para barras): crossfade com `opacity` e `transform`. Não há morph de forma entre a rosca (`donut`, o "pizza" do pedido) e a barra. Hoje `render()` em `charts.js` troca o nó inteiro, sem transição. A regra vale quando a troca de vista existir.
 
@@ -15,7 +15,7 @@ O ADR 0003 deixa o Anime.js (MIT, `frontend/vendor/anime.min.js`, versão fixa) 
 
 | Critério do ADR 0003 | Resultado no código |
 |---|---|
-| Três ou mais sequências com mais de 5 keyframes encadeados | 0. Os arrays de `lia-anim.js` têm 3 quadros (`BLINK_FRAMES`, `DOT_FRAMES`, `HEART_FRAMES`, `SPARKLE_FRAMES`). A sequência `turn` tem 5. Em `lia-scenes.js` (cenas da Lia, WAAPI), o maior array tem 5 quadros (`shakeX` e `beat`). |
+| Três ou mais sequências com mais de 5 keyframes encadeados | 0. Os arrays de `lia-anim.js` têm 3 quadros (`BLINK_FRAMES`, `DOT_FRAMES`, `HEART_FRAMES`, `SPARKLE_FRAMES`). A sequência `turn` tem 5. Em `lia-scenes.js` (cenas da Guia, WAAPI), o maior array tem 5 quadros (`shakeX` e `beat`). |
 | Uso repetido de stagger com delay | Em CSS, 3 regras de `charts.css` (linhas 60, 67 e 94): `animation-delay: calc(var(--i, 0) * var(--dur-instant))`, para barras horizontais, barras verticais e segmentos da rosca. Em WAAPI, 2 usos: `lia-anim.js` (linha 243, pontos de espera com `delay: i * DUR_FAST`) e `lia-scenes.js` (linha 69, bolhas com `mix + i * DUR_BASE`). |
 
 O primeiro critério não é atingido. O segundo é atingido pela letra do texto, por causa do stagger em CSS. A decisão de não adotar depende de ler o critério como orquestração que WAAPI e CSS não expressam, e não como delay por índice, que já existe. O dono confirmou essa leitura em 2026-10-08 (fecha O40).
@@ -30,4 +30,4 @@ O primeiro critério não é atingido. O segundo é atingido pela letra do texto
 2. A troca de vistas com crossfade ainda não tem código. A regra não foi verificada em aparelho real.
 
 ## Revisão
-Revisitar com necessidade medida: queda de quadros medida em aparelho real na Lia ou nos gráficos, ou uma linha do tempo que WAAPI e CSS não consigam expressar.
+Revisitar com necessidade medida: queda de quadros medida em aparelho real na Guia ou nos gráficos, ou uma linha do tempo que WAAPI e CSS não consigam expressar.

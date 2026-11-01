@@ -17,10 +17,10 @@
   'use strict';
 
   var CACHE_PREFIX = 'laift-shell-';
-  var CACHE_NAME = CACHE_PREFIX + 'v26';
+  var CACHE_NAME = CACHE_PREFIX + 'v27';
   // SÓ o shell essencial entra no cache na instalação (MOB-07): o que o index.html carrega de
   // imediato, para a tela inicial abrir offline já na primeira visita. Os pacotes sob demanda
-  // (admin e Lia, ver lazy-bundles.js) e os módulos pesados NÃO são pré-cacheados: entram no
+  // (admin e Guia, ver lazy-bundles.js) e os módulos pesados NÃO são pré-cacheados: entram no
   // cache quando forem usados, pelo próprio fetch abaixo (rede primeiro, grava a resposta 200).
   // O PNG grande do crachá (laift-marca.png, 285 KB) também fica de fora: só o crachá o usa e a interface usa a versão de 80 px.
   // Nada de Atlas 3D/WASM aqui. Item ausente é ignorado.

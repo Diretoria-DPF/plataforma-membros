@@ -1,4 +1,4 @@
-# L01: Bases para a pesquisa externa da Lia (viabilidade)
+# L01: Bases para a pesquisa externa da Guia (viabilidade)
 
 Acesso em 2026-10-09. **Confirmado** = página oficial lida ou endpoint testado nesta data. **Via busca** = resumo de busca ou fonte secundária. **Não confirmado** = nada encontrado.
 Bloqueios: NCBI (reCAPTCHA em NBK25497), Europe PMC (403 na documentação), search.scielo.org (403). A cópia do web.archive.org foi recusada pela ferramenta. docs.openalex.org redireciona para help.openalex.org.

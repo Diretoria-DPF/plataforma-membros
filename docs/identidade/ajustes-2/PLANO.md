@@ -6,9 +6,9 @@ Fichas e ondas: `fichas/ORDEM.md`. Verificadores: `verificadores/` (ensaiados: v
 ## 1. Diagnóstico (onde está cada coisa hoje)
 | Pedido | Onde (arquivo:linha) | O que acontece |
 |---|---|---|
-| 1 Lia no login | `frontend/index.html:87` (`#hero-lia`), `:1007` (`hero.js`); `hero.js`; `ux.css:518`, `:535-555`; `scripts/build.js:56`; `sw.js:26` | A cabeça da Lia "espia" sobre o cartão (top -92 px). O botão de baixo é `#lia-launcher` (`assistant.js:592`), fixo a 16 px |
+| 1 Guia no login | `frontend/index.html:87` (`#hero-lia`), `:1007` (`hero.js`); `hero.js`; `ux.css:518`, `:535-555`; `scripts/build.js:56`; `sw.js:26` | A cabeça da Guia "espia" sobre o cartão (top -92 px). O botão de baixo é `#lia-launcher` (`assistant.js:592`), fixo a 16 px |
 | 2 Tela num cartão só | `index.html:86-122`; `styles.css:844-848` | Login, "Conheça a LAIFT", "Blog: conheça a plataforma" (`index.html:119`) e o aviso no mesmo cartão; links de texto |
-| 3 Prévia só com letras | `blog-novidade.js:91-111`; `blog-novidade.css` | Selo "Nova publicação no blog"/"Do blog" (`:93`), título e data; nenhuma imagem. Na foto atual a Lia flutuante cobre o aviso |
+| 3 Prévia só com letras | `blog-novidade.js:91-111`; `blog-novidade.css` | Selo "Nova publicação no blog"/"Do blog" (`:93`), título e data; nenhuma imagem. Na foto atual a Guia flutuante cobre o aviso |
 | 4 Endereço errado | ver lista abaixo | "Rua Direita da Piedade, 358 · 40070-190" (prédio do Centro, -12.98658/-38.51689) |
 | 5 Cartões "Do blog" sem imagem | `liga.html:223-228` (contêiner) + `blog-novidade.js` | Mesmo componente do item 3, em 3 cartões |
 | 6 Rodapé no blog | `liga.html:231-236` (origem); `publico.css:368-413` (estilo) | `blog.html`, posts (`scripts/build-blog.js:275-319`) e `blog/404.html` não têm rodapé |
@@ -26,8 +26,8 @@ Documentos: `docs/identidade/CONTRATO.md:449`, `docs/identidade/STATUS.md:11`, `
 (o título de seção "Do blog" em `liga.html:224` fica).
 
 ## 2. Decisões (detalhe e textos exatos no CONTRATO)
-1. **Remover** o hero da Lia (não só esconder): ele só existe em `#screen-welcome`; esconder ainda montaria a Lia. Saem `hero.js`, o teste
-   e o e2e dele; entram `scripts/entrada.test.mjs` e `scripts/e2e/entrada.e2e.js`. A Lia flutuante de baixo fica, e a tela ganha 72 px de
+1. **Remover** o hero da Guia (não só esconder): ele só existe em `#screen-welcome`; esconder ainda montaria a Guia. Saem `hero.js`, o teste
+   e o e2e dele; entram `scripts/entrada.test.mjs` e `scripts/e2e/entrada.e2e.js`. A Guia flutuante de baixo fica, e a tela ganha 72 px de
    folga para ela não cobrir os botões no fim da rolagem.
 2. Tela de entrada em **três cartões**: login (formulário, Criar conta, Esqueci minha senha); atalhos com dois botões tonais de 56 px e
    largura total, "Conheça a LAIFT" e "Acessar blog" (ícones do sprite do blog); e o cartão da publicação. Celular em coluna; ≥ 960 px em
@@ -48,7 +48,7 @@ Documentos: `docs/identidade/CONTRATO.md:449`, `docs/identidade/STATUS.md:11`, `
 ## 4. Revisão do orquestrador (onda 4) — checklist
 - Diff só nos arquivos da tabela (+ docs da sessão principal); nenhum `style=""`, `on*=`, `innerHTML`; cabeçalho nos arquivos novos.
 - Os 3 verificadores verdes em série; `node --test scripts/*.test.mjs` só com as 2 falhas antigas de `_headers`; e2e da onda 3 com 0 ✘.
-- Capturas: login sem Lia no topo; três blocos; botões grandes; laço rosa discreto (claro e escuro); capas no /liga; rodapé no blog;
+- Capturas: login sem Guia no topo; três blocos; botões grandes; laço rosa discreto (claro e escuro); capas no /liga; rodapé no blog;
   endereço e placa 364. Comparar com `capturas/antes/`.
 
 ## 5. Sessão principal (depois das fichas)

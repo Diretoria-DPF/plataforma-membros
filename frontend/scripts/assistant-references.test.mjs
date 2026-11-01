@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Lia: "Artigos na Biblioteca" (references) e "Ver na Biblioteca" com a busca pronta (query).
+// Guia: "Artigos na Biblioteca" (references) e "Ver na Biblioteca" com a busca pronta (query).
 // Tudo vindo do servidor é dado não confiável: texto por textContent, link só de host permitido.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -102,7 +102,7 @@ test('o botão "Ver na Biblioteca" prepara a busca ANTES de abrir o painel; sem 
   assert.match(block, /action\.query && root\.LaiftLibrary/);
 });
 
-test('as referências entram na mensagem da Lia sem tocar nas fontes (assistant.js usa só o módulo de fontes)', () => {
+test('as referências entram na mensagem da Guia sem tocar nas fontes (assistant.js usa só o módulo de fontes)', () => {
   const src = read('assistant.js');
   assert.match(src, /references: Sources\.sanitizeReferences\(res\.references\)/);
   assert.match(src, /Sources\.renderReferences\(ui\.doc, msg\.references\)/);

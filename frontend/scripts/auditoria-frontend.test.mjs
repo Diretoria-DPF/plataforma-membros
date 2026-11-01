@@ -58,7 +58,7 @@ test('F-09: falha de rede e HTTP de erro viram mensagens claras (nada de "Failed
   await assert.rejects(fetchJsonWithTimeout(() => Promise.resolve({ ok: true, json: () => Promise.reject(new SyntaxError('x')) }), 'u', {}, 1000, AbortController), (err) => err.kind === 'http');
 });
 
-test('F-09: limite padrão de 20 s; Lia e reindexação da base têm mais tempo', () => {
+test('F-09: limite padrão de 20 s; Guia e reindexação da base têm mais tempo', () => {
   const { apiTimeoutFor, API_TIMEOUT_MS } = loadApiFetch();
   assert.equal(API_TIMEOUT_MS, 20000);
   assert.equal(apiTimeoutFor('apiGetMyProfile'), 20000);

@@ -1,9 +1,9 @@
 # Avaliação da plataforma LAIFT (2026-10-09)
 
-Avaliador: Opus 5.5, somente leitura. Base: `origin/main` c132c0f (identidade da Liga #47, Lia #46, blog, `ux_v2_enabled` ligada).
+Avaliador: Opus 5.5, somente leitura. Base: `origin/main` c132c0f (identidade da Liga #47, Guia #46, blog, `ux_v2_enabled` ligada).
 Método: leitura dos documentos de estado e do código por amostragem, capturas de `docs/identidade/capturas/`. Não rodei build, testes nem e2e.
 Números de testes vêm dos documentos; contagens de arquivos, telas e linhas foram medidas agora. "Não verificado" = não dá para confirmar só lendo.
-Em andamento em outra frente (não são defeitos aqui): tela de login sem a cabeça da Lia, botões maiores "Conheça a LAIFT" e "Acessar blog",
+Em andamento em outra frente (não são defeitos aqui): tela de login sem a cabeça da Guia, botões maiores "Conheça a LAIFT" e "Acessar blog",
 miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Maçons, 364, rodapé da Liga no blog.
 
 ## 1. Resumo executivo
@@ -16,7 +16,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 | Confiabilidade e operação | 6 | Backup cifrado validado e staging separado; restauração nunca treinada, flags só por SQL, sem monitor externo. |
 | Código e testes | 7 | 52 arquivos de teste no Worker e 51 suítes e2e; `app.js` com 2.688 linhas, 10 e2e vermelhos e cobertura não medida. |
 | Conteúdo | 7 | Fontes oficiais e "a divulgar" honesto; nenhuma revisão humana com registro profissional documentada. |
-| Lia e IA | 6,5 | Arquitetura segura (lista branca, hash, moderação); base pequena (recall 13/24) e ativação da #46 incompleta. |
+| Guia e IA | 6,5 | Arquitetura segura (lista branca, hash, moderação); base pequena (recall 13/24) e ativação da #46 incompleta. |
 | Preparo para crescer | 5,5 | Planos gratuitos (Groq ~25 ativos/dia), limites globais de liga pequena, promoção a membro e exclusão manuais. |
 **Nota geral: 6,8/10.** Produto sólido para uma liga pequena; os riscos estão na entrada (cadastro e login), no jurídico e na operação.
 
@@ -27,8 +27,8 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 - **Flags com falha segura e auditoria pela API** (`docs/FEATURE_FLAGS.md:12-16`); regra "nasce desligada".
 - **Backup:** dump diário e mensal cifrado com age no R2, validado em 2026-10-09 (`docs/BACKUP_RESTORE.md:3-12`, `:66-67`).
 - **Staging** com site, API e banco próprios, sem dado real (`docs/AMBIENTES.md:3-14`).
-- **Retenção automática** de sessões, tokens, logs e dados da Lia (`worker/src/maintenance.js:56-67`).
-- **Lia com minimização:** pergunta guardada só como hash (`docs/POLITICA_DE_PRIVACIDADE.md:135-138`); botões só da lista branca (`docs/TIME_CONTRATO.md:19`); registro de pesquisas sem `profile_id` (`docs/lia/REVISAO.md:46`).
+- **Retenção automática** de sessões, tokens, logs e dados da Guia (`worker/src/maintenance.js:56-67`).
+- **Guia com minimização:** pergunta guardada só como hash (`docs/POLITICA_DE_PRIVACIDADE.md:135-138`); botões só da lista branca (`docs/TIME_CONTRATO.md:19`); registro de pesquisas sem `profile_id` (`docs/lia/REVISAO.md:46`).
 - **Terceiro só por clique:** mapa do OpenStreetMap carrega só ao clicar (`docs/identidade/PLANO.md:31-33`).
 - **Sem invenção:** vagas e datas "a divulgar" (`frontend/liga-ciclo.json:4-9`); "Processo seletivo aberto" só aparece com a flag (`frontend/styles.css:846-847`).
 - **Saúde com fonte:** Outubro Rosa com ~25 referências oficiais (`frontend/blog/conteudo/campanhas.json:982-1185`) e aviso "não substitui consulta" (`:38`); correções críticas aplicadas (ex.: "100%" explicado, `:98`).
@@ -52,7 +52,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 - **Mídia em `r2.dev`** (`worker/wrangler.toml:37`). A Cloudflare limita essa URL e não a indica para produção.
 - **Peso evitável:** `laift-marca.png` tem 291.829 bytes e entra no PRECACHE (`frontend/sw.js:28`). JS e CSS saem sem minificar (`docs/LIGHTHOUSE_2026-10-08b.md:57-59`).
 - **Teto gratuito:** Groq atende ~25 ativos/dia (`docs/backlog-futuro.md:20`); KV tem ~1.000 escritas/dia (O3).
-- **Lia:** recall@4 de 13/24 só com trigramas (O36); `sql/026` não aplicada; rerank sem calibração (`docs/lia/REVISAO.md:56`).
+- **Guia:** recall@4 de 13/24 só com trigramas (O36); `sql/026` não aplicada; rerank sem calibração (`docs/lia/REVISAO.md:56`).
 - **Mensagens presas ao aparelho:** limpar o navegador ou trocar de aparelho perde o histórico (`frontend/messaging.js:28-33`). A pessoa só descobre depois (`:550`).
 
 ## 4. Pontos críticos (P0/P1)
@@ -83,7 +83,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 **C6 (P1). Recuperação de desastre não comprovada.** Impacto alto, probabilidade baixa. Nenhum treino de restauração (`CHANGELOG.md:70`),
   PITR de ~6 h, sem monitor externo, erro da API com HTTP 200. Correção (I7).
 
-**C7 (P1, condicional). Pesquisa externa da Lia.** O aviso de privacidade sai depois do envio (`frontend/assistant.js:519-525`; `docs/lia/REVISAO.md:29`);
+**C7 (P1, condicional). Pesquisa externa da Guia.** O aviso de privacidade sai depois do envio (`frontend/assistant.js:519-525`; `docs/lia/REVISAO.md:29`);
   a Política não cita a Europe PMC (grep: 0). Certo se `research_enabled` ligar antes. Correção (I3, passo 6).
 
 ## 5. Usabilidade
@@ -94,7 +94,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 - Estados vazios claros ("Não há eventos publicados no momento", captura `app-voltar-375-claro.png`); onboarding de 3 a 4 passos por papel (`onboarding.js:7`).
 - Processo seletivo: 5 passos "Antes de começar", etapas com selo eliminatória/classificatória, 5 perguntas frequentes, edital imprimível (captura `processo-375-claro.png`).
 - Mapa por clique e "abrir no app de mapas"; aviso "Nova publicação no blog" com até 14 dias (`docs/identidade/PLANO.md:34-35`).
-- Atalhos de teclado (`keyboard-shortcuts.js`); a Lia leva à tela certa e cita a fonte (`assistantService.js:266-276`).
+- Atalhos de teclado (`keyboard-shortcuts.js`); a Guia leva à tela certa e cita a fonte (`assistantService.js:266-276`).
 
 **Atritos por jornada:**
 - **Visitante, cadastro, e-mail, login:** o C2; seletor "SMS (indisponível na V1)" inútil (`index.html:171-176`); telefone obrigatório (`:153`);
@@ -106,7 +106,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 - **Admin (10 painéis):** sem tela de flags, de reenviar confirmação, de excluir ou anonimizar conta; promoção a membro após o Forms manual e sem prazo.
 - **Celular e leitor de tela:** Lighthouse 100 só no login (`LIGHTHOUSE_2026-10-08b.md:76`); teste manual com NVDA, JAWS e VoiceOver nunca
   registrado (`QA_LEITORES_DE_TELA.md:169-171`); 82 textos com menos de 11 px nos módulos (`backlog-futuro.md:37`).
-- **Lia:** "Não encontrei" provável para pergunta do acervo enquanto a busca for só por trigramas (O36); aviso de pesquisa tardio (C7);
+- **Guia:** "Não encontrei" provável para pergunta do acervo enquanto a busca for só por trigramas (O36); aviso de pesquisa tardio (C7);
   emergência sem números de atendimento (`worker/src/assistant/docsConteudo.js:117-118`).
 
 ## 6. O que pode melhorar (por área)
@@ -123,7 +123,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 | Segurança | Token fora de `getState()` (`callApiAuthed`) | G | médio |
 | Desempenho | Marca em WebP de até 40 KB; minificar JS e CSS; mídia em domínio próprio | P | médio |
 | App no celular | Barra com 5 itens + "Mais"; rótulos de 12 px ou mais; cartão "Como virar membro" | M | alto |
-| Lia | Ativação da v2 em ordem; números oficiais de emergência com fonte; painel de lacunas | M | alto |
+| Guia | Ativação da v2 em ordem; números oficiais de emergência com fonte; painel de lacunas | M | alto |
 | Conteúdo | Revisão humana assinada (Outubro Rosa, questões, Atlas) | G | alto |
 | Código | Extrair Administração de `app.js`; dividir `liga.css`; consertar os 10 e2e; medir cobertura | M | médio |
 | Documentação | Uma fonte de estado (`CONTINUIDADE.md`); atualizar riscos, flags e contrato | P | médio |
@@ -134,7 +134,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 | S1 | Limites de autenticação sem bloqueio geral | C1, P0 | P | alto | Claude (dono aprova os tetos) | `AV-01-rate-limit.md` |
 | S2 | Reenvio de confirmação, redefinição que confirma, faxina de não confirmadas | C2 | M | alto | Claude + dono (prazo) | `AV-02-funil-cadastro.md` |
 | S3 | Domínio de e-mail autenticado | C2 | P | alto | dono (Brevo e DNS) | `AV-03-email-dominio.md` |
-| S4 | Ativação da Lia v2 (reindexar, 026, cache) | #46 já está na `main` | M | alto | dono (flags) + Claude | `AV-04-lia-ativacao.md` |
+| S4 | Ativação da Guia v2 (reindexar, 026, cache) | #46 já está na `main` | M | alto | dono (flags) + Claude | `AV-04-lia-ativacao.md` |
 | S5 | Higiene de produção (HSTS, Pages, CORS, imagem, `r2.dev`) | baixo custo | P | médio | dono (DNS) + Claude | `AV-05-higiene-prod.md` |
 | S6 | Painel de flags | tira o SQL do caminho | M | alto | Claude; portão visual | `AV-06-painel-flags.md` |
 | S7 | Pacote jurídico (idade, Política, edital, retenção, re-aceite) | C3, C4 | P/G | alto | dono + jurídico | `AV-07-pacote-juridico.md` |
@@ -142,7 +142,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 | S9 | 10 e2e vermelhos, cobertura medida, Semgrep bloqueante | qualidade | M | médio | Claude | `AV-09-testes.md` |
 | S10 | Barra do app, visitante para membro, aviso das mensagens | atrito diário | M | alto | Claude; portão visual | `AV-10-ux-app.md` |
 | S11 | Excluir e exportar conta | LGPD | M | alto | jurídico + Claude | `AV-11-titular.md` |
-| S12 | Revisão humana de saúde e números de emergência na Lia | C5 | G | alto | dono (revisor) | `AV-12-revisao-saude.md` |
+| S12 | Revisão humana de saúde e números de emergência na Guia | C5 | G | alto | dono (revisor) | `AV-12-revisao-saude.md` |
 | S13 | Forms atualizado e flag só com datas | C3 | P | alto | dono e diretoria | `AV-13-processo.md` |
 | S14 | Consolidar documentos de estado | divergências | P | médio | Claude | `AV-14-docs.md` |
 | S15 | Extrair Administração de `app.js`; dividir `liga.css` | arquivo quente | M | médio | Claude | `AV-15-modularizar.md` |
@@ -152,7 +152,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 ### 8.0 Regras do dono (valem para todo agente)
 - **Equipe:**
   - Opus 5.5 orquestra: lê o código, escreve as fichas e revisa;
-  - Sonnet produz o código de risco (autenticação, banco, Lia, build);
+  - Sonnet produz o código de risco (autenticação, banco, Guia, build);
   - Haiku faz o mecânico (documentos, textos, testes simples, CSS pontual), uma ficha cada, até 3 arquivos, aceite por comando e relatório de até 12 linhas;
   - no máximo 3 agentes ao mesmo tempo. A sessão principal dispara os agentes, integra os arquivos quentes (`index.html`, `app.js`, `build.js`, `sw.js`), roda as suítes e abre a PR.
 - **O dono só revisa e mescla.** Sem auto-merge e sem linhas de atribuição nos commits.
@@ -165,9 +165,9 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 - **GateGuard:** se pedir fatos, escreva 2 linhas e repita a mesma chamada. Ramifique sempre de `origin/main` num worktree.
 
 ### 8.1 Estado de partida
-- #46 (Lia) e #47 (identidade) estão mescladas.
+- #46 (Guia) e #47 (identidade) estão mescladas.
 - Em produção: `ux_v2_enabled` ligada; 020 a 024 aplicadas; **026 não aplicada**.
-- Se a base da Lia foi reindexada depois do deploy: não verificado.
+- Se a base da Guia foi reindexada depois do deploy: não verificado.
 - Em andamento: os ajustes da tela de login, do blog e do endereço (cabeçalho). Na troca para Rua dos Maçons, 364, conferir CEP e coordenadas em fonte aberta, como em `docs/identidade/PLANO.md:28-30`.
 
 ### 8.2 Iniciativas (nesta ordem)
@@ -196,7 +196,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
 - Aceite: testes do Worker verdes; e2e novo `cadastro` (cadastrar, reenviar, confirmar, entrar); o dono confirma a chegada fora do spam em Gmail, Outlook e e-mail institucional.
 - Riscos: enumeração de e-mail (resposta neutra) e abuso de envio (limites). Quem decide: o dono (prazo e domínio).
 
-**I3. Ativar a Lia v2 em produção na ordem segura**
+**I3. Ativar a Guia v2 em produção na ordem segura**
 - Opus orquestra; Sonnet faz a calibração e o aviso; Haiku faz os documentos. Esforço: M.
 - Passos (`docs/lia/REVISAO.md:68`):
   0. Conferir que o Worker no ar contém a #46.
@@ -282,7 +282,7 @@ miniatura do laço rosa no aviso do blog, endereço da UNINASSAU para Rua dos Ma
   1. O dono nomeia o revisor com registro profissional.
   2. Fila: Outubro Rosa, depois as questões de toxicologia e do quiz, depois o Atlas (0 de 215).
   3. Registro assinado (nome, data, escopo) em `docs/`.
-  4. Lia: números oficiais de emergência (Disque-Intoxicação e SAMU), conferidos na fonte oficial, em `docsConteudo.js:117-118`, e reindexar.
+  4. Guia: números oficiais de emergência (Disque-Intoxicação e SAMU), conferidos na fonte oficial, em `docsConteudo.js:117-118`, e reindexar.
 - Aceite: tabela de revisão assinada; `cd worker && npm test -- -i docsConteudo ragEval` verde.
 - Riscos: falta de revisor; nada vira "revisado" sem assinatura. Quem decide: o dono.
 

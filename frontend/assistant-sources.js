@@ -3,13 +3,13 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Lia: fontes citadas sob a resposta e convite da prévia de IA (extraído de assistant.js, que tem teto de
+// Guia: fontes citadas sob a resposta e convite da prévia de IA (extraído de assistant.js, que tem teto de
 // linhas). Tudo vindo do servidor é dado não confiável: o texto entra por textContent e o único href que
 // existe é copiado de uma LISTA FIXA deste arquivo (nunca do valor recebido), só para caminhos relativos.
 //   - PUBLIC_PATHS: páginas públicas que uma fonte pode abrir (`url` opcional de `sources`). É IGUAL à lista de
 //     worker/src/assistant/publicLinks.js (o teste assistant.test.mjs confere).
 //   - CTA_PATHS: onde o convite para criar conta pode levar (o cadastro abre por hash na tela de entrada).
-//   - Artigos da Biblioteca citados pela Lia (`references`, flag lia_library_enabled): título, autores, periódico e ano
+//   - Artigos da Biblioteca citados pela Guia (`references`, flag lia_library_enabled): título, autores, periódico e ano
 //     por textContent; o link só existe se a url for https://doi.org/ ou https://pubmed.ncbi.nlm.nih.gov/ (a mesma
 //     regra do banco), e o href é montado com o host da LISTA FIXA daqui.
 // Expõe window.LaiftAssistantSources.

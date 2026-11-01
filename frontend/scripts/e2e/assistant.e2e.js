@@ -4,10 +4,10 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * assistant.e2e.js — Lia, guia da plataforma (frontend/assistant.js).
+ * assistant.e2e.js — Guia, guia da plataforma (frontend/assistant.js).
  * Flag desligada = sem botão; ligada = conversa, botões que levam às telas,
  * botão fora da lista branca descartado, histórico só com perguntas da pessoa,
- * conversa zerada ao trocar de conta, "disabled" do servidor esconde a Lia.
+ * conversa zerada ao trocar de conta, "disabled" do servidor esconde a Guia.
  */
 const { startApp, check } = require('./harness');
 const { axeGate } = require('./axe-gate');
@@ -56,7 +56,7 @@ function suspendedReply() {
   return { success: true, source: 'moderation', reply: text, message: text, actions: [], suggestions: [], moderation: { level: 3, suspended: true, until: inADay() } };
 }
 
-/** Faz login, abre a Lia e, se houver mensagem, envia. Devolve a página. */
+/** Faz login, abre a Guia e, se houver mensagem, envia. Devolve a página. */
 async function openLia(app, message) {
   await app.login();
   const page = app.page;
@@ -70,20 +70,20 @@ async function openLia(app, message) {
 }
 
 async function moderacao() {
-  // ---- Aviso nível 1 e 2: faixa com ícone e texto, Lia em alerta, chat continua ----
+  // ---- Aviso nível 1 e 2: faixa com ícone e texto, Guia em alerta, chat continua ----
   const warn = await startApp({ role: 'member', workerHandlers: { apiGetFeatureFlags: FLAGS_ON, apiAssistantChat: warnReply } });
   try {
     const page = await openLia(warn, '[aviso1] oi');
     await page.waitForSelector('#lia-log .lia-warning-1');
     check(/Aviso 1 de 3/.test(await page.textContent('#lia-log .lia-warning-1')), 'o nível 1 mostra a faixa "Aviso 1 de 3" (texto, não só cor)');
     check(await page.getAttribute('#lia-log .lia-warning-1', 'role') === 'status', 'a faixa de aviso tem papel de status');
-    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está atenta"]');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Guia está atenta"]');
     check(await page.isEnabled('#lia-input'), 'com aviso, o chat continua disponível');
     await page.fill('#lia-input', '[aviso2] oi');
     await page.press('#lia-input', 'Enter');
     await page.waitForSelector('#lia-log .lia-warning-2');
     check(/Aviso 2 de 3/.test(await page.textContent('#lia-log .lia-warning-2')), 'o nível 2 mostra a faixa "Aviso 2 de 3"');
-    await page.waitForSelector('#lia-panel .lia[aria-label="Lia emitiu um alerta"]');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Guia emitiu um alerta"]');
     check(await page.locator('#lia-redeem.hidden').count() === 1, 'sem suspensão, o pedido de redenção continua escondido');
     check(warn.errors.length === 0, 'sem erros de página nos avisos (' + warn.errors.join('; ') + ')');
   } finally {
@@ -105,7 +105,7 @@ async function moderacao() {
   });
   try {
     const page = await openLia(sus, '[suspende] oi');
-    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está suspensa"]');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Guia está suspensa"]');
     check(await page.isDisabled('#lia-input'), 'com o chat suspenso, o campo de pergunta fica desabilitado');
     check(await page.isVisible('#lia-redeem'), 'a suspensão mostra o pedido de redenção');
     check(/\d{2}\/\d{2} às \d{2}:\d{2} \(horário de Brasília\)/.test(await page.textContent('.lia-redeem-return')), 'a suspensão informa o horário de retorno em Brasília');
@@ -121,8 +121,8 @@ async function moderacao() {
     check(redeemed.length === 1 && redeemed[0][0] === 'e2e-session-token' && /Errei ao xingar/.test(redeemed[0][1].message), 'a redenção vai com a sessão da pessoa e com a explicação');
     check(await page.isEnabled('#lia-input'), 'redenção aceita: o campo de pergunta volta');
     check(await page.evaluate(() => document.activeElement.id) === 'lia-input', 'ao aceitar, o foco vai para a pergunta');
-    check(await page.locator('#lia-panel .lia[aria-label="Lia"]').count() === 1, 'a Lia volta ao repouso depois da redenção');
-    check(/O chat voltou ao normal/.test(await page.textContent('#lia-log')), 'a Lia dá as boas-vindas de volta');
+    check(await page.locator('#lia-panel .lia[aria-label="Guia"]').count() === 1, 'a Guia volta ao repouso depois da redenção');
+    check(/O chat voltou ao normal/.test(await page.textContent('#lia-log')), 'a Guia dá as boas-vindas de volta');
     check(sus.errors.length === 0, 'sem erros de página na redenção (' + sus.errors.join('; ') + ')');
   } finally {
     await sus.close();
@@ -143,7 +143,7 @@ async function moderacao() {
   });
   try {
     const page = await openLia(refusal, '[suspende] oi');
-    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está suspensa"]');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Guia está suspensa"]');
     await page.click('.lia-redeem-open');
     await page.fill('#lia-redeem-text', 'Peço desculpas e vou manter o respeito com a equipe.');
     await page.click('.lia-redeem-send');
@@ -170,7 +170,7 @@ async function moderacao() {
   });
   try {
     const page = await openLia(flaky, '[suspende] oi');
-    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está suspensa"]');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Guia está suspensa"]');
     await page.click('.lia-redeem-open');
     const explanation = 'Errei ao xingar a colega. Vou responder com respeito daqui em diante.';
     await page.fill('#lia-redeem-text', explanation);
@@ -214,14 +214,14 @@ async function moderacao() {
     await restore.login();
     const page = restore.page;
     await page.waitForSelector('#lia-launcher:not(.hidden)');
-    check(stateCalls.length === 0, 'a página não consulta a moderação antes de abrir a Lia');
+    check(stateCalls.length === 0, 'a página não consulta a moderação antes de abrir a Guia');
     await page.click('#lia-launcher');
-    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está suspensa"]');
-    check(stateCalls.length === 1 && stateCalls[0] === 'e2e-session-token', 'ao abrir a Lia, a suspensão é consultada uma vez, com a sessão da pessoa');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Guia está suspensa"]');
+    check(stateCalls.length === 1 && stateCalls[0] === 'e2e-session-token', 'ao abrir a Guia, a suspensão é consultada uma vez, com a sessão da pessoa');
     check(await page.isDisabled('#lia-input'), 'após recarregar a página, a suspensão volta a valer na tela');
     await page.keyboard.press('Escape');
     await page.click('#lia-launcher');
-    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está suspensa"]');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Guia está suspensa"]');
     check(stateCalls.length === 1, 'reabrir o painel não consulta de novo nesta página');
     await page.click('#btn-logout');
     await page.waitForSelector('#public-shell:not(.hidden)');
@@ -266,7 +266,7 @@ async function moderacao() {
   }
 }
 
-// ---- Dica contextual (plano §3.4): um balão por módulo por sessão, perto da Lia ----
+// ---- Dica contextual (plano §3.4): um balão por módulo por sessão, perto da Guia ----
 const DICA = {
   eventos: 'Quer ajuda com sua inscrição?',
   propostas: 'Posso te levar para criar uma proposta.',
@@ -282,11 +282,11 @@ async function dicas() {
     await page.waitForSelector('#lia-launcher:not(.hidden)');
     const textoDaDica = () => page.$eval('.lia-hint-open', (b) => b.textContent).catch(() => '');
 
-    // Entrar em Eventos mostra a dica, sem abrir o painel da Lia
+    // Entrar em Eventos mostra a dica, sem abrir o painel da Guia
     await page.click('#app-nav [data-panel="panel-events"]');
     await page.waitForSelector('.lia-hint[role="status"]');
-    check(await textoDaDica() === DICA.eventos, 'entrar em Eventos mostra a dica da Lia');
-    check(await page.locator('#lia-panel.hidden').count() === 1, 'a dica não abre o painel da Lia sozinha');
+    check(await textoDaDica() === DICA.eventos, 'entrar em Eventos mostra a dica da Guia');
+    check(await page.locator('#lia-panel.hidden').count() === 1, 'a dica não abre o painel da Guia sozinha');
 
     // Fechar pelo × some a dica; voltar a Eventos na mesma sessão não a repete
     await page.click('.lia-hint-close');
@@ -301,20 +301,20 @@ async function dicas() {
     await page.waitForTimeout(400);
     check(await page.locator('.lia-hint').count() === 0, 'voltar a Eventos na mesma sessão não repete a dica');
 
-    // Ao abrir a Lia, ela já vem com o prop da tela (Eventos); com o painel aberto, nenhuma dica
+    // Ao abrir a Guia, ela já vem com o prop da tela (Eventos); com o painel aberto, nenhuma dica
     await page.click('#lia-launcher');
     await page.waitForSelector('#lia-panel:not(.hidden)');
-    check(await page.locator('#lia-panel .lia[aria-label="Lia, assistente de Eventos"]').count() === 1, 'a Lia abre já com o prop de Eventos');
-    check(await page.locator('.lia-hint').count() === 0, 'com o painel da Lia aberto, nenhuma dica aparece');
+    check(await page.locator('#lia-panel .lia[aria-label="Guia, assistente de Eventos"]').count() === 1, 'a Guia abre já com o prop de Eventos');
+    check(await page.locator('.lia-hint').count() === 0, 'com o painel da Guia aberto, nenhuma dica aparece');
     await page.keyboard.press('Escape');
 
-    // Tocar na dica abre a Lia com a pergunta no campo; nada é enviado
+    // Tocar na dica abre a Guia com a pergunta no campo; nada é enviado
     await page.click('#app-nav [data-panel="panel-learn"]');
     await page.waitForSelector('.lia-hint-open');
     check(await textoDaDica() === DICA.aprender, 'Aprender tem a sua dica');
     await page.click('.lia-hint-open');
     await page.waitForSelector('#lia-panel:not(.hidden)');
-    check(await page.inputValue('#lia-input') === DICA.aprender, 'tocar na dica abre a Lia com a pergunta pronta no campo');
+    check(await page.inputValue('#lia-input') === DICA.aprender, 'tocar na dica abre a Guia com a pergunta pronta no campo');
     check(await page.locator('.lia-msg-user').count() === 0, 'a pergunta não foi enviada');
     check(app.calls.worker.every((c) => c.action !== 'apiAssistantChat'), 'tocar na dica não chama o chat');
     await page.keyboard.press('Escape');
@@ -333,7 +333,7 @@ async function dicas() {
 }
 
 module.exports = async function assistant() {
-  // ---- Flag desligada (padrão): a Lia não existe na tela ----
+  // ---- Flag desligada (padrão): a Guia não existe na tela ----
   const off = await startApp({ role: 'member' });
   try {
     await off.login();
@@ -341,8 +341,8 @@ module.exports = async function assistant() {
     for (let i = 0; i < 50 && !off.calls.worker.some((c) => c.action === 'apiGetFeatureFlags' && c.args[0] === 'e2e-session-token'); i += 1) {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    check(off.calls.worker.some((c) => c.action === 'apiGetFeatureFlags'), 'a Lia perguntou ao servidor se está ligada');
-    check(await off.page.locator('#lia-launcher.hidden').count() === 1, 'com a flag desligada o botão da Lia fica escondido');
+    check(off.calls.worker.some((c) => c.action === 'apiGetFeatureFlags'), 'a Guia perguntou ao servidor se está ligada');
+    check(await off.page.locator('#lia-launcher.hidden').count() === 1, 'com a flag desligada o botão da Guia fica escondido');
     check(off.calls.worker.every((c) => c.action !== 'apiAssistantChat'), 'sem a flag, nenhuma chamada ao chat');
   } finally {
     await off.close();
@@ -354,7 +354,7 @@ module.exports = async function assistant() {
     role: 'member',
     workerHandlers: {
       apiGetFeatureFlags: FLAGS_ON,
-      // "[lento]" simula uma resposta demorada, para observar o estado "pensando" da Lia.
+      // "[lento]" simula uma resposta demorada, para observar o estado "pensando" da Guia.
       apiAssistantChat: async (args) => {
         chats.push(args);
         if (/\[lento\]/.test(String(args[1].message))) await new Promise((resolve) => setTimeout(resolve, 600));
@@ -366,17 +366,17 @@ module.exports = async function assistant() {
     const page = app.page;
     await app.login();
     await page.waitForSelector('#lia-launcher:not(.hidden)');
-    check(true, 'com a flag ligada o botão da Lia aparece');
+    check(true, 'com a flag ligada o botão da Guia aparece');
     check(await page.locator('#lia-panel.hidden').count() === 1, 'o painel começa fechado');
     const crop = await page.getAttribute('#lia-launcher .lia-launcher-figure svg.lia-svg', 'viewBox');
-    check(!!crop && crop !== '0 0 200 300', 'a bolha fechada mostra a Lia recortada na cabeça (viewBox ' + crop + ')');
+    check(!!crop && crop !== '0 0 200 300', 'a bolha fechada mostra a Guia recortada na cabeça (viewBox ' + crop + ')');
 
     await page.click('#lia-launcher');
     await page.waitForSelector('#lia-panel:not(.hidden)');
     check(await page.getAttribute('#lia-launcher', 'aria-expanded') === 'true', 'o botão informa que o painel está aberto (aria-expanded)');
-    check(await page.getAttribute('#lia-panel .lia-head-figure svg.lia-svg', 'viewBox') === '0 0 200 300', 'o painel mostra a Lia de corpo inteiro no cabeçalho');
-    check(await page.getAttribute('#lia-panel .lia', 'aria-label') === 'Lia', 'a Lia do painel começa com o rótulo de repouso');
-    check(/Eu sou a Lia/.test(await page.textContent('#lia-log')), 'a Lia se apresenta ao abrir');
+    check(await page.getAttribute('#lia-panel .lia-head-figure svg.lia-svg', 'viewBox') === '0 0 200 300', 'o painel mostra a Guia de corpo inteiro no cabeçalho');
+    check(await page.getAttribute('#lia-panel .lia', 'aria-label') === 'Guia', 'a Guia do painel começa com o rótulo de repouso');
+    check(/Eu sou a Guia/.test(await page.textContent('#lia-log')), 'a Guia se apresenta ao abrir');
     check(await page.evaluate(() => document.activeElement && document.activeElement.id) === 'lia-input', 'o foco vai para o campo de pergunta');
 
     // Pergunta sobre eventos → texto com dado + botão que leva à tela de eventos
@@ -387,11 +387,11 @@ module.exports = async function assistant() {
     check(chats[0][1].message === 'quais eventos estão abertos?' && Array.isArray(chats[0][1].history) && chats[0][1].history.length === 0, 'a primeira pergunta não leva histórico');
     check(/^panel-/.test(chats[0][1].context.panel), 'o painel atual vai como contexto (' + chats[0][1].context.panel + ')');
     check(!JSON.stringify(chats[0]).includes('ana@exemplo.com'), 'o e-mail da pessoa nunca vai na pergunta');
-    await axeGate(page, 'Lia aberta com resposta (membro)');
+    await axeGate(page, 'Guia aberta com resposta (membro)');
     await page.click('#lia-log .lia-chip-action:has-text("Eventos")');
     await page.waitForSelector('#panel-events:not(.hidden)');
-    check(await page.locator('#lia-panel.hidden').count() === 1, 'ao clicar no botão a Lia sai da frente e a tela de eventos abre');
-    check(await page.locator('#lia-panel .lia').count() === 0, 'ao fechar o painel, a Lia do cabeçalho é desmontada');
+    check(await page.locator('#lia-panel.hidden').count() === 1, 'ao clicar no botão a Guia sai da frente e a tela de eventos abre');
+    check(await page.locator('#lia-panel .lia').count() === 0, 'ao fechar o painel, a Guia do cabeçalho é desmontada');
 
     // Laboratório → botão abre o módulo; o botão hostil não existe
     await page.click('#lia-launcher');
@@ -399,7 +399,7 @@ module.exports = async function assistant() {
     await page.fill('#lia-input', 'como funciona o laboratório?');
     await page.press('#lia-input', 'Enter');
     await page.waitForFunction(() => /Estúdio 3D/.test(document.getElementById('lia-log').textContent));
-    check(chats[1][1].history.length === 1 && chats[1][1].history[0].role === 'user' && chats[1][1].history[0].text === 'quais eventos estão abertos?', 'o histórico leva só a pergunta anterior da pessoa, nunca a resposta da Lia');
+    check(chats[1][1].history.length === 1 && chats[1][1].history[0].role === 'user' && chats[1][1].history[0].text === 'quais eventos estão abertos?', 'o histórico leva só a pergunta anterior da pessoa, nunca a resposta da Guia');
     const chipLabels = await page.$$eval('#lia-log .lia-chip-action', (nodes) => nodes.map((n) => n.textContent));
     check(chipLabels.includes('Laboratório Virtual') && !chipLabels.includes('Clique aqui'), 'o botão fora da lista branca é descartado (' + chipLabels.join(' | ') + ')');
     await page.click('#lia-log .lia-chip-action:has-text("Laboratório Virtual")');
@@ -407,14 +407,14 @@ module.exports = async function assistant() {
     const frameSrc = await page.$eval('.learn-frame:not(.hidden)', (f) => f.getAttribute('src'));
     check(/modulos\/laboratorio\//.test(frameSrc), 'o botão abre o módulo do laboratório (' + frameSrc + ')');
 
-    // Crachá pela Lia
+    // Crachá pela Guia
     await page.click('#lia-launcher');
     await page.fill('#lia-input', 'meu crachá');
     await page.press('#lia-input', 'Enter');
     await page.waitForFunction(() => /QR de presença/.test(document.getElementById('lia-log').textContent));
     await page.click('#lia-log .lia-chip-action:has-text("Meu crachá")');
     await page.waitForSelector('#modal-learn-credential:not(.hidden)');
-    check(true, 'o botão "Meu crachá" da Lia abre o crachá virtual');
+    check(true, 'o botão "Meu crachá" da Guia abre o crachá virtual');
     await page.click('#learn-credential-close');
 
     // Esc fecha e devolve o foco
@@ -422,7 +422,7 @@ module.exports = async function assistant() {
     await page.waitForSelector('#lia-panel:not(.hidden)');
     await page.keyboard.press('Escape');
     check(await page.locator('#lia-panel.hidden').count() === 1, 'Esc fecha o painel');
-    check(await page.evaluate(() => document.activeElement && document.activeElement.id) === 'lia-launcher', 'o foco volta para o botão da Lia');
+    check(await page.evaluate(() => document.activeElement && document.activeElement.id) === 'lia-launcher', 'o foco volta para o botão da Guia');
 
     // Texto da resposta é texto, nunca HTML
     check(await page.locator('#lia-log script, #lia-log img').count() === 0, 'a conversa não tem elementos ativos');
@@ -432,13 +432,13 @@ module.exports = async function assistant() {
     await page.waitForSelector('#lia-panel:not(.hidden)');
     await page.fill('#lia-input', '[lento] meu crachá');
     await page.press('#lia-input', 'Enter');
-    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está pensando"]');
-    check(true, 'enquanto a resposta vem, o rótulo da Lia diz que ela está pensando');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Guia está pensando"]');
+    check(true, 'enquanto a resposta vem, o rótulo da Guia diz que ela está pensando');
     // "digitando" some quando a resposta chega (o texto já existia de um passo anterior, então não serve de sinal)
     await page.waitForSelector('#lia-log .lia-typing', { state: 'detached' });
-    check(await page.locator('#lia-panel .lia[aria-label="Lia está respondendo"]').count() === 1, 'quando a resposta chega, a Lia fala');
+    check(await page.locator('#lia-panel .lia[aria-label="Guia está respondendo"]').count() === 1, 'quando a resposta chega, a Guia fala');
     await page.keyboard.press('Escape');
-    check(await page.locator('#lia-panel .lia').count() === 0, 'fechar o painel desmonta a Lia do cabeçalho');
+    check(await page.locator('#lia-panel .lia').count() === 0, 'fechar o painel desmonta a Guia do cabeçalho');
 
     // Sair da conta zera a conversa
     await page.click('#btn-logout');
@@ -452,12 +452,12 @@ module.exports = async function assistant() {
     await app.close();
   }
 
-  // ---- O servidor desliga a Lia no meio da conversa ----
+  // ---- O servidor desliga a Guia no meio da conversa ----
   const kill = await startApp({
     role: 'member',
     workerHandlers: {
       apiGetFeatureFlags: FLAGS_ON,
-      apiAssistantChat: () => ({ success: false, disabled: true, message: 'A Lia está indisponível no momento.' }),
+      apiAssistantChat: () => ({ success: false, disabled: true, message: 'A Guia está indisponível no momento.' }),
     },
   });
   try {
@@ -467,7 +467,7 @@ module.exports = async function assistant() {
     await kill.page.fill('#lia-input', 'oi');
     await kill.page.press('#lia-input', 'Enter');
     await kill.page.waitForSelector('#lia-launcher.hidden', { state: 'attached' });
-    check(await kill.page.locator('#lia-panel.hidden').count() === 1, 'se o servidor desligar a Lia, o botão e o painel somem');
+    check(await kill.page.locator('#lia-panel.hidden').count() === 1, 'se o servidor desligar a Guia, o botão e o painel somem');
   } finally {
     await kill.close();
   }
@@ -487,14 +487,14 @@ module.exports = async function assistant() {
     await err.page.fill('#lia-input', 'oi');
     await err.page.press('#lia-input', 'Enter');
     await err.page.waitForSelector('#lia-log .lia-msg-error');
-    check(/Muitas tentativas/.test(await err.page.textContent('#lia-log .lia-msg-error')), 'o erro do servidor aparece como mensagem da Lia');
-    check(await err.page.locator('#lia-panel .lia[aria-label="Lia não entendeu"]').count() === 1, 'um erro do servidor deixa a Lia confusa');
+    check(/Muitas tentativas/.test(await err.page.textContent('#lia-log .lia-msg-error')), 'o erro do servidor aparece como mensagem da Guia');
+    check(await err.page.locator('#lia-panel .lia[aria-label="Guia não entendeu"]').count() === 1, 'um erro do servidor deixa a Guia confusa');
     check(await err.page.locator('.lia-send:not([disabled])').count() === 1, 'o envio é liberado de novo depois do erro');
   } finally {
     await err.close();
   }
 
-  // ---- O 👍 no micro-card faz a Lia comemorar ----
+  // ---- O 👍 no micro-card faz a Guia comemorar ----
   const fb = await startApp({
     role: 'member',
     workerHandlers: {
@@ -514,9 +514,9 @@ module.exports = async function assistant() {
     await fb.page.press('#lia-input', 'Enter');
     await fb.page.waitForSelector('#lia-log .lia-fb-choice');
     await fb.page.click('#lia-log .lia-fb-choice:has-text("Útil")');
-    await fb.page.waitForSelector('#lia-panel .lia[aria-label="Lia está celebrando"]');
+    await fb.page.waitForSelector('#lia-panel .lia[aria-label="Guia está celebrando"]');
     check(fb.calls.worker.some((c) => c.action === 'apiAssistantFeedback'), 'o 👍 vai ao servidor');
-    check(true, 'o 👍 aceito faz a Lia comemorar');
+    check(true, 'o 👍 aceito faz a Guia comemorar');
   } finally {
     await fb.close();
   }
@@ -527,7 +527,7 @@ module.exports = async function assistant() {
     const page = await openLia(mood, null);
     await page.waitForSelector('#lia-log .lia-msg-lia .lia-bubble');
     const greeting = await page.textContent('#lia-log .lia-msg-lia .lia-bubble');
-    check(/^(Oi!|Olá!|E aí!|Bem-vindo!|Chegou!) Eu sou a Lia, a guia da plataforma LAIFT\./.test(greeting), 'a saudação abre com uma variação e mantém a apresentação');
+    check(/^(Oi!|Olá!|E aí!|Bem-vindo!|Chegou!) Eu sou a Guia da plataforma LAIFT\./.test(greeting), 'a saudação abre com uma variação e mantém a apresentação');
     await page.keyboard.press('Escape'); // fecha
     await page.click('#lia-launcher'); // reabre
     check(await page.locator('#lia-log .lia-msg-lia').count() === 1, 'reabrir o painel não repete a saudação');

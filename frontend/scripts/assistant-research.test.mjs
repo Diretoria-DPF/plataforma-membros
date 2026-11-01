@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Pesquisa externa e registro da Lia (frontend/assistant-research.js): rótulos das fontes,
+// Pesquisa externa e registro da Guia (frontend/assistant-research.js): rótulos das fontes,
 // sanitização de links e tamanhos, bloco de referências com DOM mínimo e aviso de privacidade.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -63,7 +63,7 @@ test('sourceLabel: rótulo legível para cada fonte; id desconhecido volta como 
   assert.equal(Object.keys(R.SOURCE_LABELS).length, 12);
   assert.equal(R.sourceLabel('kb'), 'Guia da plataforma');
   assert.equal(R.sourceLabel('destinos'), 'Telas e módulos');
-  assert.equal(R.sourceLabel('guia'), 'Guia da Lia');
+  assert.equal(R.sourceLabel('guia'), 'Guia da Guia');
   assert.equal(R.sourceLabel('privacidade'), 'Privacidade');
   assert.equal(R.sourceLabel('convivencia'), 'Convivência');
   assert.equal(R.sourceLabel('liga'), 'A Liga');
@@ -156,7 +156,7 @@ test('renderResearch: estado vazio e estado de falha, cada um sem lista; rodapé
   assert.equal(findAll(failed, (n) => n.tagName === 'UL').length, 0);
 
   [empty, failed].forEach((box) => {
-    assert.match(textOf(box), /Referências de base externa \(Europe PMC\)\. A Lia não resume artigos nem dá orientação de saúde\./);
+    assert.match(textOf(box), /Referências de base externa \(Europe PMC\)\. A Guia não resume artigos nem dá orientação de saúde\./);
   });
 });
 

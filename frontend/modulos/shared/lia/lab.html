@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lia Lab - ajuste do personagem</title>
+<title>Guia Lab - ajuste do personagem</title>
 <link rel="stylesheet" href="lia.css">
 <link rel="stylesheet" href="lab.css">
 </head>
 <body>
-<!-- Arte da Lia embutida (gerada por build-lab.mjs a partir de lia.svg). Nao editar entre os marcadores. -->
+<!-- Arte da Guia embutida (gerada por build-lab.mjs a partir de lia.svg). Nao editar entre os marcadores. -->
 <template id="lia-src">
 <!-- LIA_SVG_START -->
-<svg xmlns="http://www.w3.org/2000/svg" class="lia-svg" viewBox="0 0 200 300" role="img" aria-label="Lia">
+<svg xmlns="http://www.w3.org/2000/svg" class="lia-svg" viewBox="0 0 200 300" role="img" aria-label="Guia">
 <defs><path id="lia-star" class="s n" d="M0-8 2-2 8 0 2 2 0 8-2 2-8 0-2-2z"/></defs>
 <g id="lia-scene-glow"><circle class="gl n" cx="100" cy="150" r="104"/></g>
 <g id="lia-body">
@@ -79,8 +79,8 @@
 
 <header class="cab">
   <div>
-    <h1>Lia Lab</h1>
-    <p class="sub">Ajuste a proporção e a linguagem visual da Lia. Os valores viram parâmetros CSS (<code>lia.css</code>).</p>
+    <h1>Guia Lab</h1>
+    <p class="sub">Ajuste a proporção e a linguagem visual da Guia. Os valores viram parâmetros CSS (<code>lia.css</code>).</p>
   </div>
   <button type="button" id="btn-tema" class="botao" aria-pressed="false">Modo escuro</button>
 </header>
@@ -90,18 +90,18 @@
   <section class="painel palco-painel" aria-labelledby="h-palco">
     <h2 id="h-palco">Palco</h2>
     <div class="palco">
-      <div class="lia palco-lia" data-lia="palco" data-state="idle" role="img" aria-label="Lia no palco"></div>
+      <div class="lia palco-lia" data-lia="palco" data-state="idle" role="img" aria-label="Guia no palco"></div>
     </div>
     <p class="razao">Cabeça : corpo = <output id="o-razao" for="s-topo s-escala s-pescoco s-pernas">1 : 4,0</output></p>
 
     <h3>Tamanho real de bolha</h3>
     <div class="bolhas">
       <figure class="fig">
-        <div class="lia lia-48" data-lia="bolha" data-state="idle" role="img" aria-label="Lia na bolha de 48 pixels"></div>
+        <div class="lia lia-48" data-lia="bolha" data-state="idle" role="img" aria-label="Guia na bolha de 48 pixels"></div>
         <figcaption>48 px</figcaption>
       </figure>
       <figure class="fig">
-        <div class="lia lia-120" data-lia="bolha" data-state="idle" role="img" aria-label="Lia na bolha de 120 pixels"></div>
+        <div class="lia lia-120" data-lia="bolha" data-state="idle" role="img" aria-label="Guia na bolha de 120 pixels"></div>
         <figcaption>120 px</figcaption>
       </figure>
     </div>

@@ -16,7 +16,7 @@ Todo agente lê este arquivo antes de editar. Plano completo: `C:\Users\Administ
 - **Movimento**: só `transform` e `opacity`; duração e curva só via `--dur-*` e `--ease-*` de `modulos/shared/laift-tokens.css`.
 - **Sem bordas de card** sob `:root[data-flag-ux-v2-enabled]`: separar por tom (`--layer-0..3`), raio 24–32px, sombra de luz e hairline.
 - **Atlas 3D congelado** (`docs/ATLAS_UX_SPEC.md`): não mexer em `#organ-hud`, `#organ-name`, `#bio-search-input`; sem `backdrop-filter` sobre o canvas.
-- **LGPD / IA**: nenhum dado pessoal vai para a IA; a Lia **nunca altera dados**; texto de IA nunca vira botão (só a lista branca de `ACTION_KEYS`).
+- **LGPD / IA**: nenhum dado pessoal vai para a IA; a Guia **nunca altera dados**; texto de IA nunca vira botão (só a lista branca de `ACTION_KEYS`).
 - **Worker**: toda action nova entra no `API_REGISTRY` (`worker/src/handlers.js`) com `runWithSession`, validação de entrada, cota e testes; segredo nunca no código nem no chat. Migração nova = `sql/NNN_*.sql` + `sql/down/NNN_*.sql` e `npm run validate:sql` verde. Próxima numeração livre: 025.
 - **Imutabilidade, funções < 50 linhas, arquivos < 800 linhas.**
 
@@ -43,7 +43,7 @@ Plano: `C:\Users\Administrador\.claude\plans\c-users-administrador-desktop-audit
 - **Passo 0 de todo agente:** o worktree parte de um commit antigo. Rode `git merge feat/v5-fechamento` (branch local, já visível no worktree) antes de qualquer edição.
 - **Arquivos novos do frontend** (`build.js`, `sw.js` PRECACHE): o orquestrador registra. Informe no relatório o caminho do arquivo e como ele é carregado (`<script defer>` ou `<link>`).
 - **Esta PR não cria migração.** A 025 está reservada para a F4 (`feat/v5-f4-acervo`). *(Superado na Rodada 3: a 025 é da inscrição nativa; a F4 passa para a 026.)*
-- **Lia ondas 2–4:** nenhum código antes de o dono aprovar o preview da arte.
+- **Guia ondas 2–4:** nenhum código antes de o dono aprovar o preview da arte.
 - **Memória (3,9 GB):** testes do worker só das suítes afetadas, com `-i`; no máximo **um** e2e (Playwright) por agente e só o cenário que você precisa. A suíte completa é do orquestrador, em série, no fim.
 - **Hot file de outro dono:** não edite. Entregue o trecho exato (arquivo, linha, antes/depois) no relatório.
 

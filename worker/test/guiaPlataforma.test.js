@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * guiaPlataforma.test.js — guia geral da plataforma na base da Lia (docs/lia/GUIA-PLATAFORMA.md →
+ * guiaPlataforma.test.js — guia geral da plataforma na base da Guia (docs/lia/GUIA-PLATAFORMA.md →
  * worker/src/assistant/guiaPlataforma.js → buildDocuments(), fonte 'guia-plataforma').
  * Garante: o módulo gerado é igual ao markdown (quebras de linha normalizadas), as seções de
  * administração ficam fora do acervo, cada trecho cabe e não tem cara de instrução, o guia cobre
@@ -42,7 +42,7 @@ const UI_LABELS = [
   'Acessar blog', 'Conheça a LAIFT', 'Instalar o blog',
   'Sugerir artigo', 'Enviar sugestão', 'Sugestão enviada.', 'Buscar artigos', 'Limpar filtros', 'Carregar mais', 'Só acesso aberto',
   'Abrir no site oficial', 'Salvar nos favoritos', 'Remover dos favoritos', 'Copiar citação', 'Citação copiada.', 'Voltar às coleções',
-  'Reindexar base da Lia', 'Buscar dados', 'Aprovar referência', 'Publicar', 'Trabalho em lote',
+  'Reindexar base da Guia', 'Buscar dados', 'Aprovar referência', 'Publicar', 'Trabalho em lote',
   'Todas as áreas', 'Só em português', 'Para revisar', 'Marcar todos desta lista', 'Pôr a área nos marcados', 'Publicar os marcados',
   'Li e aprovo os resumos feitos por IA', 'Mudar estado ou tirar do ar', 'Pedir remoção', 'Pedidos de remoção', 'Aceitar e tirar do ar', 'Editar artigos',
 ];
@@ -79,7 +79,7 @@ describe('guia da plataforma: fonte única', () => {
   });
 
   test('passos curtos e numerados: toda seção de uso começa pelo passo 1', () => {
-    const semPassos = ['Tela Início: o resumo', 'Papéis: visitante, membro e administrador', 'Menu e avisos de pendência', 'Administração: Reindexar a base da Lia'];
+    const semPassos = ['Tela Início: o resumo', 'Papéis: visitante, membro e administrador', 'Menu e avisos de pendência', 'Administração: Reindexar a base da Guia'];
     chunkMarkdown(GUIA_SOURCE, MD).filter((c) => !semPassos.includes(c.section)).forEach((c) => {
       expect({ section: c.section, numbered: /\b1\. /.test(c.content) }).toEqual({ section: c.section, numbered: true });
     });

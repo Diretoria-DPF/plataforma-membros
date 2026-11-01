@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * Retenção da Lia (ADR 0005) contra Postgres de verdade (PGlite com todas as
+ * Retenção da Guia (ADR 0005) contra Postgres de verdade (PGlite com todas as
  * migrações). Prova o que um mock não prova: o corte por idade, o apagamento
  * do texto do comentário aos 90 dias e o efeito do CASCADE de sql/021 sobre a
  * avaliação. Para cada teste, os dias são "recuados" nas colunas created_at.
@@ -21,7 +21,7 @@ let sql;
 async function seedMessage(daysAgo = 0) {
   const res = await db.query(
     `INSERT INTO assistant_messages (profile_id, question_hash, topic, source, answer, created_at)
-     VALUES ($1, $2, 'eventos', 'kb', 'Resposta da Lia.', now() - make_interval(days => $3::int))
+     VALUES ($1, $2, 'eventos', 'kb', 'Resposta da Guia.', now() - make_interval(days => $3::int))
      RETURNING id`,
     [A, 'h-' + Math.random().toString(36).slice(2), daysAgo]
   );
@@ -141,7 +141,7 @@ describe('(b) registro da avaliação removido aos 365 dias', () => {
   });
 });
 
-describe('(c) resposta registrada da Lia removida aos 180 dias', () => {
+describe('(c) resposta registrada da Guia removida aos 180 dias', () => {
   test('mensagem de 181 dias sai; a de 179 dias permanece', async () => {
     const old = await seedMessage(181);
     const young = await seedMessage(179);

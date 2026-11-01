@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Lia: cola do humor no chat (L7). Liga o humor de modulos/shared/lia/lia-mood.js às
+// Guia: cola do humor no chat (L7). Liga o humor de modulos/shared/lia/lia-mood.js às
 // reações de assistant.js: a saudação, as frases fixas no tom reflexivo, os eventos
 // (👍, moderação, pergunta rápida, pedido de detalhe) e as micro-poses idle.
 // Funções puras: cada função devolve uma sessão nova e não altera a que recebeu.
@@ -22,7 +22,7 @@
   var QUICK_REPLY_MS = 4000;
   var NEGATIVE_MODES = ['warning', 'suspended']; // moderação de nível 1 ou mais
   var ASKS_DETAIL = /\b(detalhe|explique melhor|mais)/;
-  var GREETING_REST = 'Eu sou a Lia, a guia da plataforma LAIFT. Posso te explicar cada parte e te levar direto para a tela certa. Sobre o que você quer saber?';
+  var GREETING_REST = 'Eu sou a Guia da plataforma LAIFT. Posso te explicar cada parte e te levar direto para a tela certa. Sobre o que você quer saber?';
 
   /** Texto sem acento e em minúsculas, para casar "mais" e "explique melhor" com qualquer grafia. */
   function fold(text) {
@@ -97,7 +97,7 @@
     };
   }
 
-  /** Frase fixa da Lia (confirmação ou erro). No tom reflexivo ganha uma variação na frente; fora dele, fica igual. */
+  /** Frase fixa da Guia (confirmação ou erro). No tom reflexivo ganha uma variação na frente; fora dele, fica igual. */
   function fixedLine(session, kind, text, rand) {
     if (Mood.toneOf(session.mood) !== 'reflective') return { session: session, text: text };
     var line = Mood.pickVariation(kind, session.mood, rand, session.lastLine);

@@ -1,9 +1,9 @@
 -- Plataforma de Membros LAIFT
 -- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
 -- Licença proprietária: ver LICENSE na raiz do repositório.
--- 021_assistant_feedback.sql — respostas da Lia e feedback (polegar) das pessoas.
+-- 021_assistant_feedback.sql — respostas da Guia e feedback (polegar) das pessoas.
 --
--- assistant_messages  uma linha por resposta da Lia a uma pessoa logada. Guarda: hash da
+-- assistant_messages  uma linha por resposta da Guia a uma pessoa logada. Guarda: hash da
 --                     pergunta normalizada (NUNCA o texto da pergunta), tópico, origem
 --                     (regra, ao vivo, IA, moderação...), a resposta EM TEXTO, citações e
 --                     se foi degradada. A resposta fica legível por até 180 dias. O prompt

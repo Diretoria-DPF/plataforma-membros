@@ -1,6 +1,6 @@
 # L07: Pesquisa externa ("pesquisar mais a fundo"), adaptador e serviço atrás de `research_enabled`
 
-**Objetivo.** Deixar a Lia buscar referências científicas numa base externa grande (v1: Europe PMC, que cobre o PubMed sem chave; confirme em L01), mandando **só termos gerais**, guardando no registro (L04) apenas metadados e link e devolvendo um texto fixo, nunca gerado por IA. Desligado por padrão. Só liga depois do OK jurídico (Política, seção 5).
+**Objetivo.** Deixar a Guia buscar referências científicas numa base externa grande (v1: Europe PMC, que cobre o PubMed sem chave; confirme em L01), mandando **só termos gerais**, guardando no registro (L04) apenas metadados e link e devolvendo um texto fixo, nunca gerado por IA. Desligado por padrão. Só liga depois do OK jurídico (Política, seção 5).
 
 **Passo 0.** Leia:
 - `docs/lia/pesquisa/BASES.md` (de L01): endpoint, parâmetros, campos, limite e hosts. Se o arquivo não existir, use `https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=<termos>&format=json&pageSize=5&resultType=lite` e marque a hipótese;
@@ -28,7 +28,7 @@
    - falha do cliente → `Logging.logError(sql, cid, 'ASSISTANT_RESEARCH_FAILED', <mensagem curta sem os termos>, null)` e resposta honesta com `failed: true`.
 3. Formato de retorno (contrato com L08 e L09):
    `{ success: true, source: 'research', reply: <texto fixo>, actions: [], suggestions: [], research: { provider: 'europepmc', query, cached, failed, items: [...] } }`.
-   O `reply` diz quantas referências achou e traz o aviso "Referências de base externa; a Lia não resume artigos nem dá orientação de saúde."
+   O `reply` diz quantas referências achou e traz o aviso "Referências de base externa; a Guia não resume artigos nem dá orientação de saúde."
 4. Os itens passam por `sanitizeResults` antes de sair, mesmo quando vêm do cache.
 
 **Teste (com `fetch` simulado, sem rede).**

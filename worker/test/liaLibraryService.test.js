@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * liaLibraryService (flag lia_library_enabled): artigos PUBLICADOS da Biblioteca que a Lia cita, contra um
+ * liaLibraryService (flag lia_library_enabled): artigos PUBLICADOS da Biblioteca que a Guia cita, contra um
  * Postgres real (PGlite com as migrações). UMA consulta com LIMIT 3, cache no KV por consulta normalizada
  * (10 min, uma gravação por consulta NOVA com resultado), sem resumo, sem dado pessoal.
  */
@@ -47,7 +47,7 @@ async function addArticle(over = {}) {
     oa_status: 'gold',
     language: 'pt',
     status: 'publicado',
-    summary_text: 'Resumo que a Lia nunca deve enviar.',
+    summary_text: 'Resumo que a Guia nunca deve enviar.',
     summary_origin: 'curador',
     summary_updated_at: new Date('2026-01-15T00:00:00Z'),
     ...(published ? { approved_at: new Date('2026-01-01T00:00:00Z'), approver_name: 'Dra. Curadora', published_at: new Date('2026-02-01T00:00:00Z') } : {}),
@@ -91,7 +91,7 @@ describe('flags', () => {
     expect(articleQueries()).toHaveLength(0);
   });
 
-  test('library_enabled desligada: nada, mesmo com a da Lia ligada', async () => {
+  test('library_enabled desligada: nada, mesmo com a da Guia ligada', async () => {
     await addArticle();
     await setFlag('library_enabled', false);
     expect(await referencesFor(sql, makeEnv(), MEMBER, 'paracetamol')).toEqual([]);
@@ -172,7 +172,7 @@ describe('o que entra', () => {
     expect(articleQueries()).toHaveLength(0);
   });
 
-  test('falha da consulta: lista vazia, nunca lança (a resposta da Lia segue)', async () => {
+  test('falha da consulta: lista vazia, nunca lança (a resposta da Guia segue)', async () => {
     const failing = jest.fn((strings, ...values) => (strings.join('?').includes('FROM library_articles') ? Promise.reject(new Error('banco fora')) : rawSql(strings, ...values)));
     expect(await referencesFor(failing, makeEnv(), MEMBER, 'paracetamol')).toEqual([]);
   });
@@ -221,7 +221,7 @@ describe('cache no KV (10 min, uma gravação por consulta NOVA)', () => {
     expect(await referencesFor(sql, env, MEMBER, 'paracetamol')).toEqual([]);
   });
 
-  test('KV ausente, ilegível ou que falha ao gravar: a Lia segue pelo banco', async () => {
+  test('KV ausente, ilegível ou que falha ao gravar: a Guia segue pelo banco', async () => {
     await addArticle();
     expect(await referencesFor(sql, makeEnv(), MEMBER, 'paracetamol')).toHaveLength(1); // sem HOT_CACHE
     const broken = { get: jest.fn(async () => { throw new Error('kv fora'); }), put: jest.fn(async () => { throw new Error('kv fora'); }) };
