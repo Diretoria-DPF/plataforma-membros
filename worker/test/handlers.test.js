@@ -8,7 +8,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 159 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 161 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -17,7 +17,7 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiSubmitProposal', 'apiListMyProposals',
       'apiListOpenProposalsForVoting', 'apiCastVote', 'apiGetProposalResults',
       'apiListTasks', 'apiSignupForTask', 'apiMarkTaskComplete', 'apiListTaskComments', 'apiSubmitTaskComment',
-      'apiAdminDashboard', 'apiAdminListUsers', 'apiAdminChangeUserRole', 'apiAdminBanUser', 'apiAdminUnbanUser',
+      'apiAdminDashboard', 'apiAdminListUsers', 'apiAdminChangeUserRole', 'apiAdminClientErrors', 'apiLogClientError', 'apiAdminBanUser', 'apiAdminUnbanUser',
       'apiAdminListRoles', 'apiAdminGrantRole', 'apiAdminRevokeRole',
       'apiAdminListFeedback', 'apiAdminCreateEvent', 'apiAdminUpdateEventStatus', 'apiAdminListAllEvents',
       'apiAdminListProposalsForReview', 'apiAdminTransitionProposal', 'apiAdminCreateTask', 'apiAdminUpdateTaskStatus',

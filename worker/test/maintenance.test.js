@@ -45,7 +45,7 @@ describe('maintenance.runMaintenance', () => {
       .mockResolvedValueOnce([1, 1, 1]); // assistant_incidents (365 dias)
     const res = await runMaintenance(sql, 'cid');
     expect(res).toEqual({
-      aiUsageLog: 3, atlasTelemetry: 2, sessions: 1, accountTokens: 0, rateLimitBuckets: 2, auditLogs: 1, errorLogs: 4, mfaChallenges: 0,
+      aiUsageLog: 3, atlasTelemetry: 2, sessions: 1, accountTokens: 0, rateLimitBuckets: 2, auditLogs: 1, clientErrorsPurge: 0, errorLogs: 4, mfaChallenges: 0,
       semanticCache: 0, aiAlerts: 0, assistantModeration: 0,
       assistantFeedbackAnonymize: 2, assistantFeedbackPurge: 1, assistantMessagesPurge: 0, assistantIncidentsPurge: 3,
       ragReindex: 0, liaResearchPurge: 0, agentTracesPurge: 0, unconfirmedProfilesPurge: 0, usageDailyPurge: 0, activityDaysPurge: 0,
@@ -115,7 +115,7 @@ describe('maintenance.runMaintenance', () => {
       .mockResolvedValueOnce([]);        // assistant_incidents (365 dias)
     const res = await runMaintenance(sql, 'cid');
     expect(res).toEqual({
-      aiUsageLog: null, atlasTelemetry: 0, sessions: 1, accountTokens: 1, rateLimitBuckets: 0, auditLogs: 0, errorLogs: 1, mfaChallenges: 0,
+      aiUsageLog: null, atlasTelemetry: 0, sessions: 1, accountTokens: 1, rateLimitBuckets: 0, auditLogs: 0, clientErrorsPurge: 0, errorLogs: 1, mfaChallenges: 0,
       semanticCache: 0, aiAlerts: 0, assistantModeration: 0,
       assistantFeedbackAnonymize: 0, assistantFeedbackPurge: 0, assistantMessagesPurge: 0, assistantIncidentsPurge: 0,
       ragReindex: 0, liaResearchPurge: 0, agentTracesPurge: 0, unconfirmedProfilesPurge: 0, usageDailyPurge: 0, activityDaysPurge: 0,
@@ -150,9 +150,9 @@ describe('maintenance.runMaintenance', () => {
     sql.mockResolvedValue([]);
     await runMaintenance(sql, 'cid');
     const modifying = allQueryTexts(sql).filter((t) => /^\s*(DELETE|UPDATE)\b/.test(t));
-    // 9 limpezas do Worker + 4 da Lia + 1 dos rastros dos agentes + 2 de analytics + 1 dos cadastros não confirmados (SEC-02) + 3 da retenção do seletivo (sem contar o decaimento, que é um SELECT + UPDATE só com linhas).
+    // 9 limpezas do Worker + 4 da Lia + 1 dos rastros dos agentes + 2 de analytics + 1 dos cadastros não confirmados (SEC-02) + 1 dos erros do navegador (OPS-08) + 3 da retenção do seletivo (sem contar o decaimento, que é um SELECT + UPDATE só com linhas).
     // A purga de lia_pesquisas começa com WITH (está em researchLogService) e tem teste próprio abaixo.
-    expect(modifying).toHaveLength(20);
+    expect(modifying).toHaveLength(21);
     modifying.forEach((text) => {
       expect(text).toMatch(/\bWHERE\b[\s\S]*<\s*now\(\)/);
     });
@@ -173,8 +173,9 @@ describe('index.js — handler scheduled (Cron Trigger)', () => {
     // + 1 da purga do registro de pesquisas (liaResearchPurge, sql/026)
     // + 1 da purga dos rastros dos agentes (agentTracesPurge, sql/035)
     // + 2 das purgas de analytics (usageDailyPurge e activityDaysPurge, sql/040)
-    // + 3 da retenção do processo seletivo (expirar rascunhos, anonimizar, apagar eventos).
-    expect(sql).toHaveBeenCalledTimes(25);
+    // + 3 da retenção do processo seletivo (expirar rascunhos, anonimizar, apagar eventos)
+    // + 1 da purga dos erros do navegador (clientErrorsPurge, sql/045).
+    expect(sql).toHaveBeenCalledTimes(26);
   });
 });
 

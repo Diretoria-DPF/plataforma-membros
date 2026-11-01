@@ -74,6 +74,7 @@ import * as MemoryTutor from './memory/tutor.js';
 import * as RolesService from './services/rolesService.js';
 // Analytics de produto mínimo (DAT-01; sql/040)
 import * as UsageStatsService from './services/usageStatsService.js';
+import * as ClientErrorService from './services/clientErrorService.js';
 import { recordActivity } from './analytics/usage.js';
 
 async function run(sql, callback) {
@@ -229,6 +230,9 @@ export const API_REGISTRY = {
 
   // ---- Administração ----
   apiAdminDashboard: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AdminService.dashboard(sql, identity)),
+  // OPS-08: erros do navegador, agregados e sem PII (publica; nunca falha para o cliente).
+  apiLogClientError: (sql, env, [input]) => run(sql, () => ClientErrorService.logClientError(sql, env, asInput(input))),
+  apiAdminClientErrors: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ClientErrorService.adminList(sql, identity, asInput(input))),
   apiAdminUsageStats: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => UsageStatsService.usageStats(sql, identity)),
   apiAdminListUsers: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AdminService.listUsers(sql, identity, input || {})),
   apiAdminChangeUserRole: (sql, env, [sessionToken, targetProfileId, newRole, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.changeUserRole(sql, identity, targetProfileId, newRole, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
