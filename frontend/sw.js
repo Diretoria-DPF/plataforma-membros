@@ -17,17 +17,17 @@
   'use strict';
 
   var CACHE_PREFIX = 'laift-shell-';
-  var CACHE_NAME = CACHE_PREFIX + 'v20';
+  var CACHE_NAME = CACHE_PREFIX + 'v22';
   // O shell inteiro (HTML, estilos e scripts) entra no cache na instalação, para
   // a tela inicial abrir offline já na primeira visita. Item ausente é ignorado.
   var PRECACHE = [
-    './', 'styles.css', 'ux.css', 'ux-glass.css', 'modulos/shared/charts.css', 'modulos/shared/charts-core.js', 'modulos/shared/charts.js', 'home-editorial.css', 'dashboardAdapter.js', 'modulos/shared/lia/lia.css', 'modulos/shared/lia/lia-art.js', 'modulos/shared/lia/lia-props-art.js', 'modulos/shared/lia/lia-props.js', 'modulos/shared/lia/lia-scenes.js', 'modulos/shared/lia/lia-states.js', 'modulos/shared/lia/lia-mood.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia.js', 'manifest.webmanifest', 'icons/icon-192.png',
+    './', 'styles.css', 'ux.css', 'ux-glass.css', 'modulos/shared/charts.css', 'modulos/shared/charts-core.js', 'modulos/shared/charts.js', 'home-editorial.css', 'engagement.css', 'engagement.js', 'daily-quiz.js', 'dashboardAdapter.js', 'modulos/shared/lia/lia.css', 'modulos/shared/lia/lia-art.js', 'modulos/shared/lia/lia-props-art.js', 'modulos/shared/lia/lia-props.js', 'modulos/shared/lia/lia-scenes.js', 'modulos/shared/lia/lia-states.js', 'modulos/shared/lia/lia-mood.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia.js', 'manifest.webmanifest', 'icons/icon-192.png',
     'app.js', 'shared-states.js', 'pwa.js', 'domain-notice.js', 'learning.js', 'admin-ai.js',
     'msg-crypto.js', 'messaging.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-drag.js', 'assistant-mood-glue.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-research.js', 'assistant-hints.js', 'assistant-hints.css', 'admin-moderation.js', 'admin-usage.js', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-typing.js', 'assistant-sources.js', 'assistant-suggestions.js', 'assistant-turnstile.js', 'modulos/shared/safe-dom.js',
     'ux-v2.js', 'splash.js', 'splash.css', 'modulos/shared/laift-tokens.css', 'blog-novidade.js', 'blog-novidade.css', 'voltar-app.js', 'voltar-app.css', 'entrada.js', 'resend-confirmation.js', 'app-menu.js', 'app-menu.css',
     'panel-history.js', 'app-update.js', 'library-cite.js', 'library-detail.js', 'library.js', 'library.css', 'selection.js', 'selection.css', 'selection-admin.js', 'selection-admin.css', 'privacy.js', 'privacy-admin.js', 'privacy.css', 'agents-tutor.js', 'agents-tutor.css', 'memory-core.js', 'memory.js', 'memory.css','admin-library-extras.js', 'admin-library-publicar.js', 'admin-library-lote.js', 'admin-library.js',
-    'roles-ui.js', 'admin-roles.js', 'roles.css',
-    'modulos/cracha/laift-marca.png', 'modulos/cracha/laift-marca-80.png',
+    'session-view.js', 'modulos/cracha/laift-marca-80.png', 'roles-ui.js', 'admin-roles.js', 'roles.css',
+    'modulos/cracha/laift-marca.png',
   ];
   var ATLAS_PATH = '/modulos/anatomia-3d/';
 

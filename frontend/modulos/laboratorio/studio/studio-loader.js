@@ -3,7 +3,8 @@
  *
  * Antes era um <script> inline no index.html que buscava as bibliotecas no
  * unpkg/jsDelivr SEM versão (RDKit) e sem verificação de integridade. Agora:
- *   - versões fixas, sempre no jsDelivr (que serve os bytes do pacote npm);
+ *   - versões fixas; OpenChemLib vem de ../vendor/ (TEC-01, mesmos bytes do npm);
+ *     o RDKit segue no jsDelivr (o .wasm de 7,3 MB não entra no repositório);
  *   - integrity (SRI) + crossorigin nos <script> injetados: se o CDN servir
  *     outro conteúdo, o navegador recusa;
  *   - o .wasm do RDKit vem da MESMA versão do .js (window.LAIFT_RDKIT_DIST,
@@ -15,7 +16,7 @@
   'use strict';
 
   var OCL = {
-    url: 'https://cdn.jsdelivr.net/npm/openchemlib@8.6.0/dist/openchemlib-full.js',
+    url: '../vendor/openchemlib/openchemlib-full.js',
     integrity: 'sha384-uGDLFGKDxSejlsZ5aP+cqrKccw9mRrYPhNcW0/EI8lXb7w+mDoDv+klc5T5xJRbw'
   };
   var RDKIT_VERSION = '2026.3.6';
