@@ -47,7 +47,7 @@
 
   function buildReportMessage(ctx) {
     ctx = ctx || {};
-    var parts = ['[Erro de conteúdo]', clean(ctx.kind || 'conteúdo', 20)];
+    var parts = ['[Erro de conteúdo] ' + clean(ctx.kind || 'conteúdo', 20)];
     if (ctx.module) parts.push('módulo: ' + clean(ctx.module, 60));
     if (ctx.id !== undefined && ctx.id !== null && ctx.id !== '') parts.push('id: ' + clean(ctx.id, 60));
     if (ctx.topic) parts.push('tópico: ' + clean(ctx.topic, 80));
