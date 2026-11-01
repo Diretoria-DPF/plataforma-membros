@@ -35,6 +35,7 @@
   var SECONDS_PER_EXAM_QUESTION = 90;
   var URGENT_SECONDS = 300;
   var API_MODE = { study: 'estudo', exam: 'prova' };
+  var QUEUED_MESSAGE = 'Salvo neste aparelho, será enviado quando houver internet.';
 
   function $(id) { return global.document.getElementById(id); }
 
@@ -54,6 +55,17 @@
   }
 
   function show(el, visible) { if (el) el.hidden = !visible; }
+
+  // Avisos e confirmações: modal acessível (LaiftDialog); sem ele, cai nos nativos.
+  function dialogAlert(message) {
+    if (global.LaiftDialog) return global.LaiftDialog.alert(message);
+    global.alert(message);
+    return Promise.resolve();
+  }
+  function dialogConfirm(message) {
+    if (global.LaiftDialog) return global.LaiftDialog.confirm(message);
+    return Promise.resolve(global.confirm(message));
+  }
 
   /**
    * @param {object} cfg
@@ -100,6 +112,20 @@
       active: false, timeLeft: 0, timer: null, startedAt: 0, renderToken: 0, lastFocusedOption: null,
     };
 
+    var queue = createQueue();
+
+    function createQueue() {
+      var Q = global.LaiftQuizQueue;
+      if (!Q || !global.LaiftApi || typeof global.LaiftApi.call !== 'function') return null;
+      return Q.create({
+        backend: Q.createDefaultBackend(global.indexedDB),
+        send: function (body) { return global.LaiftApi.call('apiLearnSubmitQuizAttempt', body); },
+        owner: function () {
+          try { var id = global.LaiftIdentity && global.LaiftIdentity.get(); return Q.ownerTag(id && id.email); } catch (e) { return ''; }
+        },
+      });
+    }
+
     // ------------------------------------------------------------------
     // Progresso local (mesmo formato de antes: { userAnswers, timestamp },
     // userAnswers indexado pela posição da questão no banco completo)
@@ -144,7 +170,7 @@
     }
 
     function setStatus(message, kind) {
-      if (!el.status) { if (message) global.alert(message); return; }
+      if (!el.status) { if (message) dialogAlert(message); return; }
       el.status.textContent = message || '';
       el.status.dataset.kind = kind || 'info';
     }
@@ -296,13 +322,15 @@
     }
 
     function resetProgress() {
-      if (!global.confirm(L.resetConfirm)) return;
-      clearProgress();
-      state.answers = [];
-      state.active = false;
-      stopTimer();
-      showScreen('start');
-      updateStats();
+      dialogConfirm(L.resetConfirm).then(function (ok) {
+        if (!ok) return;
+        clearProgress();
+        state.answers = [];
+        state.active = false;
+        stopTimer();
+        showScreen('start');
+        updateStats();
+      });
     }
 
     function optionButton(text, index) {
@@ -427,18 +455,37 @@
         return Promise.resolve(null);
       }
       report('Registrando resultado no seu desempenho...', 'info');
+      // A fila grava a tentativa (com idempotencyKey) antes de enviar: sem rede ela fica salva e é
+      // reenviada sozinha (evento online / ao abrir o módulo); o Worker ignora a repetição da chave.
       return Promise.resolve()
-        .then(function () { return global.LaiftApi.call('apiLearnSubmitQuizAttempt', payload); })
-        .then(function (res) {
-          if (res && res.success) report('✔ Resultado registrado no seu desempenho da área Aprender.', 'success');
-          else report('Não foi possível registrar o resultado agora' + (res && res.message ? ': ' + res.message : '.'), 'error');
-          return res;
+        .then(function () { return queue ? queue.submit(payload) : direct(payload); })
+        .then(function (out) {
+          if (out.status === 'sent') report('✔ Resultado registrado no seu desempenho da área Aprender.', 'success');
+          else if (out.status === 'queued') report(QUEUED_MESSAGE, 'info');
+          else report('Não foi possível registrar o resultado agora' + (out.res && out.res.message ? ': ' + out.res.message : '.'), 'error');
+          return out.res;
         })
         .catch(function (err) {
           console.warn('[QuizEngine] Falha ao registrar a tentativa:', err);
           report('Não foi possível registrar o resultado agora.', 'error');
           return null;
         });
+    }
+
+    /** Sem fila (biblioteca não carregada): envia direto, como antes. */
+    function direct(payload) {
+      return global.LaiftApi.call('apiLearnSubmitQuizAttempt', payload).then(function (res) {
+        return { status: res && res.success ? 'sent' : 'rejected', res: res };
+      });
+    }
+
+    /** Reenvia o que ficou pendente (offline) — chamado ao abrir o módulo e no evento online. */
+    function flushPending() {
+      if (!queue) return Promise.resolve(null);
+      return queue.flush().then(function (summary) {
+        if (summary && summary.sent > 0 && el.status) setStatus('✔ Resultado pendente enviado ao seu desempenho.', 'success');
+        return summary;
+      }).catch(function () { return null; });
     }
 
     function performanceText(pct) {
@@ -492,7 +539,7 @@
 
     function reviewWrong() {
       var wrong = state.questions.filter(function (q, i) { return state.answers[i] !== q.correct; });
-      if (!wrong.length) { global.alert(L.allCorrect); return; }
+      if (!wrong.length) { dialogAlert(L.allCorrect); return; }
       setMode('study');
       begin(wrong, new Array(wrong.length).fill(null), 0, L.reviewTimer);
     }
@@ -578,9 +625,11 @@
       renderTopics();
       setMode('study');
       refreshSidebar();
+      flushPending();
     }
 
     bindEvents();
+    global.addEventListener('online', flushPending);
     if (global.document.readyState === 'loading') global.document.addEventListener('DOMContentLoaded', init);
     else init();
 

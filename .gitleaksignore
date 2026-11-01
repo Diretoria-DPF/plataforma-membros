@@ -26,3 +26,7 @@ fe2a1b0a0ccd97677d596b79628fb7583ce5aff1:worker/test/memoryHandlers.test.js:gene
 9435b0149db11e787aac187fd22baf229ee02e2b:worker/test/authService.test.js:generic-api-key:218
 9435b0149db11e787aac187fd22baf229ee02e2b:worker/test/confirmationService.test.js:generic-api-key:33
 9435b0149db11e787aac187fd22baf229ee02e2b:worker/test/confirmationService.test.js:generic-api-key:168
+# UUID FICTICIO de teste (idempotencyKey em learningService.test.js:92), nao e segredo; commit dcb7951 da PR #106; triado em 31/10/2026 com autorizacao do dono
+dcb795183b6b51a4069df23a88b79d14476e6dbc:worker/test/learningService.test.js:generic-api-key:92
+# Mesmo UUID FICTICIO de teste (learningService.test.js:92), agora no commit de mesclagem da PR #106 na main; nao e segredo; triado em 01/11/2026 com autorizacao do dono
+b3e21e6b6327649e07de0ec33274c922f247cec4:worker/test/learningService.test.js:generic-api-key:92

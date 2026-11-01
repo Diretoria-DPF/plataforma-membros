@@ -298,7 +298,7 @@ export const API_REGISTRY = {
   // Resultado do simulado também alimenta a memória de estudo (sinal determinístico, em segundo plano; sem banco de memória, nada).
   apiLearnSubmitQuizAttempt: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity, cid) => {
     const result = await LearningService.submitQuizAttempt(sql, identity, asInput(input), cid);
-    await MemoryTutor.scheduleQuizSignal(sql, env, identity, asInput(input));
+    if (!result.duplicate) await MemoryTutor.scheduleQuizSignal(sql, env, identity, asInput(input));
     return result;
   }),
   // Retorno pessoal (ENG-01/02/03, docs/engajamento.md): sequência, meta diária e última atividade; nada é público.
