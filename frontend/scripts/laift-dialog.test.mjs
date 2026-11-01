@@ -179,6 +179,63 @@ test('sem DOM, cai nos nativos', async () => {
   assert.deepEqual(calls, [['alert', 'a'], ['confirm', 'b']]);
 });
 
+// --- prompt (MOB-03: substitui o prompt() nativo da clínica) ---------------------------------------------------
+
+test('prompt: campo rotulado, valor inicial, foco no campo, OK devolve o texto digitado', async () => {
+  const p = dialogs.prompt('Qual agravo deseja simular?', { title: 'Novo caso', label: 'Agravo', defaultValue: 'Paracetamol', maxLength: 40 });
+  await flush();
+  const box = byClass('laift-dialog');
+  assert.equal(box.getAttribute('role'), 'dialog');
+  const input = byClass('laift-dialog-input');
+  const label = byClass('laift-dialog-label');
+  assert.equal(label.textContent, 'Agravo');
+  assert.ok(input.id);
+  assert.equal(label.attrs.for, input.id);
+  assert.equal(input.value, 'Paracetamol');
+  assert.equal(input.attrs.maxlength, '40');
+  assert.equal(doc.activeElement, input);
+  input.value = 'Organofosforados';
+  byClass('laift-dialog-btn-primary').click();
+  assert.equal(await p, 'Organofosforados');
+  assert.equal(doc.activeElement, opener);
+});
+
+test('prompt: Cancelar e Esc resolvem null', async () => {
+  let p = dialogs.prompt('x');
+  await flush();
+  byClass('laift-dialog-btn-secondary').click();
+  assert.equal(await p, null);
+  p = dialogs.prompt('x');
+  await flush();
+  press('Escape');
+  assert.equal(await p, null);
+});
+
+test('prompt: Enter no campo confirma (sem repetição); foco preso entre campo e botões', async () => {
+  const p = dialogs.prompt('x', { defaultValue: 'abc' });
+  await flush();
+  const input = byClass('laift-dialog-input');
+  assert.equal(press('Enter', { target: input, repeat: true }).defaultPrevented, true);
+  press('Tab', { shiftKey: true });
+  assert.equal(doc.activeElement, byClass('laift-dialog-btn-primary'));
+  press('Tab');
+  assert.equal(doc.activeElement, input);
+  press('Enter', { target: input });
+  assert.equal(await p, 'abc');
+});
+
+test('prompt: sem DOM, cai no prompt nativo', async () => {
+  const sandbox = { window: { document: null, prompt: (m, d) => `nativo:${m}:${d}` } };
+  sandbox.window.window = sandbox.window;
+  vm.runInNewContext(SRC, sandbox);
+  assert.equal(await sandbox.window.LaiftDialog.prompt('q', { defaultValue: 'd' }), 'nativo:q:d');
+});
+
+test('CSS do campo: altura >= 44px e fonte >= 16px (evita zoom no iOS)', () => {
+  assert.match(CSS, /\.laift-dialog-input \{[^}]*min-height: 44px/);
+  assert.match(CSS, /\.laift-dialog-input \{[^}]*font-size: 1rem/);
+});
+
 test('CSS: alvo de toque >= 44px, texto >= 16px, foco visível e sem script inline', () => {
   assert.match(CSS, /\.laift-dialog-btn \{[^}]*min-height: 44px/);
   assert.match(CSS, /\.laift-dialog \{[^}]*font-size: 16px/);
@@ -199,9 +256,20 @@ test('páginas dos módulos carregam a folha e o script, e não sobra alert/conf
     assert.ok(html.indexOf('laift-dialog.js') < html.search(/<script src="[^"]*(quiz-engine|clinic-engine)\.js/), `${page}: dialog antes do motor`);
     for (const f of files) {
       const code = fs.readFileSync(path.join(frontend, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
-      const native = code.match(/(^|[^.\w])(alert|confirm)\(/gm) || [];
+      const native = code.match(/(^|[^.\w])(alert|confirm|prompt)\(/gm) || [];
       // As únicas ocorrências são o fallback `window.alert(` / `global.alert(` / `global.confirm(` dentro dos helpers.
       assert.equal(native.length, 0, `${f} ainda chama alert/confirm nativo sem prefixo`);
     }
+  }
+});
+
+test('Atlas (anatomia-3d): página carrega o diálogo e o JS não chama alert() nativo', () => {
+  const html = fs.readFileSync(path.join(frontend, 'modulos/anatomia-3d/index.html'), 'utf8');
+  assert.match(html, /laift-dialog\.css/);
+  assert.match(html, /<script src="\.\.\/shared\/laift-dialog\.js"><\/script>/);
+  for (const f of ['modulos/anatomia-3d/js/modes/study.js', 'modulos/anatomia-3d/js/api-cache.js']) {
+    const code = fs.readFileSync(path.join(frontend, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+    const native = code.match(/(^|[^.\w])(alert|confirm|prompt)\(/gm) || [];
+    assert.equal(native.length, 0, `${f} ainda chama alert/confirm/prompt nativo`);
   }
 });

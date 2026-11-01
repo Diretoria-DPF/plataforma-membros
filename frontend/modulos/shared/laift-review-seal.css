@@ -1,0 +1,14 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Selo ⓘ de conteúdo sem revisor (CON-01): glifo pequeno e atenuado; a área de toque é de 44px. */
+.laift-review-seal-row { display: flex; justify-content: flex-end; margin: 0; }
+.laift-review-seal {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: var(--laift-muted, #5b6577);
+  font: inherit; font-size: 1rem; line-height: 1; cursor: pointer;
+}
+.laift-review-seal:hover { background: var(--laift-surface-alt, rgba(127, 127, 127, 0.14)); }
+.laift-review-seal:focus-visible { outline: 3px solid var(--laift-info, #1d5fb8); outline-offset: 2px; }

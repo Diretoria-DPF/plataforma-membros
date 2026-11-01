@@ -81,6 +81,12 @@ const ClinicEngine = (() => {
     return Promise.resolve(window.confirm(message));
   }
 
+  // Pergunta de uma linha: campo rotulado no mesmo modal; sem ele, cai no prompt nativo. Cancelar/Esc -> null.
+  function dialogPrompt(message, opts) {
+    if (window.LaiftDialog) return window.LaiftDialog.prompt(message, opts);
+    return Promise.resolve(window.prompt(message, (opts && opts.defaultValue) || ''));
+  }
+
   /** Cria um elemento; `text` vira textContent, filhos string viram nós de texto. */
   function el(tag, props, children) {
     const node = document.createElement(tag);
@@ -1257,9 +1263,9 @@ const ClinicEngine = (() => {
     }
 
     const promptPadrao = temaPredefinido ? `Variação clínica de ${temaPredefinido}` : 'Intoxicação por Paracetamol';
-    const topico = prompt(
+    const topico = await dialogPrompt(
       'Qual agravo farmacológico ou toxicológico deseja simular?\n\nExemplos:\n• Intoxicação por Paracetamol\n• Paciente exigente pedindo Ciprofloxacino para gripe\n• Intoxicação Ocupacional por Organofosforados\n• Idoso polimedicado com interação Varfarina + AINE',
-      promptPadrao
+      { title: 'Novo caso com IA', label: 'Agravo ou situação clínica', defaultValue: promptPadrao, maxLength: TOPIC_MAX, okLabel: 'Gerar caso', cancelLabel: 'Cancelar' }
     );
     if (!topico || !topico.trim()) return;
     const tema = topico.trim().slice(0, TOPIC_MAX);

@@ -10,6 +10,13 @@
  * - Emissão de Dossiê / Certificado Acadêmico em PDF de Alta Resolução
  */
 
+// Aviso em modal acessível (shared/laift-dialog.js, MOB-03); sem ele, cai no alert nativo.
+function avisar(mensagem) {
+  if (window.LaiftDialog) return window.LaiftDialog.alert(mensagem);
+  window.alert(mensagem);
+  return Promise.resolve();
+}
+
 const ApiCache = (() => {
   // Configurações de Armazenamento
   const DB_NAME = "LAIFT_BioTwin_DB";
@@ -380,7 +387,7 @@ const ApiCache = (() => {
     const historico = lerHistorico();
 
     if (historico.length === 0) {
-      alert("Não há registros de simulação para emitir o dossiê.");
+      avisar("Não há registros de simulação para emitir o dossiê.");
       return;
     }
 
@@ -410,7 +417,7 @@ const ApiCache = (() => {
 
     const win = window.open("", "_blank");
     if (!win) {
-      alert("Habilite pop-ups para gerar o documento PDF.");
+      avisar("Habilite pop-ups para gerar o documento PDF.");
       return;
     }
 
