@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Carregamento sob demanda das props da Lia (frontend/modulos/shared/lia/lia-props.js): um único <script> da mesma
+// Carregamento sob demanda das props do Guia (frontend/modulos/shared/lia/lia-props.js): um único <script> da mesma
 // origem, cache, falha sem erro visível, validação da arte e montagem das peças nos pais certos.
 import { test, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
@@ -188,7 +188,7 @@ test('load: arte já presente na página não injeta nada', async () => {
   assert.equal(scripts(doc).length, 0);
 });
 
-test('load: falha de rede resolve false (sem lançar) e a Lia base segue', async () => {
+test('load: falha de rede resolve false (sem lançar) e o Guia base segue', async () => {
   const doc = fakeDoc();
   const pending = Props.load(doc);
   scripts(doc)[0].fire('error');

@@ -56,14 +56,14 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiSelectionRequestReview', 'apiSelectionCommitteeOverview', 'apiSelectionCommitteeGet', 'apiSelectionCommitteeTriage', 'apiSelectionCommitteeDecide', 'apiSelectionCommitteeSettings');
     // Direitos do titular (privacyService.js)
     expected.push('apiPrivacyExportMyData', 'apiPrivacyRequestDeletion', 'apiPrivacyGetDeletionStatus', 'apiPrivacyCancelDeletion', 'apiAdminListDeletionRequests', 'apiAdminCompleteDeletion');
-    // Lia, guia da plataforma (sessão opcional; orienta e navega, nunca altera dados)
+    // Guia, guia da plataforma (sessão opcional; orienta e navega, nunca altera dados)
     expected.push('apiAssistantChat');
-    // Lia — feedback, painel de satisfação, fontes e reindexação (assistantFeedbackService.js)
+    // Guia — feedback, painel de satisfação, fontes e reindexação (assistantFeedbackService.js)
     expected.push(
       'apiAssistantFeedback', 'apiAdminListAssistantFeedback', 'apiAdminUpdateAssistantFeedback',
       'apiAdminAssistantStats', 'apiAssistantSources', 'apiAdminReindexKb'
     );
-    // Moderação da Lia (ADR 0004): redenção, estado da própria pessoa e resumo do admin
+    // Moderação do Guia (ADR 0004): redenção, estado da própria pessoa e resumo do admin
     expected.push('apiAssistantRedeem', 'apiAssistantModerationState', 'apiAdminAssistantModeration');
     // Biblioteca LAIFT (CONTRATO-B1 §4)
     expected.push(

@@ -5,7 +5,7 @@
  */
 /**
  * assistant/kb.js
- * Base de conhecimento da Lia, guia da plataforma. Texto fixo e regras de
+ * Base de conhecimento do Guia, guia da plataforma. Texto fixo e regras de
  * intenção por palavra-chave: responde a maioria das perguntas SEM gastar IA.
  *
  * - Cada intenção tem palavras-chave (comparadas sem acento, por palavra
@@ -186,26 +186,26 @@ export const INTENTS = [
   },
   {
     id: 'avaliacao_lia',
-    title: 'Avaliar uma resposta da Lia',
-    keywords: ['avaliar resposta', 'avaliar a resposta', 'avaliar a lia', 'avaliacao da lia', 'resposta da lia', 'resposta util', 'nao util', 'marcar como util', 'resposta incorreta', 'resposta confusa'],
-    reply: 'Abaixo de cada resposta da Lia há as opções Útil e Não útil. Ao marcar Não útil, você pode escolher o motivo (incorreta, incompleta, confusa, ofensiva ou outro) e deixar um comentário de até 500 caracteres. O motivo e o comentário são opcionais, e o comentário é apagado após 90 dias.',
+    title: 'Avaliar uma resposta do Guia',
+    keywords: ['avaliar resposta', 'avaliar a resposta', 'avaliar a lia', 'avaliacao da lia', 'resposta da lia', 'resposta util', 'nao util', 'marcar como util', 'resposta incorreta', 'resposta confusa', 'avaliar o guia', 'avaliacao do guia', 'resposta do guia'],
+    reply: 'Abaixo de cada resposta do Guia há as opções Útil e Não útil. Ao marcar Não útil, você pode escolher o motivo (incorreta, incompleta, confusa, ofensiva ou outro) e deixar um comentário de até 500 caracteres. O motivo e o comentário são opcionais, e o comentário é apagado após 90 dias.',
     actions: [],
     suggestions: ['Quem vê meus dados?', 'Meu crachá'],
   },
   {
     id: 'redencao',
-    title: 'Pedido de redenção na Lia',
-    keywords: ['redencao', 'redimir', 'chat suspenso', 'suspenso', 'suspensa', 'suspensao', 'pedir redencao', 'advertencia da lia', 'nivel de moderacao'],
-    reply: 'Mensagens ofensivas à Lia geram avisos que sobem de nível. Nos casos mais graves, o chat fica suspenso por ' + MODERATION.SUSPENSION_HOURS + ' horas. Enquanto estiver suspenso, aparece o botão Pedir redenção: explique com sinceridade o que houve, em ' + MODERATION.REDEEM_MIN_CHARS + ' a ' + MODERATION.REDEEM_MAX_CHARS + ' caracteres. Se for aceito, o nível volta a zero. Se for recusado, dá para tentar de novo após ' + MODERATION.REDEEM_RETRY_SECONDS / 3600 + ' hora. Cada pessoa pode ter até ' + MODERATION.REDEEM_ACCEPTED_MAX + ' redenções aceitas em ' + MODERATION.REDEEM_ACCEPTED_WINDOW_DAYS + ' dias.',
+    title: 'Pedido de redenção no Guia',
+    keywords: ['redencao', 'redimir', 'chat suspenso', 'suspenso', 'suspensa', 'suspensao', 'pedir redencao', 'advertencia da lia', 'nivel de moderacao', 'advertencia do guia'],
+    reply: 'Mensagens ofensivas ao Guia geram avisos que sobem de nível. Nos casos mais graves, o chat fica suspenso por ' + MODERATION.SUSPENSION_HOURS + ' horas. Enquanto estiver suspenso, aparece o botão Pedir redenção: explique com sinceridade o que houve, em ' + MODERATION.REDEEM_MIN_CHARS + ' a ' + MODERATION.REDEEM_MAX_CHARS + ' caracteres. Se for aceito, o nível volta a zero. Se for recusado, dá para tentar de novo após ' + MODERATION.REDEEM_RETRY_SECONDS / 3600 + ' hora. Cada pessoa pode ter até ' + MODERATION.REDEEM_ACCEPTED_MAX + ' redenções aceitas em ' + MODERATION.REDEEM_ACCEPTED_WINDOW_DAYS + ' dias.',
     actions: [],
     suggestions: ['Meu crachá', 'Eventos abertos'],
   },
   {
     id: 'cotas',
     defines: true, // lista ou define de fato: responde também a pergunta de definição (assistant/questionKind.js)
-    title: 'Limite de perguntas da Lia',
-    keywords: ['limite de perguntas', 'quantas perguntas', 'perguntas por dia', 'limite diario', 'cota da lia', 'cota de perguntas', 'limite da lia', 'limite de uso'],
-    reply: 'Perguntas de rotina (eventos, crachá, módulos e perfil) são respondidas sem IA e sem limite diário. Perguntas abertas usam IA, para quem está logado: visitantes têm ' + AI_QUOTAS.assistant.visitor + ' por dia, membros ' + AI_QUOTAS.assistant.member + ' e administradores ' + AI_QUOTAS.assistant.admin + '. Quando a Lia está em modo limitado, a resposta não gasta essa cota.',
+    title: 'Limite de perguntas do Guia',
+    keywords: ['limite de perguntas', 'quantas perguntas', 'perguntas por dia', 'limite diario', 'cota da lia', 'cota de perguntas', 'limite da lia', 'limite de uso', 'cota do guia', 'limite do guia'],
+    reply: 'Perguntas de rotina (eventos, crachá, módulos e perfil) são respondidas sem IA e sem limite diário. Perguntas abertas usam IA, para quem está logado: visitantes têm ' + AI_QUOTAS.assistant.visitor + ' por dia, membros ' + AI_QUOTAS.assistant.member + ' e administradores ' + AI_QUOTAS.assistant.admin + '. Quando o Guia está em modo limitado, a resposta não gasta essa cota.',
     actions: [],
     suggestions: ['Eventos abertos', 'O que posso fazer aqui?'],
   },
@@ -284,8 +284,8 @@ export const INTENTS = [
   {
     id: 'guia',
     titleOnlyOutline: true,
-    title: 'Guia da plataforma: por onde começar',
-    keywords: ['guia', 'guia da plataforma', 'tutorial', 'manual', 'por onde comeco', 'por onde comecar', 'por onde eu comeco', 'primeiros passos'],
+    title: 'Por onde começar na plataforma',
+    keywords: ['guia da plataforma', 'manual da plataforma', 'tutorial', 'manual', 'por onde comeco', 'por onde comecar', 'por onde eu comeco', 'primeiros passos'],
     reply: 'Por onde começar:\n1. Crie sua conta (ou entre) na tela inicial.\n2. Em Aprender, escolha um módulo de estudo.\n3. Em Eventos, confira os próximos encontros e inscreva-se.\n4. Em Perfil, complete seus dados e ative a verificação em duas etapas.\n5. No menu ☰ ficam Propostas, Tarefas, Mensagens, Equipe e Biblioteca.\nPergunte do seu jeito, por exemplo: "como instalo o app?".',
     actions: [nav('panel-learn'), nav('panel-events')],
     suggestions: ['Como instalar o app?', 'Como uso a Biblioteca?'],
@@ -406,10 +406,10 @@ export const INTENTS = [
   },
   {
     id: 'admin_ia',
-    title: 'Painel de IA e moderação da Lia (administração)',
+    title: 'Painel de IA e moderação do Guia (administração)',
     adminOnly: true,
-    keywords: ['painel de ia', 'painel da ia', 'saude das chaves', 'testar chaves', 'chaves do groq', 'orcamento de tokens', 'consumo de ia', 'satisfacao da lia', 'moderacao da lia', 'incidentes da lia', 'cotas diarias', 'acervo da clinica', 'casos gerados', 'revisar casos'],
-    reply: 'O Painel de IA, na área Admin, mostra a saúde das chaves do provedor (com Testar chaves agora), o orçamento e o consumo de tokens, o uso anônimo do Atlas 3D, a satisfação da Lia, a moderação da Lia (incidentes e taxa de redenção) e as cotas diárias por pessoa. Casos clínicos gerados com IA entram no acervo da clínica só depois de aprovados nesse painel.',
+    keywords: ['painel de ia', 'painel da ia', 'saude das chaves', 'testar chaves', 'chaves do groq', 'orcamento de tokens', 'consumo de ia', 'satisfacao da lia', 'moderacao da lia', 'incidentes da lia', 'cotas diarias', 'acervo da clinica', 'casos gerados', 'revisar casos', 'satisfacao do guia', 'moderacao do guia', 'incidentes do guia'],
+    reply: 'O Painel de IA, na área Admin, mostra a saúde das chaves do provedor (com Testar chaves agora), o orçamento e o consumo de tokens, o uso anônimo do Atlas 3D, a satisfação do Guia, a moderação do Guia (incidentes e taxa de redenção) e as cotas diárias por pessoa. Casos clínicos gerados com IA entram no acervo da clínica só depois de aprovados nesse painel.',
     actions: [nav('panel-admin-ai')],
     suggestions: ['Meu crachá', 'Eventos abertos'],
   },
@@ -443,7 +443,7 @@ export const INTENTS = [
   {
     id: 'ajuda',
     defines: true, // lista ou define de fato: responde também a pergunta de definição (assistant/questionKind.js)
-    title: 'O que a Lia faz',
+    title: 'O que o Guia faz',
     weight: 0.7,
     keywords: ['ajuda', 'ajudar', 'socorro', 'duvida', 'como usar', 'como usa', 'nao sei', 'o que voce faz', 'o que voce pode', 'como funciona a plataforma', 'o que posso fazer', 'o que da para fazer'],
     reply: 'O que dá para fazer depende de ter conta. Sem conta: ler o blog, conhecer a Liga e o processo seletivo, ver o catálogo público da Biblioteca, conversar comigo e criar a sua conta. Com conta de membro: ver eventos, se inscrever e cancelar a inscrição, estudar nos módulos (laboratório, atlas 3D, quiz, casos clínicos), mostrar o crachá, usar a Biblioteca completa, trocar mensagens, votar em propostas e acompanhar tarefas. Pergunte do seu jeito, por exemplo: "como funciona o laboratório?".',
@@ -504,7 +504,7 @@ export const INTENTS = [
     selection: true,
     titleOnlyOutline: true,
     defines: true,
-    title: 'A Lia não responde o teste do processo seletivo',
+    title: 'O Guia não responde o teste do processo seletivo',
     weight: 4,
     keywords: ['gabarito', 'resposta da questao', 'qual a resposta', 'qual alternativa e a certa', 'responda a questao', 'me da a resposta', 'escreve minha analise', 'escreva minha analise', 'faz minha analise', 'escreva o texto para mim', 'o que a comissao espera'],
     reply: 'Eu não posso responder as perguntas nem escrever a sua análise: a resposta tem de ser sua, e é isso que a comissão quer conhecer. Posso explicar o que se espera. Na análise de cenário, escolha um ponto de partida, cite de onde vem a informação e explique o impacto com as suas palavras. Nas perguntas sobre o seu raciocínio, conte seus passos e o porquê, com exemplos reais. Nas situações de conduta, pense no que protege as pessoas, os prazos e a confidencialidade.',
@@ -516,7 +516,7 @@ export const INTENTS = [
     title: 'Saudação',
     weight: 0.5,
     keywords: ['oi', 'ola', 'bom dia', 'boa tarde', 'boa noite', 'e ai', 'opa', 'tudo bem'],
-    reply: 'Oi! Eu sou a Lia, a guia da plataforma LAIFT. Posso te explicar cada parte e te levar direto para a tela certa. O que você quer fazer agora?',
+    reply: 'Oi! Eu sou o Guia, o assistente da plataforma LAIFT. Posso te explicar cada parte e te levar direto para a tela certa. O que você quer fazer agora?',
     actions: [],
     suggestions: ['Eventos abertos', 'Como funciona o laboratório?', 'Meu crachá'],
   },

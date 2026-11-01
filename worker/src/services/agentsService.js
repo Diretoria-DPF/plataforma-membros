@@ -152,7 +152,7 @@ async function isSuspended(sql, identity) {
   }
 }
 
-/** Recusa de entrada (I1–I7, mais a suspensão da moderação da Lia, só lida) ou null. */
+/** Recusa de entrada (I1–I7, mais a suspensão da moderação do Guia, só lida) ou null. */
 async function inputRefusal(sql, identity, agent, turn) {
   const verdict = checkInput(turn.message, { maxChars: agent.limits.messageMax, rules: agent.guardrails.input });
   if (!verdict.ok) return verdict;

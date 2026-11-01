@@ -168,7 +168,7 @@ test('aprender: olhar acompanha a linha, página vira (1, 0, -1), "?" sobe e a t
   assert.deepEqual(learn.from, { 'data-emotion': 'focused', 'data-mouth': 'flat' }, 'os olhos de leitura são os de #lia-eyes-focused');
 });
 
-test('aviso: véu até 35%, braços cruzados entram, balão pula (0,4 a 1,08 a 1) e a Lia fica preocupada', () => {
+test('aviso: véu até 35%, braços cruzados entram, balão pula (0,4 a 1,08 a 1) e o Guia fica preocupada', () => {
   const warning = scene('warning');
   const veil = warning.anima.find((p) => p.sel === '#lia-pv-veu');
   assert.deepEqual(veil.frames, [{ opacity: 0 }, { opacity: 0.35 }]);
@@ -197,7 +197,7 @@ test('redenção: UMA animação de escala X no host (1, 0,04, 1), a troca de co
     'data-emotion': 'happy', 'data-mouth': 'smile', 'data-scene': 'glow heart',
   });
   assert.equal(redeem.from['data-state'], 'suspended');
-  assert.equal('aria-label' in redeem.from, false, 'o rótulo da Lia é o do estado, não muda no meio da cena');
+  assert.equal('aria-label' in redeem.from, false, 'o rótulo do Guia é o do estado, não muda no meio da cena');
 });
 
 test('toda cena cita só ids que existem em lia.svg ou no contrato dos props (lia-pv-*)', () => {

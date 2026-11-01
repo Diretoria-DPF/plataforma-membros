@@ -5,7 +5,7 @@
  */
 /**
  * assistant/moderationRules.js
- * Regras PURAS da moderação da Lia (ADR 0004): sem banco, sem relógio global
+ * Regras PURAS da moderação do Guia (ADR 0004): sem banco, sem relógio global
  * (o instante `now` vem de fora) e sem mutação (cada função devolve um estado novo).
  *
  * Estado: { level 0-3, until: Date|null, lastIncidentAt: Date|null, lastDecayAt: Date|null }
@@ -85,7 +85,7 @@ export const LEVEL_MESSAGES = {
   2: 'Aviso sério: mensagens ofensivas se repetiram. Se continuar, o chat será suspenso por 24 horas.',
   3: 'Chat suspenso por 24 horas por mensagens ofensivas repetidas. Se quiser, você pode pedir redenção explicando o que houve.',
 };
-export const SUSPENDED_MESSAGE = 'O chat com a Lia está suspenso até {until} (horário de Brasília). Você pode pedir redenção, explicando com sinceridade o que houve.';
+export const SUSPENDED_MESSAGE = 'O chat com o Guia está suspenso até {until} (horário de Brasília). Você pode pedir redenção, explicando com sinceridade o que houve.';
 
 // ---- Detecção de ofensa (texto PT-BR) ----
 // Antes de casar, o texto passa por `moderationForms`: some o invisível (zero-width, bidi), tira acento,

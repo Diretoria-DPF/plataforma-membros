@@ -4,8 +4,8 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Onboarding por papel: na primeira entrada autenticada, um <dialog> com showModal() (foco preso,
-// Esc fecha, foco volta) mostra 3 passos para visitante, membro ou administrador (4 quando a Lia
-// está disponível). O passo da Lia abre a Lia; o do crachá usa [data-open-credential], que
+// Esc fecha, foco volta) mostra 3 passos para visitante, membro ou administrador (4 quando o Guia
+// está disponível). O passo do Guia abre o Guia; o do crachá usa [data-open-credential], que
 // credential.js já trata. "Visto" fica em localStorage por perfil, só como conveniência: se o
 // storage estiver bloqueado, o passo volta na próxima entrada. Sem innerHTML e sem animação
 // própria (prefers-reduced-motion). Expõe window.LaiftOnboarding; as funções são testadas em Node.
@@ -19,7 +19,7 @@
   var BODY_ID = 'onboarding-body';
   var ROLES = ['visitor', 'member', 'admin'];
   var TOUCH_SIZE = '44px';
-  var ACTION_LABEL = { lia: 'Abrir a Lia', credential: 'Abrir meu crachá' };
+  var ACTION_LABEL = { lia: 'Abrir o Guia', credential: 'Abrir meu crachá' };
 
   var COPY = {
     visitor: {
@@ -38,7 +38,7 @@
       credential: ['Seu crachá', 'O crachá virtual tem o QR de presença. O terminal fiscal lê esse QR na portaria.'],
     },
   };
-  var LIA_COPY = ['Conheça a Lia', 'A Lia é a guia da plataforma: explica as telas e responde dúvidas. Ela não altera seus dados.'];
+  var LIA_COPY = ['Conheça o Guia', 'O Guia é o assistente da plataforma: explica as telas e responde dúvidas. Ele não altera seus dados.'];
 
   function normalizeRole(role) {
     return ROLES.indexOf(role) >= 0 ? role : 'visitor';
@@ -48,7 +48,7 @@
     return Object.freeze({ kind: kind, title: pair[0], body: pair[1] });
   }
 
-  /** Passos do papel: intro, conteúdo, [Lia se disponível] e crachá (sempre o último). */
+  /** Passos do papel: intro, conteúdo, [Guia se disponível] e crachá (sempre o último). */
   function stepsFor(role, options) {
     var copy = COPY[normalizeRole(role)];
     var steps = [step('intro', copy.intro), step('content', copy.content)];
@@ -149,7 +149,7 @@
       setHidden(nodes.action, !isAction);
       if (!isAction) return;
       nodes.action.textContent = ACTION_LABEL[step.kind];
-      // O crachá é aberto pela delegação de credential.js; a Lia, por runAction.
+      // O crachá é aberto pela delegação de credential.js; o Guia, por runAction.
       if (step.kind === 'credential') nodes.action.setAttribute('data-open-credential', '');
       else nodes.action.removeAttribute('data-open-credential');
     }
@@ -234,7 +234,7 @@
       if (opener && typeof opener.focus === 'function') opener.focus({ preventScroll: true });
     }
 
-    /** Fecha e marca como visto (Pular, Concluir, Esc, ação de Lia/crachá). Idempotente. */
+    /** Fecha e marca como visto (Pular, Concluir, Esc, ação de Guia/crachá). Idempotente. */
     function finish() {
       if (state.current) settle(true);
     }

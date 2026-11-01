@@ -6,6 +6,12 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
+### Alterado (nome do assistente: Lia passa a se chamar Guia)
+- O assistente da plataforma agora se chama **Guia** em telas, respostas, blog e documentação viva. Motivo: nome mais amplo, que cobre a plataforma inteira. Os registros históricos abaixo mantêm o nome da época.
+- Identificadores internos **não mudaram** (`window.Lia`, classes `lia-*`, nomes de arquivo, flag `lia_visitor_ai_enabled`, ações `apiAssistant*`, slug do post `lia-a-guia`). A intenção da base "por onde começar" deixou de usar a palavra-chave `guia` sozinha, para não colidir com o nome. O documento-fonte do Guia passou de "Guia da plataforma" a "Manual da plataforma".
+- Fora desta troca, por falta de parecer jurídico: Política de Privacidade (`frontend/privacidade.html`, `docs/POLITICA_DE_PRIVACIDADE.md`) e dossiê jurídico seguem com o nome antigo.
+- Depois de publicar: reindexar a base do Guia (Admin → IA → Reindexar), porque os trechos guardados no banco ainda citam o nome antigo.
+
 ### Adicionado (direitos do titular, LGPD art. 18, backend)
 - **Exportar meus dados e pedir exclusão da conta**: seis ações (`apiPrivacyExportMyData`, `apiPrivacyRequestDeletion`, `apiPrivacyGetDeletionStatus`, `apiPrivacyCancelDeletion`, `apiAdminListDeletionRequests`, `apiAdminCompleteDeletion`), migração 044 (`account_deletion_requests`, prazo de 180 dias, sem dado pessoal além do primeiro nome, zerado ao concluir). A exportação omite segredos e anotações internas da comissão. Front ainda por fazer.
 

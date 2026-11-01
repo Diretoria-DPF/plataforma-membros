@@ -1,3 +1,5 @@
+> Nota de 2026-11-01: a assistente passou a se chamar **Guia**. Este plano mantém o nome da época (Lia).
+
 # Lia: base de conhecimento, registro de pesquisas, pesquisa externa e seleção (plano, 2026-10-09)
 
 Orquestrador Opus 5.5, branch `feat/lia-conhecimento` (a partir da `main`, que já tem o blog). As fichas estão em `docs/lia/fichas/` e a ordem em `ORDEM.md`. Arquivos lidos: `worker/src/assistant/*`, `services/{rag,assistant,assistantFeedback}Service.js`, `ai/semanticCache.js`, `ai/orchestrator.js`, `maintenance.js`, `featureFlagService.js`, `sql/018–024`, `test/ragEval.test.js`, `frontend/assistant*.js`, `hero.js`, `e2e/visual-qa.e2e.js` e os documentos citados abaixo.

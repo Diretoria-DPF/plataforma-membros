@@ -5,13 +5,13 @@
  */
 /**
  * assistant/questionKind.js
- * Guarda de intenção da Lia híbrida (flag lia_hibrida_enabled). Funções PURAS, sem banco e sem IA:
+ * Guarda de intenção do Guia híbrida (flag lia_hibrida_enabled). Funções PURAS, sem banco e sem IA:
  *
  *   questionKind(message) -> 'definicao' | 'como-fazer' | 'clinico' | 'fora-de-escopo'
  *
  *   - 'definicao'      o que é/são, qual a diferença, para que serve, quem é, por que, quanto custa, quais...?
  *   - 'como-fazer'     como faço, onde, passo a passo, esqueci...; mantém o comportamento atual
- *   - 'clinico'        dose, posologia, conduta, tratamento de paciente: a Lia NÃO responde conduta
+ *   - 'clinico'        dose, posologia, conduta, tratamento de paciente: o Guia NÃO responde conduta
  *   - 'fora-de-escopo' sinal explícito de assunto alheio (previsão do tempo...) OU pergunta sem nenhum dos
  *                      sinais acima. A classe NÃO decide nada: quem decide é o acervo (RAG) e o answerable.
  *
@@ -94,10 +94,10 @@ export function allowIntent(kind, hit) {
   return kind !== 'definicao' || hit.intent.defines === true;
 }
 
-const CLINICAL_SECTION = 'A Lia pode errar em temas clínicos';
+const CLINICAL_SECTION = 'O Guia pode errar em temas clínicos';
 
 /** Resposta segura a pergunta clínica: sem dose, sem conduta, remete a profissional e à emergência. */
 export const CLINICAL_REPLY = Object.freeze({
-  reply: 'Não posso orientar dose, medicamento, tratamento nem conduta: isso depende da avaliação de um profissional de saúde, que conhece o caso. Em caso de urgência ou suspeita de intoxicação, procure um serviço de emergência na hora (SAMU 192). A Lia orienta sobre a plataforma e pode errar em temas clínicos; os conteúdos de estudo não definem conduta.\n\n(Fonte: seção ' + CLINICAL_SECTION + ')',
+  reply: 'Não posso orientar dose, medicamento, tratamento nem conduta: isso depende da avaliação de um profissional de saúde, que conhece o caso. Em caso de urgência ou suspeita de intoxicação, procure um serviço de emergência na hora (SAMU 192). O Guia orienta sobre a plataforma e pode errar em temas clínicos; os conteúdos de estudo não definem conduta.\n\n(Fonte: seção ' + CLINICAL_SECTION + ')',
   sources: Object.freeze([Object.freeze({ source: 'saude', section: CLINICAL_SECTION })]),
 });

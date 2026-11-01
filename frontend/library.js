@@ -837,7 +837,7 @@
     }
   }
 
-  // Lia ("Ver na Biblioteca"): deixa a busca pronta ANTES de App.showPanel('panel-library'), que sempre recarrega o
+  // Guia ("Ver na Biblioteca"): deixa a busca pronta ANTES de App.showPanel('panel-library'), que sempre recarrega o
   // painel a partir deste estado (sem pedido duplicado). Volta ao catálogo e limpa os filtros, para o tema aparecer.
   function searchFor(value) {
     var q = typeof value === 'string' ? cleanQuery(value) : '';

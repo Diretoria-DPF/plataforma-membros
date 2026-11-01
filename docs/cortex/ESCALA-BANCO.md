@@ -25,7 +25,7 @@ antes do fim do mês. Por isso o objetivo é **deixar a maior parte da leitura f
 |---|---|---|
 | 0. Cache de borda (Cache API) | Páginas públicas, `blog/index.json`, catálogo da Biblioteca, listas que mudam pouco | TTL de 60 s a 10 min com atualização em segundo plano; **modo degradado**: se o banco cair, o catálogo e o blog continuam de um instantâneo estático gerado no build |
 | 1. D1 (leitura pública) | Só artigos `publicado` da Biblioteca, com busca FTS5 | Réplicas em várias regiões; atualizado quando o curador publica e conferido por uma rotina diária; resumo e coleções passam pelo Worker, que confere a sessão |
-| 2. Neon principal | Membros, sessões, eventos, tarefas, propostas, mensagens, Lia, curadoria da Biblioteca | Tráfego só de quem está logado; limites por IP, perfil e global (já existem; correção do P0 do login no item I1) |
+| 2. Neon principal | Membros, sessões, eventos, tarefas, propostas, mensagens, Guia, curadoria da Biblioteca | Tráfego só de quem está logado; limites por IP, perfil e global (já existem; correção do P0 do login no item I1) |
 | 3. Neon de logs | `audit_logs`, `error_logs`, `ai_usage_log`, `ai_metrics_daily`, `atlas_telemetry`, `lia_pesquisas` | Escritas frequentes saem do banco principal; retenção atual (auditoria 2 anos, erros 30 dias) continua; segredo novo `DATABASE_URL_LOGS` |
 | 4. Proteção | Disjuntores e alertas | Se o Neon falhar, leitura pública segue (camadas 0 e 1) e só o login e as ações de membro ficam indisponíveis; alertas por consumo (§5) |
 

@@ -64,7 +64,7 @@ NVIDIA_MODEL_SMART = "nvidia/nemotron-3-super-120b-a12b"
 # 2026-10-11: US$ 0,10/M tokens de entrada e 0,30/M de saída (9.091 e 27.273
 # neurons por milhão). Custo e teto diário: docs/cortex/RUNBOOK-BIBLIOTECA.md §7.
 LIBRARY_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it"
-# Lia: prévia de IA para visitante (flag lia_visitor_ai_enabled; docs/lia/PLANO.md). Só liga com o secret
+# Guia: prévia de IA para visitante (flag lia_visitor_ai_enabled; docs/lia/PLANO.md). Só liga com o secret
 # TURNSTILE_SECRET (`npx wrangler secret put TURNSTILE_SECRET`, feito pelo dono; nunca no código).
 # TURNSTILE_HOSTNAMES não é secreta: sites onde o widget roda, separados por vírgula (localhost nunca vale).
 TURNSTILE_HOSTNAMES = "laift.com.br,www.laift.com.br"
@@ -94,7 +94,7 @@ binding = "MEDIA_BUCKET"
 binding = "HOT_CACHE"
 id = "6ee17e571c044c43bd5b32599b6fbab9"
 
-# Workers AI: gera os embeddings da base da Lia (@cf/baai/bge-m3, ver
+# Workers AI: gera os embeddings da base do Guia (@cf/baai/bge-m3, ver
 # worker/src/services/ragService.js). Sem este binding o RAG NÃO quebra: a busca
 # cai para trigramas (pg_trgm) e a resposta segue normalmente. Em staging o binding
 # é declarado à parte, em [env.staging.ai] (ver abaixo).

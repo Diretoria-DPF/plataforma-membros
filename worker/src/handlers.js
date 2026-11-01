@@ -47,12 +47,12 @@ import * as AttendanceService from './services/attendanceService.js';
 import * as AiService from './services/aiService.js';
 import * as ClinicalService from './services/clinicalService.js';
 import * as ClinicalSimService from './services/clinicalSimService.js';
-// Lia, guia da plataforma (orienta e navega; nunca altera dados)
+// Guia, guia da plataforma (orienta e navega; nunca altera dados)
 import * as SelectionService from './services/selectionService.js';
 import * as SelectionCommittee from './services/selectionCommitteeService.js';
 import * as PrivacyService from './services/privacyService.js';
 import * as AssistantService from './services/assistantService.js';
-// Lia — feedback das respostas, painel de satisfação, fontes e reindexação (sql/021, sql/020)
+// Guia — feedback das respostas, painel de satisfação, fontes e reindexação (sql/021, sql/020)
 import * as AssistantFeedbackService from './services/assistantFeedbackService.js';
 import * as AssistantModeration from './assistant/moderationGate.js';
 // PR 3.2 (Onda 3) — proxy RCSB/PubChem do modo Moléculas do Atlas 3D
@@ -192,7 +192,7 @@ export const API_REGISTRY = {
   apiPrivacyCancelDeletion: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => PrivacyService.cancelDeletion(sql, identity, cid)),
   apiAdminListDeletionRequests: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => PrivacyService.listDeletionRequests(sql, identity, asInput(input))),
   apiAdminCompleteDeletion: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => PrivacyService.completeDeletion(sql, identity, asInput(input), cid, { env, stepUp: () => MfaService.requireStepUp(sql, env, identity, asInput(input)) })),
-  // Lia — feedback do membro: polegar e comentário só na PRÓPRIA resposta (flag feedback_enabled).
+  // Guia — feedback do membro: polegar e comentário só na PRÓPRIA resposta (flag feedback_enabled).
   apiAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.submitFeedback(sql, identity, asInput(input), cid)),
   apiAdminListAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantFeedbackService.listFeedback(sql, identity, asInput(input))),
   apiAdminUpdateAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.updateFeedback(sql, identity, asInput(input), cid)),
@@ -201,7 +201,7 @@ export const API_REGISTRY = {
   // actions: mfaGate.test.js só isenta de sessão obrigatória as actions listadas em OPTIONAL_SESSION.
   apiAssistantSources: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, () => AssistantFeedbackService.listKbSources(sql)),
   apiAdminReindexKb: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.reindexKb(sql, env, identity, cid)),
-  // Moderação da Lia (ADR 0004): redenção e estado exigem sessão (portão de MFA incluso); visitante não é moderado.
+  // Moderação do Guia (ADR 0004): redenção e estado exigem sessão (portão de MFA incluso); visitante não é moderado.
   apiAssistantRedeem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.redeemAssistant(sql, env, identity, asInput(input), cid)),
   apiAssistantModerationState: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AssistantModeration.assistantModerationState(sql, identity)),
   apiAdminListFeatureFlags: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => FeatureFlagService.adminList(sql, identity)),

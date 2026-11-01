@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Lia como guia da plataforma inteira e da Biblioteca: intenções novas, papel de curador, lista branca
+// Guia como guia da plataforma inteira e da Biblioteca: intenções novas, papel de curador, lista branca
 // (panel-library, open_library, panel-admin-library) e a frase de busca de artigos. Regra pura, sem banco.
 import { matchIntent, INTENTS, PUBLIC_INTENTS, kbOutline } from '../src/assistant/kb.js';
 import { buildAction, filterActions, libraryAction, ACTION_KEYS, TARGETS } from '../src/assistant/targets.js';
@@ -43,7 +43,7 @@ describe('guia da plataforma: perguntas de uso → intenção', () => {
   });
 });
 
-describe('Lia e a Biblioteca: intenções', () => {
+describe('Guia e a Biblioteca: intenções', () => {
   test.each([
     ['Como uso a Biblioteca?', 'biblioteca'],
     ['onde busco artigos científicos?', 'biblioteca'],

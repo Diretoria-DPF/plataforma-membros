@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-/* Micro-card "Isso te ajudou?" da Lia (frontend/assistant-feedback.js).
+/* Micro-card "Isso te ajudou?" do Guia (frontend/assistant-feedback.js).
    Sem borda de card: a separação é por tom, raio e sombra. Só tokens, sem cor
    fixa, para valer nos dois temas. Vidro só quando há backdrop-filter. */
 
@@ -27,7 +27,7 @@
   }
 }
 
-/* Resposta aproximada (IA indisponível) e fontes citadas, sob o texto da Lia. */
+/* Resposta aproximada (IA indisponível) e fontes citadas, sob o texto do Guia. */
 .lia-degraded {
   margin: 0;
   padding: 6px 10px;
@@ -191,7 +191,7 @@
   .lia-fb-choice:hover:not(:disabled) { transform: none; }
 }
 
-/* Lia: pesquisa externa e registro (frontend/assistant-research.js). Só tokens; sem borda de cartão. */
+/* Guia: pesquisa externa e registro (frontend/assistant-research.js). Só tokens; sem borda de cartão. */
 .lia-cached-note {
   margin: 0;
   font-size: 13px;

@@ -68,7 +68,7 @@ Branch: `feat/identidade-liga`, a partir de `origin/main` (b589fed). O `main` lo
 
 ## 3. Riscos
 - Arquivos quentes (`index.html`, `app.js`, `build.js`, `sw.js`) só pela sessão principal, com os trechos de `CONTRATO.md` §12.
-  O checkout principal tem mudanças da Lia não comitadas nesses arquivos: trabalhe num worktree e espere conflito pequeno no merge da Lia.
+  O checkout principal tem mudanças do Guia não comitadas nesses arquivos: trabalhe num worktree e espere conflito pequeno no merge do Guia.
 - Worktree novo não tem `frontend/node_modules`: `npm ci` em `frontend/` (ou junção para o do checkout principal) antes da onda 3.
 - Testes que mudam de propósito: `liga.e2e.js` (marcação nova) e `blog.e2e.js` (contatos saem do topo). Q1 e Q3 reescrevem.
 - `visual-qa` mede só abas e cabeçalho; se a geometria mudar, regravar a baseline (`UPDATE_GEOMETRY=1`) só depois da revisão.

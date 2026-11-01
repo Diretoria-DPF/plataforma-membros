@@ -13,14 +13,14 @@
  *   .lp-cards         quem somos: carrossel no celular, grade no desktop
  *   .lp-areas         áreas de interesse
  *   .lp-funciona      como funciona: compromisso, benefícios, diferencial
- *   .lp-processo      processo seletivo: passos e Lia
+ *   .lp-processo      processo seletivo: passos e Guia
  *   .lp-edital        edital
  *   .lp-contato       canais oficiais
  *   .lp-instituicao   prédio, endereço e mapa carregado sob pedido
  *   .lp-blog          avisos do blog (estilo em blog-novidade.css)
  *
  * Pontos de quebra (mobile first): 600 px, 760 px, 900 px, 1024 px.
- *   600   áreas e benefícios em 2 colunas; Lia do processo aparece
+ *   600   áreas e benefícios em 2 colunas; Guia do processo aparece
  *   760   chips com mais respiro; passos em 3 colunas; contatos em 3; mapa 16:9
  *   900   hero em 2 colunas (texto | marca); funciona e instituição em 2 colunas
  *   1024  cartões e áreas em 4 colunas, sem rolagem

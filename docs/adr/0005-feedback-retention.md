@@ -1,9 +1,9 @@
-# ADR 0005 — Retenção do feedback e dos registros da Lia (LGPD)
+# ADR 0005 — Retenção do feedback e dos registros do Guia (LGPD)
 
 Status: aceita. Data: 2026-10-07 (atualizada em 2026-10-08).
 
 ## Contexto
-`assistant_feedback` guarda polegar, categoria e comentário livre ligados a uma resposta da Lia. O comentário pode conter dado pessoal. `assistant_messages` (respostas registradas, sql/021) e `assistant_incidents` (incidentes de moderação, sem texto da mensagem, sql/022) também guardam registros ligados ao perfil.
+`assistant_feedback` guarda polegar, categoria e comentário livre ligados a uma resposta do Guia. O comentário pode conter dado pessoal. `assistant_messages` (respostas registradas, sql/021) e `assistant_incidents` (incidentes de moderação, sem texto da mensagem, sql/022) também guardam registros ligados ao perfil.
 
 ## Decisão
 - `assistant_feedback`, de 0 a 90 dias: registro bruto.
@@ -20,5 +20,5 @@ Status: aceita. Data: 2026-10-07 (atualizada em 2026-10-08).
 - **Exclusão de conta.** Não existe fluxo automatizado: a exclusão é feita pelo responsável a partir do pedido do titular (roteiro previsto em `docs/PLANO_FASE3_MENSAGERIA.md`, item R9). As FKs `ON DELETE CASCADE` de sql/021 e sql/022 removem avaliações, respostas, moderação e incidentes ligados ao perfil quando o cadastro é excluído.
 - **Denúncias.** O ADR de origem pedia que o fluxo de denúncias cobrisse `assistant_feedback`. Hoje não há código de denúncia que faça isso: pendência.
 - **Sem hash (revisão de 2026-10-08).** A versão anterior trocava o comentário por SHA-256 sem sal. Isso era reversível por dicionário para comentários curtos e comuns, então não é garantia de anonimização. O texto agora é apagado. A coluna `comment_hash` deixa de existir (sai da migração 021).
-- **Painel do admin.** Após 90 dias, `comment` vem nulo e `comment_anonymized_at` vem preenchido. O painel "Satisfação da Lia" (`frontend/admin-ai.js`) mostra "Comentário apagado após 90 dias" no lugar do texto.
+- **Painel do admin.** Após 90 dias, `comment` vem nulo e `comment_anonymized_at` vem preenchido. O painel "Satisfação do Guia" (`frontend/admin-ai.js`) mostra "Comentário apagado após 90 dias" no lugar do texto.
 - **Versão da política.** A alteração de texto não mudou `LEGAL_VERSIONS.PRIVACY` (2026-10-08). Se a revisão jurídica considerar o texto materialmente alterado, a versão deve ser atualizada em `worker/src/constants.js`, na página e na política juntas, antes do merge de D2.

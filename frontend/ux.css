@@ -171,7 +171,7 @@ summary:focus-visible,
 /* ---------- Tela de entrada em cartões (index.html, #screen-welcome) ---------- */
 /* Três blocos separados: login, atalhos (Liga e blog) e a publicação do blog. Celular: uma coluna.
    A partir de 960 px: login à esquerda; atalhos e publicação à direita. A margem de baixo deixa a
-   Lia flutuante (#lia-launcher, fixa a 16 px do canto) longe dos botões no fim da rolagem. Sem flag.
+   Guia flutuante (#lia-launcher, fixa a 16 px do canto) longe dos botões no fim da rolagem. Sem flag.
    Movimento reduzido: o bloco único de laift-tokens.css zera as transições (ux.css não repete o @media). */
 #screen-welcome.auth-pilha {
   display: grid;
@@ -245,7 +245,7 @@ summary:focus-visible,
 .site-credito { margin: 8px 0 0; text-align: center; color: var(--muted); font-size: 0.75rem; line-height: 1.4; }
 .site-credito a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .site-credito a:hover, .site-credito a:focus-visible { color: var(--primary); }
-/* Na entrada o crédito fica na faixa livre sob os cartões (a margem de 96 px também afasta a Lia flutuante dos botões). */
+/* Na entrada o crédito fica na faixa livre sob os cartões (a margem de 96 px também afasta o Guia flutuante dos botões). */
 .site-credito--entrada { position: absolute; left: 0; right: 0; bottom: 84px; margin: 0; padding: 0 16px; }
 .cadastro-opcional {
   border-radius: var(--radius-md); background: var(--surface-alt);
@@ -355,8 +355,8 @@ summary:focus-visible,
 .credential-zoom { max-width: min(96vw, 560px); }
 .credential-zoom .credential-qr-wrap .learn-credential-qr { width: 100%; max-width: 380px; height: auto; aspect-ratio: 1; }
 
-/* ---------- Lia, guia da plataforma ---------- */
-/* Bolha fechada: 48 px com a cabeça da Lia (recorte 'head', ADR 0003). Alvo de toque >= 44 px. */
+/* ---------- Guia, guia da plataforma ---------- */
+/* Bolha fechada: 48 px com a cabeça do Guia (recorte 'head', ADR 0003). Alvo de toque >= 44 px. */
 .lia-launcher {
   position: fixed; right: 16px; bottom: 16px; z-index: 30; width: auto; min-height: 48px;
   display: inline-flex; align-items: center; gap: 8px; padding: 0 14px 0 0;
@@ -435,7 +435,7 @@ summary:focus-visible,
   .lia-launcher { padding: 0; }
   .lia-panel, .lia-launcher.lia-in-app ~ .lia-panel { right: 8px; left: 8px; width: auto; }
 }
-/* Moderação da Lia (ADR 0004): faixa de aviso e pedido de redenção. Cor nunca é o único sinal (ícone e texto). */
+/* Moderação do Guia (ADR 0004): faixa de aviso e pedido de redenção. Cor nunca é o único sinal (ícone e texto). */
 .lia-warning {
   display: flex; align-items: center; gap: 8px; margin: 0; padding: 8px 12px; border-radius: var(--radius-md);
   background: var(--surface-alt); color: var(--text); font-size: 13px; font-weight: 700; line-height: 1.35;

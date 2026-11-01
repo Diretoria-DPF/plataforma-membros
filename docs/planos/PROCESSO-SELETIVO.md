@@ -1,12 +1,12 @@
 # Processo seletivo contínuo da LAIFT: plano de execução
 
-Decidido com o dono em 2026-10-19. Substitui o formulário externo (Google Forms) por uma jornada dentro da plataforma, com inscrição sempre aberta, teste interativo, triagem por IA que **nunca elimina** e a Lia como guia.
+Decidido com o dono em 2026-10-19. Substitui o formulário externo (Google Forms) por uma jornada dentro da plataforma, com inscrição sempre aberta, teste interativo, triagem por IA que **nunca elimina** e o Guia como guia.
 
 ## 1. Decisões já tomadas
 
 | Tema | Decisão |
 |---|---|
-| Entrada | **Conta na plataforma** (e-mail confirmado). Reaproveita login, limites, auditoria e a Lia. |
+| Entrada | **Conta na plataforma** (e-mail confirmado). Reaproveita login, limites, auditoria e o Guia. |
 | Ritmo | **Inscrição sempre aberta.** Cada pessoa tem prazo individual para concluir (padrão 7 dias, configurável). A comissão analisa em **lotes** (padrão: a cada 15 dias). A página mostra "Próxima análise: dd/mm" em vez de "a divulgar". |
 | Teste | Perfil e disponibilidade + análise de cenário + questões objetivas de base + situações de conduta e ética. |
 | IA | Faz a **triagem prévia**: resume, organiza e sugere prioridade de leitura. **Não decide, não nota para eliminar, não exclui ninguém.** A comissão decide. |
@@ -48,15 +48,15 @@ Pendência da comissão: revisar o banco inicial (propomos um rascunho com 10 ob
 
 Roda quando a inscrição é enviada, em segundo plano, com o modelo "inteligente" do Groq (cota própria).
 
-- **Entrada**: respostas do candidato tratadas **como dado, nunca como instrução** (mesmo escudo de injeção de prompt da Lia). Sem nome, e-mail ou telefone no prompt.
+- **Entrada**: respostas do candidato tratadas **como dado, nunca como instrução** (mesmo escudo de injeção de prompt do Guia). Sem nome, e-mail ou telefone no prompt.
 - **Saída (JSON validado)**: resumo de 3 linhas; pontos fortes; pontos a esclarecer na entrevista; leitura da rubrica por critério (com a frase que justifica); **sinais de atenção** (texto genérico ou copiado, tentativa de manipular a IA, dado de saúde escrito, respostas incoerentes); **prioridade de leitura** (alta, média, ler com atenção). Sem nota final e sem "reprovar".
 - **Comissão** vê o resumo **ao lado** das respostas originais; a IA nunca esconde nada. Sinal de atenção **não penaliza**: só chama uma pessoa para ler.
 - **Falha ou cota esgotada**: a inscrição segue normal, marcada "sem triagem automática"; nada trava.
 - **Custo**: ~3 mil tokens por inscrição. Há teto diário próprio e alerta no painel de IA.
 
-## 6. A Lia como guia do processo
+## 6. O Guia como guia do processo
 
-- **Contexto por etapa**: o botão da Lia no assistente sabe em que etapa a pessoa está e oferece perguntas prontas daquela etapa.
+- **Contexto por etapa**: o botão do Guia no assistente sabe em que etapa a pessoa está e oferece perguntas prontas daquela etapa.
 - **O que ela faz**: explica o processo, as etapas, os prazos, o que a comissão espera, como preencher cada campo, como funciona a triagem, privacidade, status e recurso; resolve dúvidas de uso da tela.
 - **O que ela não faz**: não escreve a análise do candidato, não diz a resposta de questão, não opina sobre as chances. Pergunta de conteúdo recebe: "posso explicar o que se espera, mas a resposta tem de ser sua".
 - **Conteúdo**: novo documento da base de conhecimento (`processo-seletivo`), novas intenções por regra e botões que levam à etapa certa. Vale também para quem ainda não tem conta (visitante).
@@ -89,12 +89,12 @@ Reaproveita: sessão (cookie HttpOnly), limite por hora por pessoa e IP, Turnsti
 |---|---|---|
 | **1. Base e jornada** (feita; PR da fatia 1) | Migração (`selection_applications`, `selection_events`, `selection_settings`), serviço do Worker, jornada do candidato (etapas 1 a 8), banco v1, segurança da seção 7, página pública com fluxo contínuo e "Próxima análise" | `selection_enabled` |
 | **2. Triagem por IA e painel** | Pipeline de triagem, painel da comissão, decisões, e-mails de status | `selection_ai_enabled` |
-| **3. Lia guia** | Documento e intenções do processo, contexto por etapa, botões | (usa `chatbot_enabled`) |
+| **3. Guia guia** | Documento e intenções do processo, contexto por etapa, botões | (usa `chatbot_enabled`) |
 | **4. Fechamento** | Edital e avisos atualizados (sem "a divulgar"), recurso, retenção/exclusão, testes de carga e de segurança, treinamento da comissão (`docs/`) | desliga o formulário externo |
 
 Para reduzir PRs, as fatias 1 e 3 vão juntas; 2 e 4 vão juntas.
 
-**Definição de pronto:** candidato novo percorre tudo em 375 px e no computador; comissão decide pelo painel; Lia responde as dúvidas da jornada sem escrever pelo candidato; todos os testes e o e2e verdes; revisão de segurança sem achado alto; deploy conferido em produção; documentação e `CONTINUIDADE.md` atualizados.
+**Definição de pronto:** candidato novo percorre tudo em 375 px e no computador; comissão decide pelo painel; Guia responde as dúvidas da jornada sem escrever pelo candidato; todos os testes e o e2e verdes; revisão de segurança sem achado alto; deploy conferido em produção; documentação e `CONTINUIDADE.md` atualizados.
 
 ## 10. Pendências que dependem da comissão e do jurídico
 

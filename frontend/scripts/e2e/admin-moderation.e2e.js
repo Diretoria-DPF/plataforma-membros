@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * admin-moderation.e2e.js — seção "Moderação da Lia" do painel admin de IA
+ * admin-moderation.e2e.js — seção "Moderação do Guia" do painel admin de IA
  * (frontend/admin-moderation.js), como admin, em celular 375x812: carregando
  * (aria-busy), dados (agregados, níveis, pessoas e redenção, sem nome), vazio,
  * erro com "Tentar de novo", sem rolagem horizontal, alvos >= 44 px, axe sem
@@ -133,7 +133,7 @@ async function estadoErro() {
     await page.waitForSelector('#admin-moderation .state-error');
     check((await page.getAttribute('#admin-moderation .state-error', 'role')) === 'alert', 'erro: a falha é anunciada (role=alert)');
     const texto = await sectionText(page);
-    check(texto.includes('Não foi possível carregar a moderação da Lia.') && texto.includes('Servidor ocupado.'), 'erro: mostra o título e a mensagem da API como texto');
+    check(texto.includes('Não foi possível carregar a moderação do Guia.') && texto.includes('Servidor ocupado.'), 'erro: mostra o título e a mensagem da API como texto');
     await checkTargets(page, 'erro');
     await axeGate(page, 'admin/moderação 375x812 (erro)');
     await page.click('#admin-moderation .state-error button');

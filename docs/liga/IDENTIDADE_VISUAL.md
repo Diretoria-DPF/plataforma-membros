@@ -7,8 +7,8 @@ Fontes de referência: `docs/liga/REFERENCIAS_LIGAS.md`.
 
 ## 1. Os dois caminhos
 
-- **A · Institucional**: base clara, sóbria. A marca (teal) aparece como acento: botão, passos da linha do tempo e capa do Instagram. A Lia é pequena e fica dentro do cartão de apresentação. Indicada para a página pública e o formulário.
-- **B · Laboratório vivo**: painel profundo no topo e na linha do tempo, com a Lia maior e um filete amarelo que destaca o processo. Indicada para as redes sociais e os destaques.
+- **A · Institucional**: base clara, sóbria. A marca (teal) aparece como acento: botão, passos da linha do tempo e capa do Instagram. O Guia é pequena e fica dentro do cartão de apresentação. Indicada para a página pública e o formulário.
+- **B · Laboratório vivo**: painel profundo no topo e na linha do tempo, com o Guia maior e um filete amarelo que destaca o processo. Indicada para as redes sociais e os destaques.
 
 Diferenças detalhadas na seção 7.
 
@@ -31,7 +31,7 @@ Todos os valores vêm de `frontend/modulos/shared/laift-tokens.css`. Nenhuma cor
 | Destaque amarelo (B) | - | #ffc857 | `--dk-warning` (B, nos dois temas) |
 | Placa da marca | #fafaf7 | #fafaf7 | valor fixo igual a `--layer-0` claro |
 
-A variante B usa o painel profundo (`--dk-layer-1` e `--dk-warning`) nos dois temas. Sobre o painel, a Lia recebe `--lia-line` #cfe9e3 e halo #3fcfb6.
+A variante B usa o painel profundo (`--dk-layer-1` e `--dk-warning`) nos dois temas. Sobre o painel, o Guia recebe `--lia-line` #cfe9e3 e halo #3fcfb6.
 
 ### Contraste medido (WCAG 2.x, luminância relativa)
 
@@ -66,12 +66,12 @@ Menor par de cada variante: A claro 4,98:1; A escuro 6,07:1; B 6,07:1.
 - **Foco**: contorno de 3 px com `--laift-focus-color` (a marca), do próprio token.
 - **Movimento**: a prévia não anima. Qualquer animação futura usa só `transform` e `opacity`, duração com `--dur-*`, curva com `--ease-*`, e respeita o bloco de `prefers-reduced-motion` do `laift-tokens.css`.
 
-## 4. Uso da logo e da Lia
+## 4. Uso da logo e do Guia
 
 - **Logo** (`frontend/modulos/cracha/laift-marca.png`, 500 x 500, com transparência): sempre sobre a placa clara circular (#fafaf7), mesmo no tema escuro, porque o anel roxo some sobre fundo escuro. Tamanho mínimo de 64 px na tela. Sem distorção, sem troca de cor, sem recorte.
 - **Texto da arte**: a arte traz "LIGA ACADÊMICA DE FARMACOLOGIA E TOXICOLOGIA", "LAIFT" e "EST. 2026". Esse texto é o da arte já feita. O nome oficial depende da diretoria, e a arte deve ser revista se o nome mudar.
-- **Lia** (`frontend/modulos/shared/lia/lia.svg`, versão neutra, sem cenas nem adereços): as cores vêm de `lia.css`. A prévia copia o desenho para um `<symbol>` interno, porque uma `<img>` não aplica o CSS da Lia e ela sairia preta.
-- **Lia e dados**: a Lia nunca altera dados, não é botão e não recebe dado pessoal (LGPD). Na identidade, ela é ilustração.
+- **Guia** (`frontend/modulos/shared/lia/lia.svg`, versão neutra, sem cenas nem adereços): as cores vêm de `lia.css`. A prévia copia o desenho para um `<symbol>` interno, porque uma `<img>` não aplica o CSS do Guia e ela sairia preta.
+- **Guia e dados**: o Guia nunca altera dados, não é botão e não recebe dado pessoal (LGPD). Na identidade, ele é ilustração.
 
 ## 5. Tom de voz
 
@@ -89,10 +89,10 @@ Evitar:
 
 ## 6. Direito de imagem
 
-- A identidade não usa foto de pessoa. A marca e a Lia são arte da Liga.
+- A identidade não usa foto de pessoa. A marca e o Guia são arte da Liga.
 - Nome, foto ou @ de estudante ou membro só com autorização por escrito (LGPD). Depoimentos e imagens de membros: a definir pela diretoria.
 - Nenhum conteúdo com menor de idade entra na identidade antes do parecer jurídico. A flag `minors_enabled` nasce desligada.
-- Nenhuma imagem de terceiros foi baixada ou usada. A prévia usa só a marca e a Lia do próprio repositório.
+- Nenhuma imagem de terceiros foi baixada ou usada. A prévia usa só a marca e o Guia do próprio repositório.
 
 ## 7. Diferenças entre A e B
 
@@ -100,7 +100,7 @@ Evitar:
 |---|---|---|
 | Base | Clara (`--layer-0` #fafaf7) | Painel profundo (#14181c) no topo e na linha do tempo; o resto segue o tema |
 | Acento | Teal da marca (#0f6f62 claro, #3fcfb6 escuro) | #3fcfb6 e, na linha do tempo, #ffc857 |
-| Lia | 96 x 144 px no celular, 128 x 192 px no desktop, sem halo | 150 x 225 px no celular, 240 x 360 px no desktop, com halo #3fcfb6 |
+| Guia | 96 x 144 px no celular, 128 x 192 px no desktop, sem halo | 150 x 225 px no celular, 240 x 360 px no desktop, com halo #3fcfb6 |
 | Linha do tempo | Lista em camada 2, passos de 40 px | Painel com filete amarelo, passos de 56 px |
 | Tom | Institucional e sóbrio | Didático e experimental |
 | Uso sugerido | Página pública, formulário | Redes sociais, destaques |

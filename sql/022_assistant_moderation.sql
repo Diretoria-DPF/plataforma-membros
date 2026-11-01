@@ -1,7 +1,7 @@
 -- Plataforma de Membros LAIFT
 -- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
 -- Licença proprietária: ver LICENSE na raiz do repositório.
--- 022_assistant_moderation.sql — moderação da Lia (níveis, decaimento e redenção; ADR 0004).
+-- 022_assistant_moderation.sql — moderação do Guia (níveis, decaimento e redenção; ADR 0004).
 --
 -- assistant_moderation  estado atual por pessoa: nível 0 normal, 1 alerta, 2 aviso sério,
 --                       3 suspensão de 24 h (until). last_incident_at e last_decay_at

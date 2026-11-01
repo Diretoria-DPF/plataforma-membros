@@ -227,14 +227,14 @@ export const RATE_LIMITS = {
   MFA_ENROLL: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
   // Consultas ao cache semântico da IA (acerto não gasta cota, então tem teto próprio).
   AI_CACHE_LOOKUP: { MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 },
-  // Lia (guia da plataforma). Resposta por regra não gasta IA, então o teto é
+  // Guia (guia da plataforma). Resposta por regra não gasta IA, então o teto é
   // por hora e não por cota: 60 mensagens/h por pessoa logada; sem login, por
   // IP (NAT de campus é comum, então 30/h dá para uma turma conversar).
   ASSISTANT_CHAT: { MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 },
   ASSISTANT_CHAT_IP: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   ASSISTANT_FEEDBACK: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   ASSISTANT_REINDEX: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
-  // Prévia de IA do visitante (Lia híbrida): 5 tentativas por dia por IP (chave = hash do IP + sal). No Neon, não no
+  // Prévia de IA do visitante (Guia híbrido): 5 tentativas por dia por IP (chave = hash do IP + sal). No Neon, não no
   // KV: o KV gratuito só aceita 1.000 gravações por dia.
   LIA_VISITOR_AI_IP: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 86400 },
   // Gestão (confirmar cadastro, novos códigos, reautenticação): bucket separado
@@ -315,19 +315,19 @@ export const AI_FEATURE = {
 // Calibração atual (12/10/2026, medida em produção): 4 membros, 1 administrador
 // e 3 visitantes; o MAIOR consumo de IA em um dia foi ~6,8 mil tokens, contra o
 // orçamento de AI_DAILY_TOKEN_BUDGET (450 mil): ~1,5%. As cotas anteriores
-// (chat 40, Lia 25...) foram dimensionadas para ~25 pessoas ativas e ficaram
+// (chat 40, Guia 25...) foram dimensionadas para ~25 pessoas ativas e ficaram
 // apertadas demais para o uso real. Decisão do dono: ser GENEROSO com os
 // membros e deixar o orçamento global de tokens (AI_DAILY_TOKEN_BUDGET) e o
 // disjuntor AI_GLOBAL_DAILY_MAX como freio de verdade. Se a comunidade crescer
 // (uma troca de chat gasta ~1,2 mil tokens), reduza estes números ou aumente o
-// orçamento; admin ~2x o membro. Visitante NÃO mudou (a Lia dele é a prévia
-// própria, com limite por IP; aqui a cota da Lia de visitante é 0).
+// orçamento; admin ~2x o membro. Visitante NÃO mudou (o Guia dele é a prévia
+// própria, com limite por IP; aqui a cota do Guia de visitante é 0).
 export const AI_QUOTAS = {
   chat: { visitor: 15, member: 100, admin: 200 },
   evaluate: { visitor: 5, member: 25, admin: 50 },
   generate_case: { visitor: 2, member: 10, admin: 20 },
   lab_preceptor: { visitor: 10, member: 80, admin: 160 },
-  // Lia: só a pergunta SEM intenção conhecida chega à IA (o resto é regra, sem custo).
+  // Guia: só a pergunta SEM intenção conhecida chega à IA (o resto é regra, sem custo).
   // Cotas generosas (2026-10-20): quem tem login (inclusive candidato do processo seletivo, que é visitante) conversa à vontade;
   // quem NÃO tem login recebe só a base fixa. O disjuntor global de tokens continua sendo o freio de verdade.
   assistant: { visitor: 40, member: 200, admin: 400 },
@@ -355,7 +355,7 @@ export const AI_VISITOR_DAILY_MAX = Math.floor((AI_GLOBAL_DAILY_MAX * AI_VISITOR
 export const AI_DAILY_TOKEN_BUDGET = 450000;
 export const AI_BUDGET_REFRESH_MS = 30000; // reconsulta o uso a cada 30 s por instância
 
-// Modelo da Lia do MEMBRO (feature 'assistant'; ai/modelTier.js). Por padrão a Lia usa o modelo rápido
+// Modelo do Guia do MEMBRO (feature 'assistant'; ai/modelTier.js). Por padrão o Guia usa o modelo rápido
 // (GROQ_MODEL_FAST, gpt-oss-20b); com FOLGA ela sobe para o modelo inteligente (GROQ_MODEL_SMART, gpt-oss-120b),
 // que responde melhor. "Folga" = as DUAS condições valem ao mesmo tempo:
 //   - uso de tokens das últimas 24 h (todos os modelos) abaixo de SMART_BELOW_BUDGET_PCT % do orçamento
@@ -440,7 +440,7 @@ Object.assign(RATE_LIMITS, {
   ATLAS_TELEMETRY_STATS: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
 });
 
-// ---- Lia: RAG, feedback e moderação (sql/020-022; ADR 0004 e 0005) ----
+// ---- Guia: RAG, feedback e moderação (sql/020-022; ADR 0004 e 0005) ----
 // Embedding via Workers AI. A dimensão está no SQL (vector(1024)): trocar de modelo exige nova migração.
 export const EMBEDDING_MODEL = '@cf/baai/bge-m3';
 export const EMBEDDING_DIM = 1024;
@@ -457,7 +457,7 @@ export const RAG = {
   CONTEXT_CHARS: 900,       // máximo de caracteres de cada trecho no prompt
 };
 
-// ---- Lia híbrida (flag lia_hibrida_enabled, docs/lia/PLANO.md §"Desenho híbrido") ----
+// ---- Guia híbrido (flag lia_hibrida_enabled, docs/lia/PLANO.md §"Desenho híbrido") ----
 // RAG para recall + árvore de seções (assistant/tree.js) para decidir e ler + guarda de intenção +
 // resposta extrativa para quem não usa IA. Nada daqui vale com a flag desligada.
 export const TREE = {
@@ -530,7 +530,7 @@ export const TIMESERIES = {
   CACHE_TTL_SECONDS: 300,
 };
 
-// ---- Lia: feedback (D2), painel de satisfação e reindexação da base (D1) ----
+// ---- Guia: feedback (D2), painel de satisfação e reindexação da base (D1) ----
 // Página e comentário usam FEEDBACK (acima). Aqui só o que o painel e a reindexação precisam.
 export const FEEDBACK_STATS = {
   DAYS_DEFAULT: 30,   // janela padrão do painel de satisfação
@@ -544,11 +544,11 @@ Object.assign(RATE_LIMITS, {
   ASSISTANT_REINDEX_MINUTE: { MAX_ATTEMPTS: 1, WINDOW_SECONDS: 60 },
 });
 
-// ---- Lia: retenção de mensagens e incidentes (ADR 0005; limpeza em maintenance.js) ----
+// ---- Guia: retenção de mensagens e incidentes (ADR 0005; limpeza em maintenance.js) ----
 // Comentário e avaliação usam FEEDBACK (acima). Pelo CASCADE de sql/021, a avaliação sai junto
-// com a resposta da Lia a que se refere (ASSISTANT_MESSAGES), antes dos 365 dias de FEEDBACK.
+// com a resposta do Guia a que se refere (ASSISTANT_MESSAGES), antes dos 365 dias de FEEDBACK.
 export const ASSISTANT_RETENTION = {
-  MESSAGES_PURGE_AFTER_DAYS: 180,   // resposta registrada da Lia (assistant_messages)
+  MESSAGES_PURGE_AFTER_DAYS: 180,   // resposta registrada do Guia (assistant_messages)
   INCIDENTS_PURGE_AFTER_DAYS: 365,  // incidente de moderação, sem texto (assistant_incidents)
 };
 
@@ -561,7 +561,7 @@ Object.assign(RATE_LIMITS, {
   DASHBOARD_SERIES: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
 });
 
-// ---- Lia: moderação sob concorrência e abuso (juiz LLM e redenção) ----
+// ---- Guia: moderação sob concorrência e abuso (juiz LLM e redenção) ----
 // Limites por perfil, via enforceRateLimit. Estourar o juiz não derruba o chat: segue só pelos termos.
 Object.assign(RATE_LIMITS, {
   ASSISTANT_JUDGE: { MAX_ATTEMPTS: 20, WINDOW_SECONDS: 3600 },       // julgamentos de ofensa pelo LLM
@@ -572,7 +572,7 @@ Object.assign(MODERATION, {
   REDEEM_ACCEPTED_WINDOW_DAYS: 30,
 });
 
-// ---- Lia: revisão final da moderação (lote do decaimento diário) ----
+// ---- Guia: revisão final da moderação (lote do decaimento diário) ----
 // O job diário (maintenance.js) processa no máximo este tanto de pessoas por execução, as de relógio
 // mais antigo primeiro. O que sobrar fica para o dia seguinte.
 Object.assign(MODERATION, {

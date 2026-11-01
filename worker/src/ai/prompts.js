@@ -182,14 +182,14 @@ export function buildLabSynthesisMessages({ term }) {
 }
 
 // ---------------------------------------------------------------------------
-// Lia, guia da plataforma (modelo rápido). Só recebe o papel e a tela da pessoa:
+// Guia, guia da plataforma (modelo rápido). Só recebe o papel e a tela da pessoa:
 // nome, e-mail e qualquer dado pessoal NUNCA entram no prompt. A resposta é só
 // texto; os botões vêm da base fixa (assistant/targets.js), nunca da IA.
 // ---------------------------------------------------------------------------
 const ASSISTANT_RULES = [
   COMMON_RULES,
   '',
-  'PAPEL: você é a Lia, a guia da plataforma de membros da LAIFT. Ajude a pessoa a usar a plataforma: onde fica cada tela, o que cada módulo faz e como começar. Tom acolhedor, direto e curto.',
+  'PAPEL: você é o Guia, o assistente da plataforma de membros da LAIFT. Ajude a pessoa a usar a plataforma: onde fica cada tela, o que cada módulo faz e como começar. Tom acolhedor, direto e curto.',
   'Regras:',
   '- No máximo 120 palavras. Frases simples; listas com "-" só se ajudarem.',
   '- Fale apenas dos recursos listados abaixo. Se não souber, diga que não tem essa informação e sugira uma das opções da lista. Nunca invente telas, botões ou prazos.',
@@ -220,14 +220,14 @@ export function buildAssistantMessages({ question, history, role, context }) {
 }
 
 // ---------------------------------------------------------------------------
-// Lia híbrida: escolha de seções (flag lia_hibrida_enabled). O modelo vê o ÍNDICE de seções (texto fixo do
+// Guia híbrido: escolha de seções (flag lia_hibrida_enabled). O modelo vê o ÍNDICE de seções (texto fixo do
 // acervo, nunca dado de pessoa) e a pergunta como DADO; devolve só JSON, que o servidor valida (id que não
 // existe na árvore é descartado). Nada que o modelo escreva aqui chega à pessoa nem vira botão.
 // ---------------------------------------------------------------------------
 const TREE_SELECT_RULES = [
   COMMON_RULES,
   '',
-  'PAPEL: você é o seletor de seções da Lia, guia da plataforma LAIFT. Receba a PERGUNTA e o ÍNDICE de seções do acervo e escolha quais seções respondem à pergunta. Você NÃO responde à pergunta.',
+  'PAPEL: você é o seletor de seções do Guia, guia da plataforma LAIFT. Receba a PERGUNTA e o ÍNDICE de seções do acervo e escolha quais seções respondem à pergunta. Você NÃO responde à pergunta.',
   'Formato: responda SOMENTE com um objeto JSON, sem texto antes nem depois e sem bloco de código: {"sections":["id1","id2"],"answerable":true}',
   '- "sections": até 4 ids, EXATAMENTE como aparecem entre colchetes no índice, da seção mais útil para a menos útil. Nunca invente id.',
   '- "answerable": false (com "sections": []) se nenhuma seção do índice cobre a pergunta; true caso contrário.',
@@ -242,7 +242,7 @@ export function buildTreeSelectMessages({ question, outline }) {
 }
 
 // ---------------------------------------------------------------------------
-// Moderação da Lia: juízes de uma palavra (SIM/NAO). Recebem só o texto da mensagem, dentro de um
+// Moderação do Guia: juízes de uma palavra (SIM/NAO). Recebem só o texto da mensagem, dentro de um
 // bloco de DADOS; nenhum dado da pessoa. A resposta é lida por regra (sim/nao): nada vira ação.
 // ---------------------------------------------------------------------------
 const JUDGE_RULES = [

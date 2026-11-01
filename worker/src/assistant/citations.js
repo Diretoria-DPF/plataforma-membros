@@ -5,7 +5,7 @@
  */
 /**
  * assistant/citations.js
- * Citações das respostas da Lia que usam trechos do acervo (extraído de services/assistantService.js sem
+ * Citações das respostas do Guia que usam trechos do acervo (extraído de services/assistantService.js sem
  * mudar o comportamento; a prévia de visitante usa a mesma regra).
  *
  * O texto da IA cita "[n]", n = número do trecho enviado no prompt. Só os trechos citados viram fonte: o texto

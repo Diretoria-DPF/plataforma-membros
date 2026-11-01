@@ -12,7 +12,7 @@
  *    instância e cada chamada bem-sucedida soma localmente (noteTokens), para
  *    o contador não ficar defasado entre as consultas. Se a consulta falhar,
  *    vale o último valor conhecido (a IA não cai por causa do contador).
- *  - smartTierRoom: há folga para a Lia do membro usar o modelo inteligente? (uso do dia abaixo de
+ *  - smartTierRoom: há folga para o Guia do membro usar o modelo inteligente? (uso do dia abaixo de
  *    AI_MODEL_TIER.SMART_BELOW_BUDGET_PCT do orçamento E uso do próprio modelo abaixo de
  *    AI_MODEL_TIER.SMART_MODEL_DAILY_TOKENS_MAX). Mesma memória de 30 s do orçamento; qualquer falha ao
  *    medir = sem folga (o modelo rápido atende).
@@ -84,7 +84,7 @@ export async function budgetStatus(sql, env, now = Date.now()) {
 }
 
 /**
- * Há folga para o modelo inteligente (Lia do membro; AI_MODEL_TIER)? As duas condições valem juntas:
+ * Há folga para o modelo inteligente (Guia do membro; AI_MODEL_TIER)? As duas condições valem juntas:
  * uso de tokens do dia abaixo de SMART_BELOW_BUDGET_PCT % do orçamento E uso do modelo abaixo de
  * SMART_MODEL_DAILY_TOKENS_MAX. Nunca lança: sem modelo, sem medida confiável (falha na soma do dia ou do
  * modelo) ou com o limiar em 0 (desliga o recurso) = false, e o modelo rápido atende.

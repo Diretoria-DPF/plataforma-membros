@@ -35,7 +35,7 @@ Escopo: leitura de arquivos. Sem npm install, build, teste, Lighthouse, axe nem 
 | Grupo | Linha | Qtd | Entradas |
 |---|---|---|---|
 | Shell, estilos, gráficos | 24 | 9 | './', styles.css, ux.css, ux-glass.css, home-editorial.css, dashboardAdapter.js, charts.css, charts-core.js, charts.js |
-| Lia | 24 | 9 | lia.css, lia-art.js, lia-props-art.js, lia-props.js, lia-scenes.js, lia-states.js, lia-mood.js, lia-anim.js, lia.js |
+| Guia | 24 | 9 | lia.css, lia-art.js, lia-props-art.js, lia-props.js, lia-scenes.js, lia-states.js, lia-mood.js, lia-anim.js, lia.js |
 | Manifest e ícone | 24 | 2 | manifest.webmanifest, icons/icon-192.png |
 | Scripts da página | 25-26 | 24 | app.js, shared-states.js, pwa.js, ..., assistant-typing.js, modulos/shared/safe-dom.js |
 | Splash e tokens | 27 | 4 | ux-v2.js, splash.js, splash.css, laift-tokens.css |
@@ -135,7 +135,7 @@ Data: 2026-10-08 (linha 1); e2e 18:47 a 18:49 (-03) (linha 11). Viewport 375x812
 
 | Arquivo | Ocorrência | Efeito |
 |---|---|---|
-| frontend/modulos/shared/laift-tokens.css | :323 `reduce` | zera duração e iterações (:324-331); gráficos e Lia sem animação (:334-336) |
+| frontend/modulos/shared/laift-tokens.css | :323 `reduce` | zera duração e iterações (:324-331); gráficos e Guia sem animação (:334-336) |
 | frontend/ux.css | :9 (comentário); :565 `no-preference` | animação só sem restrição (conteúdo não lido) |
 | frontend/ux-glass.css | :103 `no-preference` | keyframe ux-glass-expand só sem restrição |
 

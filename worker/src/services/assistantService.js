@@ -5,7 +5,7 @@
  */
 /**
  * assistantService.js
- * Lia, a guia da plataforma. Orienta e leva até a tela certa; NUNCA altera dados.
+ * Guia, o assistente da plataforma. Orienta e leva até a tela certa; NUNCA altera dados.
  *
  * Camadas, da mais barata para a mais cara (a IA só entra no fim):
  *   1. flag chatbot_enabled (botão de emergência; falha fechada);
@@ -76,7 +76,7 @@ const EVENT_TITLE_MAX = 80;
 const EVENT_PLACE_MAX = 60;
 const RETRIEVAL_QUERY_MAX = 300; // mesmo teto de ragService (QUERY_MAX); a pergunta atual cabe inteira
 
-const MSG_DISABLED = 'A Lia está indisponível no momento. Tente novamente mais tarde.';
+const MSG_DISABLED = 'O Guia está indisponível no momento. Tente novamente mais tarde.';
 const MSG_REFUSAL = 'Não posso seguir esse tipo de instrução, mas posso te ajudar a usar a plataforma: eventos, módulos de estudo, seu crachá e seu perfil.';
 const MSG_FALLBACK = 'Ainda não sei responder isso por aqui. Posso te ajudar com eventos, módulos de estudo (laboratório, atlas 3D, quiz, casos clínicos), seu crachá e seu perfil. Escolha uma opção ou pergunte de outro jeito.';
 const MSG_AI_DOWN = 'A IA está indisponível agora, então respondo só com o que já sei: eventos, módulos de estudo, seu crachá e seu perfil. Escolha uma opção ou tente de novo mais tarde.';
@@ -147,7 +147,7 @@ async function flagOn(sql, identity, key = FLAG_CHATBOT) {
   try {
     return await isEnabled(sql, key, identity);
   } catch (err) {
-    return false; // falha fechada: sem saber, a Lia fica desligada
+    return false; // falha fechada: sem saber, o Guia fica desligado
   }
 }
 
@@ -164,7 +164,7 @@ async function enforceChatLimit(sql, env, identity) {
 /**
  * Pergunta sem intenção: IA para quem pode usar; senão, a base fixa. Com trechos (`context`), uma saída
  * vazia da IA devolve result null: quem chama responde pela base estática (answerFromKnowledge).
- * `refine` (Lia híbrida) é chamada DENTRO da unidade de cota, com os trechos, e devolve { chunks, answerable }:
+ * `refine` (Guia híbrido) é chamada DENTRO da unidade de cota, com os trechos, e devolve { chunks, answerable }:
  * assim uma pergunta continua gastando uma unidade, mesmo com a chamada extra de escolha de seções.
  * Devolve { result, context }: `context` é a lista de trechos que de fato foi para o prompt (a numeração [n]).
  */
@@ -194,7 +194,7 @@ async function askAiCore(sql, env, identity, message, history, context = null, r
       }
       if (refined) used = refined.chunks;
       const messages = buildAssistantMessages({ question: message, history, role, context: used });
-      // smartWhenRoom: a Lia do membro sobe para o modelo inteligente quando há folga de tokens (ai/orchestrator.js).
+      // smartWhenRoom: o Guia do membro sobe para o modelo inteligente quando há folga de tokens (ai/orchestrator.js).
       const out = await Orchestrator.complete(
         sql, env, identity,
         { feature: C.AI_FEATURE.ASSISTANT, messages, profileId: identity.profileId },
@@ -206,7 +206,7 @@ async function askAiCore(sql, env, identity, message, history, context = null, r
       return answer({ reply, source: 'ai', cached: !!out.cached, ...(out.degraded ? { degraded: true } : {}) });
     });
   } catch (err) {
-    // IA fora, orçamento do dia ou resposta vazia: a Lia continua útil com a base fixa.
+    // IA fora, orçamento do dia ou resposta vazia: o Guia continua útil com a base fixa.
     if (isEmptyOutput(err) && context) return done(null);
     if (err && (err.aiUnavailable || isEmptyOutput(err))) return done(answer({ reply: MSG_AI_DOWN, source: 'fallback' }));
     throw err;
@@ -229,7 +229,7 @@ function asDegradedIfNotAi(result) {
   return result.source === 'ai' ? result : Object.assign({}, result, { degraded: true });
 }
 
-/** Cota da Lia ainda livre para a pessoa? Só lê: não consome cota nem chama a IA. */
+/** Cota do Guia ainda livre para a pessoa? Só lê: não consome cota nem chama a IA. */
 async function hasAiQuota(sql, env, identity) {
   const { quotas } = await getMyQuota(sql, env, identity);
   return quotas.assistant.remaining > 0;
@@ -254,7 +254,7 @@ function canUseAi(identity, env) {
 /**
  * Busca os trechos do acervo. Nunca lança: falha vira { failed: true }. Trecho com cara de instrução sai.
  * Com rerank (rag_rerank_enabled), answerable === false quer dizer que nenhum trecho cobre a pergunta.
- * `limit` (Lia híbrida) pede mais candidatos que o TOP_K, para a escolha de seções.
+ * `limit` (Guia híbrido) pede mais candidatos que o TOP_K, para a escolha de seções.
  */
 async function retrieveContext(sql, env, query, correlationId, rerank = false, limit = undefined) {
   let found;
@@ -318,7 +318,7 @@ export function __resetKbIndexForTests() {
 
 /**
  * Versão do registro: hash do conteúdo que a busca usa; com o reranker ligado, ':r' (trocar o reranker invalida);
- * com a Lia híbrida, ':h' (a escolha de seções muda o que é lido, então o registro antigo não vale).
+ * com o Guia híbrida, ':h' (a escolha de seções muda o que é lido, então o registro antigo não vale).
  */
 function versionOf(index, rerank, hybrid = false) {
   if (index.empty || !index.hash) return NO_INDEX;
@@ -330,7 +330,7 @@ async function fromResearchLog(sql, message, version, hybrid = false) {
   const hit = await ResearchLog.lookup(sql, { provider: KB_PROVIDER, question: message, kbVersion: version });
   if (!hit) return null;
   if (hit.outcome === 'empty') return staticKbFallback(MSG_KB_EMPTY);
-  // O registro guarda só origem e seção; na Lia híbrida a fonte volta com o link da página pública (allowlist), como na resposta nova.
+  // O registro guarda só origem e seção; no Guia híbrida a fonte volta com o link da página pública (allowlist), como na resposta nova.
   const sources = hybrid ? hit.results.sources.map((s) => sourceEntry(s.source, s.section)) : hit.results.sources;
   return answer({ reply: hit.results.reply, sources, source: 'ai', cached: true });
 }
@@ -362,7 +362,7 @@ async function answerFromKnowledge(sql, env, identity, message, history, correla
     if (logOn) await logKbOutcome(sql, message, version, 'empty', {});
     return staticKbFallback(MSG_KB_EMPTY);
   }
-  // Lia híbrida: UMA chamada curta escolhe, na árvore de seções, o que a resposta lê (dentro da mesma unidade de cota).
+  // Guia híbrido: UMA chamada curta escolhe, na árvore de seções, o que a resposta lê (dentro da mesma unidade de cota).
   const refine = flags.hybrid
     ? (candidates) => TreeSelect.refineContext(sql, env, identity, { question: message, candidates, correlationId })
     : null;
@@ -396,7 +396,7 @@ async function recordAnswer(sql, identity, message, result, correlationId) {
   }
 }
 
-/** Quem não tem direito à IA (sem login ou papel com cota 0): na Lia híbrida recebe o trecho do acervo. */
+/** Quem não tem direito à IA (sem login ou papel com cota 0): no Guia híbrida recebe o trecho do acervo. */
 function lacksAiRight(identity) {
   return !identity || quotaLimit(identity.role, C.AI_FEATURE.ASSISTANT) <= 0;
 }
@@ -424,7 +424,7 @@ async function cachedPreview(sql, env, message, correlationId) {
 }
 
 /**
- * Lia híbrida para quem não usa IA da conta. Degraus, do melhor ao mais simples, sem nunca mostrar erro técnico:
+ * Guia híbrido para quem não usa IA da conta. Degraus, do melhor ao mais simples, sem nunca mostrar erro técnico:
  * cache compartilhado -> prévia de IA (Workers AI; flag lia_visitor_ai_enabled, limite por IP, Turnstile e
  * teto de neurons) -> trecho EXTRATIVO do acervo -> convite com temas. Não usa Groq, orquestrador nem cota.
  */
@@ -476,7 +476,7 @@ async function askWithKnowledge(sql, env, identity, ctx) {
 }
 
 /**
- * Modo da Lia híbrida para esta pergunta. `hybrid` exige a flag lia_hibrida_enabled E rag_enabled (sem o acervo
+ * Modo do Guia híbrida para esta pergunta. `hybrid` exige a flag lia_hibrida_enabled E rag_enabled (sem o acervo
  * não há o que escolher nem extrair); a prévia de IA do visitante exige ainda lia_visitor_ai_enabled. Com
  * lia_hibrida_enabled desligada nada muda: o resto do fluxo é o de sempre. `turnstileToken` é de uso único.
  */
@@ -525,7 +525,7 @@ async function chatCore(sql, env, identity, rawInput, correlationId) {
   const input = asObject(rawInput);
   // Só texto: um número ou objeto não é pergunta (cleanText aceitaria o número).
   const message = typeof input.message === 'string' ? cleanText(input.message, C.AI_LIMITS.QUESTION_MAX + 1) : '';
-  if (!message) throw E.ValidationError('Escreva sua pergunta para a Lia.');
+  if (!message) throw E.ValidationError('Escreva sua pergunta para o Guia.');
   if (message.length > C.AI_LIMITS.QUESTION_MAX) throw E.ValidationError('A pergunta passou do limite de ' + C.AI_LIMITS.QUESTION_MAX + ' caracteres.');
   // O teto de mensagens por hora vem ANTES do portão: quem está suspenso também gasta o teto (60/h) e não
   // consegue martelar o endpoint só porque a resposta é um texto fixo.
@@ -564,23 +564,23 @@ async function routeQuestion(sql, env, identity, ctx) {
   const { input, message, history, correlationId } = ctx;
   const role = identity ? identity.role : null;
   // O papel limita as intenções: a de administração não existe para quem não é admin (cai no fluxo normal).
-  // Com library_enabled desligada a Lia não fala da Biblioteca: a intenção é ignorada e os botões para ela somem.
+  // Com library_enabled desligada o Guia não fala da Biblioteca: a intenção é ignorada e os botões para ela somem.
   const libraryOn = await flagOn(sql, identity, FLAG_LIBRARY);
   const mode = await hybridMode(sql, identity, input, libraryOn);
   const kind = mode.hybrid ? questionKind(message) : null;
-  // Lia híbrida: pergunta clínica (dose, conduta, tratamento) nunca é respondida; remete a profissional e à emergência.
+  // Guia híbrido: pergunta clínica (dose, conduta, tratamento) nunca é respondida; remete a profissional e à emergência.
   if (kind === 'clinico') return recordAnswer(sql, identity, message, clinicalAnswer(), correlationId);
 
   let hit = matchIntent(message, history, role);
   if (hit && hit.intent.library && !libraryOn) hit = null;
-  // Processo seletivo na plataforma: as intenções dele só existem com selection_enabled; com ela ligada, a do processo
+  // Processo seletivo na plataforma: as intenções dele só existem com selection_enabled; com ele ligado, a do processo
   // geral troca para a versão "a inscrição é aqui".
   const selectionOn = await flagOn(sql, identity, FLAG_SELECTION);
   if (hit && hit.intent.selection && !selectionOn) hit = null;
   if (hit && selectionOn && hit.intent.whenSelection) hit = Object.assign({}, hit, { intent: await withSelectionStatus(sql, Object.assign({}, hit.intent, hit.intent.whenSelection)) });
-  // Lia híbrida: pergunta de definição só é respondida por regra pelas intenções que de fato definem.
+  // Guia híbrido: pergunta de definição só é respondida por regra pelas intenções que de fato definem.
   if (hit && mode.hybrid && !allowIntent(kind, hit)) hit = null;
-  // Artigos da Biblioteca: só com library_enabled; quem não tem login só na Lia híbrida (o degrau do visitante).
+  // Artigos da Biblioteca: só com library_enabled; quem não tem login só no Guia híbrida (o degrau do visitante).
   const wantsRefs = libraryOn && (!!identity || mode.hybrid);
   const plan = wantsRefs ? libraryPlan(message, kind || questionKind(message), !!hit) : null;
   if (hit) {

@@ -129,14 +129,14 @@ test('normalizeRole: papel desconhecido ou ausente cai em visitante', () => {
   assert.equal(Onboarding.normalizeRole(undefined), 'visitor');
 });
 
-test('cada papel tem 3 passos com a flag da Lia desligada e 4 com ela ligada', () => {
+test('cada papel tem 3 passos com a flag do Guia desligado e 4 com ele ligado', () => {
   for (const role of ['visitor', 'member', 'admin']) {
-    assert.equal(Onboarding.stepsFor(role, { chatbotOn: false }).length, 3, `${role} sem Lia`);
-    assert.equal(Onboarding.stepsFor(role, { chatbotOn: true }).length, 4, `${role} com Lia`);
+    assert.equal(Onboarding.stepsFor(role, { chatbotOn: false }).length, 3, `${role} sem Guia`);
+    assert.equal(Onboarding.stepsFor(role, { chatbotOn: true }).length, 4, `${role} com Guia`);
   }
 });
 
-test('o passo da Lia só aparece com a flag ligada, e o último passo é sempre o crachá', () => {
+test('o passo do Guia só aparece com a flag ligada, e o último passo é sempre o crachá', () => {
   const off = Onboarding.stepsFor('member', { chatbotOn: false });
   assert.equal(off.some((s) => s.kind === 'lia'), false);
   const on = Onboarding.stepsFor('member', { chatbotOn: true });
@@ -235,13 +235,13 @@ test('passo do crachá tem data-open-credential (delegação de credential.js) e
   assert.equal(storage.data['laift_onboarding_seen_p1'], '1');
 });
 
-test('passo da Lia abre a Lia (LaiftAssistant.open) e fecha o diálogo, sem data-open-credential', () => {
+test('passo do Guia abre o Guia (LaiftAssistant.open) e fecha o diálogo, sem data-open-credential', () => {
   const { api, doc, openedLia } = setup({ flags: [CHATBOT_FLAG], chatbot: true });
   api.maybeShow({ role: 'member', profileId: 'p1' });
   const dialog = dialogOf(doc);
   buttonNamed(dialog, 'Próximo').click();
   buttonNamed(dialog, 'Próximo').click();
-  buttonNamed(dialog, 'Abrir a Lia').click();
+  buttonNamed(dialog, 'Abrir o Guia').click();
   assert.equal(openedLia(), 1);
   assert.equal(dialog.open, false);
 });
@@ -271,12 +271,12 @@ test('não reabre enquanto já está aberto, e não exibe sem identificador de p
   assert.equal(api.maybeShow({ role: 'member' }), false);
 });
 
-test('sem flag do chatbot, o passo da Lia nunca aparece mesmo com a Lia carregada', () => {
+test('sem flag do chatbot, o passo do Guia nunca aparece mesmo com o Guia carregada', () => {
   const { api, doc } = setup({ chatbot: true });
   api.maybeShow({ role: 'member', profileId: 'p1' });
   assert.equal(progressOf(dialogOf(doc)), 'Passo 1 de 3');
   const titles = allNodes(dialogOf(doc)).filter((n) => n.tagName === 'BUTTON').map((n) => n.textContent);
-  assert.equal(titles.includes('Abrir a Lia'), false);
+  assert.equal(titles.includes('Abrir o Guia'), false);
 });
 
 // ---------- degradação ----------

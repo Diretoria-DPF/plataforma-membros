@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * avaliar-lia.mjs — roda o golden set da Lia (worker/test/fixtures/lia-golden.json) contra a API e grava um
+ * avaliar-lia.mjs — roda o golden set do Guia (worker/test/fixtures/lia-golden.json) contra a API e grava um
  * CSV para um revisor humano, mais um resumo no terminal (taxa de "não sei", de erro de intenção e de
  * respostas com fonte). Serve para o ensaio no staging ANTES de ligar lia_hibrida_enabled em produção.
  *
@@ -15,7 +15,7 @@
  *              VISITANTE (sem login). O token nunca é impresso nem gravado no CSV.
  *   O limite por hora do chat vale (30 por IP sem login, 60 com sessão): use --delay e, se preciso, rode em
  *   duas etapas. Quem estourar o limite aparece no CSV como erro.
- * Nenhum segredo mora neste arquivo. A resposta da Lia entra no CSV (para o revisor) mas a PERGUNTA do golden
+ * Nenhum segredo mora neste arquivo. A resposta do Guia entra no CSV (para o revisor) mas a PERGUNTA do golden
  * é texto de teste, nunca de pessoa.
  */
 import fs from 'node:fs';

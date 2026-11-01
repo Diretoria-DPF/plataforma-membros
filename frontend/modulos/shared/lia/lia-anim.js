@@ -1,4 +1,4 @@
-/* Lia - animacoes WAAPI (ADR 0002 e 0003, onda 1). Sem dependencias, sem innerHTML.
+/* Guia - animacoes WAAPI (ADR 0002 e 0003, onda 1). Sem dependencias, sem innerHTML.
    Interface: window.LiaAnim (e module.exports). Cada funcao recebe o host `.lia`,
    que contem o <svg class="lia-svg"> com os grupos do lia.svg. Animacoes so em transform e opacity.
    Tokens espelhados de modulos/shared/laift-tokens.css: manter em sincronia (o teste confere). */
@@ -250,7 +250,7 @@
     };
   }
 
-  // Cancela tudo que estiver pendente neste host (uso ao destruir a Lia).
+  // Cancela tudo que estiver pendente neste host (uso ao destruir o Guia).
   function destroy(host) {
     if (!host || typeof host !== 'object') return;
     cancelOwned(host, registryOf(host));

@@ -104,7 +104,7 @@ const SUPERFICIES = [
     grandes: ['--laift-primary'],
   },
   {
-    nome: 'Popover da Lia',
+    nome: 'Popover do Guia',
     veu: '--glass-fill-1',
     textos: ['--laift-text', '--laift-muted', '--laift-primary-strong'],
     grandes: [],

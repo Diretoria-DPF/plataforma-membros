@@ -5,7 +5,7 @@
  */
 /**
  * assistant/targets.js
- * Lista branca dos destinos que a Lia pode oferecer como botão. É a ÚNICA fonte
+ * Lista branca dos destinos que o Guia pode oferecer como botão. É a ÚNICA fonte
  * de ações: nada que venha da IA ou do cliente vira ação sem passar por aqui, e
  * o rótulo que o cliente exibe é sempre o desta lista.
  *
@@ -14,7 +14,7 @@
  *   open_module      → abre o módulo de estudo         (target = id do módulo)
  *   open_credential  → abre o crachá virtual           (target = 'credential')
  *
- * A Lia nunca altera dados: nenhuma ação aqui inscreve, vota, envia ou apaga.
+ * O Guia nunca altera dados: nenhuma ação aqui inscreve, vota, envia ou apaga.
  * Os ids de painel e de módulo são os do front (frontend/app.js PANEL_LOADERS e
  * frontend/learning.js MODULES); frontend/scripts/assistant.test.mjs confere que
  * a lista do front é igual a ACTION_KEYS.

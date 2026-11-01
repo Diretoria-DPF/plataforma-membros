@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Lia (L5): humor, tom, variações, poses idle, atraso idle e encurtamento (lia-mood.js). Funções puras, sem navegador.
+// Guia (L5): humor, tom, variações, poses idle, atraso idle e encurtamento (lia-mood.js). Funções puras, sem navegador.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

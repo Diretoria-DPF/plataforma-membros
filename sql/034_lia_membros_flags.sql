@@ -1,7 +1,7 @@
 -- Plataforma de Membros LAIFT
 -- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
 -- Licença proprietária: ver LICENSE na raiz do repositório.
--- 034_lia_membros_flags.sql — flag do registro de respostas da Lia para membros.
+-- 034_lia_membros_flags.sql — flag do registro de respostas do Guia para membros.
 --
 --   rag_cache_enabled   registro de respostas (tabela lia_pesquisas, sql/026): pergunta repetida de membro,
 --                       sem histórico, na mesma versão do acervo, é respondida sem IA e sem gastar cota.
@@ -13,5 +13,5 @@
 -- Reversão: sql/down/034_lia_membros_flags.sql.
 
 INSERT INTO feature_flags (key, enabled, description) VALUES
-  ('rag_cache_enabled', FALSE, 'Lia: registro de respostas (pergunta repetida de membro é respondida sem IA e sem gastar cota)')
+  ('rag_cache_enabled', FALSE, 'Guia: registro de respostas (pergunta repetida de membro é respondida sem IA e sem gastar cota)')
 ON CONFLICT (key) DO NOTHING;

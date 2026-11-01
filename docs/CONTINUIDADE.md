@@ -28,7 +28,7 @@ Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender d
 |---|---|
 | `main` | `6ee7c74` (PR #79). Deploys do Worker e do site passam; `/health` responde `{"ok":true}`; `laift.com.br`, `/biblioteca` e a API em ~0,3 s. Só as PRs de dependências #58 e #59 estão abertas |
 | Biblioteca LAIFT (Córtex) | **No ar e completa no código** (PRs #50–#57, #60–#61, #78, #79). 155 artigos: 137 publicados, 3 aprovados, 15 em triagem. Curadoria em abas (Para revisar, No ar, Pedidos de remoção, Editar artigos); só o admin remove ou muda o estado; curador e mentor pedem remoção. Os 56 DOIs de inglês do lote 1 **não serão importados** (decisão do dono). Detalhe: `docs/cortex/CONTINUIDADE-BIBLIOTECA.md` |
-| Lia | v2 com busca no acervo (RAG), guia da plataforma e guia da Biblioteca. Flags ligadas: `chatbot`, `rag`, `rag_cache`, `lia_hibrida`, `lia_library`, `lia_visitor_ai`. Depois de cada mudança no guia o admin toca em **Reindexar base da Lia** |
+| Guia | v2 com busca no acervo (RAG), guia da plataforma e guia da Biblioteca. Flags ligadas: `chatbot`, `rag`, `rag_cache`, `lia_hibrida`, `lia_library`, `lia_visitor_ai`. Depois de cada mudança no guia o admin toca em **Reindexar base do Guia** |
 | Cargos funcionais | **Feitos** (#73, #77; ADR 0010): gestor, revisor de conteúdo, moderador, curador e mentor, acumuláveis, com MFA nos privilegiados |
 | Auditoria geral (`docs/AUDITORIA_GERAL_2026-10-14.md`) | Fase 0 quase fechada; Fase 1 em andamento. Corrigidos: SEC-01 (#72), SEC-09 (#71), SEC-02 (#76), SEC-03/04/07 (#74), OPS-01 (#70), DAT-01 (#75), ROL-01/02/03 (#73, #77) |
 | Banco (Neon `jolly-snow-39561777`, banco `plataforma_membros`) | Migrações até `040` aplicadas (`039` não existe). A senha do papel dono foi rotacionada em 2026-10-17 |
@@ -36,7 +36,7 @@ Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender d
 | Backup | Diário, verde (09:35 de 17/10). **Restauração completa ainda não treinada** (OPS-03) |
 | E-mail | Remetente ainda é Gmail (OPS-04 pendente) |
 | Repositório | **Privado desde 2026-10-17.** Site e API seguem normais (a produção roda no Cloudflare). O GitHub Pages saiu do ar e `deploy-frontend.yml` é só manual. Atenção ao limite de minutos do GitHub Actions no plano gratuito (2.000 min/mês em repositório privado) |
-| Processo seletivo contínuo | **Plano aprovado em 2026-10-19:** `docs/planos/PROCESSO-SELETIVO.md` (inscrição sempre aberta, teste interativo, triagem por IA sem eliminar, Lia guia, painel da comissão). Entrega em 4 fatias atrás de flags `selection_*`. **Fatia 1 (jornada do candidato + Lia + datas) feita na branch `feat/processo-seletivo-fatia1`**; para ligar: aplicar a migração 042 e então `selection_enabled`. Fatia 2 (painel da comissão, triagem por IA, prova sem objetivas, migração 043) na branch `feat/processo-seletivo-fatia2`; para ligar: aplicar 042 e 043 e então `selection_enabled` (e `selection_ai_enabled`). **Retenção de 12 meses** já roda no cron diário (`maintenance.js`: anonimiza inscrições finais antigas, expira rascunhos de 60 dias, apaga eventos; sem migração). Hoje a inscrição ainda é pelo Google Forms |
+| Processo seletivo contínuo | **Plano aprovado em 2026-10-19:** `docs/planos/PROCESSO-SELETIVO.md` (inscrição sempre aberta, teste interativo, triagem por IA sem eliminar, Guia guia, painel da comissão). Entrega em 4 fatias atrás de flags `selection_*`. **Fatia 1 (jornada do candidato + Guia + datas) feita na branch `feat/processo-seletivo-fatia1`**; para ligar: aplicar a migração 042 e então `selection_enabled`. Fatia 2 (painel da comissão, triagem por IA, prova sem objetivas, migração 043) na branch `feat/processo-seletivo-fatia2`; para ligar: aplicar 042 e 043 e então `selection_enabled` (e `selection_ai_enabled`). **Retenção de 12 meses** já roda no cron diário (`maintenance.js`: anonimiza inscrições finais antigas, expira rascunhos de 60 dias, apaga eventos; sem migração). Hoje a inscrição ainda é pelo Google Forms |
 | Direitos do titular (LGPD) | Backend pronto: `privacyService.js` + migração 044 (aplicar antes de usar), 6 ações `apiPrivacy*` / `apiAdmin*DeletionRequest(s)`. Exportação dos próprios dados (sem segredos nem notas da comissão) e pedido de exclusão com prazo de 180 dias; a diretoria conclui por `apiAdminCompleteDeletion` (apaga o perfil, recusa a si mesma e o último admin). Falta o front (aba Privacidade no perfil + fila no painel admin) |
 | Jev (TypeSafe AI) | Só registrado: `docs/lia/JEV.md` |
 | Splash "Bem-vindo" do app | Não feita (`feat/splash-bem-vindo`) |
@@ -47,14 +47,14 @@ Documentos: `docs/identidade/PLANO.md` (diagnóstico, decisões, riscos, itens p
 - `/liga` vira a identidade digital: hero com nome, lema "✨ Nada se cria, nada se perde, tudo se transforma 📚", "🧬 conteúdo científico • projetos • capacitações" e botão "Processo seletivo" (abre as instruções; lá "Participar do processo seletivo" abre o formulário).
 - Quem somos em cards verticais; Áreas de interesse gerais; Como funciona (compromissos e benefícios); FAQ (Como se inscrever; Quem pode participar?; Quando são as inscrições?; Quantas vagas há?; Como acompanho o resultado?); Edital novo, vinculado, aberto por clique; Contato.
 - Instituição: UNINASSAU, Rua dos Maçons, 364, Salvador-Bahia, 41810-205, Brasil; site uninassau.edu.br; prédio grande em SVG; mapa só por clique (OpenStreetMap), "abrir no app de mapas".
-- Tela inicial: cartões sem a cabeça da Lia, com botões grandes "Conheça a LAIFT" e "Acessar blog"; aviso "nova publicação" com miniatura e laço rosa discreto, lendo `blog/index.json`.
+- Tela inicial: cartões sem a cabeça do Guia, com botões grandes "Conheça a LAIFT" e "Acessar blog"; aviso "nova publicação" com miniatura e laço rosa discreto, lendo `blog/index.json`.
 - Botão **Voltar** no canto superior esquerdo em todo módulo e página. Favicon e ícones nas páginas públicas. Blog instalável (PWA).
 - Pendências do dono (PLANO §4): texto do edital, áreas, frase incompleta do botão, benefícios, idade/menores, dados da diretoria, mapa na Política, nome do app do blog.
 
 ## 4. Fila (fazer nesta ordem)
 1. **Auditoria, Fase 1** (ver Fila e Log em `docs/AUDITORIA_GERAL_2026-10-14.md`): feitos SEC-06, SEO-01 (#82) e MOB-01 (#81); SEC-05 e SEC-08 mesclados (#83); o cookie de sessão está **LIGADO em produção desde 2026-10-17** (ADR 0011). Falta: conferir logout e iPhone/Safari; subir o HSTS (30 dias, 1 ano) depois de uma semana sem incidente; OPS-06 (status HTTP real nos erros) e OPS-08 (erros do front).
-2. **Verificação dos módulos** (pedido do dono, depois do item 1): percorrer Aprender (farmaco, toxico, clínica, lab, anatomia/Atlas), Eventos, Propostas, Tarefas, Mensagens, Equipe, Perfil, crachá, Biblioteca e Lia, em celular e desktop, corrigindo o que falhar.
-3. **Dono** (roteiro passo a passo enviado no chat de 2026-10-17): monitor externo no `/health` (OPS-01); planilha de consumo e horas do Neon (OPS-02/09); treino de restauração (OPS-03); remetente de e-mail no domínio e plano do Brevo (OPS-04); segundo admin de emergência; **Reindexar base da Lia**; revisar os 18 artigos que faltam publicar; Android real; Google Forms (6 áreas antigas e "Campus Pituba").
+2. **Verificação dos módulos** (pedido do dono, depois do item 1): percorrer Aprender (farmaco, toxico, clínica, lab, anatomia/Atlas), Eventos, Propostas, Tarefas, Mensagens, Equipe, Perfil, crachá, Biblioteca e Guia, em celular e desktop, corrigindo o que falhar.
+3. **Dono** (roteiro passo a passo enviado no chat de 2026-10-17): monitor externo no `/health` (OPS-01); planilha de consumo e horas do Neon (OPS-02/09); treino de restauração (OPS-03); remetente de e-mail no domínio e plano do Brevo (OPS-04); segundo admin de emergência; **Reindexar base do Guia**; revisar os 18 artigos que faltam publicar; Android real; Google Forms (6 áreas antigas e "Campus Pituba").
 4. **Biblioteca**: nomear a Diretoria Científica no texto público; critério de inclusão; importar mais artigos em português quando o dono pedir.
 5. **ux-progresso**: Lote A (barra de progresso de leitura nos posts) e Lote W; splash "Bem-vindo".
 6. **Jev (TypeSafe AI)**: checklist de `docs/lia/JEV.md` §5, só pesquisa e staging.
@@ -66,7 +66,7 @@ Documentos: `docs/identidade/PLANO.md` (diagnóstico, decisões, riscos, itens p
 | Assunto | Onde |
 |---|---|
 | Blog, estilo, wireframe, campanhas | `docs/blog/` (`WIREFRAME.md`, `CAMPANHAS.md`, `fichas/`, `campanhas/outubro-rosa/`) |
-| Lia: plano, revisão, fichas, bases, seleção | `docs/lia/` (`PLANO.md`, `REVISAO.md`, `JEV.md`, `pesquisa/BASES.md`, `pesquisa/SELECAO.md`) |
+| Guia: plano, revisão, fichas, bases, seleção | `docs/lia/` (`PLANO.md`, `REVISAO.md`, `JEV.md`, `pesquisa/BASES.md`, `pesquisa/SELECAO.md`) |
 | Identidade da Liga | `docs/identidade/` |
 | Liga e edital (fontes) | `docs/liga/` (`IDENTIDADE_VISUAL.md`, `fontes/edital-original-2026.txt`) |
 | Ambientes, deploy, flags, backup | `docs/AMBIENTES.md`, `docs/DEPLOYMENT.md`, `docs/FEATURE_FLAGS.md`, `docs/BACKUP_RESTORE.md` |
@@ -81,7 +81,7 @@ Documentos: `docs/identidade/PLANO.md` (diagnóstico, decisões, riscos, itens p
 - **Front:** CSP sem inline (`script-src 'self'; style-src 'self'`); sem `innerHTML`; alvos de 44 px; `prefers-reduced-motion`; cabeçalho de copyright em `.js/.css/.mjs/.sql` (`node tools/license/apply-headers.mjs --check`).
 - **`main` local pode estar atrasado:** sempre `git fetch` e ramificar de `origin/main`.
 - **Worktrees pesam** (`.claude/worktrees/`); limpar com `git worktree remove` quando a PR for mesclada.
-- O checkout principal tinha mudanças da Lia não comitadas em arquivos quentes: trabalhe a identidade num worktree separado e espere conflito pequeno ao mesclar.
+- O checkout principal tinha mudanças do Guia não comitadas em arquivos quentes: trabalhe a identidade num worktree separado e espere conflito pequeno ao mesclar.
 
 ## 7. Comandos úteis
 ```bash

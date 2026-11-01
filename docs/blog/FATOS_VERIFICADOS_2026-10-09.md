@@ -25,7 +25,7 @@ Fonte única dos posts (`docs/blog/ESTILO.md:4`): **se o fato não está aqui, n
 3. O Worker expõe **117 actions** em 14 grupos (`worker/src/handlers.js:88-271`), com a mesma lista do `openapi.yaml`.
 4. Migrações **001 a 019 aplicadas** e **020 a 024 pendentes** em produção, segundo os docs (`docs/ANDAMENTO.md:6`, `:26`; `docs/CHANGELOG.md:57`). Não há `sql/025`.
 5. Flags públicas lidas em produção em 2026-10-09, por volta de 03:37-03:38 UTC: `chatbot_enabled=true`, `ux_v2_enabled=false`, `feedback_enabled` e `selection_open` ausentes (= desligadas).
-6. A Lia (guia) está ligada em produção. A base de conhecimento, o feedback e a moderação da Lia estão prontos, mas aguardam as migrações 020 a 024.
+6. O Guia (guia) está ligado em produção. A base de conhecimento, o feedback e a moderação do Guia estão prontos, mas aguardam as migrações 020 a 024.
 7. O novo visual (vidro e hero da UX v2) **não** está ligado no app em produção (`ux_v2_enabled=false`; `frontend/hero.js:17`).
 8. A `/liga` responde HTTP 200 em produção. O processo seletivo está fechado (`selection_open` ausente) e não há inscrição nativa.
 9. A segurança tem base real: CSP por página, MFA TOTP, mensagens cifradas no navegador (X25519, HKDF, AES-GCM), rate limit e backup diário cifrado. Os limites ficam declarados: QR sem validade (O14), Termos e Privacidade em minuta (J2).
@@ -46,9 +46,9 @@ Legenda de "produção": **ativo** = código no main + site e Worker publicados 
 | M7 | Mensagens cifradas | Conversas cifradas no navegador | ativo | nenhuma | `messageService.test.js`; `messagingKeyService.test.js` | `index.html:484`; `msg-crypto.js:42`, `:226`, `:281` |
 | M8 | Perfil | Dados e preferências da conta | ativo | nenhuma | `profileService.test.js`; `e2e/mfa.e2e.js` | `index.html:521`; `handlers.js:115-117` |
 | F1 | Crachá virtual | Cartão com papel e QR de presença assinado | ativo (inferência: #36 antes da #38) | nenhuma | `credential.test.mjs`; `e2e/credential.e2e.js`; `e2e/qr.e2e.js` | `credential.js:270`; `handlers.js:244` |
-| F2 | Lia (guia) | Orienta e leva às telas; chat para quem está logado | ativo | chatbot_enabled=true | `assistant.test.mjs`; `e2e/assistant.e2e.js`; `lia*.test.mjs` | `assistant.js:620-623`; `handlers.js:140` |
-| F3 | Feedback da Lia | Polegar e comentário nas respostas | pronto-aguardando-ativacao | feedback_enabled ausente | `assistant-feedback.test.mjs` | `assistant.js:274-276`; `handlers.js:145` |
-| F4 | Onboarding | Passos por papel após o login | ativo (inferência) | passo da Lia depende de chatbot (on) | `onboarding.test.mjs`; `e2e/onboarding.e2e.js` | `app.js:937`; `onboarding.js:144` |
+| F2 | Guia (guia) | Orienta e leva às telas; chat para quem está logado | ativo | chatbot_enabled=true | `assistant.test.mjs`; `e2e/assistant.e2e.js`; `lia*.test.mjs` | `assistant.js:620-623`; `handlers.js:140` |
+| F3 | Feedback do Guia | Polegar e comentário nas respostas | pronto-aguardando-ativacao | feedback_enabled ausente | `assistant-feedback.test.mjs` | `assistant.js:274-276`; `handlers.js:145` |
+| F4 | Onboarding | Passos por papel após o login | ativo (inferência) | passo do Guia depende de chatbot (on) | `onboarding.test.mjs`; `e2e/onboarding.e2e.js` | `app.js:937`; `onboarding.js:144` |
 | F5 | Verificação em duas etapas | TOTP no login e códigos de recuperação | ativo (017 aplicada e chave cadastrada: `docs/ANDAMENTO.md:26`) | mfa_required NAO CONFIRMADO | `mfaTotp.test.js`; `mfaService.test.js`; `e2e/mfa.e2e.js` | `handlers.js:98`; `mfa.js:277` |
 | F6 | Página /liga | Quem somos, áreas, processo seletivo, contato | ativo (HTTP 200, H3:86) | selection_open ausente (CTA oculto) | `e2e/liga.e2e.js` | `frontend/liga.html:23-121`; `liga.js:63` |
 | Q1 | Farmacologia Básica | Simulador com 240 questões | ativo | nenhuma | `e2e/quiz-farmaco.e2e.js` | `learning.js:62`; `handlers.js:242` |
@@ -58,7 +58,7 @@ Legenda de "produção": **ativo** = código no main + site e Worker publicados 
 | Q5 | Anatomia e Farmacocinética 3D | Atlas 3D, PK e vias; telemetria anônima | ativo; conteúdo em revisão (seção 6) | nenhuma | `frontend/scripts/atlas/*.test.mjs`; `e2e/atlas*.e2e.js` | `learning.js:82`; `sql/014_atlas_telemetry.sql:4` |
 | A1-A8 | Admin: painel, usuários, eventos, propostas, tarefas, feedback, auditoria, denúncias | Gestão pela diretoria | ativo (só papel admin, `app.js:1044`) | nenhuma | `adminService.test.js`; `e2e/qa-full.e2e.js` | `index.html:298-345`; `handlers.js:182-196` |
 | A9 | Terminal fiscal | Check-in de presença por QR | ativo (admin) | nenhuma | `e2e/fase2.e2e.js`; `e2e/qr.e2e.js` | `learning.js:88`, `:358`; `handlers.js:245-249` |
-| A10-A11 | Painel de IA e moderação da Lia | Uso, cotas, métricas; moderação agregada | tela no main (`admin-moderation.js:338`); a moderação em si depende da 023 | moderation_enabled NAO CONFIRMADO | `admin-ai.test.mjs`; `admin-moderation.test.mjs` | `index.html:771`; `handlers.js:219`, `:262-263` |
+| A10-A11 | Painel de IA e moderação do Guia | Uso, cotas, métricas; moderação agregada | tela no main (`admin-moderation.js:338`); a moderação em si depende da 023 | moderation_enabled NAO CONFIRMADO | `admin-ai.test.mjs`; `admin-moderation.test.mjs` | `index.html:771`; `handlers.js:219`, `:262-263` |
 
 ## 3. Segurança e privacidade
 
@@ -71,7 +71,7 @@ Legenda de "produção": **ativo** = código no main + site e Worker publicados 
 | LGPD | A Política cita base legal (art. 7), transferência internacional (art. 33) e direitos (arts. 18 e 20). Termos e Privacidade são **minutas sem revisão de advogado**. Nenhum encarregado nomeado | `docs/POLITICA_DE_PRIVACIDADE.md:69`, `:163`, `:253`, `:267`; J2 em `docs/riscos-residuais.md:35` |
 | Backup | Diário às 05:30 UTC, cifrado com `age` antes de sair do runner, guardado no R2. Retenção: 7 dias (diário), 400 dias (mensal) e 90 dias (artefato) | `.github/workflows/backup.yml:26`, `:89-98`, `:109-121`; `docs/BACKUP_RESTORE.md:3-12` |
 | Backup funcionando | **Confirmado fora do repo, a registrar**: o dono informou o run 37873140437 e a Issue #34 fechada. O restore drill existe (`tools/backup/restore-drill.sh`); não há execução registrada (O1 "a mitigar") | `docs/riscos-residuais.md:45` |
-| IA e dados | A Lia nunca altera dados; nenhum dado pessoal vai para a IA | `docs/TIME_CONTRATO.md:19` |
+| IA e dados | O Guia nunca altera dados; nenhum dado pessoal vai para a IA | `docs/TIME_CONTRATO.md:19` |
 | Limites declarados | O14: QR do crachá sem validade. S8: QR estático. S9: troca de origem perde a identidade das mensagens. I2: IA pode errar clinicamente. 56 riscos abertos ou aceitos | `docs/riscos-residuais.md:56`, `:17`, `:18`, `:25`; H3 seção 3 |
 
 ## 4. Desempenho e acessibilidade (só números com fonte e data)
@@ -92,7 +92,7 @@ Os números valem só para as páginas medidas. Não existe Lighthouse de outras
 | Fato | Fonte |
 |---|---|
 | Instalável: manifest com nome curto "LAIFT", `display: standalone` e ícones 192, 512 e maskable 512 | `frontend/manifest.webmanifest:4`, `:10`, `:15-19` |
-| O service worker pré-carrega 49 arquivos do shell (estilos, scripts, Lia, ícone, splash) | `frontend/sw.js:23-29` |
+| O service worker pré-carrega 49 arquivos do shell (estilos, scripts, Guia, ícone, splash) | `frontend/sw.js:23-29` |
 | Estratégia: rede primeiro; sem rede, usa o cache; navegação sem cache devolve a página inicial | `frontend/sw.js:80-90` |
 | **Não** funciona offline: API e POST (outra origem), CDN das páginas de módulo (O31b) | `frontend/sw.js:33`, `:36`; `docs/riscos-residuais.md:76` |
 | O Atlas 3D tem cache próprio por build, fora do service worker | `frontend/sw.js:37`; `frontend/scripts/build.js:133`, `:143` |
@@ -102,8 +102,8 @@ Os números valem só para as páginas medidas. Não existe Lighthouse de outras
 
 | Item | Selo | Fonte | O que falta |
 |---|---|---|---|
-| Lia, guia da plataforma | EM PRODUCAO | `sql/019_assistant.sql:21`; `docs/ANDAMENTO.md:26`; leitura pública de flags (H1:26, H3:61) | nada no escopo atual |
-| Base de conhecimento, feedback e moderação da Lia | PRONTO AGUARDANDO ATIVACAO | `docs/CHANGELOG.md:57`; `docs/ANDAMENTO.md:6`, `:69-71`; `sql/023_flags_v2.sql:49-51` | aplicar 020 a 022 e 024, reindexar e, por último, a 023 |
+| Guia, guia da plataforma | EM PRODUCAO | `sql/019_assistant.sql:21`; `docs/ANDAMENTO.md:26`; leitura pública de flags (H1:26, H3:61) | nada no escopo atual |
+| Base de conhecimento, feedback e moderação do Guia | PRONTO AGUARDANDO ATIVACAO | `docs/CHANGELOG.md:57`; `docs/ANDAMENTO.md:6`, `:69-71`; `sql/023_flags_v2.sql:49-51` | aplicar 020 a 022 e 024, reindexar e, por último, a 023 |
 | Novo visual do app (UX v2: vidro, hero) | PRONTO AGUARDANDO ATIVACAO | `docs/ANDAMENTO.md:6`; `sql/023_flags_v2.sql:47`; `frontend/hero.js:17` | ligar `ux_v2_enabled` (desligada na leitura pública) |
 | Abertura do processo seletivo pela /liga | PRONTO AGUARDANDO ATIVACAO | `frontend/liga.js:63`; `frontend/liga.html:128` | a diretoria ligar `selection_open` |
 | Inscrição direta no site (Etapa 2) | PLANEJADO | `docs/TIME_CONTRATO.md:65`; `docs/liga/fontes/forms-processo-seletivo.md:3` | migração 025 e action de inscrição (nenhuma das duas existe) |
@@ -137,7 +137,7 @@ Os números valem só para as páginas medidas. Não existe Lighthouse de outras
 
 1. Atlas "revisado", "aprovado" ou "validado por especialistas". Diga "em revisão".
 2. "100% seguro", "garantido", "inviolável", "à prova de fraude", "imune a ataques".
-3. Base de conhecimento, feedback ou moderação da Lia ativos em produção.
+3. Base de conhecimento, feedback ou moderação do Guia ativos em produção.
 4. Novo visual (vidro) ou hero como estado atual do app.
 5. "Inscrições abertas", "inscreva-se pelo site" ou inscrição nativa existente.
 6. Datas, vagas, pesos ou notas do seletivo (use "a divulgar"); regras do Edital v2 como definitivas.
@@ -162,7 +162,7 @@ Fusões guiadas pelos fatos:
 - "Sobre a Liga" entra no Bem-vindo, porque missão, história e nome oficial seguem "a definir pela diretoria" e o post sozinho ficaria vazio.
 - Desempenho e offline viram um post só: a mesma base de evidência (login e `sw.js`).
 - Equipe (Liga) absorve o organograma; Perfil fica com as conexões.
-- A Lia é um post só, com selo por recurso.
+- O Guia é um post só, com selo por recurso.
 
 | # | slug | título | série | status | fontes |
 |---|---|---|---|---|---|
@@ -178,7 +178,7 @@ Fusões guiadas pelos fatos:
 | 10 | eventos-e-cracha | Eventos, presença e crachá virtual | modulos | ativo | `frontend/index.html:397`; `worker/src/handlers.js:164`, `:244`; `docs/riscos-residuais.md:56` |
 | 11 | propostas-votacao-tarefas | Propostas, votação e tarefas | modulos | ativo | `frontend/index.html:411`, `:439`; `worker/src/handlers.js:171`, `:176` |
 | 12 | mensagens-cifradas | Mensagens cifradas entre membros | modulos | ativo | `frontend/msg-crypto.js:42`, `:226`, `:281`; `sql/009_messaging.sql:5`; `docs/riscos-residuais.md:18` |
-| 13 | lia-a-guia | Lia, a guia da plataforma | modulos | ativo | `frontend/assistant.js:620-623`; `sql/019_assistant.sql:21`; `docs/CHANGELOG.md:57`; seção 6 |
+| 13 | lia-a-guia | Guia, o assistente da plataforma | modulos | ativo | `frontend/assistant.js:620-623`; `sql/019_assistant.sql:21`; `docs/CHANGELOG.md:57`; seção 6 |
 | 14 | perfil-e-conexoes | Perfil, conexões e segurança da conta | modulos | ativo | `worker/src/handlers.js:98`, `:115-117`, `:216`; `frontend/mfa.js:277` |
 | 15 | seguranca-e-privacidade | Segurança e privacidade na LAIFT | plataforma | ativo | seção 3 (`frontend/index.html:6`; `msg-crypto.js:226`; `.github/workflows/backup.yml:26`; `docs/riscos-residuais.md:35`) |
 | 16 | desempenho-acessibilidade-offline | Rápida, acessível e instalável no celular | plataforma | ativo | `docs/LIGHTHOUSE_2026-10-08b.md:9-17`; `docs/qa/A11Y_EVIDENCIA_2026-10.md:19-21`; `frontend/sw.js:23-29`, `:36` |

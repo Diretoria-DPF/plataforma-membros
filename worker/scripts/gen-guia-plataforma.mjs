@@ -5,7 +5,7 @@
  */
 /**
  * gen-guia-plataforma.mjs — gera worker/src/assistant/guiaPlataforma.js a partir de docs/lia/GUIA-PLATAFORMA.md
- * (a fonte única do guia da Lia). O Worker não lê arquivo em tempo de execução, então o markdown entra no
+ * (a fonte única do guia do Guia). O Worker não lê arquivo em tempo de execução, então o markdown entra no
  * módulo como texto. Uso: `cd worker && node scripts/gen-guia-plataforma.mjs`. O teste guiaPlataforma.test.js
  * falha enquanto o módulo não for regerado.
  */
@@ -26,7 +26,7 @@ const module = `/*
 /**
  * assistant/guiaPlataforma.js — GERADO por worker/scripts/gen-guia-plataforma.mjs a partir de
  * docs/lia/GUIA-PLATAFORMA.md. Não edite à mão: edite o markdown e rode o gerador.
- * O guia vira trechos do acervo da Lia (fonte 'guia-plataforma', ver assistant/docs.js); as seções
+ * O guia vira trechos do acervo do Guia (fonte 'guia-plataforma', ver assistant/docs.js); as seções
  * de administração ficam fora do acervo, que é o mesmo para todos os papéis.
  */
 export const GUIA_SOURCE = 'guia-plataforma';

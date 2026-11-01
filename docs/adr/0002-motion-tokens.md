@@ -21,7 +21,7 @@ Tokens únicos em `modulos/shared/laift-tokens.css`; nenhuma animação usa dura
 | `--ease-anticipate` | cubic-bezier(0.68, -0.55, 0.27, 1.55) |
 | `--move-xs/sm/md/lg` | 4 / 8 / 16 / 32px |
 
-Uso: hover → fast + out; active → instant + out; modal → base + spring; splash e entrada de módulo → slow + spring; Lia reagindo → base + spring.
+Uso: hover → fast + out; active → instant + out; modal → base + spring; splash e entrada de módulo → slow + spring; Guia reagindo → base + spring.
 
 Regras:
 - Animar só `transform` e `opacity`.

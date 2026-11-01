@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Micro-card "Isso te ajudou?" da Lia, embaixo de cada resposta com messageId.
+// Micro-card "Isso te ajudou?" do Guia, embaixo de cada resposta com messageId.
 // Envia ao servidor (apiAssistantFeedback) só o id da resposta, o polegar e, se a
 // pessoa quiser, categoria e comentário (até 500 caracteres). Não guarda nada no
 // navegador e não mostra dados de outras pessoas. Texto sempre por textContent.
@@ -54,7 +54,7 @@
   /** Monta o corpo que vai ao servidor; nada sai sem passar aqui. */
   function buildPayload(input) {
     var src = input || {};
-    if (!isUuid(src.messageId)) return { ok: false, error: 'Resposta da Lia não identificada.' };
+    if (!isUuid(src.messageId)) return { ok: false, error: 'Resposta do Guia não identificada.' };
     if (RATINGS.indexOf(src.rating) === -1) return { ok: false, error: 'Escolha Útil ou Não útil.' };
     var payload = { messageId: src.messageId, rating: src.rating };
     if (src.category !== undefined && src.category !== null && src.category !== '') {
@@ -299,7 +299,7 @@
     var state = initialState({ enabled: opts.enabled, messageId: opts.messageId });
     if (state.phase === 'hidden') return null;
     var root = el(doc, 'section', 'lia-feedback');
-    root.setAttribute('aria-label', 'Avaliação da resposta da Lia');
+    root.setAttribute('aria-label', 'Avaliação da resposta do Guia');
     root.tabIndex = -1;
     var ids = nextIds();
     var timer = null;

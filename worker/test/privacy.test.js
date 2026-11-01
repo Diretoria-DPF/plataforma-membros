@@ -62,13 +62,13 @@ describe('exportMyData', () => {
     for (const banned of ['HASH-SECRETO', 'password', 'TRIAGEM-IA', 'NOTA-INTERNA', '_signals', 'saude', 'OUTRO-CURSO-BIA', 'Bia Costa']) expect(text).not.toContain(banned);
   });
 
-  test('inclui conexões, bloqueios, feedback, Lia, aprendizagem, presença e favoritos (B-08)', async () => {
+  test('inclui conexões, bloqueios, feedback, Guia, aprendizagem, presença e favoritos (B-08)', async () => {
     await db.query("INSERT INTO feedback (profile_id, message) VALUES ($1, 'Meu feedback livre')", [ANA]);
     await db.query("UPDATE profiles SET status = 'active', email_confirmed_at = now() WHERE id = ANY($1::uuid[])", [[ANA, BIA]]);
     await db.query("INSERT INTO connections (requester_id, addressee_id, status, requested_via) VALUES ($1, $2, 'accepted', 'username')", [ANA, BIA]);
     await db.query('INSERT INTO profile_blocks (blocker_id, blocked_id) VALUES ($1, $2)', [ANA, ADMIN2]);
     await db.query("INSERT INTO learning_attempts (profile_id, module, activity, score, max_score) VALUES ($1, 'farmacologia', 'quiz_estudo', 3, 5)", [ANA]);
-    const [msg] = await rows("INSERT INTO assistant_messages (profile_id, question_hash, topic, source, answer) VALUES ($1, 'h', 'agenda', 'kb', 'Resposta da Lia') RETURNING id", [ANA]);
+    const [msg] = await rows("INSERT INTO assistant_messages (profile_id, question_hash, topic, source, answer) VALUES ($1, 'h', 'agenda', 'kb', 'Resposta do Guia') RETURNING id", [ANA]);
     await db.query("INSERT INTO assistant_feedback (message_id, profile_id, rating, comment) VALUES ($1, $2, 'down', 'Meu comentário')", [msg.id, ANA]);
     const out = await Privacy.exportMyData(sql, ana);
     const d = out.data;
@@ -76,7 +76,7 @@ describe('exportMyData', () => {
     expect(d.connections).toEqual([expect.objectContaining({ with: 'priv4', status: 'accepted' })]);
     expect(d.blocks).toEqual([expect.objectContaining({ blocked: 'priv2' })]);
     expect(d.learning).toEqual([expect.objectContaining({ module: 'farmacologia', activity: 'quiz_estudo', score: 3, maxScore: 5 })]);
-    expect(d.assistantMessages).toEqual([expect.objectContaining({ topic: 'agenda', answer: 'Resposta da Lia' })]);
+    expect(d.assistantMessages).toEqual([expect.objectContaining({ topic: 'agenda', answer: 'Resposta do Guia' })]);
     expect(d.assistantFeedback).toEqual([expect.objectContaining({ rating: 'down', comment: 'Meu comentário' })]);
     for (const key of ['libraryFavorites', 'librarySuggestions', 'activityDays', 'preferences']) expect(d).toHaveProperty(key);
     expect(out.notes.join(' ')).toMatch(/memória de estudo/i);

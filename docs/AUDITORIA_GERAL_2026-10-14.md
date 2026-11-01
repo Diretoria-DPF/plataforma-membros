@@ -78,7 +78,7 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 | MOB-01 | Botão voltar do Android: `router.js` + `pushState`/`popstate` (3 passos) | ALTO | sem `pushState`/`popstate` (só `replaceState`: `app.js` ~L930, ~L2700) | corrigido (mergeado; falta conferir em Android real) | A | G | #81 | — |
 | MOB-02 | Fila offline do quiz (IndexedDB + `idempotencyKey`) | MÉDIO | `modulos/quiz/quiz-engine.js:434` ("Não foi possível registrar") | aberto | A | M | — | — |
 | MOB-03 | Trocar `alert()`/`confirm()` nativos por modais | MÉDIO | `modulos/clinica/clinic-engine.js:1073,1243`; `modulos/quiz/quiz-engine.js:299,495` | aberto | A | M | — | — |
-| MOB-04 | Admin/Lia carregados sob demanda por papel (hoje ~140 KB admin + ~124 KB Lia para todos) | MÉDIO | `frontend/index.html` | aberto | A | M | — | — |
+| MOB-04 | Admin/Guia carregados sob demanda por papel (hoje ~140 KB admin + ~124 KB Guia para todos) | MÉDIO | `frontend/index.html` | aberto | A | M | — | — |
 | MOB-05 | Imagens (WebP/AVIF; `laift-marca.png` 285 KB exibido a 40 px; `icon-512.png` 269 KB) e Cache-Control de JS/CSS | MÉDIO | `frontend/_headers`, `frontend/scripts/build.js` | aberto | A | M | — | — |
 | MOB-06 | Laboratório: fontes < 12 px (117 declarações; HUD 8,3 px) e alvos < 44 px (links de Termos/Política) | MÉDIO | `docs/ux-progresso/AUDITORIA.md` K7/M1 | aberto | A | M | — | — |
 | MOB-07 | Service worker com módulos (hoje só a casca é pré-cacheada) | MÉDIO | `frontend/sw.js` (`laift-shell-v9`) | aberto | A | M | — | U1 |
@@ -123,7 +123,7 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 | SEO-03 | Sinais de marca: Google Business, Wikidata, parcerias — só com dados confirmados pelo dono | BAIXO | `sameAs`: Instagram real é `laift.liga`; `github.com/Diretoria-DPF` não é rede da Liga | aberto | D | M | — | — |
 | TEC-01 | Vendorizar libs do jsDelivr (3Dmol, smiles-drawer, OpenChemLib, RDKit/WASM, leitor de QR) e remover o CDN do `script-src` | MÉDIO | `modulos/quiz`, `laboratorio`, `laboratorio/studio`, `fiscal` (todos com SRI) | aberto | A | M | — | O31b |
 | TEC-02 | Dívida de arquivos > 800 linhas (regra do escoteiro): `frontend/app.js` 2760, `studio.js` 3444, `bio-database.js` 4061; 23 arquivos do frontend (medido na `main` em 2026-10-14, sem vendor) | MÉDIO | `wc -l` na `main` | aberto | A | G | — | B5 |
-| DOC-01 | Docs defasados: O1 (backup), "8 abas", Lia 35/72, link do arquivo vivo | BAIXO | `docs/riscos-residuais.md`, `docs/ANDAMENTO.md`, `docs/CONTINUIDADE.md` | em curso | A | P | esta | — |
+| DOC-01 | Docs defasados: O1 (backup), "8 abas", Guia 35/72, link do arquivo vivo | BAIXO | `docs/riscos-residuais.md`, `docs/ANDAMENTO.md`, `docs/CONTINUIDADE.md` | em curso | A | P | esta | — |
 
 ## 6. O que o rascunho inicial errava (não propagar)
 - A barra inferior tem **4 itens** de membro (Início, Aprender, Eventos, Perfil), não 8; "Aprender" não está escondido; o botão "Refazer" já não fica atrás do nav; inputs já têm 16 px.
@@ -168,7 +168,7 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 Diferencial defensável: Tutor com guardrails, simulação clínica, Atlas 3D em PT-BR, memória opt-in — não o volume de questões frente a Anki/UWorld.
 
 ## 9. Log (uma linha por sessão)
-- 2026-10-14 — Auditoria iniciada: 3 agentes de leitura validaram o rascunho contra o código; plano elaborado em Opus e aprovado pelo dono (decisões em §7). Worktree `docs/auditoria-geral` criado de `origin/main` (501244f, PR #68 incluída). Criado este arquivo; corrigidos O1, "8 abas" e Lia 35/72; link em `CONTINUIDADE.md`. Complemento privado criado fora do git. Próximo: SEC-01.
+- 2026-10-14 — Auditoria iniciada: 3 agentes de leitura validaram o rascunho contra o código; plano elaborado em Opus e aprovado pelo dono (decisões em §7). Worktree `docs/auditoria-geral` criado de `origin/main` (501244f, PR #68 incluída). Criado este arquivo; corrigidos O1, "8 abas" e Guia 35/72; link em `CONTINUIDADE.md`. Complemento privado criado fora do git. Próximo: SEC-01.
 - 2026-10-14 (tarde) — Dono respondeu: cadastro ok, consumo baixo, `laift_worker` em uso, cargos acumuláveis (decisões em §7). Mapa dos papéis feito (ver ROL-01..05). Abertas as PRs #70 (OPS-01, CI verde) e #71 (SEC-09; CI verde exceto 1 teste instável do Atlas, reexecutado). SEC-01 com implementação pronta no worktree, falta commit, revisão e PR. Próximo: ROL-01 + ROL-02 (migração 038).
 
 - 2026-10-17 — Verificado contra a `main` (`6ee7c74`): mesclados #69–#79. Corrigidos SEC-01/02/03/04/07/09, OPS-01 (falta o monitor do dono), DAT-01, ROL-01/02/03 e a Biblioteca simples (#78, #79). `/health`, site, `/biblioteca` e API respondem 200 em produção. Em curso: SEC-06 + SEO-01 (agente), MOB-01 e SEC-08 (ADR 0011).

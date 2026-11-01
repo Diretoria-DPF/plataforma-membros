@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Contraste WCAG do balão vermelho de aviso da Lia (cena 5) nos dois temas, com os tokens reais de laift-tokens.css
+// Contraste WCAG do balão vermelho de aviso do Guia (cena 5) nos dois temas, com os tokens reais de laift-tokens.css
 // e as regras de lia.css: o "!" sobre o balão (texto, 4,5:1) e o balão sobre o fundo com o véu de 35% (objeto gráfico, 3:1).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

@@ -1,5 +1,5 @@
 /*
- * Lia - cenas de movimento das ondas 2-4 (aprovadas em preview-ondas.js). Cada cena é uma linha do tempo WAAPI:
+ * Guia - cenas de movimento das ondas 2-4 (aprovadas em preview-ondas.js). Cada cena é uma linha do tempo WAAPI:
  * animações em transform e opacity (e as propriedades individuais rotate/translate, desvio aprovado), mais
  * passos que trocam atributos data-* do host e removem peças. Durações e curvas vêm de LiaAnim.tokens
  * (espelho de --dur-* e --ease-* de laift-tokens.css). Sem innerHTML, sem estilo inline (origens por CSSOM).
@@ -253,7 +253,7 @@
   /**
    * Toca a cena. env = { host, svg, reduced, detach(nomes) }. Devolve { stop(), finished } ou null (cena desconhecida).
    * As animações ficam presas no quadro final (fill both) até stop(): a pose final dura até o próximo estado.
-   * stop() só cancela animações e relógios; os atributos do host quem reescreve é o próximo estado da Lia.
+   * stop() só cancela animações e relógios; os atributos do host quem reescreve é o próximo estado do Guia.
    */
   function play(name, env) {
     var def = Object.prototype.hasOwnProperty.call(SCENES, name) ? SCENES[name] : null;

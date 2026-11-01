@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Atalhos de teclado da plataforma. Todo atalho exige modificador (WCAG 2.1.4): Ctrl+/ (Cmd+/
-// no Mac) abre a ajuda com a lista de atalhos; Ctrl+K (Cmd+K) abre e foca o campo da Lia
+// no Mac) abre a ajuda com a lista de atalhos; Ctrl+K (Cmd+K) abre e foca o campo do Guia
 // (window.LaiftAssistant.open). Nada dispara com tecla segurada (evt.repeat), dentro de campo de
 // texto (input, textarea, select, role textbox/combobox/searchbox ou contenteditable), nem com
 // outro diálogo aberto. Ponto de extensão: window.LaiftShortcuts.register('Ctrl+Shift+F', handler,
@@ -217,7 +217,7 @@
 
     var shortcuts = { register: register, dispatch: dispatch, openHelp: openHelp, closeHelp: closeHelp };
     register(HELP_COMBO, openHelp, 'Mostra esta lista de atalhos');
-    register(LIA_COMBO, openLia, 'Abre a Lia e foca o campo de pergunta');
+    register(LIA_COMBO, openLia, 'Abre o Guia e foca o campo de pergunta');
     return shortcuts;
   }
 

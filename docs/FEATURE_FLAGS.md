@@ -21,12 +21,12 @@ Quem altera:
 
 `PUBLIC_FLAGS` em `featureFlagService.js`: `ux_v2_enabled`, `chatbot_enabled`, `feedback_enabled`, as da Biblioteca e `lia_visitor_ai_enabled` (ver as tabelas abaixo). As demais só aparecem para admin (`apiAdminListFeatureFlags`).
 
-## Flags da renovação (UX v2, Lia, RAG, feedback e moderação)
+## Flags da renovação (UX v2, Guia, RAG, feedback e moderação)
 
 | Flag | Fase | Pública | Criada em | Estado depois da 023 | Onde é lida |
 |---|---|---|---|---|---|
 | `ux_v2_enabled` | A, B | sim | 016, `FALSE` | ligada, se nunca alterada por admin | `frontend/ux-v2.js` (vira o atributo `data-flag-ux-v2-enabled` no `<html>`) |
-| `chatbot_enabled` | C (Lia) | sim | 019, `FALSE` | ligada, se nunca alterada por admin | `worker/src/services/assistantService.js` (`FLAG_CHATBOT`, falha fechada) |
+| `chatbot_enabled` | C (Guia) | sim | 019, `FALSE` | ligada, se nunca alterada por admin | `worker/src/services/assistantService.js` (`FLAG_CHATBOT`, falha fechada) |
 | `rag_enabled` | D1 | não | 023, `TRUE` | ligada | `worker/src/services/assistantService.js` (`FLAG_RAG`); reindexação diária em `worker/src/maintenance.js` |
 | `feedback_enabled` | D2 | sim | 023, `TRUE` | ligada | `worker/src/services/assistantFeedbackService.js` (`FLAG_FEEDBACK`) |
 | `moderation_enabled` | D3 | não | 023, `TRUE` | ligada | `worker/src/services/moderationService.js` (`FLAG_MODERATION`) |
@@ -42,11 +42,11 @@ Criadas pela 029 (`sql/029_library.sql`), todas **desligadas**. A 029 insere com
 | `library_enabled` | B1 | sim | `FALSE` | Menu "Estudo", painel do membro e catálogo público (`docs/cortex/CONTRATO-B1.md` §4) |
 | `library_member_suggest` | B1 | sim | `FALSE` | Botão "Sugerir artigo" |
 | `library_ai_summary` | B3 | não | `FALSE` | Resumo por IA (ainda sem efeito) |
-| `lia_library_enabled` | B4 | não | `FALSE` | Lia cita artigos publicados da Biblioteca (campo `references` e botão que abre a busca; exige `library_enabled`; visitante só com a Lia híbrida) |
+| `lia_library_enabled` | B4 | não | `FALSE` | Guia cita artigos publicados da Biblioteca (campo `references` e botão que abre a busca; exige `library_enabled`; visitante só com o Guia híbrida) |
 
 Ligação por etapas, desligamento e volta: `docs/cortex/RUNBOOK-BIBLIOTECA.md`. Com condição de papel (`conditions.role`), a página pública fica fora, porque a leitura sem sessão não casa a condição.
 
-## Flags da Lia híbrida
+## Flags do Guia híbrida
 
 Criadas pela 033 (`sql/033_lia_hibrida_flag.sql`), as duas **desligadas** (`INSERT ... ON CONFLICT (key) DO NOTHING`). Ordem de ativação em `docs/lia/PLANO.md` §7.
 
@@ -54,11 +54,11 @@ Criadas pela 033 (`sql/033_lia_hibrida_flag.sql`), as duas **desligadas** (`INSE
 |---|---|---|---|
 | `lia_hibrida_enabled` | não | `FALSE` | `assistantService.js` (`FLAG_HIBRIDA`; exige também `rag_enabled`): guarda de intenção, resposta clínica segura, escolha de seções e resposta extrativa |
 | `session_cookie_enabled` | não (o front reage à resposta do login: `sessionCookie: true`) | `FALSE` | `index.js` e `sessionCookie.js` (SEC-08, ADR 0011): o token de sessão vai num cookie HttpOnly para origens do mesmo site (`SESSION_COOKIE_SITE`); a cópia do GitHub Pages continua com o token no corpo. Ligar primeiro em staging |
-| `selection_enabled` | sim (o menu "Processo seletivo" e as páginas públicas reagem a ela) | `FALSE` | `selectionService.js` (sql/042): jornada do candidato dentro da plataforma, com inscrição sempre aberta. Com ela desligada, as páginas públicas seguem pelo formulário externo (`selection_open`). Só visitante (e admin, para testar) se inscreve. Também liga as respostas da Lia sobre o processo. Plano: `docs/planos/PROCESSO-SELETIVO.md` |
+| `selection_enabled` | sim (o menu "Processo seletivo" e as páginas públicas reagem a ela) | `FALSE` | `selectionService.js` (sql/042): jornada do candidato dentro da plataforma, com inscrição sempre aberta. Com ela desligada, as páginas públicas seguem pelo formulário externo (`selection_open`). Só visitante (e admin, para testar) se inscreve. Também liga as respostas do Guia sobre o processo. Plano: `docs/planos/PROCESSO-SELETIVO.md` |
 | `selection_ai_enabled` | não | `FALSE` | Triagem por IA das inscrições (`selectionCommitteeService.js`, feature `selection_triage`): resumo para a comissão, nunca decide nem elimina |
-| `lia_visitor_ai_enabled` | sim (o front só carrega o Turnstile com ela ligada) | `FALSE` | `assistantService.js` (`FLAG_VISITOR_AI`): prévia de IA do visitante; exige `lia_hibrida_enabled`, o secret `TURNSTILE_SECRET` e o KV |
+| `lia_visitor_ai_enabled` | sim (o front só carrega o Turnstile com ele ligado) | `FALSE` | `assistantService.js` (`FLAG_VISITOR_AI`): prévia de IA do visitante; exige `lia_hibrida_enabled`, o secret `TURNSTILE_SECRET` e o KV |
 
-## Flags da Lia para membros
+## Flags do Guia para membros
 
 Criada pela 034 (`sql/034_lia_membros_flags.sql`), **desligada** (`INSERT ... ON CONFLICT (key) DO NOTHING`).
 

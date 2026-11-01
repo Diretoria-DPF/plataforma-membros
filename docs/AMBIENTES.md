@@ -65,7 +65,7 @@ DATABASE_URL=... node tools/db/migrate.mjs                            # aplica o
 
 1. Criar a branch: `git push origin main:staging`.
 2. GitHub → Settings → Environments → `staging`: adicionar o segredo `STAGING_DATABASE_URL` (URL direta do projeto Neon `laift-staging`). Opcional: restringir à branch `staging`. **Antes de cadastrar, leia a seção 6 (homologação): com o segredo, o primeiro push em `staging` aplica a 023.**
-3. Rodar o `--baseline-through N` em staging e em produção, com N = a última migração **contígua** já aplicada à mão naquele banco. O `015` era o caso original: confira antes (seção 3 de *Ativação da UX v2, Lia viva, RAG, feedback e moderação*).
+3. Rodar o `--baseline-through N` em staging e em produção, com N = a última migração **contígua** já aplicada à mão naquele banco. O `015` era o caso original: confira antes (seção 3 de *Ativação da UX v2, Guia vivo, RAG, feedback e moderação*).
 4. O token da Cloudflare já usado nos deploys precisa de **Workers Routes: Edit** e **DNS: Edit** na zona `laift.com.br` (staging usa domínio próprio).
 
 ## Ligar e desligar recursos (feature flags)
@@ -74,7 +74,7 @@ Cada recurso novo nasce **desligado** na tabela `feature_flags`. A exceção sã
 
 ```sql
 UPDATE feature_flags SET enabled = TRUE,  rollout_pct = 100, updated_at = now() WHERE key = 'use_orchestrator';  -- IA com orçamento e cache
-UPDATE feature_flags SET enabled = TRUE,  rollout_pct = 100, updated_at = now() WHERE key = 'chatbot_enabled';   -- Lia
+UPDATE feature_flags SET enabled = TRUE,  rollout_pct = 100, updated_at = now() WHERE key = 'chatbot_enabled';   -- Guia
 UPDATE feature_flags SET enabled = FALSE, updated_at = now() WHERE key = 'chatbot_enabled';                      -- desligar
 ```
 
@@ -90,7 +90,7 @@ Segredo do MFA: `powershell -ExecutionPolicy Bypass -File tools\ci\gerar-segredo
 - **Banco**: cada migração tem reversão em `sql/down/NNN_*.sql`, aplicada **à mão** (o runner não executa). Os `down` de 020 a 024 também removem a linha correspondente de `schema_migrations`; os de 015 a 019 não. Se a migração mexeu em dados, restaure a branch/snapshot do Neon criada antes.
 - **Recurso novo com problema**: desligue a feature flag (`apiAdminSetFeatureFlag`); não exige novo deploy.
 
-## Ativação da UX v2, Lia viva, RAG, feedback e moderação
+## Ativação da UX v2, Guia vivo, RAG, feedback e moderação
 
 Runbook da entrega única `feat/v5-ux-fundacao`. Quem executa é o dono, em produção, na ordem abaixo. Cada comando e cada nome de ação foi conferido contra o código em 2026-10-08.
 
@@ -126,7 +126,7 @@ Runbook da entrega única `feat/v5-ux-fundacao`. Quem executa é o dono, em prod
   ```bash
   grep -n -A1 "^\[.*ai\]" worker/wrangler.toml
   ```
-  Esperado: dois blocos, `[ai]` e `[env.staging.ai]`, cada um seguido de `binding = "AI"`. Sem o binding, a Lia segue respondendo, mas só com trigramas, e a reindexação reporta `embeddingAvailable: false`.
+  Esperado: dois blocos, `[ai]` e `[env.staging.ai]`, cada um seguido de `binding = "AI"`. Sem o binding, o Guia segue respondendo, mas só com trigramas, e a reindexação reporta `embeddingAvailable: false`.
 - [ ] **Testes verdes** (os mesmos do CI).
   ```bash
   cd worker && npm ci && npm test && npm run validate:sql
@@ -186,7 +186,7 @@ Princípio: **código primeiro, banco depois, flags por último.** Com o código
   ```
   Esperado: as seis colunas com nome, nenhuma `NULL`.
 
-#### 2.3 Reindexar o acervo da Lia
+#### 2.3 Reindexar o acervo do Guia
 
 Ação só de admin. Não há tela para ela no front; a chamada é direta na API.
 
@@ -198,7 +198,7 @@ Ação só de admin. Não há tela para ela no front; a chamada é direta na API
   ```bash
   curl -s https://api.laift.com.br/v1/ -H 'Content-Type: application/json' -d "{\"action\":\"apiAdminReindexKb\",\"args\":[\"$TOKEN_ADMIN\"]}"
   ```
-  Esperado: `"success":true` e `report` com `total`, `embedded`, `embeddingAvailable` e `embeddingError`. Com `embeddingAvailable` `false`, a Lia usa só trigramas até um novo reindex com o binding funcionando. HTTP 429 é o limite `ASSISTANT_REINDEX_MINUTE`: uma reindexação a cada 60 s, para toda a plataforma. Espere e repita.
+  Esperado: `"success":true` e `report` com `total`, `embedded`, `embeddingAvailable` e `embeddingError`. Com `embeddingAvailable` `false`, o Guia usa só trigramas até um novo reindex com o binding funcionando. HTTP 429 é o limite `ASSISTANT_REINDEX_MINUTE`: uma reindexação a cada 60 s, para toda a plataforma. Espere e repita.
 - [ ] Confira o acervo.
   ```sql
   SELECT count(*) AS total, count(embedding) AS com_embedding FROM kb_chunks;
@@ -276,10 +276,10 @@ Use esta seção quando alguma migração de 016 a 022, ou a 024, foi aplicada n
   ```
 - [ ] Com uma **conta de teste** (nunca conta de membro real):
   - [ ] **Início**: os gráficos carregam (`apiGetMyDashboardSeries`). Série com falha vem como `null`; investigue nos logs.
-  - [ ] **Lia**: pergunte "quem pode ver meus dados?" (tópico de privacidade em `worker/src/assistant/kb.js`). Deve responder.
+  - [ ] **Guia**: pergunte "quem pode ver meus dados?" (tópico de privacidade em `worker/src/assistant/kb.js`). Deve responder.
   - [ ] **Feedback**: polegar para cima numa resposta; polegar para baixo em outra, com categoria e comentário.
-  - [ ] **Satisfação**: Administração → IA → "Satisfação da Lia" (`frontend/admin-ai.js`) mostra as avaliações de teste.
-  - [ ] **Moderação**: não há tela no front para a moderação nem para a redenção. Mande uma mensagem ofensiva à Lia com a conta de teste e confira o aviso (é a resposta da própria Lia). Depois, no SQL Editor, troque o UUID.
+  - [ ] **Satisfação**: Administração → IA → "Satisfação do Guia" (`frontend/admin-ai.js`) mostra as avaliações de teste.
+  - [ ] **Moderação**: não há tela no front para a moderação nem para a redenção. Mande uma mensagem ofensiva ao Guia com a conta de teste e confira o aviso (é a resposta da próprio Guia). Depois, no SQL Editor, troque o UUID.
     ```sql
     SELECT level, until, last_incident_at FROM assistant_moderation WHERE profile_id = '<UUID da conta de teste>';
     ```
@@ -291,18 +291,18 @@ Use esta seção quando alguma migração de 016 a 022, ou a 024, foi aplicada n
   ```sql
   SELECT created_at, code, message FROM error_logs WHERE code IN ('ASSISTANT_RAG_FAILED', 'MAINTENANCE_FAILED') ORDER BY created_at DESC LIMIT 20;
   ```
-  `MAINTENANCE_FAILED` nas tarefas da Lia é esperado nas madrugadas entre o deploy e a seção 2.2, porque cada tarefa é isolada (`worker/src/maintenance.js`).
+  `MAINTENANCE_FAILED` nas tarefas do Guia é esperado nas madrugadas entre o deploy e a seção 2.2, porque cada tarefa é isolada (`worker/src/maintenance.js`).
 - [ ] **Auditoria.** A reindexação e as mudanças feitas pela API ficam em `audit_logs`. A 023 e os `UPDATE` de SQL **não** passam por ela.
   ```sql
   SELECT created_at, action, result FROM audit_logs WHERE action IN ('REINDEX_ASSISTANT_KB', 'SET_FEATURE_FLAG') ORDER BY created_at DESC LIMIT 10;
   ```
-- [ ] **Dia seguinte.** A faxina roda às 03:17 (Brasília) = 06:17 UTC, **só em produção** (`crons` em `worker/wrangler.toml`; staging tem `crons = []`). Confira que as tarefas da Lia não aparecem com `MAINTENANCE_FAILED`.
+- [ ] **Dia seguinte.** A faxina roda às 03:17 (Brasília) = 06:17 UTC, **só em produção** (`crons` em `worker/wrangler.toml`; staging tem `crons = []`). Confira que as tarefas do Guia não aparecem com `MAINTENANCE_FAILED`.
 
 ### 5. Rollback
 
 Do mais leve ao mais pesado. Cada passo é independente.
 
-**5.1 Desligar por flag.** Vale em até 60 s, sem deploy. Pela API, que grava em `audit_logs` e marca `updated_by`, então a 023 não a religa. Troque `rag_enabled` por `chatbot_enabled` (botão de emergência da Lia), `feedback_enabled`, `moderation_enabled` ou `ux_v2_enabled`.
+**5.1 Desligar por flag.** Vale em até 60 s, sem deploy. Pela API, que grava em `audit_logs` e marca `updated_by`, então a 023 não a religa. Troque `rag_enabled` por `chatbot_enabled` (botão de emergência do Guia), `feedback_enabled`, `moderation_enabled` ou `ux_v2_enabled`.
 ```bash
 curl -s https://api.laift.com.br/v1/ -H 'Content-Type: application/json' -d "{\"action\":\"apiAdminSetFeatureFlag\",\"args\":[\"$TOKEN_ADMIN\",\"rag_enabled\",{\"enabled\":false}]}"
 ```
@@ -341,18 +341,18 @@ SELECT name FROM schema_migrations ORDER BY name;
 ### 6. Pendências (decisão do dono)
 
 - [ ] **Re-aceite da política de privacidade.** O aceite só é gravado no cadastro (`worker/src/services/authService.js`, documento `privacy`, versão `LEGAL_VERSIONS.PRIVACY` = `2026-10-08`). Quem já tem conta não tem registro dessa versão. Decidir se haverá re-aceite.
-- [ ] **Exclusão de conta.** Não há ação de exclusão de conta no `API_REGISTRY` (`worker/src/handlers.js`). Hoje é manual. As tabelas da Lia saem junto por `ON DELETE CASCADE`, mas o fluxo de exclusão não existe no código.
+- [ ] **Exclusão de conta.** Não há ação de exclusão de conta no `API_REGISTRY` (`worker/src/handlers.js`). Hoje é manual. As tabelas do Guia saem junto por `ON DELETE CASCADE`, mas o fluxo de exclusão não existe no código.
 - [ ] **Custo do reindex e dos embeddings.** A faxina diária roda `ragReindex` às 03:17 (Brasília) e grava só o que mudou (hash de modelo + conteúdo). O repositório não registra custo nem orçamento do Workers AI (`@cf/baai/bge-m3`). O único freio é o limite de uma reindexação manual a cada 60 s. Definir teto e responsável.
 - [ ] **Folhas decorativas.** Existem em `frontend/styles.css` (linhas 72 a 104, `.leaf-field` e `.leaf`), fixas atrás de toda a plataforma. Podem cobrir texto em alguns pontos. Conferir no QA visual; o bloco de movimento reduzido as esconde.
 - [x] **Site legado no GitHub Pages.** Resolvido em 2026-10-18: o repositório ficou privado e o Pages do plano gratuito não publica; `deploy-frontend.yml` agora só roda à mão. O endereço `diretoria-dpf.github.io` responde 404.
-- [ ] **Homologação.** (a) `[env.staging.ai]` existe, então a busca da Lia em staging usa embeddings quando há reindexação. Mas a reindexação diária não roda em staging (`crons = []`); a base de staging só é reindexada por `apiAdminReindexKb`. (b) Se `STAGING_DATABASE_URL` existir, o push em `staging` roda o runner inteiro, **inclusive a 023**, **antes** de publicar a API (`deploy-staging.yml`). Escolha: cadastrar o segredo (a homologação liga as flags no primeiro push) ou migrar staging à mão, na ordem desta seção.
+- [ ] **Homologação.** (a) `[env.staging.ai]` existe, então a busca do Guia em staging usa embeddings quando há reindexação. Mas a reindexação diária não roda em staging (`crons = []`); a base de staging só é reindexada por `apiAdminReindexKb`. (b) Se `STAGING_DATABASE_URL` existir, o push em `staging` roda o runner inteiro, **inclusive a 023**, **antes** de publicar a API (`deploy-staging.yml`). Escolha: cadastrar o segredo (a homologação liga as flags no primeiro push) ou migrar staging à mão, na ordem desta seção.
 - [ ] **A 023 e a regra "não religar".** Resolvido na migração: a 023 segue a regra descrita em *Fatos que definem a ordem*. A ressalva que permanece: um `UPDATE` de SQL não é protegido (ver §5.1 e o risco O30 em `docs/riscos-residuais.md`).
 - [ ] **Migração 024.** Existe (`sql/024_indices.sql`) e entra no lote da seção 2.2. Resolvido.
 - [x] **Documentação.** `docs/FEATURE_FLAGS.md` foi atualizado nesta entrega. `docs/DEPLOYMENT.md`, seção 1, foi corrigido na passada final de 2026-10-08: migrações 001 a 024, e a 023 não religa o que um admin desligou.
 
-## Lia: registro, seleção e pesquisa externa (2026-10)
+## Guia: registro, seleção e pesquisa externa (2026-10)
 
-Ativação das entregas de registro de pesquisas, seleção e pesquisa externa. Faça depois da seção *Ativação da UX v2, Lia viva, RAG, feedback e moderação*, com o código no ar. As flags novas nascem **desligadas**, e cada uma só liga por decisão do dono.
+Ativação das entregas de registro de pesquisas, seleção e pesquisa externa. Faça depois da seção *Ativação da UX v2, Guia vivo, RAG, feedback e moderação*, com o código no ar. As flags novas nascem **desligadas**, e cada uma só liga por decisão do dono.
 
 **Antes de tudo: `rag_enabled` e o acervo**
 
@@ -361,7 +361,7 @@ Ativação das entregas de registro de pesquisas, seleção e pesquisa externa. 
   SELECT key, enabled, rollout_pct, conditions FROM feature_flags WHERE key = 'rag_enabled';
   ```
   Esperado: `enabled` `true`, `rollout_pct` `100` e `conditions` `{}`.
-- [ ] Reindexe pelo painel: Administração → IA → **Reindexar base da Lia**. Leia o relatório (`total`, `embedded`, `embeddingAvailable`). Com `embeddingAvailable` `false`, confira o binding `AI` (pré-requisitos da ativação). Depois, confira o acervo como em 2.3.
+- [ ] Reindexe pelo painel: Administração → IA → **Reindexar base do Guia**. Leia o relatório (`total`, `embedded`, `embeddingAvailable`). Com `embeddingAvailable` `false`, confira o binding `AI` (pré-requisitos da ativação). Depois, confira o acervo como em 2.3.
 
 **Migração 026 (`lia_pesquisas`)**
 
@@ -379,7 +379,7 @@ Ativação das entregas de registro de pesquisas, seleção e pesquisa externa. 
   node tools/db/migrate.mjs
   ```
   Esperado: `aplicada: 026_lia_pesquisas.sql`. No SQL Editor, `SELECT to_regclass('public.lia_pesquisas');` não pode voltar `NULL`.
-- [ ] Reversão, se preciso: desligue `rag_cache_enabled` antes e cole `sql/down/026_lia_pesquisas.sql` no SQL Editor. Ela apaga só o registro (a Lia volta a pesquisar do zero) e tira a 026 do ledger.
+- [ ] Reversão, se preciso: desligue `rag_cache_enabled` antes e cole `sql/down/026_lia_pesquisas.sql` no SQL Editor. Ela apaga só o registro (o Guia volta a pesquisar do zero) e tira a 026 do ledger.
 
 **Flags, uma de cada vez**
 

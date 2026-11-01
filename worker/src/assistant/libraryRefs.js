@@ -5,7 +5,7 @@
  */
 /**
  * assistant/libraryRefs.js
- * Regras puras da Lia sobre a Biblioteca (decisão 10 do PLANO-CORTEX): reconhecer o pedido de artigos
+ * Regras puras do Guia sobre a Biblioteca (decisão 10 do PLANO-CORTEX): reconhecer o pedido de artigos
  * ("tem artigos sobre paracetamol?"), tirar o tema e transformar os itens de LibraryService.search em
  * referências seguras. Sem banco, sem rede e sem IA.
  *
@@ -13,7 +13,7 @@
  *   nunca para o prompt de uma IA, e item com cara de instrução sai da lista.
  * - Só sai link oficial (doi.org ou PubMed), a mesma regra da página pública (biblioteca/catalogo.js).
  * - Resumo só para membro e admin; visitante recebe só o catálogo (o serviço já não manda o resumo).
- * - A Lia NÃO envia resumo algum ao cliente (referenceView): só id, título, autores, periódico, ano e link.
+ * - O Guia NÃO envia resumo algum ao cliente (referenceView): só id, título, autores, periódico, ano e link.
  */
 import { normalize } from './kb.js';
 import { looksLikeInjection } from './moderationRules.js';
@@ -56,7 +56,7 @@ const QUESTION_WORDS = new Set(['sao', 'significa', 'quer', 'dizer', 'diferenca'
   'funcionam', 'explique', 'explica', 'fale', 'fala', 'defina', 'conceito', 'significado', 'quem', 'porque', 'quanto', 'quanta',
   'quantos', 'quantas', 'quando', 'como', 'onde', 'custa', 'vale', 'confiar', 'confiavel', 'seguro', 'possivel', 'pra', 'eh']);
 // Pergunta sobre a PLATAFORMA ou a Liga, não sobre ciência: nunca ganha artigos por inferência.
-const PLATFORM_RE = /\b(plataforma|laift|liga|cadastr\w*|inscri\w*|evento\w*|cracha|senha|login|perfil|modulo\w*|edital|seletivo|mensalidade|certificado\w*|lia|app|aplicativo|mensage\w*|proposta\w*|tarefa\w*|equipe|biblioteca|conta|membro\w*|diretoria|atlas|quiz|suporte|site|blog)\b/;
+const PLATFORM_RE = /\b(plataforma|laift|liga|cadastr\w*|inscri\w*|evento\w*|cracha|senha|login|perfil|modulo\w*|edital|seletivo|mensalidade|certificado\w*|lia|guia|app|aplicativo|mensage\w*|proposta\w*|tarefa\w*|equipe|biblioteca|conta|membro\w*|diretoria|atlas|quiz|suporte|site|blog)\b/;
 
 /** Texto curto e seguro para o campo de busca: sem controle, sem marcação, espaços simples, até 120. */
 export function cleanLibraryQuery(value) {
@@ -173,7 +173,7 @@ export function studyQuery(message) {
 }
 
 /**
- * A Lia busca artigos da Biblioteca para esta pergunta? Devolve { query, explicit } ou null.
+ * O Guia busca artigos da Biblioteca para esta pergunta? Devolve { query, explicit } ou null.
  *  - Pergunta clínica (dose, conduta, tratamento): NUNCA (kind 'clinico').
  *  - Pedido explícito de artigos ("tem artigos sobre X?"): sim, com o tema (libraryTopic).
  *  - Pergunta de definição de conteúdo científico, que não é sobre a plataforma e que nenhuma intenção por

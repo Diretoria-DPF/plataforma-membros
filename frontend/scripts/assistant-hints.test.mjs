@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Dica contextual da Lia (frontend/assistant-hints.js, plano §3.4): mapa de painel e módulo para
+// Dica contextual do Guia (frontend/assistant-hints.js, plano §3.4): mapa de painel e módulo para
 // texto fixo, uma vez por módulo por sessão, condições de exibição, balão de 8 s e limpeza do timer.
 // O DOM real é coberto pelo e2e (assistant.e2e.js); aqui um documento mínimo basta.
 import { test } from 'node:test';
@@ -117,7 +117,7 @@ test('mapa de textos: os seis contextos com o texto exato do plano, congelado', 
   assert.equal(Object.isFrozen(Hints.HINT_TEXT), true);
 });
 
-test('cada contexto de dica é um módulo da Lia (lia-states.js), para o react() aceitar', () => {
+test('cada contexto de dica é um módulo do Guia (lia-states.js), para o react() aceitar', () => {
   for (const context of Object.keys(Hints.HINT_TEXT)) assert.equal(States.isModule(context), true, context);
 });
 
@@ -161,12 +161,12 @@ test('os painéis e os módulos do mapa existem de verdade (index.html e learnin
 
 // ---------- Condições de exibição ----------
 
-test('shouldShow: só com a Lia ligada, painel da Lia fechado, sem suspensão e contexto ainda não mostrado', () => {
+test('shouldShow: só com o Guia ligado, painel do Guia fechado, sem suspensão e contexto ainda não mostrado', () => {
   const seen = new Set();
   assert.equal(Hints.shouldShow('lab', seen, { chatbot_enabled: true }), true);
   assert.equal(Hints.shouldShow('lab', seen, { chatbot_enabled: false, panelOpen: false, moderated: false }), false, 'flag desligada');
   assert.equal(Hints.shouldShow('lab', seen, { chatbot_enabled: 'true' }), false, 'flag que não é booleana não liga');
-  assert.equal(Hints.shouldShow('lab', seen, { chatbot_enabled: true, panelOpen: true }), false, 'painel da Lia aberto');
+  assert.equal(Hints.shouldShow('lab', seen, { chatbot_enabled: true, panelOpen: true }), false, 'painel do Guia aberto');
   assert.equal(Hints.shouldShow('lab', seen, { chatbot_enabled: true, moderated: true }), false, 'suspensão ativa');
   assert.equal(Hints.shouldShow('home', seen, { chatbot_enabled: true }), false, 'contexto sem dica');
   assert.equal(Hints.shouldShow('lab', seen, undefined), false, 'sem flags');
@@ -270,7 +270,7 @@ test('sair da conta (reset) limpa o timer e zera o que já foi mostrado: a dica 
   assert.equal(bubbles(doc).length, 1);
 });
 
-test('não aparece com o painel da Lia aberto, com a Lia desligada ou com suspensão ativa', async () => {
+test('não aparece com o painel do Guia aberto, com o Guia desligado ou com suspensão ativa', async () => {
   const { doc, hints, setFlags } = makeHints();
   setFlags({ ...ON, panelOpen: true });
   hints.panelChanged('panel-events');
@@ -279,7 +279,7 @@ test('não aparece com o painel da Lia aberto, com a Lia desligada ou com suspen
   setFlags({ ...ON, chatbot_enabled: false });
   hints.moduleChanged('lab');
   await settle();
-  assert.equal(bubbles(doc).length, 0, 'Lia desligada');
+  assert.equal(bubbles(doc).length, 0, 'Guia desligado');
   setFlags({ ...ON, moderated: true });
   hints.moduleChanged('clinica');
   await settle();
@@ -335,7 +335,7 @@ test('CSS: a animação só existe com movimento permitido; só transform e opac
   assert.doesNotMatch(css, /transition\s*:\s*all/);
 });
 
-test('CSS: alvos de toque de 44 px e o balão sobe junto com a Lia no modo app', () => {
+test('CSS: alvos de toque de 44 px e o balão sobe junto com o Guia no modo app', () => {
   const css = read('frontend/assistant-hints.css');
   assert.match(ruleOf(css, '.lia-hint-open'), /min-height:\s*44px/);
   assert.match(ruleOf(css, '.lia-hint-close'), /width:\s*44px/);

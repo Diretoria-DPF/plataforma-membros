@@ -289,7 +289,7 @@
     return true;
   }
 
-  /** Avisa a Lia (assistant-hints.js) que o módulo mudou. Só evento DOM: não altera nada aqui. */
+  /** Avisa o Guia (assistant-hints.js) que o módulo mudou. Só evento DOM: não altera nada aqui. */
   function emitModuleChange(moduleId) {
     document.dispatchEvent(new CustomEvent('laift:modulechange', { detail: { module: moduleId } }));
   }

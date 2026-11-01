@@ -3,12 +3,12 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Pesquisa externa e registro da Lia, na tela: rótulos legíveis das fontes, aviso
+// Pesquisa externa e registro do Guia, na tela: rótulos legíveis das fontes, aviso
 // "já pesquisada", bloco de referências (Europe PMC) e aviso de privacidade. Tudo por
 // createElement, textContent e setAttribute: nunca HTML a partir de texto. Links só para https em
 // domínios da lista branca, sempre com target _blank e rel noopener. O aviso de
 // privacidade fica marcado UMA vez no navegador (chave abaixo); a conversa nunca.
-// Sem este script, a Lia segue igual. Expõe window.LaiftAssistantResearch (ou
+// Sem este script, o Guia segue igual. Expõe window.LaiftAssistantResearch (ou
 // module.exports, no Node).
 (function (root) {
   'use strict';
@@ -17,7 +17,7 @@
   var SOURCE_LABELS = {
     kb: 'Guia da plataforma',
     destinos: 'Telas e módulos',
-    guia: 'Guia da Lia',
+    guia: 'Guia do Guia',
     privacidade: 'Privacidade',
     convivencia: 'Convivência',
     liga: 'A Liga',
@@ -28,7 +28,7 @@
     faq: 'Perguntas frequentes',
     saude: 'Avisos de saúde',
   };
-  // Lista branca dos links da pesquisa: só os domínios que a Lia cita hoje.
+  // Lista branca dos links da pesquisa: só os domínios que o Guia cita hoje.
   var RESEARCH_HOSTS = ['europepmc.org', 'pubmed.ncbi.nlm.nih.gov', 'doi.org'];
   var MAX_ITEMS = 10;
   var TITLE_MAX = 300;
@@ -39,7 +39,7 @@
   var HINT_KEY = 'lia.research.hint.v1';
   var EMPTY_TEXT = 'Nada encontrado para esses termos.';
   var FAIL_TEXT = 'A base externa não respondeu agora. Tente mais tarde.';
-  var FOOT_TEXT = 'Referências de base externa (Europe PMC). A Lia não resume artigos nem dá orientação de saúde.';
+  var FOOT_TEXT = 'Referências de base externa (Europe PMC). O Guia não resume artigos nem dá orientação de saúde.';
   var CACHED_TEXT = 'Resposta já pesquisada antes, sem gastar IA.';
   var BUTTON_TEXT = 'Pesquisar mais a fundo';
   var PRIVACY_HINT = 'Só os termos gerais da pergunta vão para a base externa. Não escreva dados pessoais.';

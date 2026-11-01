@@ -1,5 +1,5 @@
 /*
- * Lia - matriz de estados (ADR 0003). Funções puras, sem DOM.
+ * Guia - matriz de estados (ADR 0003). Funções puras, sem DOM.
  * Quem chama: lia.js (mount e setState) e frontend/scripts/lia.test.mjs.
  * Convenção: null em um campo = omitir o data-* (vale o padrão do CSS do estado).
  */
@@ -26,21 +26,21 @@
   }
 
   var CONTEXTS = Object.freeze({
-    idle: ctx('idle', 'neutral', 'neutral', 'idle', 'idle', 'none', null, 'Lia'),
-    thinking: ctx('thinking', 'curious', 'flat', 'idle', 'chin', 'none', 'bubble', 'Lia está pensando'),
-    speaking: ctx('speaking', null, 'open', 'idle', 'point', 'none', null, 'Lia está respondendo'),
-    celebrating: ctx('celebrating', 'happy', 'smile', 'heart', 'heart', 'none', 'glow heart sparkles', 'Lia está celebrando'),
-    confused: ctx('idle', 'curious', 'neutral', 'idle', 'idle', 'none', null, 'Lia não entendeu'),
-    alert: ctx('idle', 'focused', 'neutral', 'idle', 'idle', 'none', null, 'Lia está atenta'),
-    warning: ctx('idle', 'worried', 'worried', 'idle', 'idle', 'none', null, 'Lia emitiu um alerta'),
-    suspended: ctx('suspended', 'sad', 'flat', 'idle', 'idle', 'none', null, 'Lia está suspensa'),
-    redeem: ctx('idle', 'happy', 'smile', 'idle', 'idle', 'none', 'glow heart', 'Lia'), // volta ao repouso: o rótulo é o de sempre
-    events: ctx('idle', 'curious', 'neutral', 'idle', 'idle', 'calendar', null, 'Lia, assistente de Eventos'),
-    proposals: ctx('idle', 'focused', 'neutral', 'idle', 'idle', 'pencil', null, 'Lia, assistente de Propostas'),
-    lab: ctx('idle', 'focused', 'neutral', 'idle', 'idle', 'flask', null, 'Lia, assistente do Laboratório'),
-    clinic: ctx('idle', 'neutral', 'neutral', 'idle', 'idle', 'stethoscope', null, 'Lia, assistente da Clínica'),
-    atlas: ctx('idle', 'curious', 'neutral', 'idle', 'idle', 'skeleton', null, 'Lia, assistente do Atlas 3D'),
-    learn: ctx('idle', 'neutral', 'neutral', 'idle', 'idle', 'book', null, 'Lia, assistente de Aulas'),
+    idle: ctx('idle', 'neutral', 'neutral', 'idle', 'idle', 'none', null, 'Guia'),
+    thinking: ctx('thinking', 'curious', 'flat', 'idle', 'chin', 'none', 'bubble', 'Guia está pensando'),
+    speaking: ctx('speaking', null, 'open', 'idle', 'point', 'none', null, 'Guia está respondendo'),
+    celebrating: ctx('celebrating', 'happy', 'smile', 'heart', 'heart', 'none', 'glow heart sparkles', 'Guia está celebrando'),
+    confused: ctx('idle', 'curious', 'neutral', 'idle', 'idle', 'none', null, 'Guia não entendeu'),
+    alert: ctx('idle', 'focused', 'neutral', 'idle', 'idle', 'none', null, 'Guia está atenta'),
+    warning: ctx('idle', 'worried', 'worried', 'idle', 'idle', 'none', null, 'Guia emitiu um alerta'),
+    suspended: ctx('suspended', 'sad', 'flat', 'idle', 'idle', 'none', null, 'Guia está suspenso'),
+    redeem: ctx('idle', 'happy', 'smile', 'idle', 'idle', 'none', 'glow heart', 'Guia'), // volta ao repouso: o rótulo é o de sempre
+    events: ctx('idle', 'curious', 'neutral', 'idle', 'idle', 'calendar', null, 'Guia, assistente de Eventos'),
+    proposals: ctx('idle', 'focused', 'neutral', 'idle', 'idle', 'pencil', null, 'Guia, assistente de Propostas'),
+    lab: ctx('idle', 'focused', 'neutral', 'idle', 'idle', 'flask', null, 'Guia, assistente do Laboratório'),
+    clinic: ctx('idle', 'neutral', 'neutral', 'idle', 'idle', 'stethoscope', null, 'Guia, assistente da Clínica'),
+    atlas: ctx('idle', 'curious', 'neutral', 'idle', 'idle', 'skeleton', null, 'Guia, assistente do Atlas 3D'),
+    learn: ctx('idle', 'neutral', 'neutral', 'idle', 'idle', 'book', null, 'Guia, assistente de Aulas'),
   });
   var MODULES = Object.freeze(['events', 'proposals', 'lab', 'clinic', 'atlas', 'learn']);
 
@@ -127,7 +127,7 @@
     });
   }
 
-  /** Rótulo ARIA de um contexto (desconhecido cai em 'Lia'). */
+  /** Rótulo ARIA de um contexto (desconhecido cai em 'Guia'). */
   function ariaLabelFor(context) {
     return hasContext(context) ? CONTEXTS[context].ariaLabel : CONTEXTS.idle.ariaLabel;
   }

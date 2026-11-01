@@ -1,8 +1,8 @@
-# Guia da plataforma LAIFT
+# Manual da plataforma LAIFT
 
-Fonte única do guia que a Lia usa (base de conhecimento e busca do acervo). Cada seção `## ` vira um trecho
+Fonte única do manual que o Guia usa (base de conhecimento e busca do acervo). Cada seção `## ` vira um trecho
 do acervo (`kb_chunks`, fonte `guia-plataforma`) quando um administrador toca em **Reindexar** no Painel de IA.
-As seções que começam com "Administração" ficam fora do acervo (ele é o mesmo para todos os papéis); a Lia
+As seções que começam com "Administração" ficam fora do acervo (ele é o mesmo para todos os papéis); o Guia
 responde a elas só para administradores, pelas intenções de `worker/src/assistant/kb.js`.
 Depois de editar este arquivo: `cd worker && node scripts/gen-guia-plataforma.mjs` (gera
 `worker/src/assistant/guiaPlataforma.js`; o teste `guiaPlataforma.test.js` acusa quando os dois divergem).
@@ -33,7 +33,7 @@ Para quem: todos com conta. 1. Toque em Aprender, na barra de baixo. 2. Escolha 
 Para quem: todos com conta; alguns eventos são só para membros. 1. Toque em Eventos, na barra de baixo. 2. Confira data, local e vagas de cada encontro. 3. Toque em Inscrever-se. Aparece Inscrição confirmada; sem vagas, a tela avisa. Mudou de ideia? Toque em Cancelar inscrição e confirme: a vaga volta para outra pessoa. Só dá para cancelar antes de o evento começar e antes de a presença ser registrada. 4. No dia, mostre o crachá virtual na portaria. O Histórico, abaixo, lista os últimos eventos concluídos. Se você ligou o e-mail em Preferências, recebe a confirmação da inscrição.
 
 ## Crachá virtual na portaria
-Para quem: todos com conta. 1. Toque em Meu crachá virtual (QR de presença): o botão fica no Perfil, logo abaixo da foto, e no cartão Meu crachá virtual do Início. A Lia também abre o crachá se você pedir. 2. O crachá mostra seu nome, seu papel e o QR de presença. 3. Na portaria, deixe o crachá aberto e mostre o QR para o fiscal ler. Ampliar QR deixa o código maior; Salvar imagem guarda o crachá no aparelho.
+Para quem: todos com conta. 1. Toque em Meu crachá virtual (QR de presença): o botão fica no Perfil, logo abaixo da foto, e no cartão Meu crachá virtual do Início. O Guia também abre o crachá se você pedir. 2. O crachá mostra seu nome, seu papel e o QR de presença. 3. Na portaria, deixe o crachá aberto e mostre o QR para o fiscal ler. Ampliar QR deixa o código maior; Salvar imagem guarda o crachá no aparelho.
 
 ## Propostas e votações passo a passo
 Para quem: enviar, todos com conta; votar, só membros e administradores. 1. Abra o menu (botão ☰ no alto) e toque em Propostas. 2. Em Enviar proposta, escreva o título e a descrição e toque em Enviar. 3. Acompanhe a análise em Minhas propostas. 4. Em Votação aberta, toque em Sim ou Não, ou em Comentar para votar com um comentário. Depois aparece Voto registrado.
@@ -77,5 +77,5 @@ Para quem: administradores. 1. Toque em Admin (a engrenagem) na barra de baixo. 
 ## Administração: curadoria da Biblioteca
 Para quem: administradores e curadores. A curadoria tem quatro abas. 1. Entre no modo administrador e toque em Biblioteca: ela abre em Para revisar. 2. Para revisar: marque os artigos (ou Marcar todos desta lista), escolha uma Área e toque em Pôr a área nos marcados; depois toque em Publicar os marcados. Marque Li e aprovo os resumos feitos por IA quando tiver lido os resumos, e Publicar só como referência para artigo clínico sem revisor (sai sem resumo). Cada artigo que não puder subir aparece com o motivo. 3. No ar: lista o que está publicado. O administrador toca em Mudar estado ou tirar do ar e escolhe o destino (remover e rejeitar pedem motivo); curador e mentor tocam em Pedir remoção. 4. Pedidos de remoção: o administrador toca em Aceitar e tirar do ar ou em Recusar. 5. Editar artigos: cadastre por DOI ou PMID (Buscar dados), abra o artigo, confira dados, área e resumo, salve, toque em Aprovar referência e depois em Publicar; ali também ficam Trabalho em lote e as demais abas (Sugestões, Coleções, Áreas, Equipe). Resumo com dose, conduta ou interação precisa do revisor clínico. Só o administrador remove ou muda o estado de qualquer artigo; curador sem acesso à área Admin pede ajuda a um administrador.
 
-## Administração: Reindexar a base da Lia
-Para quem: administradores. Depois de mudar este guia ou outro texto da base da Lia, publique o Worker e, no modo administrador, abra IA e toque em Reindexar base da Lia (pede confirmação; uma vez por minuto). A Lia passa a buscar nos trechos novos; os trechos que não mudaram não são refeitos.
+## Administração: Reindexar a base do Guia
+Para quem: administradores. Depois de mudar este guia ou outro texto da base do Guia, publique o Worker e, no modo administrador, abra IA e toque em Reindexar base do Guia (pede confirmação; uma vez por minuto). O Guia passa a buscar nos trechos novos; os trechos que não mudaram não são refeitos.

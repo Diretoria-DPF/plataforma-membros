@@ -1,7 +1,7 @@
 -- Plataforma de Membros LAIFT
 -- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
 -- Licença proprietária: ver LICENSE na raiz do repositório.
--- 020_rag.sql — base de conhecimento da Lia com busca híbrida (vetor + trigramas).
+-- 020_rag.sql — base de conhecimento do Guia com busca híbrida (vetor + trigramas).
 --
 -- kb_chunks      trechos da base (kb.js, destinos e documentos embutidos), cada um com
 --                embedding de 1024 dimensões (Workers AI @cf/baai/bge-m3; constante
