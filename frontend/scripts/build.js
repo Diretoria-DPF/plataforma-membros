@@ -104,7 +104,7 @@ fs.copyFileSync(path.join(ROOT, 'static-page.js'), path.join(DIST, 'static-page.
 // Fase 3 — painel admin de IA: sem segredo (só chama a Worker com o token da
 // sessão, como o resto), copiado sem ofuscação, como learning.js.
 fs.copyFileSync(path.join(ROOT, 'admin-ai.js'), path.join(DIST, 'admin-ai.js'));
-// Ferramentas de revisão da arte do Guia (preview, Guia Lab) e o README ficam só no repositório (ADR 0003).
+// Ferramentas de revisão da arte de Guia (preview, Guia Lab) e o README ficam só no repositório (ADR 0003).
 const LIA_REVIEW_ONLY = /[\\/]shared[\\/]lia[\\/](?:preview[^\\/]*|lab[^\\/]*|build-lab[^\\/]*|build-lia-art[^\\/]*|README\.md)$/;
 ['modulos', 'vendor', 'icons'].forEach((dir) => {
   fs.cpSync(path.join(ROOT, dir), path.join(DIST, dir), { recursive: true, filter: (src) => !LIA_REVIEW_ONLY.test(src) });

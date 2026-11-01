@@ -4,8 +4,8 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * assistant-drag.e2e.js — o Guia pode ser movida para qualquer ponto da tela (frontend/assistant-drag.js).
- *  - um toque sem arrastar abre o Guia como sempre; arrastar move a bolha e NÃO abre o painel;
+ * assistant-drag.e2e.js — Guia pode ser movida para qualquer ponto da tela (frontend/assistant-drag.js).
+ *  - um toque sem arrastar abre Guia como sempre; arrastar move a bolha e NÃO abre o painel;
  *  - o painel abre junto da bolha, sempre dentro da tela; no desktop o cabeçalho também arrasta o painel;
  *  - Alt + setas movem pelo teclado; "Voltar ao canto" desfaz; a posição fica guardada e acompanha o tamanho da janela.
  */
@@ -37,10 +37,10 @@ async function cenario(rotulo, viewport) {
 
     // 1) toque sem arrastar abre e fecha como sempre
     await page.click('#lia-launcher');
-    check(await page.evaluate(() => !document.getElementById('lia-panel').classList.contains('hidden')), `${rotulo}: um toque sem arrastar abre o Guia`);
+    check(await page.evaluate(() => !document.getElementById('lia-panel').classList.contains('hidden')), `${rotulo}: um toque sem arrastar abre Guia`);
     await page.click('#lia-panel .lia-close'); // no canto de origem o painel cobre a bolha: fecha-se pelo ×
     check(await page.evaluate(() => document.getElementById('lia-panel').classList.contains('hidden')), `${rotulo}: e o × fecha`);
-    check(await page.evaluate(() => !document.documentElement.hasAttribute('data-lia-moved')), `${rotulo}: sem arrastar, o Guia fica no canto de origem`);
+    check(await page.evaluate(() => !document.documentElement.hasAttribute('data-lia-moved')), `${rotulo}: sem arrastar, Guia fica no canto de origem`);
 
     // 2) arrastar move a bolha e não abre o painel
     const alvo = { x: Math.round(viewport.width * 0.3), y: Math.round(viewport.height * 0.3) };

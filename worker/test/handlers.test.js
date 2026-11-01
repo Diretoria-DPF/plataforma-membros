@@ -63,7 +63,7 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiAssistantFeedback', 'apiAdminListAssistantFeedback', 'apiAdminUpdateAssistantFeedback',
       'apiAdminAssistantStats', 'apiAssistantSources', 'apiAdminReindexKb'
     );
-    // Moderação do Guia (ADR 0004): redenção, estado da própria pessoa e resumo do admin
+    // Moderação de Guia (ADR 0004): redenção, estado da própria pessoa e resumo do admin
     expected.push('apiAssistantRedeem', 'apiAssistantModerationState', 'apiAdminAssistantModeration');
     // Biblioteca LAIFT (CONTRATO-B1 §4)
     expected.push(

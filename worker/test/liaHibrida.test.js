@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * liaHibrida.test.js — apiAssistantChat com o Guia híbrida (flags lia_hibrida_enabled e lia_visitor_ai_enabled),
+ * liaHibrida.test.js — apiAssistantChat com Guia híbrida (flags lia_hibrida_enabled e lia_visitor_ai_enabled),
  * pelo chat() inteiro, com RAG (kb_chunks), Workers AI, Groq e Turnstile simulados:
  *   - flag desligada: comportamento antigo; ligada: guarda de intenção, resposta clínica segura, escolha de
  *     seções pela árvore (uma unidade de cota) e resposta extrativa para quem não usa IA;
@@ -125,7 +125,7 @@ describe('guarda de intenção e pergunta clínica (flag ligada)', () => {
     const sql = routedSql([HYBRID, INDEX, KB(LAIFT), SAVED]);
     const res = await chat(sql, identity, { message: 'Qual a dose de paracetamol para uma criança de 10 kg?' }, visitorEnv());
     expect(res).toMatchObject({ success: true, source: 'kb', reply: CLINICAL_REPLY.reply });
-    expect(res.sources).toEqual([{ source: 'saude', section: 'O Guia pode errar em temas clínicos' }]);
+    expect(res.sources).toEqual([{ source: 'saude', section: 'Guia pode errar em temas clínicos' }]);
     expect(res.actions).toEqual([]);
     expect(seen).toEqual([]);
     expect(callsMatching(sql, 'FROM kb_chunks')).toHaveLength(0);
@@ -280,8 +280,8 @@ describe('visitante: resposta extrativa (sem LLM, sem cota de IA)', () => {
   });
 
   test('seção sem página pública: a fonte sai sem url', async () => {
-    const res = await chat(routedSql([HYBRID, INDEX, KB(row('saude', 'O Guia pode errar em temas clínicos'))]), null, { message: 'Posso confiar no Guia para dúvidas clínicas?' }, visitorEnv());
-    expect(res.sources).toEqual([{ source: 'saude', section: 'O Guia pode errar em temas clínicos' }]);
+    const res = await chat(routedSql([HYBRID, INDEX, KB(row('saude', 'Guia pode errar em temas clínicos'))]), null, { message: 'Posso confiar em Guia para dúvidas clínicas?' }, visitorEnv());
+    expect(res.sources).toEqual([{ source: 'saude', section: 'Guia pode errar em temas clínicos' }]);
   });
 
   test('nada acima do piso: mensagem amigável com temas, sem "Ainda não sei"', async () => {

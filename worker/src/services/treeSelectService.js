@@ -13,7 +13,7 @@
  * TREE.MAX_SECTIONS), e qualquer falha, tempo esgotado ou saída inválida devolve os candidatos do RRF (o
  * comportamento anterior), sem erro para a pessoa. O texto da pergunta não vai para log.
  *
- * Custo: a chamada passa pelo Orchestrator (orçamento, reserva, métricas e ai_usage_log). Ele NÃO consome
+ * Custo: a chamada passa pelo Orchestrator (orçamento, reserva, métricas e ai_usage_log). Guia NÃO consome
  * cota própria: quem chama (assistantService) a faz DENTRO da unidade de cota da pergunta, então uma
  * pergunta continua gastando uma unidade.
  */

@@ -3,18 +3,18 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Dica contextual do Guia (plano §3.4): ao entrar num painel ou módulo, um balão curto e
-// dispensável perto do botão do Guia. O texto é FIXO deste arquivo (nunca vem de IA nem da API)
-// e a dica não altera nada: tocar nela só abre o painel do Guia com a pergunta no campo, sem enviar.
+// Dica contextual de Guia (plano §3.4): ao entrar num painel ou módulo, um balão curto e
+// dispensável perto do botão de Guia. O texto é FIXO deste arquivo (nunca vem de IA nem da API)
+// e a dica não altera nada: tocar nela só abre o painel de Guia com a pergunta no campo, sem enviar.
 // Uma vez por módulo por sessão (Set em memória; nada vai para o armazenamento do navegador),
-// some sozinha em 8 s e não aparece com o painel aberto, com o Guia desligado ou com suspensão.
+// some sozinha em 8 s e não aparece com o painel aberto, com Guia desligado ou com suspensão.
 // A cola com a tela fica em assistant.js. Expõe window.AssistantHints (ou module.exports, no Node).
 (function (root) {
   'use strict';
 
   var SHOW_MS = 8000;
 
-  // Texto fixo por contexto do Guia (os mesmos nomes de MODULES em lia-states.js).
+  // Texto fixo por contexto de Guia (os mesmos nomes de MODULES em lia-states.js).
   var HINT_TEXT = Object.freeze({
     events: 'Quer ajuda com sua inscrição?',
     proposals: 'Posso te levar para criar uma proposta.',
@@ -54,7 +54,7 @@
   }
 
   /**
-   * Mostra a dica? Só com o Guia ligado (flags.chatbot_enabled === true), com o painel do Guia fechado,
+   * Mostra a dica? Só com Guia ligado (flags.chatbot_enabled === true), com o painel de Guia fechado,
    * sem suspensão (flags.moderated) e se o contexto ainda não foi mostrado nesta sessão (seen: Set).
    */
   function shouldShow(context, seen, flags) {
@@ -159,7 +159,7 @@
       offer(contextForModule(state.module));
     }
 
-    /** Contexto do Guia na tela: o módulo aberto, ou o painel. */
+    /** Contexto de Guia na tela: o módulo aberto, ou o painel. */
     function context() {
       return state.module ? contextForModule(state.module) : contextForPanel(state.panel);
     }

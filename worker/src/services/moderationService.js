@@ -12,7 +12,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
-// Moderação do Guia (ADR 0004): regras puras, juiz por LLM e flag.
+// Moderação de Guia (ADR 0004): regras puras, juiz por LLM e flag.
 import * as Rules from '../assistant/moderationRules.js';
 import { normalize } from '../assistant/kb.js';
 import * as Orchestrator from '../ai/orchestrator.js';
@@ -160,7 +160,7 @@ export async function resolveReport(sql, identity, reportId, input, correlationI
 }
 
 // ===========================================================================
-// Moderação do Guia (ADR 0004; sql/022). Regras puras em assistant/moderationRules.js.
+// Moderação de Guia (ADR 0004; sql/022). Regras puras em assistant/moderationRules.js.
 //
 // O driver HTTP do Neon não tem transação interativa. Por isso nenhuma mudança de estado
 // é "ler, calcular e regravar a linha inteira": cada uma é UM comando atômico no SQL
@@ -168,7 +168,7 @@ export async function resolveReport(sql, identity, reportId, input, correlationI
 // condicional (decaimento, só se a linha não mudou desde a leitura).
 // ===========================================================================
 const FLAG_MODERATION = 'moderation_enabled';
-const MSG_MODERATION_OFF = 'A moderação do Guia está desligado no momento.';
+const MSG_MODERATION_OFF = 'A moderação de Guia está desligado no momento.';
 const HOUR_MS = 3600000;
 const DECAY_RETRIES = 3;
 
@@ -339,12 +339,12 @@ export async function registerAssistantIncident(sql, correlationId, profileId, d
 
 /** Nível em que a administração é avisada (só auditoria: nada é bloqueado por isto). */
 const ALERT_LEVEL = 2;
-/** Categoria da denúncia automática: o Guia não sabe qual assunto a motivou. */
+/** Categoria da denúncia automática: Guia não sabe qual assunto a motivou. */
 const AUTO_REPORT_CATEGORY = 'other';
 
 /**
- * Escalonamento do Guia: no nível 2 audita o aviso à administração; no nível 3 abre uma denúncia automática
- * sobre a conta, sem denunciante e sem evidência (o Guia não guarda o texto). Não repete denúncia automática
+ * Escalonamento de Guia: no nível 2 audita o aviso à administração; no nível 3 abre uma denúncia automática
+ * sobre a conta, sem denunciante e sem evidência (Guia não guarda o texto). Não repete denúncia automática
  * ainda aberta. Nunca lança erro: o incidente já está registrado e não pode falhar por causa disto.
  */
 async function escalateModeration(sql, correlationId, profileId, level, detection) {
@@ -353,7 +353,7 @@ async function escalateModeration(sql, correlationId, profileId, level, detectio
     return;
   }
   if (level < C.MODERATION.MAX_LEVEL) return;
-  const details = `Denúncia automática do Guia: nível ${level} de moderação (suspensão de ${C.MODERATION.SUSPENSION_HOURS} h). Detecção: ${detection}.`;
+  const details = `Denúncia automática de Guia: nível ${level} de moderação (suspensão de ${C.MODERATION.SUSPENSION_HOURS} h). Detecção: ${detection}.`;
   try {
     // Denúncias sem denunciante (reporter_id NULL) não entram no índice único: o NOT EXISTS é o que evita repetir.
     const rows = await sql`
@@ -455,13 +455,13 @@ export async function judgeOffense(sql, env, identity, message, correlationId, o
 // e sem dado pessoal. O prazo da nova tentativa vem de REDEEM_RETRY_SECONDS (1 hora), nunca escrito à mão.
 const RETRY_HOURS = C.MODERATION.REDEEM_RETRY_SECONDS / 3600;
 const RETRY_LABEL = RETRY_HOURS === 1 ? '1 hora' : RETRY_HOURS + ' horas';
-const MSG_REDEEM_ACCEPTED = 'Redenção aceita. O nível de moderação voltou a 0 e você já pode conversar com o Guia normalmente. Obrigada por explicar o que houve.';
+const MSG_REDEEM_ACCEPTED = 'Redenção aceita. O nível de moderação voltou a 0 e você já pode conversar com Guia normalmente. Obrigada por explicar o que houve.';
 const MSG_REDEEM_REFUSED = 'A redenção não foi aceita desta vez: a explicação não deixou claro o que houve e como a conversa vai mudar daqui em diante. '
   + 'O nível de moderação continua o mesmo. Você pode enviar uma nova explicação, com palavras próprias, daqui a ' + RETRY_LABEL + '.';
 const MSG_REDEEM_UNAVAILABLE = 'A avaliação da redenção não está disponível agora, então nada mudou no nível de moderação. Isso não conta como tentativa: tente de novo em alguns minutos.';
 const MSG_REDEEM_CHANGED = 'O nível de moderação mudou enquanto a explicação era avaliada (uma nova ocorrência ou a passagem do tempo), então a redenção não foi aplicada. '
   + 'Isso não conta como tentativa: confira o nível atual e envie de novo.';
-const MSG_REDEEM_NORMAL = 'O nível de moderação já é 0: não há nada a redimir e a conversa com o Guia está liberada.';
+const MSG_REDEEM_NORMAL = 'O nível de moderação já é 0: não há nada a redimir e a conversa com Guia está liberada.';
 const MSG_REDEEM_LIMIT = 'O limite de ' + C.MODERATION.REDEEM_ACCEPTED_MAX + ' redenções aceitas em ' + C.MODERATION.REDEEM_ACCEPTED_WINDOW_DAYS + ' dias foi atingido, '
   + 'então não é possível pedir outra agora. O nível atual diminui com o tempo, um nível a cada ' + C.MODERATION.DECAY_DAYS + ' dias sem nova ocorrência, '
   + 'e a suspensão de ' + C.MODERATION.SUSPENSION_HOURS + ' horas termina sozinha. Se acredita que houve engano, fale com a administração.';

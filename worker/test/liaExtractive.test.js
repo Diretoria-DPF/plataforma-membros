@@ -66,7 +66,7 @@ describe('publicPathFor — mapa fixo e allowlist', () => {
   });
 
   test('sem página pública: null (nunca um caminho inventado)', () => {
-    expect(publicPathFor('saude', 'O Guia pode errar em temas clínicos')).toBeNull();
+    expect(publicPathFor('saude', 'Guia pode errar em temas clínicos')).toBeNull();
     expect(publicPathFor('modulos', 'Início: resumo e atalhos do membro')).toBeNull();
     expect(publicPathFor('__proto__', 'x')).toBeNull();
     expect(publicPathFor(undefined, undefined)).toBeNull();
@@ -98,8 +98,8 @@ describe('extractiveAnswer', () => {
   });
 
   test('sem página pública, a fonte sai sem a chave url', () => {
-    const out = extractiveAnswer({ source: 'saude', section: 'O Guia pode errar em temas clínicos', content: 'x. O Guia pode errar.' });
-    expect(out.sources).toEqual([{ source: 'saude', section: 'O Guia pode errar em temas clínicos' }]);
+    const out = extractiveAnswer({ source: 'saude', section: 'Guia pode errar em temas clínicos', content: 'x. Guia pode errar.' });
+    expect(out.sources).toEqual([{ source: 'saude', section: 'Guia pode errar em temas clínicos' }]);
     expect('url' in out.sources[0]).toBe(false);
   });
 

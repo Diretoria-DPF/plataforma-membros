@@ -32,11 +32,11 @@
  *    mais de 180 dias sai — e o CASCADE de sql/021 leva junto a avaliação
  *    dela; incidente de moderação (assistant_incidents, sem texto) com mais
  *    de 365 dias sai.
- *  - Base do Guia (ragService.reindex, tarefa ragReindex): reindexa o que mudou
+ *  - Base de Guia (ragService.reindex, tarefa ragReindex): reindexa o que mudou
  *    (hash = modelo + conteúdo) só quando há env (Workers AI) e a flag rag_enabled
  *    está ligada. Exceção consciente à regra "corte por idade": trechos que saíram
  *    de kb.js/docs.js somem, porque a base é a fonte da verdade e não um histórico.
- *    Sem embeddings (embeddingAvailable: false) a busca do Guia cai para trigramas: o cron registra o
+ *    Sem embeddings (embeddingAvailable: false) a busca de Guia cai para trigramas: o cron registra o
  *    aviso ASSISTANT_RAG_REINDEX_DEGRADED em error_logs e segue (risco O20).
  *  - Guia, registro de pesquisas (sql/026, tarefa liaResearchPurge): apaga as linhas com
  *    validade vencida (expires_at: 30 dias a base, 7 os provedores externos). Aqui o corte é a
@@ -146,13 +146,13 @@ function coreTasks(sql, correlationId, env) {
       RETURNING 1`,
     // Alertas da IA (tokens, 429, cache) por e-mail aos admins; devolve os alertas enviados.
     aiAlerts: () => (env ? runAiAlerts(sql, env, correlationId) : []),
-    // Moderação do Guia (ADR 0004): -1 nível a cada 30 dias sem incidente; devolve { checked, lowered }.
+    // Moderação de Guia (ADR 0004): -1 nível a cada 30 dias sem incidente; devolve { checked, lowered }.
     assistantModeration: () => ModerationService.decayAssistantModeration(sql),
   };
 }
 
 /**
- * Retenção do Guia (ADR 0005). Cada tarefa tem corte por idade parametrizado
+ * Retenção de Guia (ADR 0005). Cada tarefa tem corte por idade parametrizado
  * e RETURNING 1 para a contagem. Sem DELETE/UPDATE sem filtro de idade.
  */
 function assistantRetentionTasks(sql) {
@@ -190,19 +190,19 @@ function embeddingGapReason(env) {
 }
 
 /**
- * O20: reindexação sem embeddings degrada a busca do Guia para trigramas. Deixa um aviso estruturado em
+ * O20: reindexação sem embeddings degrada a busca de Guia para trigramas. Deixa um aviso estruturado em
  * error_logs (motivo e contagens, nunca o texto da base nem a mensagem do erro). logError não lança, então
  * o aviso nunca derruba o cron.
  */
 async function warnIfEmbeddingUnavailable(sql, env, correlationId, report) {
   if (report.embeddingAvailable !== false) return;
-  await Logging.logError(sql, correlationId, 'ASSISTANT_RAG_REINDEX_DEGRADED', 'Reindexação sem embeddings: a busca do Guia segue só por trigramas.', {
+  await Logging.logError(sql, correlationId, 'ASSISTANT_RAG_REINDEX_DEGRADED', 'Reindexação sem embeddings: a busca de Guia segue só por trigramas.', {
     reason: embeddingGapReason(env), total: report.total, upserted: report.upserted, embedded: report.embedded,
   });
 }
 
 /**
- * Reindexa a base do Guia (ver o cabeçalho). Sem env ou com a flag desligada, não toca em nada.
+ * Reindexa a base de Guia (ver o cabeçalho). Sem env ou com a flag desligada, não toca em nada.
  * Devolve quantos trechos foram gravados (upserted); o hash deixa de fora o que não mudou.
  */
 async function ragReindexIfEnabled(sql, env, correlationId) {
@@ -222,7 +222,7 @@ export async function runMaintenance(sql, correlationId, env) {
     ...coreTasks(sql, correlationId, env),
     ...assistantRetentionTasks(sql),
     ragReindex: () => ragReindexIfEnabled(sql, env, correlationId),
-    // Registro de pesquisas do Guia (L04): só linhas vencidas. purgeExpired já engole falhas e devolve 0.
+    // Registro de pesquisas de Guia (L04): só linhas vencidas. purgeExpired já engole falhas e devolve 0.
     liaResearchPurge: () => ResearchLog.purgeExpired(sql),
     // Rastros dos agentes (sql/035, ADR 0007): sem texto do usuário; 90 dias, corte por created_at.
     agentTracesPurge: () => sql`

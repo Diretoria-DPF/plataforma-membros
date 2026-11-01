@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Atalhos de teclado (frontend/keyboard-shortcuts.js). Todo atalho tem modificador (WCAG 2.1.4):
-// Ctrl/Cmd+/ abre a ajuda, Ctrl/Cmd+K abre o Guia. Nada dispara com tecla segurada, dentro de campo
+// Ctrl/Cmd+/ abre a ajuda, Ctrl/Cmd+K abre Guia. Nada dispara com tecla segurada, dentro de campo
 // de texto, nem com outro diálogo aberto. register() recusa combinação repetida.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -205,7 +205,7 @@ test('tecla segurada (evt.repeat) não dispara nenhum atalho', () => {
   assert.equal(helpOverlay(doc), undefined);
 });
 
-test('Ctrl+K e Cmd+K fora de campo abrem o Guia e cancelam o padrão do navegador', () => {
+test('Ctrl+K e Cmd+K fora de campo abrem Guia e cancelam o padrão do navegador', () => {
   const ctrl = setup();
   const evtCtrl = keyEvent('k', { ctrl: true }, BODY);
   assert.equal(ctrl.shortcuts.dispatch(evtCtrl), true);
@@ -219,7 +219,7 @@ test('Ctrl+K e Cmd+K fora de campo abrem o Guia e cancelam o padrão do navegado
   assert.equal(evtMeta.prevented, 1);
 });
 
-test('Ctrl+K dentro de textarea segue o padrão do navegador (não abre o Guia)', () => {
+test('Ctrl+K dentro de textarea segue o padrão do navegador (não abre Guia)', () => {
   const { shortcuts, openedCount } = setup();
   const evt = keyEvent('k', { ctrl: true }, { tagName: 'TEXTAREA' });
   assert.equal(shortcuts.dispatch(evt), false);
@@ -285,7 +285,7 @@ test('register recusa (devolve false) combinação já registrada e não sobresc
   let intruder = 0;
   assert.equal(typeof shortcuts.register('Ctrl+J', () => { original += 1; }, 'Primeiro'), 'function');
   assert.equal(shortcuts.register('Ctrl+J', () => { intruder += 1; }, 'Segundo'), false);
-  // Ctrl/Cmd+K já é do Guia: não pode ser tomado por outro registro.
+  // Ctrl/Cmd+K já é de Guia: não pode ser tomado por outro registro.
   assert.equal(shortcuts.register('Cmd+K', () => { intruder += 1; }), false);
   shortcuts.dispatch(keyEvent('j', { ctrl: true }, BODY));
   assert.equal(original, 1);
@@ -364,7 +364,7 @@ test('a lista da ajuda mostra os atalhos registrados com descrição, com o rót
   shortcuts.dispatch(keyEvent('/', { ctrl: true }, BODY));
   const overlay = helpOverlay(doc);
   assert.match(overlay.textContent, /Busca global/);
-  assert.match(overlay.textContent, /Abre o Guia/);
+  assert.match(overlay.textContent, /Abre Guia/);
   assert.match(overlay.textContent, /Ctrl\/Cmd \+ \//);
   assert.match(overlay.textContent, /Mostra esta lista de atalhos/, 'a própria ajuda também aparece na lista');
 });

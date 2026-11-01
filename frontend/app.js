@@ -165,7 +165,7 @@
       if (window.LaiftLearning) window.LaiftLearning.reset();
       // Fase 3 — painel admin de IA: descarta respostas pendentes e dados exibidos.
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
-      if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação do Guia: some da tela com a sessão
+      if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação de Guia: some da tela com a sessão
       if (window.LaiftAdminRoles) window.LaiftAdminRoles.reset();
       if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.reset();
       if (window.LaiftPrivacy) window.LaiftPrivacy.reset();
@@ -381,7 +381,7 @@
   // ===========================================================================
   // >>> api-fetch (puro)
   // Toda chamada tem tempo limite: sem ele, uma requisição presa deixava
-  // "Carregando…" para sempre. O Guia e a reindexação da base podem demorar
+  // "Carregando…" para sempre. Guia e a reindexação da base podem demorar
   // mais (IA), por isso têm um limite maior. Os erros saem em português.
   var API_TIMEOUT_MS = 20000;
   var API_LONG_TIMEOUT_MS = 90000;
@@ -1101,7 +1101,7 @@
     if (window.LaiftLearning) window.LaiftLearning.reset();
     // Fase 3 — painel admin de IA
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
-    if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação do Guia: some da tela com a sessão
+    if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação de Guia: some da tela com a sessão
     if (window.LaiftAdminRoles) window.LaiftAdminRoles.reset();
     if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.reset();
     if (window.LaiftPrivacy) window.LaiftPrivacy.reset();
@@ -1166,7 +1166,7 @@
     if (window.LaiftMessaging) window.LaiftMessaging.startBackgroundSync();
     // Guia: relê a flag e zera a conversa da conta anterior.
     if (window.LaiftAssistant) window.LaiftAssistant.refresh();
-    // Primeira entrada da pessoa: apresentação curta por papel (o Guia e o crachá).
+    // Primeira entrada da pessoa: apresentação curta por papel (Guia e o crachá).
     if (window.LaiftOnboarding) window.LaiftOnboarding.maybeShow({ role: state.profile.role, profileId: state.profile.id });
   }
 
@@ -1337,7 +1337,7 @@
     // Fase 3 — painel admin de IA (frontend/admin-ai.js)
     'panel-admin-ai': function () {
       if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel();
-      // moderação do Guia (ADR 0004, O28): só para quem modera (admin ou cargo moderador).
+      // moderação de Guia (ADR 0004, O28): só para quem modera (admin ou cargo moderador).
       if (window.LaiftAdminModeration && window.LaiftRoles && window.LaiftRoles.has('reports.moderate')) window.LaiftAdminModeration.load(window.App);
     },
     // Biblioteca LAIFT (CONTRATO-B2 §7). Fora de MEMBER_PANEL_ORDER de propósito (§1: gate por flag só no CSS).
@@ -1376,7 +1376,7 @@
       else btn.removeAttribute('aria-current');
     });
     window.scrollTo(0, 0);
-    // Dica do Guia (assistant-hints.js): só avisa quando a tela muda de fato.
+    // Dica de Guia (assistant-hints.js): só avisa quando a tela muda de fato.
     if (previousPanelId !== panelId) document.dispatchEvent(new CustomEvent('laift:panelchange', { detail: { panel: panelId } }));
   }
 
@@ -2779,7 +2779,7 @@
     UPDATE_EVENT_STATUS: 'Mudança de status de evento', UPDATE_EVENT_IMAGE: 'Imagem de evento atualizada',
     CREATE_TASK: 'Criação de tarefa', UPDATE_TASK_STATUS: 'Mudança de status de tarefa',
     CHANGE_USER_ROLE: 'Alteração de papel de usuário', BAN_USER: 'Banimento de conta', UNBAN_USER: 'Reativação de conta',
-    assistant_moderation_alert: 'Alerta de moderação do Guia (nível 2)', assistant_auto_report: 'Denúncia automática do Guia (nível 3)',
+    assistant_moderation_alert: 'Alerta de moderação de Guia (nível 2)', assistant_auto_report: 'Denúncia automática de Guia (nível 3)',
   };
 
   var adminAuditState = { action: '', result: '' };
@@ -2839,8 +2839,8 @@
   // Administração — denúncias
   // ===========================================================================
   var REPORT_STATUS_LABELS = { open: 'Aberta', under_review: 'Em análise', resolved: 'Resolvida', dismissed: 'Arquivada' };
-  // Denúncia sem denunciante: a automática do Guia traz o aviso do servidor em details; as demais são de ex-membro.
-  var AUTO_REPORT_PREFIX = 'Denúncia automática do Guia:';
+  // Denúncia sem denunciante: a automática de Guia traz o aviso do servidor em details; as demais são de ex-membro.
+  var AUTO_REPORT_PREFIX = 'Denúncia automática de Guia:';
   function reporterLabel(item) {
     if (item.reporterName) return item.reporterName;
     if (item.reporterHidden) return 'Oculto (só o administrador vê)'; // moderador decide pelo conteúdo (ADR 0010)

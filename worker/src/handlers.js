@@ -201,7 +201,7 @@ export const API_REGISTRY = {
   // actions: mfaGate.test.js só isenta de sessão obrigatória as actions listadas em OPTIONAL_SESSION.
   apiAssistantSources: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, () => AssistantFeedbackService.listKbSources(sql)),
   apiAdminReindexKb: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.reindexKb(sql, env, identity, cid)),
-  // Moderação do Guia (ADR 0004): redenção e estado exigem sessão (portão de MFA incluso); visitante não é moderado.
+  // Moderação de Guia (ADR 0004): redenção e estado exigem sessão (portão de MFA incluso); visitante não é moderado.
   apiAssistantRedeem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.redeemAssistant(sql, env, identity, asInput(input), cid)),
   apiAssistantModerationState: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AssistantModeration.assistantModerationState(sql, identity)),
   apiAdminListFeatureFlags: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => FeatureFlagService.adminList(sql, identity)),

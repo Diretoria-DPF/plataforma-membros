@@ -98,7 +98,7 @@ function startStaticServer() {
 }
 
 /**
- * Resumo da moderação do Guia: mesmo formato de worker/src/assistant/moderationGate.js
+ * Resumo da moderação de Guia: mesmo formato de worker/src/assistant/moderationGate.js
  * (adminAssistantModeration), com os campos por pessoa que o S1 adiciona. Nenhum texto de mensagem.
  */
 function moderationSummary() {

@@ -102,7 +102,7 @@ test('o botão "Ver na Biblioteca" prepara a busca ANTES de abrir o painel; sem 
   assert.match(block, /action\.query && root\.LaiftLibrary/);
 });
 
-test('as referências entram na mensagem do Guia sem tocar nas fontes (assistant.js usa só o módulo de fontes)', () => {
+test('as referências entram na mensagem de Guia sem tocar nas fontes (assistant.js usa só o módulo de fontes)', () => {
   const src = read('assistant.js');
   assert.match(src, /references: Sources\.sanitizeReferences\(res\.references\)/);
   assert.match(src, /Sources\.renderReferences\(ui\.doc, msg\.references\)/);

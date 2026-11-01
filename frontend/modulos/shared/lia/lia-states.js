@@ -33,7 +33,7 @@
     confused: ctx('idle', 'curious', 'neutral', 'idle', 'idle', 'none', null, 'Guia não entendeu'),
     alert: ctx('idle', 'focused', 'neutral', 'idle', 'idle', 'none', null, 'Guia está atenta'),
     warning: ctx('idle', 'worried', 'worried', 'idle', 'idle', 'none', null, 'Guia emitiu um alerta'),
-    suspended: ctx('suspended', 'sad', 'flat', 'idle', 'idle', 'none', null, 'Guia está suspenso'),
+    suspended: ctx('suspended', 'sad', 'flat', 'idle', 'idle', 'none', null, 'Chat suspenso'),
     redeem: ctx('idle', 'happy', 'smile', 'idle', 'idle', 'none', 'glow heart', 'Guia'), // volta ao repouso: o rótulo é o de sempre
     events: ctx('idle', 'curious', 'neutral', 'idle', 'idle', 'calendar', null, 'Guia, assistente de Eventos'),
     proposals: ctx('idle', 'focused', 'neutral', 'idle', 'idle', 'pencil', null, 'Guia, assistente de Propostas'),

@@ -5,7 +5,7 @@
  */
 /**
  * ragService.js
- * Base de conhecimento do Guia (sql/020): embedding por Workers AI
+ * Base de conhecimento de Guia (sql/020): embedding por Workers AI
  * (@cf/baai/bge-m3, 1024 dimensões) e busca HÍBRIDA, vetor (pgvector, cosseno)
  * + trigramas (pg_trgm), fundida por posição (Reciprocal Rank Fusion).
  *

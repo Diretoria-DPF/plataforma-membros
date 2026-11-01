@@ -34,7 +34,7 @@
         { "t": "h2", "texto": "Como usar" },
         { "t": "p", "texto": "Entre com a sua conta, pela [página inicial](/index.html). Use Início para ter uma visão geral e seguir para a área que procura." },
         { "t": "p", "texto": "Membros veem as áreas do membro. Administradores veem também a área de gestão." },
-        { "t": "p", "texto": "Ficou com dúvida sobre onde achar uma tela? Pergunte ao Guia, o assistente da plataforma. Ele orienta você e leva às telas. O chat dele funciona para quem está logado." },
+        { "t": "p", "texto": "Ficou com dúvida sobre onde achar uma tela? Pergunte a Guia da plataforma. Guia orienta você e leva às telas. O chat funciona para quem está logado." },
         { "t": "p", "texto": "Sem conexão, a plataforma não carrega dados novos. Um aviso mostra que você está offline." },
         { "t": "p", "texto": "Quer seguir a série? Leia o próximo post, sobre [Farmacologia Básica](/blog/modulo-farmacologia.html)." },
         { "t": "contato", "titulo": "Tire dúvidas com a Liga" }

@@ -245,7 +245,7 @@ summary:focus-visible,
 .site-credito { margin: 8px 0 0; text-align: center; color: var(--muted); font-size: 0.75rem; line-height: 1.4; }
 .site-credito a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .site-credito a:hover, .site-credito a:focus-visible { color: var(--primary); }
-/* Na entrada o crédito fica na faixa livre sob os cartões (a margem de 96 px também afasta o Guia flutuante dos botões). */
+/* Na entrada o crédito fica na faixa livre sob os cartões (a margem de 96 px também afasta Guia flutuante dos botões). */
 .site-credito--entrada { position: absolute; left: 0; right: 0; bottom: 84px; margin: 0; padding: 0 16px; }
 .cadastro-opcional {
   border-radius: var(--radius-md); background: var(--surface-alt);
@@ -356,7 +356,7 @@ summary:focus-visible,
 .credential-zoom .credential-qr-wrap .learn-credential-qr { width: 100%; max-width: 380px; height: auto; aspect-ratio: 1; }
 
 /* ---------- Guia, guia da plataforma ---------- */
-/* Bolha fechada: 48 px com a cabeça do Guia (recorte 'head', ADR 0003). Alvo de toque >= 44 px. */
+/* Bolha fechada: 48 px com a cabeça de Guia (recorte 'head', ADR 0003). Alvo de toque >= 44 px. */
 .lia-launcher {
   position: fixed; right: 16px; bottom: 16px; z-index: 30; width: auto; min-height: 48px;
   display: inline-flex; align-items: center; gap: 8px; padding: 0 14px 0 0;
@@ -435,7 +435,7 @@ summary:focus-visible,
   .lia-launcher { padding: 0; }
   .lia-panel, .lia-launcher.lia-in-app ~ .lia-panel { right: 8px; left: 8px; width: auto; }
 }
-/* Moderação do Guia (ADR 0004): faixa de aviso e pedido de redenção. Cor nunca é o único sinal (ícone e texto). */
+/* Moderação de Guia (ADR 0004): faixa de aviso e pedido de redenção. Cor nunca é o único sinal (ícone e texto). */
 .lia-warning {
   display: flex; align-items: center; gap: 8px; margin: 0; padding: 8px 12px; border-radius: var(--radius-md);
   background: var(--surface-alt); color: var(--text); font-size: 13px; font-weight: 700; line-height: 1.35;

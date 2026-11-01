@@ -13,7 +13,7 @@
  *
  *   1. cache semântico (antes da cota, em lookupCache);
  *   2. orçamento de tokens/dia do Groq: estourado, o Groq não é chamado;
- *   3. Groq (modelo rápido/inteligente por recurso, regra em ai/config.js; o Guia do membro sobe para o
+ *   3. Groq (modelo rápido/inteligente por recurso, regra em ai/config.js; Guia do membro sobe para o
  *      inteligente quando há folga de tokens, ver pickTier);
  *   4. NVIDIA como reserva se o Groq está fora OU o orçamento acabou, quando
  *      a flag `nvidia_fallback` está ligada e o provedor configurado (o
@@ -94,7 +94,7 @@ async function staleFallback(sql, req, opts) {
 }
 
 /**
- * Modelo do Guia do MEMBRO (feature 'assistant' com opts.smartWhenRoom): 'smart' quando há folga de tokens
+ * Modelo de Guia do MEMBRO (feature 'assistant' com opts.smartWhenRoom): 'smart' quando há folga de tokens
  * (Metrics.smartTierRoom, limiares em AI_MODEL_TIER); senão null e vale o modelo do recurso (rápido). É o PONTO
  * ÚNICO dessa regra. Só entra quem pede: a árvore de seções e a moderação também são 'assistant', mas ficam no rápido.
  */
@@ -125,7 +125,7 @@ async function recordSuccess(sql, req, opts, result, rateLimited) {
 /**
  * @param {object} req  { feature, messages, profileId }
  * @param {object} [opts]  { cacheQuestion, smartWhenRoom } — cacheQuestion: pergunta genérica a guardar/recuperar
- *   no cache semântico; smartWhenRoom: só o Guia do membro (usa o modelo inteligente havendo folga, ver pickTier)
+ *   no cache semântico; smartWhenRoom: só Guia do membro (usa o modelo inteligente havendo folga, ver pickTier)
  * @returns {Promise<{content, model, provider, usage, latencyMs, finishReason, cached?, degraded?}>}
  * @throws AiUnavailableError | AiInvalidOutputError (mesmos do Groq)
  */

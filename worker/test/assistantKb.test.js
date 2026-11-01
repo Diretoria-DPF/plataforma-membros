@@ -56,7 +56,7 @@ describe('matchIntent — perguntas reais', () => {
     ['em termos de dose, o que o laboratório mostra', 'laboratorio'],
     ['como envio uma proposta', 'propostas'],
     ['como aderir a uma tarefa', 'tarefas'],
-    ['quero marcar uma resposta do Guia como útil', 'avaliacao_lia'],
+    ['quero marcar uma resposta de Guia como útil', 'avaliacao_lia'],
     ['fui suspenso no chat, como peço redenção', 'redencao'],
     ['quantas perguntas com IA posso fazer por dia', 'cotas'],
     ['como envio feedback para a administração', 'feedback_liga'],
@@ -136,7 +136,7 @@ describe('integridade da base de conhecimento', () => {
     }));
   });
 
-  test('toda sugestão que o Guia oferece leva a uma intenção (clicar nunca cai no vazio)', () => {
+  test('toda sugestão que Guia oferece leva a uma intenção (clicar nunca cai no vazio)', () => {
     const all = [].concat(DEFAULT_SUGGESTIONS, ...INTENTS.map((i) => i.suggestions || []));
     all.forEach((s) => expect({ s, hit: matchIntent(s, []) && matchIntent(s, []).id }).toEqual({ s, hit: expect.any(String) }));
   });
@@ -219,7 +219,7 @@ describe('lista branca de destinos', () => {
   });
 });
 
-describe('cobertura do Guia: administração só para admin, acervo e prompt sem telas de admin', () => {
+describe('cobertura de Guia: administração só para admin, acervo e prompt sem telas de admin', () => {
   const ADMIN_IDS = INTENTS.filter((i) => i.adminOnly).map((i) => i.id);
 
   test('há intenções de administração e todas usam o destino de admin da lista branca', () => {
@@ -279,7 +279,7 @@ describe('cobertura do Guia: administração só para admin, acervo e prompt sem
   });
 
   test('o limite de perguntas usa as cotas do plano, nunca um número fixo', () => {
-    const hit = matchIntent('qual o limite de perguntas do Guia?', []);
+    const hit = matchIntent('qual o limite de perguntas de Guia?', []);
     expect(hit.id).toBe('cotas');
     expect(hit.intent.reply).toContain(String(AI_QUOTAS.assistant.member));
     expect(hit.intent.reply).toContain(String(AI_QUOTAS.assistant.admin));

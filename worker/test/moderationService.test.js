@@ -28,7 +28,7 @@ const NONSENSE = 'Desculpa, me arrependo. Mas ainda acho que a regra do chat foi
 const MEMBER_DB = { profileId: PROFILE, role: 'member' };
 const realFetch = globalThis.fetch;
 
-describe('ModerationService — decaimento e redenção do Guia (ADR 0004, banco real)', () => {
+describe('ModerationService — decaimento e redenção de Guia (ADR 0004, banco real)', () => {
   let db;
   let sql;
   let env;
@@ -119,7 +119,7 @@ describe('ModerationService — decaimento e redenção do Guia (ADR 0004, banco
 
     test('aceita: diz que o nível voltou a 0 e que a conversa está liberada', async () => {
       const res = await redeem(SINCERE);
-      expect(res.message).toMatch(/^Redenção aceita\. O nível de moderação voltou a 0 e você já pode conversar com o Guia normalmente\./);
+      expect(res.message).toMatch(/^Redenção aceita\. O nível de moderação voltou a 0 e você já pode conversar com Guia normalmente\./);
       clean(res.message);
     });
 
@@ -432,7 +432,7 @@ describe('ModerationService — decaimento e redenção do Guia (ADR 0004, banco
 });
 
 
-describe('ModerationService — escalonamento do Guia (B-4): aviso no nível 2, denúncia automática no nível 3', () => {
+describe('ModerationService — escalonamento de Guia (B-4): aviso no nível 2, denúncia automática no nível 3', () => {
   const B4_PROFILE = '55555555-5555-4555-8555-555555555555';
   const B4_CID = '00000000-0000-4000-8000-0000000000b4';
   let db;
@@ -488,7 +488,7 @@ describe('ModerationService — escalonamento do Guia (B-4): aviso no nível 2, 
     const reports = await autoReports();
     expect(reports).toHaveLength(1);
     expect(reports[0]).toMatchObject({ reporter_id: null, reported_profile_id: B4_PROFILE, category: 'other', evidence_excerpt: null, status: 'open' });
-    expect(reports[0].details).toBe('Denúncia automática do Guia: nível 3 de moderação (suspensão de 24 h). Detecção: llm.');
+    expect(reports[0].details).toBe('Denúncia automática de Guia: nível 3 de moderação (suspensão de 24 h). Detecção: llm.');
     expect(await countAudit('assistant_auto_report')).toBe(1);
   });
 

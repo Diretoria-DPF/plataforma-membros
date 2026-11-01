@@ -96,7 +96,7 @@ default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self';
 object-src 'none'; base-uri 'self'; form-action 'self'
 ```
 
-### Turnstile na prévia de IA do Guia (visitante)
+### Turnstile na prévia de IA de Guia (visitante)
 
 A prévia de IA para quem não tem conta (flag `lia_visitor_ai_enabled`, desligada) é protegida por Cloudflare Turnstile. Controles: o token é validado no servidor (`worker/src/services/turnstileService.js`: `siteverify`, ação `lia_preview`, `hostname` em `TURNSTILE_HOSTNAMES`, timeout de 10 s, falha fechada, sem log de token, segredo ou IP); o token é de uso único e o widget é reiniciado a cada envio; sem `TURNSTILE_SECRET` a prévia não existe; limite de 5 tentativas por dia por IP (rate limit do Neon, só hash do IP com sal, nada no KV), teto diário de neurons (gravação em lote) e cache compartilhado (docs/lia/PLANO.md §7). A prévia usa só o Workers AI e nunca o Groq. A CSP de `frontend/index.html` abre `https://challenges.cloudflare.com` em `script-src`, `frame-src` e `connect-src`, e em nada mais (o e2e `csp` e `admin-dashboard-chart.test.mjs` conferem). A chave do site (`0x4AAAAAAFU5o9zPQhbtV0yA`) é pública; o segredo só existe como secret do Worker.
 
@@ -106,7 +106,7 @@ Por página:
 
 | Página | script-src | connect-src | img-src | frame / worker / media |
 |---|---|---|---|---|
-| `index.html` (plataforma) | `'self'` `https://challenges.cloudflare.com` (Turnstile do Guia) | `'self'` Worker `https://challenges.cloudflare.com` | `'self'` data: blob: R2 | frame `'self'` `https://challenges.cloudflare.com`; worker `'none'` |
+| `index.html` (plataforma) | `'self'` `https://challenges.cloudflare.com` (Turnstile de Guia) | `'self'` Worker `https://challenges.cloudflare.com` | `'self'` data: blob: R2 | frame `'self'` `https://challenges.cloudflare.com`; worker `'none'` |
 | `404`, `termos`, `privacidade` | `'self'` | `'self'` | `'self'` data: | frame `'none'`; worker `'none'` |
 | `modulos/quiz` | `'self'` jsDelivr | `'self'` rxnav.nlm.nih.gov pubchem.ncbi.nlm.nih.gov www.ebi.ac.uk | `'self'` data: | frame `'self'`; worker `'none'` |
 | `modulos/toxicologia` | `'self'` | `'self'` api.fda.gov | `'self'` data: | frame `'self'`; worker `'none'` |

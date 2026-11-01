@@ -39,9 +39,9 @@ Faça na ordem. Cada passo diz como conferir antes de seguir.
    | 17 | `sql/017_mfa.sql` | verificação em duas etapas: segredo cifrado, códigos de recuperação, desafio de login |
    | 18 | `sql/018_ai_orchestrator.sql` | `ai_metrics_daily` e `ai_semantic_cache` (extensão `pg_trgm`) — Fase 3 |
    | 19 | `sql/019_assistant.sql` | restrição de `ai_usage_log` aceita `assistant`; flag `chatbot_enabled` (desligada) — Guia |
-   | 20 | `sql/020_rag.sql` | `kb_chunks` (base do Guia, busca vetorial e trigramas) e `ai_usage_log.retrieval_used` |
-   | 21 | `sql/021_assistant_feedback.sql` | `assistant_messages` e `assistant_feedback` (avaliação das respostas do Guia) |
-   | 22 | `sql/022_assistant_moderation.sql` | `assistant_moderation` e `assistant_incidents` (moderação do Guia) |
+   | 20 | `sql/020_rag.sql` | `kb_chunks` (base de Guia, busca vetorial e trigramas) e `ai_usage_log.retrieval_used` |
+   | 21 | `sql/021_assistant_feedback.sql` | `assistant_messages` e `assistant_feedback` (avaliação das respostas de Guia) |
+   | 22 | `sql/022_assistant_moderation.sql` | `assistant_moderation` e `assistant_incidents` (moderação de Guia) |
    | 23 | `sql/023_flags_v2.sql` | insere `rag_enabled`, `feedback_enabled` e `moderation_enabled` ligadas (se não existirem). Liga `ux_v2_enabled` e `chatbot_enabled` **só se** estiverem desligadas e nunca tiverem sido alteradas por admin (`updated_by` nulo e sem `SET_FEATURE_FLAG` em `audit_logs`). **Não religa** o que um admin desligou. Não aplicar antes do acervo: ver [AMBIENTES.md](AMBIENTES.md), "Ativação da UX v2…", seção 2 |
    | 24 | `sql/024_indices.sql` | índices de `rate_limit_buckets` (purga diária) e das séries do Início (`event_registrations`, `task_signups`, `learning_attempts`). Não mexe em flags |
 
@@ -113,7 +113,7 @@ Não são segredo; ficam versionadas.
 | `GROQ_MODEL_SMART` | `openai/gpt-oss-120b` | preceptor, geração de caso, preceptor do laboratório |
 | `MEDIA_BUCKET` (R2) | `plataforma-membros-media` | upload de mídia |
 | `HOT_CACHE` (KV) | namespace `6ee17e57…` | cache curto de leitura, cooldown das chaves do Groq, cache de síntese do laboratório |
-| `AI` (Workers AI, `[ai]`) | binding de produção | embeddings da base do Guia (`@cf/baai/bge-m3`). Sem ele, a busca cai para trigramas. A homologação tem o seu, em `[env.staging.ai]` (ver seção 10) |
+| `AI` (Workers AI, `[ai]`) | binding de produção | embeddings da base de Guia (`@cf/baai/bge-m3`). Sem ele, a busca cai para trigramas. A homologação tem o seu, em `[env.staging.ai]` (ver seção 10) |
 
 Para usar um modelo só, ponha o mesmo valor nas duas vars `GROQ_MODEL_*`.
 Cotas diárias por papel e o disjuntor global (3.000 chamadas/dia) ficam em
@@ -271,7 +271,7 @@ plataforma (painel admin).
   tokens de conta expirados há mais de 7 dias, baldes de rate limit com mais
   de 8 dias, `audit_logs` com mais de 2 anos e `error_logs` com mais de 30
   dias (os prazos estão em `RETENTION`, `worker/src/maintenance.js`; o corte
-  é sempre por `created_at`). O Guia tem prazos próprios: `assistant_messages` sai após 180 dias; `assistant_incidents`, após 365; em `assistant_feedback`, o comentário é anonimizado após 90 dias e o registro sai após 365. Para guardar uma trilha de auditoria por mais
+  é sempre por `created_at`). Guia tem prazos próprios: `assistant_messages` sai após 180 dias; `assistant_incidents`, após 365; em `assistant_feedback`, o comentário é anonimizado após 90 dias e o registro sai após 365. Para guardar uma trilha de auditoria por mais
   tempo (por exemplo, por determinação jurídica), exporte-a antes de a
   janela vencer. Resultado de cada execução: `wrangler tail` ou painel da
   Cloudflare → Workers → plataforma-membros-api → Logs; falhas vão para

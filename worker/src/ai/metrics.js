@@ -12,7 +12,7 @@
  *    instância e cada chamada bem-sucedida soma localmente (noteTokens), para
  *    o contador não ficar defasado entre as consultas. Se a consulta falhar,
  *    vale o último valor conhecido (a IA não cai por causa do contador).
- *  - smartTierRoom: há folga para o Guia do membro usar o modelo inteligente? (uso do dia abaixo de
+ *  - smartTierRoom: há folga para Guia do membro usar o modelo inteligente? (uso do dia abaixo de
  *    AI_MODEL_TIER.SMART_BELOW_BUDGET_PCT do orçamento E uso do próprio modelo abaixo de
  *    AI_MODEL_TIER.SMART_MODEL_DAILY_TOKENS_MAX). Mesma memória de 30 s do orçamento; qualquer falha ao
  *    medir = sem folga (o modelo rápido atende).

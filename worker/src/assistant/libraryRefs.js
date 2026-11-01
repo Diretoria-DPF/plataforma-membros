@@ -5,7 +5,7 @@
  */
 /**
  * assistant/libraryRefs.js
- * Regras puras do Guia sobre a Biblioteca (decisão 10 do PLANO-CORTEX): reconhecer o pedido de artigos
+ * Regras puras de Guia sobre a Biblioteca (decisão 10 do PLANO-CORTEX): reconhecer o pedido de artigos
  * ("tem artigos sobre paracetamol?"), tirar o tema e transformar os itens de LibraryService.search em
  * referências seguras. Sem banco, sem rede e sem IA.
  *
@@ -13,7 +13,7 @@
  *   nunca para o prompt de uma IA, e item com cara de instrução sai da lista.
  * - Só sai link oficial (doi.org ou PubMed), a mesma regra da página pública (biblioteca/catalogo.js).
  * - Resumo só para membro e admin; visitante recebe só o catálogo (o serviço já não manda o resumo).
- * - O Guia NÃO envia resumo algum ao cliente (referenceView): só id, título, autores, periódico, ano e link.
+ * - Guia NÃO envia resumo algum ao cliente (referenceView): só id, título, autores, periódico, ano e link.
  */
 import { normalize } from './kb.js';
 import { looksLikeInjection } from './moderationRules.js';
@@ -173,7 +173,7 @@ export function studyQuery(message) {
 }
 
 /**
- * O Guia busca artigos da Biblioteca para esta pergunta? Devolve { query, explicit } ou null.
+ * Guia busca artigos da Biblioteca para esta pergunta? Devolve { query, explicit } ou null.
  *  - Pergunta clínica (dose, conduta, tratamento): NUNCA (kind 'clinico').
  *  - Pedido explícito de artigos ("tem artigos sobre X?"): sim, com o tema (libraryTopic).
  *  - Pergunta de definição de conteúdo científico, que não é sobre a plataforma e que nenhuma intenção por

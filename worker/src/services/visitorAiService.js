@@ -5,7 +5,7 @@
  */
 /**
  * visitorAiService.js
- * PRÉVIA de IA do Guia para quem não tem conta (flag lia_visitor_ai_enabled). Isolada de propósito:
+ * PRÉVIA de IA de Guia para quem não tem conta (flag lia_visitor_ai_enabled). Isolada de propósito:
  *
  *   - usa SOMENTE o Workers AI (env.AI). Não importa nem chama o Groq nem o orquestrador, para jamais
  *     reduzir a cota dos membros (há um teste que confere isso no código-fonte);

@@ -9,7 +9,7 @@ No código atual os verificadores ficam vermelhos onde devem (ex.: "nenhum Guia 
 ## 0. Pedido do dono → decisão → ficha
 | # | Pedido (resumo) | Decisão | Ficha |
 |---|---|---|---|
-| 1 | Tirar a cabeça do Guia de cima das opções de login; manter só o Guia de baixo | **Remover** o hero (`#hero-lia`, `hero.js`, regras `.hero`). O botão flutuante `#lia-launcher` (assistant.js) fica como está | S1 |
+| 1 | Tirar a cabeça de Guia de cima das opções de login; manter só Guia de baixo | **Remover** o hero (`#hero-lia`, `hero.js`, regras `.hero`). O botão flutuante `#lia-launcher` (assistant.js) fica como está | S1 |
 | 2 | Dividir a tela; links viram botões grandes; "Acessar blog" | Três blocos: cartão de login, cartão de atalhos (2 botões ≥ 56 px, largura total) e cartão da publicação | S1 |
 | 3 | Prévia da publicação com imagem; laço rosa discreto (Outubro Rosa); trocar "Do blog" por imagem | Miniatura com o ícone do sprite do blog; série `campanhas` em rosa discreto; selo "Do blog" deixa de existir | S2 |
 | 4 | Endereço da instituição | "UNINASSAU - Salvador, Rua dos Maçons, 364, Salvador-Bahia, 41810, Brasil"; coordenadas do OSM (§4) | H1 |
@@ -19,10 +19,10 @@ No código atual os verificadores ficam vermelhos onde devem (ex.: "nenhum Guia 
 ## 1. Tela de entrada (S1)
 
 ### 1.1 Por que remover o hero e não só escondê-lo
-`#hero-lia` existe só em `#screen-welcome`. Esconder por CSS ainda montaria o Guia (SVG, estados e animação) para nada. Remover tira
+`#hero-lia` existe só em `#screen-welcome`. Esconder por CSS ainda montaria Guia (SVG, estados e animação) para nada. Remover tira
 código morto: `index.html` (o `<div>` e o `<script src="hero.js" defer>`), `hero.js`, `scripts/hero.test.mjs`,
 `scripts/e2e/hero-ux2.e2e.js`, a entrada `'hero.js', ` de `scripts/build.js` e do `PRECACHE` de `sw.js`, e as regras `.hero` de `ux.css`.
-O `sw.js` é "rede primeiro" e ignora item ausente: **não** sobe a versão do cache. O Guia de baixo (`#lia-launcher`) não muda.
+O `sw.js` é "rede primeiro" e ignora item ausente: **não** sobe a versão do cache. Guia de baixo (`#lia-launcher`) não muda.
 Voltar atrás = `git revert` do commit.
 
 ### 1.2 Marcação exata de `#screen-welcome` (index.html, hoje linhas 86-122)
@@ -38,7 +38,7 @@ Voltar atrás = `git revert` do commit.
         </nav>
         <div class="blog-novidade blog-novidade--faixa" data-blog-novidade="1" hidden></div>
 ```
-- Apague `  <script src="hero.js" defer></script>` (hoje linha 1007). Os scripts do Guia (`modulos/shared/lia/*`) ficam: o botão flutuante usa.
+- Apague `  <script src="hero.js" defer></script>` (hoje linha 1007). Os scripts de Guia (`modulos/shared/lia/*`) ficam: o botão flutuante usa.
 - Ordem final dentro da `<section>`: `div.auth-card` (login) → `nav.auth-card.welcome-liga` → `div.blog-novidade--faixa`. Um só `h1` ("Entrar").
 - Caminho do sprite **relativo** (`blog/icones.svg`), como o resto do `index.html`. Classes `welcome-liga__link`, `welcome-liga__blog` e
   `welcome-liga__aviso` ficam (os e2e `liga` e `campanha` usam). A classe `link-btn` sai desses dois links.

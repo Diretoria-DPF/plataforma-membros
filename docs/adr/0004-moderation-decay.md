@@ -1,9 +1,9 @@
-# ADR 0004 — Decaimento da moderação do Guia
+# ADR 0004 — Decaimento da moderação de Guia
 
 Status: aceita (2026-10-08). A tela de moderação do admin existe desde 2026-10-08, com agregados e, por pessoa, nível, suspensão, última detecção e última redenção, sem nome (`frontend/admin-moderation.js`). Data: 2026-10-07.
 
 ## Contexto
-A moderação do Guia tem 4 níveis (normal, alerta, aviso sério, suspensão) com redenção. Sem decaimento, um deslize antigo pesa para sempre.
+A moderação de Guia tem 4 níveis (normal, alerta, aviso sério, suspensão) com redenção. Sem decaimento, um deslize antigo pesa para sempre.
 
 ## Decisão
 - O nível cai 1 ponto a cada 30 dias corridos sem novo incidente, até 0.
@@ -20,7 +20,7 @@ Depende de D2 (`assistant_feedback.message_id`). Auditoria preservada em `audit_
 
 ## Campo `stateChanged` da redenção (2026-10-08)
 
-**O que é.** Campo booleano da resposta de `apiAssistantRedeem` (`redeemAssistant`, em `worker/src/services/moderationService.js`). Quando `true`, o Guia aceitou o pedido de redenção, mas o estado da moderação mudou enquanto o juiz avaliava (incidente novo ou decaimento entre a leitura e a gravação). Por isso a redenção não foi aplicada.
+**O que é.** Campo booleano da resposta de `apiAssistantRedeem` (`redeemAssistant`, em `worker/src/services/moderationService.js`). Quando `true`, Guia aceitou o pedido de redenção, mas o estado da moderação mudou enquanto o juiz avaliava (incidente novo ou decaimento entre a leitura e a gravação). Por isso a redenção não foi aplicada.
 
 **Quando vem `true`.** Só no caminho `stateChangedReply`: a gravação condicional (`applyRedemption`) não encontra mais a linha que foi julgada (mesmo nível e mesmo último incidente). Nas demais respostas o campo não é enviado; não existe `stateChanged: false`. Recusa, espera, juiz indisponível e limite de redenções aceitas não o trazem.
 
@@ -52,7 +52,7 @@ Quando a flag ou a leitura do estado de moderação falha, o portão do chat (`w
 - Suspensa: a conversa segue sem IA, com o texto fixo da suspensão.
 - Livre: a conversa segue normal.
 - Banco indisponível: vale a suspensão que esta instância já conhecia (`KNOWN_SUSPENSIONS`, só como reserva).
-- Banco e memória indisponíveis: o Guia pausa para todos. A resposta vem com `source: 'moderation'` e `degraded: true`. É um aviso neutro, que não é suspensão nem conta como ocorrência.
+- Banco e memória indisponíveis: Guia pausa para todos. A resposta vem com `source: 'moderation'` e `degraded: true`. É um aviso neutro, que não é suspensão nem conta como ocorrência.
 - Tabela `assistant_moderation` ausente (migração 022 não aplicada): tratada como livre.
 
 No front, a consulta de suspensão ao abrir o painel (`checkModerationOnce`, em `frontend/assistant-moderation.js`) é falha aberta: se falhar, o chat segue e só fica um aviso no console. Quem impede a conversa é o servidor.

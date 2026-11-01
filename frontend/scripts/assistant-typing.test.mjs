@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Digitação do balão do Guia (frontend/assistant-typing.js): caractere a caractere em requestAnimationFrame,
+// Digitação do balão de Guia (frontend/assistant-typing.js): caractere a caractere em requestAnimationFrame,
 // tempo limitado, texto completo para o leitor de tela de uma vez, texto inteiro com movimento reduzido.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -121,14 +121,14 @@ test('sem movimento reduzido: o balão digita em quadros e termina com o texto i
 test('leitor de tela: o texto completo entra de uma vez num trecho só para leitores; a camada que digita é aria-hidden', () => {
   const win = fakeWin();
   const bubble = fakeNode('p');
-  Typing.render(doc, bubble, 'Resposta completa do Guia.', { win });
-  assert.equal(srOnly(bubble).textContent, 'Resposta completa do Guia.');
+  Typing.render(doc, bubble, 'Resposta completa de Guia.', { win });
+  assert.equal(srOnly(bubble).textContent, 'Resposta completa de Guia.');
   assert.equal(layer(bubble).attrs['aria-hidden'], 'true');
   assert.equal(srOnly(bubble).attrs['aria-hidden'], undefined);
   assert.equal(spans(bubble).length, 2);
   win.tick(0);
   win.tick(60);
-  assert.equal(srOnly(bubble).textContent, 'Resposta completa do Guia.', 'o trecho dos leitores nunca muda durante a digitação');
+  assert.equal(srOnly(bubble).textContent, 'Resposta completa de Guia.', 'o trecho dos leitores nunca muda durante a digitação');
 });
 
 test('a parte ainda não digitada fica transparente (opacity por CSSOM) e ocupa o lugar dela', () => {

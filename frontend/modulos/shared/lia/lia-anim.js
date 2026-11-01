@@ -250,7 +250,7 @@
     };
   }
 
-  // Cancela tudo que estiver pendente neste host (uso ao destruir o Guia).
+  // Cancela tudo que estiver pendente neste host (uso ao destruir Guia).
   function destroy(host) {
     if (!host || typeof host !== 'object') return;
     cancelOwned(host, registryOf(host));

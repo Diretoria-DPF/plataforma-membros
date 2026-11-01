@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Moderação do Guia (ADR 0004) na tela: faixa de aviso (nível 1 e 2), suspensão com
+// Moderação de Guia (ADR 0004) na tela: faixa de aviso (nível 1 e 2), suspensão com
 // contagem até o retorno, formulário de redenção e consulta ao abrir o painel.
 // Quem usa é assistant.js (a cola do chat). O chat injeta por `ctx` o que precisa
 // (documento, API, sessão, campo e painel, e os efeitos do chat), então este arquivo
@@ -76,7 +76,7 @@
   /** Texto da suspensão com o horário de retorno, no mesmo tom do servidor. */
   function suspensionText(until) {
     var when = formatReturnTime(until);
-    return 'O chat com o Guia está suspenso' + (when ? ' até ' + when + ' (horário de Brasília)' : '')
+    return 'O chat com o Chat suspenso' + (when ? ' até ' + when + ' (horário de Brasília)' : '')
       + '. Você pode pedir redenção, explicando com sinceridade o que houve.';
   }
 
@@ -205,7 +205,7 @@
     var actions = el(doc, 'div', 'lia-redeem-actions');
     actions.appendChild(send);
     actions.appendChild(cancel);
-    var note = el(doc, 'p', 'lia-redeem-note', 'O Guia confere o que você escrever. Se não for suficiente, você poderá tentar de novo em 1 hora.');
+    var note = el(doc, 'p', 'lia-redeem-note', 'Guia confere o que você escrever. Se não for suficiente, você poderá tentar de novo em 1 hora.');
     [note, label, area, count, hint, timer, alert, actions].forEach(function (node) { form.appendChild(node); });
     [status, returnText, open, form].forEach(function (node) { section.appendChild(node); });
     return { root: section, status: status, returnText: returnText, open: open, form: form, area: area, count: count, hint: hint, timer: timer, alert: alert, send: send, cancel: cancel };
@@ -286,7 +286,7 @@
 
   /**
    * Fim da suspensão (relógio, redenção aceita ou moderação desligada): o chat volta ao normal.
-   * `redeemed`: na redenção aceita o Guia ainda está de costas; quem a põe de frente é a cena 'redeem'
+   * `redeemed`: na redenção aceita Guia ainda está de costas; quem a põe de frente é a cena 'redeem'
    * (ctx.lia), então o repouso imediato (restLia) não entra: ele apagaria as costas antes do giro.
    */
   function liftSuspension(m, redeemed) {
@@ -400,7 +400,7 @@
   /**
    * Moderação de um chat. ctx: { doc, app ({ callApi(nome, ...args), getState() }), input, panel,
    * token() → sessão atual, isOpen() → painel aberto?, sync() → recalcula os campos do chat,
-   * restLia() → repouso do Guia, lia(método) → reação do Guia, note(texto) → fala do Guia no log }.
+   * restLia() → repouso de Guia, lia(método) → reação de Guia, note(texto) → fala de Guia no log }.
    * Devolve o bloco de redenção (root) para o chat montar e os métodos de estado.
    */
   function createModeration(ctx) {

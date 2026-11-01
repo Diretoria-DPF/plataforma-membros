@@ -46,7 +46,7 @@ const NOTES = Object.freeze([
   'Mensagens privadas não estão neste arquivo: são cifradas ponta a ponta e só você e quem conversa com você conseguem lê-las.',
   'Não incluímos segredos de segurança (senha, tokens, fatores de autenticação) nem anotações internas da comissão do processo seletivo.',
   'Votos e tarefas aparecem pelo título, para você reconhecê-los. Conexões e bloqueios mostram só o nome de usuário da outra pessoa.',
-  'A memória de estudo do Guia fica em um banco separado e tem exportação própria, no cartão da memória de estudo do seu perfil.',
+  'A memória de estudo de Guia fica em um banco separado e tem exportação própria, no cartão da memória de estudo do seu perfil.',
   'Registros técnicos (sessões, limites de uso, registros de auditoria e de uso da IA) não entram: servem à segurança da plataforma e são apagados nos prazos da política de privacidade.',
 ]);
 

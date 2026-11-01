@@ -199,7 +199,7 @@ describe('guardrail de entrada — recusa não é erro e não gasta cota nem mod
     expect(JSON.parse(call[13])).toEqual({ input: 'refused', inputRule: 'I6', history: 0 });
   });
 
-  test('suspensão da moderação do Guia vale para o tutor (só leitura, sem incidente novo)', async () => {
+  test('suspensão da moderação de Guia vale para o tutor (só leitura, sem incidente novo)', async () => {
     const future = new Date(Date.now() + 3600 * 1000).toISOString();
     const sql = world({ flags: [...ON, 'moderation_enabled'], suspension: [{ until: future }] });
     const res = await invoke(sql, ask(QUESTION));
@@ -453,7 +453,7 @@ describe('falha do modelo', () => {
     await expect(AgentsService.invoke(sql, makeEnv(), MEMBER, ask(QUESTION), CID)).rejects.toMatchObject({ code: 'AI_UNAVAILABLE' });
   });
 
-  test('resposta vazia do modelo: INVALID_OUTPUT (a cota fica gasta, como no Guia)', async () => {
+  test('resposta vazia do modelo: INVALID_OUTPUT (a cota fica gasta, como em Guia)', async () => {
     global.fetch = jest.fn(async () => groqReply('   '));
     const sql = world();
     await expect(invoke(sql, ask(QUESTION))).rejects.toMatchObject({ code: 'INVALID_OUTPUT' });

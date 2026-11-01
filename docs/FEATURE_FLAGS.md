@@ -42,11 +42,11 @@ Criadas pela 029 (`sql/029_library.sql`), todas **desligadas**. A 029 insere com
 | `library_enabled` | B1 | sim | `FALSE` | Menu "Estudo", painel do membro e catálogo público (`docs/cortex/CONTRATO-B1.md` §4) |
 | `library_member_suggest` | B1 | sim | `FALSE` | Botão "Sugerir artigo" |
 | `library_ai_summary` | B3 | não | `FALSE` | Resumo por IA (ainda sem efeito) |
-| `lia_library_enabled` | B4 | não | `FALSE` | Guia cita artigos publicados da Biblioteca (campo `references` e botão que abre a busca; exige `library_enabled`; visitante só com o Guia híbrida) |
+| `lia_library_enabled` | B4 | não | `FALSE` | Guia cita artigos publicados da Biblioteca (campo `references` e botão que abre a busca; exige `library_enabled`; visitante só com Guia híbrida) |
 
 Ligação por etapas, desligamento e volta: `docs/cortex/RUNBOOK-BIBLIOTECA.md`. Com condição de papel (`conditions.role`), a página pública fica fora, porque a leitura sem sessão não casa a condição.
 
-## Flags do Guia híbrida
+## Flags de Guia híbrida
 
 Criadas pela 033 (`sql/033_lia_hibrida_flag.sql`), as duas **desligadas** (`INSERT ... ON CONFLICT (key) DO NOTHING`). Ordem de ativação em `docs/lia/PLANO.md` §7.
 
@@ -54,11 +54,11 @@ Criadas pela 033 (`sql/033_lia_hibrida_flag.sql`), as duas **desligadas** (`INSE
 |---|---|---|---|
 | `lia_hibrida_enabled` | não | `FALSE` | `assistantService.js` (`FLAG_HIBRIDA`; exige também `rag_enabled`): guarda de intenção, resposta clínica segura, escolha de seções e resposta extrativa |
 | `session_cookie_enabled` | não (o front reage à resposta do login: `sessionCookie: true`) | `FALSE` | `index.js` e `sessionCookie.js` (SEC-08, ADR 0011): o token de sessão vai num cookie HttpOnly para origens do mesmo site (`SESSION_COOKIE_SITE`); a cópia do GitHub Pages continua com o token no corpo. Ligar primeiro em staging |
-| `selection_enabled` | sim (o menu "Processo seletivo" e as páginas públicas reagem a ela) | `FALSE` | `selectionService.js` (sql/042): jornada do candidato dentro da plataforma, com inscrição sempre aberta. Com ela desligada, as páginas públicas seguem pelo formulário externo (`selection_open`). Só visitante (e admin, para testar) se inscreve. Também liga as respostas do Guia sobre o processo. Plano: `docs/planos/PROCESSO-SELETIVO.md` |
+| `selection_enabled` | sim (o menu "Processo seletivo" e as páginas públicas reagem a ela) | `FALSE` | `selectionService.js` (sql/042): jornada do candidato dentro da plataforma, com inscrição sempre aberta. Com ela desligada, as páginas públicas seguem pelo formulário externo (`selection_open`). Só visitante (e admin, para testar) se inscreve. Também liga as respostas de Guia sobre o processo. Plano: `docs/planos/PROCESSO-SELETIVO.md` |
 | `selection_ai_enabled` | não | `FALSE` | Triagem por IA das inscrições (`selectionCommitteeService.js`, feature `selection_triage`): resumo para a comissão, nunca decide nem elimina |
-| `lia_visitor_ai_enabled` | sim (o front só carrega o Turnstile com ele ligado) | `FALSE` | `assistantService.js` (`FLAG_VISITOR_AI`): prévia de IA do visitante; exige `lia_hibrida_enabled`, o secret `TURNSTILE_SECRET` e o KV |
+| `lia_visitor_ai_enabled` | sim (o front só carrega o Turnstile com Guia ligado) | `FALSE` | `assistantService.js` (`FLAG_VISITOR_AI`): prévia de IA do visitante; exige `lia_hibrida_enabled`, o secret `TURNSTILE_SECRET` e o KV |
 
-## Flags do Guia para membros
+## Flags de Guia para membros
 
 Criada pela 034 (`sql/034_lia_membros_flags.sql`), **desligada** (`INSERT ... ON CONFLICT (key) DO NOTHING`).
 

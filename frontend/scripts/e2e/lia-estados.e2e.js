@@ -4,14 +4,14 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * lia-estados.e2e.js — estados do Guia das ondas 2–4 (lia-props.js, lia-scenes.js, lia-props-art.js),
- * com os gatilhos reais. O Guia de cabeçalho monta ao abrir o painel e reage à tela corrente: abrir o Guia
+ * lia-estados.e2e.js — estados de Guia das ondas 2–4 (lia-props.js, lia-scenes.js, lia-props-art.js),
+ * com os gatilhos reais. Guia de cabeçalho monta ao abrir o painel e reage à tela corrente: abrir Guia
  * em Aprender pede as peças; em aviso de nível 2 (gate de moderação) e em falha do chat (confusa), o estado muda.
- *  (a) lia-props-art.js é pedido só com o Guia aberta num módulo com peças, e uma única vez; se a arte
- *      não carrega, o Guia segue base, sem erro de JavaScript e sem erro no console;
+ *  (a) lia-props-art.js é pedido só com Guia aberta num módulo com peças, e uma única vez; se a arte
+ *      não carrega, Guia segue base, sem erro de JavaScript e sem erro no console;
  *  (b) prefers-reduced-motion mostra a pose final (peças aplicadas, nenhuma animação finita rodando);
  *  (c) a bolha de 48 px do launcher nunca recebe peças nem cenas;
- *  (d) axe sem violações serious/critical com o Guia nos estados aviso e confuso (tema claro e escuro).
+ *  (d) axe sem violações serious/critical com Guia nos estados aviso e confuso (tema claro e escuro).
  */
 const { startApp, check } = require('./harness');
 const { axeGate } = require('./axe-gate');
@@ -29,7 +29,7 @@ function iniciar(chat, opts) {
   return startApp(Object.assign({ role: 'member', workerHandlers }, opts || {}));
 }
 
-/** Vai ao painel (se houver) e abre o Guia de cabeçalho. O Guia reage à tela corrente ao abrir. */
+/** Vai ao painel (se houver) e abre Guia de cabeçalho. Guia reage à tela corrente ao abrir. */
 async function abrirLiaEm(page, painel) {
   if (painel && ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart'].includes(painel)) {
     await page.click('#app-menu-btn');
@@ -84,7 +84,7 @@ async function cargaSobDemanda() {
     await fecharLia(page);
     await abrirLiaEm(page, null);
     await page.waitForTimeout(500);
-    check(pedidos.length === 1, 'reabrir o Guia em Aprender não pede a arte de novo (cache na sessão)');
+    check(pedidos.length === 1, 'reabrir Guia em Aprender não pede a arte de novo (cache na sessão)');
     const bolha = await page.evaluate(() => {
       const figura = document.querySelector('#lia-launcher .lia-launcher-figure').getBoundingClientRect();
       return {
@@ -110,7 +110,7 @@ async function arteFalha() {
     await abrirLiaEm(page, 'panel-learn');
     await page.waitForTimeout(800);
     check((await page.evaluate(() => !!window.LIA_PROPS_ART)) === false, 'arte ausente: LIA_PROPS_ART não existe');
-    check((await page.locator('#lia-panel .lia').count()) === 1, 'arte ausente: o Guia base continua na tela');
+    check((await page.locator('#lia-panel .lia').count()) === 1, 'arte ausente: Guia base continua na tela');
     check((await page.locator('#lia-panel [data-extras]').count()) === 0, 'arte ausente: sem peças (Guia base)');
     // O navegador registra "Failed to load resource" para o 404 da própria arte; isso é esperado. Qualquer outro erro conta.
     const outros = consoleErros.filter((texto) => !/Failed to load resource/.test(texto));

@@ -1,12 +1,12 @@
 # Processo seletivo contínuo da LAIFT: plano de execução
 
-Decidido com o dono em 2026-10-19. Substitui o formulário externo (Google Forms) por uma jornada dentro da plataforma, com inscrição sempre aberta, teste interativo, triagem por IA que **nunca elimina** e o Guia como guia.
+Decidido com o dono em 2026-10-19. Substitui o formulário externo (Google Forms) por uma jornada dentro da plataforma, com inscrição sempre aberta, teste interativo, triagem por IA que **nunca elimina** e Guia como guia.
 
 ## 1. Decisões já tomadas
 
 | Tema | Decisão |
 |---|---|
-| Entrada | **Conta na plataforma** (e-mail confirmado). Reaproveita login, limites, auditoria e o Guia. |
+| Entrada | **Conta na plataforma** (e-mail confirmado). Reaproveita login, limites, auditoria e Guia. |
 | Ritmo | **Inscrição sempre aberta.** Cada pessoa tem prazo individual para concluir (padrão 7 dias, configurável). A comissão analisa em **lotes** (padrão: a cada 15 dias). A página mostra "Próxima análise: dd/mm" em vez de "a divulgar". |
 | Teste | Perfil e disponibilidade + análise de cenário + questões objetivas de base + situações de conduta e ética. |
 | IA | Faz a **triagem prévia**: resume, organiza e sugere prioridade de leitura. **Não decide, não nota para eliminar, não exclui ninguém.** A comissão decide. |
@@ -48,15 +48,15 @@ Pendência da comissão: revisar o banco inicial (propomos um rascunho com 10 ob
 
 Roda quando a inscrição é enviada, em segundo plano, com o modelo "inteligente" do Groq (cota própria).
 
-- **Entrada**: respostas do candidato tratadas **como dado, nunca como instrução** (mesmo escudo de injeção de prompt do Guia). Sem nome, e-mail ou telefone no prompt.
+- **Entrada**: respostas do candidato tratadas **como dado, nunca como instrução** (mesmo escudo de injeção de prompt de Guia). Sem nome, e-mail ou telefone no prompt.
 - **Saída (JSON validado)**: resumo de 3 linhas; pontos fortes; pontos a esclarecer na entrevista; leitura da rubrica por critério (com a frase que justifica); **sinais de atenção** (texto genérico ou copiado, tentativa de manipular a IA, dado de saúde escrito, respostas incoerentes); **prioridade de leitura** (alta, média, ler com atenção). Sem nota final e sem "reprovar".
 - **Comissão** vê o resumo **ao lado** das respostas originais; a IA nunca esconde nada. Sinal de atenção **não penaliza**: só chama uma pessoa para ler.
 - **Falha ou cota esgotada**: a inscrição segue normal, marcada "sem triagem automática"; nada trava.
 - **Custo**: ~3 mil tokens por inscrição. Há teto diário próprio e alerta no painel de IA.
 
-## 6. O Guia como guia do processo
+## 6. Guia como guia do processo
 
-- **Contexto por etapa**: o botão do Guia no assistente sabe em que etapa a pessoa está e oferece perguntas prontas daquela etapa.
+- **Contexto por etapa**: o botão de Guia no assistente sabe em que etapa a pessoa está e oferece perguntas prontas daquela etapa.
 - **O que ela faz**: explica o processo, as etapas, os prazos, o que a comissão espera, como preencher cada campo, como funciona a triagem, privacidade, status e recurso; resolve dúvidas de uso da tela.
 - **O que ela não faz**: não escreve a análise do candidato, não diz a resposta de questão, não opina sobre as chances. Pergunta de conteúdo recebe: "posso explicar o que se espera, mas a resposta tem de ser sua".
 - **Conteúdo**: novo documento da base de conhecimento (`processo-seletivo`), novas intenções por regra e botões que levam à etapa certa. Vale também para quem ainda não tem conta (visitante).

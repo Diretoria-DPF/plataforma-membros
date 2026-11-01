@@ -5,7 +5,7 @@
  */
 /**
  * assistant/docs.js
- * Documentos da base de conhecimento do Guia (RAG), todos SEM dado de pessoa alguma:
+ * Documentos da base de conhecimento de Guia (RAG), todos SEM dado de pessoa alguma:
  *   - 'kb'        as intenções de uso geral de assistant/kb.js (uma seção por intenção; as de
  *                 administração ficam de fora: o acervo é o mesmo para todos os papéis);
  *   - 'destinos'  as telas e módulos da lista branca de assistant/targets.js;
@@ -30,21 +30,21 @@ const GUIDE_MARKDOWN = [
   {
     source: 'guia',
     markdown: [
-      '# Guia do Guia',
-      '## O que o Guia faz',
-      'O Guia é o assistente da plataforma de membros da LAIFT. Ele explica onde fica cada tela e cada módulo de estudo e leva você até lá com um botão. O Guia nunca altera dados: não inscreve em eventos, não vota e não envia mensagens por você.',
-      '## Quem pode usar a IA do Guia',
-      'Perguntas de rotina (eventos, crachá, módulos) são respondidas sem IA e sem limite diário. Perguntas abertas usam IA e exigem estar logado. Visitantes logados têm ' + AI_QUOTAS.assistant.visitor + ' perguntas com IA por dia, membros ' + AI_QUOTAS.assistant.member + ' e administradores ' + AI_QUOTAS.assistant.admin + '. Quando o Guia está em modo limitado, a resposta não gasta essa cota.',
+      '# Guia de Guia',
+      '## O que Guia faz',
+      'Guia da plataforma de membros da LAIFT explica onde fica cada tela e cada módulo de estudo e leva você até lá com um botão. Guia nunca altera dados: não inscreve em eventos, não vota e não envia mensagens por você.',
+      '## Quem pode usar a IA de Guia',
+      'Perguntas de rotina (eventos, crachá, módulos) são respondidas sem IA e sem limite diário. Perguntas abertas usam IA e exigem estar logado. Visitantes logados têm ' + AI_QUOTAS.assistant.visitor + ' perguntas com IA por dia, membros ' + AI_QUOTAS.assistant.member + ' e administradores ' + AI_QUOTAS.assistant.admin + '. Quando Guia está em modo limitado, a resposta não gasta essa cota.',
       '## Modo limitado e avisos',
-      'Se a busca na base ou a IA estiverem indisponíveis, o Guia avisa que está com acesso limitado e responde só com o que já sabe. Ele nunca finge operar normalmente.',
+      'Se a busca na base ou a IA estiverem indisponíveis, Guia avisa que está com acesso limitado e responde só com o que já sabe. Guia nunca finge operar normalmente.',
     ].join('\n'),
   },
   {
     source: 'privacidade',
     markdown: [
-      '# Privacidade do Guia',
-      '## O que o Guia guarda',
-      'Para quem está logado, o Guia guarda a resposta dada, a origem dela (regra, base de conhecimento, IA ou resposta fixa) e um código (hash) da pergunta, nunca o texto dela. O código não mostra a pergunta, mas permite reconhecer a mesma pergunta repetida. Esses registros saem após 180 dias. Respostas com dados do momento (eventos abertos) e recusas não são guardadas. O prompt enviado à IA não leva nome, e-mail nem outros dados pessoais.',
+      '# Privacidade de Guia',
+      '## O que Guia guarda',
+      'Para quem está logado, Guia guarda a resposta dada, a origem dela (regra, base de conhecimento, IA ou resposta fixa) e um código (hash) da pergunta, nunca o texto dela. O código não mostra a pergunta, mas permite reconhecer a mesma pergunta repetida. Esses registros saem após 180 dias. Respostas com dados do momento (eventos abertos) e recusas não são guardadas. O prompt enviado à IA não leva nome, e-mail nem outros dados pessoais.',
       '## Feedback sobre as respostas',
       'Você pode marcar uma resposta como útil ou não útil e deixar um comentário. Após 90 dias o comentário é anonimizado (o texto é apagado) e, após 12 meses, o registro é removido. Ao excluir a conta, o feedback e o histórico de respostas saem junto.',
     ].join('\n'),
@@ -52,9 +52,9 @@ const GUIDE_MARKDOWN = [
   {
     source: 'convivencia',
     markdown: [
-      '# Convivência com o Guia',
+      '# Convivência com Guia',
       '## Respeito nas conversas',
-      'Mensagens ofensivas ao Guia geram um aviso. Reincidências aumentam o nível: alerta, aviso sério e suspensão de 24 horas do chat. Cada 30 dias sem novo incidente reduz um nível.',
+      'Mensagens ofensivas a Guia geram um aviso. Reincidências aumentam o nível: alerta, aviso sério e suspensão de 24 horas do chat. Cada 30 dias sem novo incidente reduz um nível.',
       '## Redenção',
       'Quem está com nível acima de zero pode explicar com sinceridade o que houve e pedir redenção. Se aceita, o nível volta a zero na hora; se recusada, é possível tentar de novo após 1 hora.',
     ].join('\n'),
@@ -70,7 +70,7 @@ const GUIDE_MARKDOWN = [
       '## Áreas',
       'As áreas de interesse são seis: Farmacologia Clínica e Terapêutica Aplicada; Toxicologia Forense e Química Analítica Operacional; Farmacocinética Avançada e Modelagem Computacional; Toxicologia Ambiental, Ocupacional e Ecotoxicologia; Escrita Científica, Pesquisa Clínica e Publicação de Artigos; Gestão Organizacional, Marketing Científico e Extensão Universitária. No formulário, você marca todas com afinidade.',
       '## Contato',
-      'O contato oficial da Liga é o e-mail laiftligauninassau@gmail.com. O Guia nunca lê nem guarda inscrições e não altera dados. Os dados enviados no processo são tratados pela comissão organizadora só para a triagem e a comunicação oficial, sem compartilhamento com terceiros.',
+      'O contato oficial da Liga é o e-mail laiftligauninassau@gmail.com. Guia nunca lê nem guarda inscrições e não altera dados. Os dados enviados no processo são tratados pela comissão organizadora só para a triagem e a comunicação oficial, sem compartilhamento com terceiros.',
     ].join('\n'),
   },
 ];
@@ -106,7 +106,7 @@ function kbChunks() {
 
 function targetChunks() {
   const items = TARGETS.map((t) => '- ' + t.label + (t.type === 'open_module' ? ' (módulo de estudo)' : t.type === 'open_credential' ? ' (crachá virtual)' : ' (tela)'));
-  return [{ source: 'destinos', section: 'Telas e módulos que o Guia pode abrir', content: ('Telas e módulos que o Guia pode abrir:\n' + items.join('\n')).slice(0, CONTENT_MAX * 2) }];
+  return [{ source: 'destinos', section: 'Telas e módulos que Guia pode abrir', content: ('Telas e módulos que Guia pode abrir:\n' + items.join('\n')).slice(0, CONTENT_MAX * 2) }];
 }
 
 /** Guia geral da plataforma: só as seções de uso geral (as de administração ficam de fora). */

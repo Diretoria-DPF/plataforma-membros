@@ -124,7 +124,7 @@ describe('maintenance.runMaintenance', () => {
     expect(queryText(sql, 1)).toMatch(/error_logs/);
   });
 
-  test('a tabela do Guia ausente (ex.: sql/021 não migrada) não derruba as outras limpezas', async () => {
+  test('a tabela de Guia ausente (ex.: sql/021 não migrada) não derruba as outras limpezas', async () => {
     const sql = makeSql();
     sql.mockImplementation((strings) => {
       const text = strings.join('?');
@@ -150,7 +150,7 @@ describe('maintenance.runMaintenance', () => {
     sql.mockResolvedValue([]);
     await runMaintenance(sql, 'cid');
     const modifying = allQueryTexts(sql).filter((t) => /^\s*(DELETE|UPDATE)\b/.test(t));
-    // 9 limpezas do Worker + 4 do Guia + 1 dos rastros dos agentes + 2 de analytics + 1 dos cadastros não confirmados (SEC-02) + 1 dos erros do navegador (OPS-08) + 3 da retenção do seletivo (sem contar o decaimento, que é um SELECT + UPDATE só com linhas).
+    // 9 limpezas do Worker + 4 de Guia + 1 dos rastros dos agentes + 2 de analytics + 1 dos cadastros não confirmados (SEC-02) + 1 dos erros do navegador (OPS-08) + 3 da retenção do seletivo (sem contar o decaimento, que é um SELECT + UPDATE só com linhas).
     // A purga de lia_pesquisas começa com WITH (está em researchLogService) e tem teste próprio abaixo.
     expect(modifying).toHaveLength(21);
     modifying.forEach((text) => {
@@ -168,7 +168,7 @@ describe('index.js — handler scheduled (Cron Trigger)', () => {
     await worker.scheduled({ cron: '17 6 * * *' }, makeEnv(), { waitUntil: (p) => pending.push(p) });
     expect(pending).toHaveLength(1);
     await pending[0];
-    // 9 limpezas + 2 consultas dos alertas da IA + 1 do decaimento da moderação do Guia + 4 da retenção do Guia
+    // 9 limpezas + 2 consultas dos alertas da IA + 1 do decaimento da moderação de Guia + 4 da retenção de Guia
     // + 1 da flag rag_enabled (ragReindex, que só roda com env; aqui a flag está desligada)
     // + 1 da purga do registro de pesquisas (liaResearchPurge, sql/026)
     // + 1 da purga dos rastros dos agentes (agentTracesPurge, sql/035)
@@ -179,7 +179,7 @@ describe('index.js — handler scheduled (Cron Trigger)', () => {
   });
 });
 
-describe('ragReindex — reindexação diária da base do Guia (cron)', () => {
+describe('ragReindex — reindexação diária da base de Guia (cron)', () => {
   const FLAG_ON = [{ key: 'rag_enabled', enabled: true, rollout_pct: 100, conditions: {} }];
   const aiOk = () => ({
     run: jest.fn(async (_model, { text }) => ({ data: text.map(() => Array.from({ length: EMBEDDING_DIM }, () => 0.01)) })),
@@ -213,7 +213,7 @@ describe('ragReindex — reindexação diária da base do Guia (cron)', () => {
     expect(res.ragReindex).toBe(total);
   });
 
-  // O20: reindexação sem embeddings degrada a busca do Guia para trigramas; o cron precisa deixar rastro disso.
+  // O20: reindexação sem embeddings degrada a busca de Guia para trigramas; o cron precisa deixar rastro disso.
   describe('embeddingAvailable: false deixa um aviso estruturado (O20) e o cron segue', () => {
     const WARNING = 'ASSISTANT_RAG_REINDEX_DEGRADED';
     const warnings = (sql) => callsMatching(sql, 'INSERT INTO error_logs').filter((call) => call.includes(WARNING));
@@ -279,7 +279,7 @@ describe('ragReindex — reindexação diária da base do Guia (cron)', () => {
   });
 });
 
-describe('liaResearchPurge — purga do registro de pesquisas do Guia (sql/026, L10)', () => {
+describe('liaResearchPurge — purga do registro de pesquisas de Guia (sql/026, L10)', () => {
   const TABLE = 'lia_pesquisas';
 
   test('a tarefa existe, apaga só as linhas vencidas (corte por expires_at) e devolve a contagem', async () => {

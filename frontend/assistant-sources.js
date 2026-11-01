@@ -9,7 +9,7 @@
 //   - PUBLIC_PATHS: páginas públicas que uma fonte pode abrir (`url` opcional de `sources`). É IGUAL à lista de
 //     worker/src/assistant/publicLinks.js (o teste assistant.test.mjs confere).
 //   - CTA_PATHS: onde o convite para criar conta pode levar (o cadastro abre por hash na tela de entrada).
-//   - Artigos da Biblioteca citados pelo Guia (`references`, flag lia_library_enabled): título, autores, periódico e ano
+//   - Artigos da Biblioteca citados por Guia (`references`, flag lia_library_enabled): título, autores, periódico e ano
 //     por textContent; o link só existe se a url for https://doi.org/ ou https://pubmed.ncbi.nlm.nih.gov/ (a mesma
 //     regra do banco), e o href é montado com o host da LISTA FIXA daqui.
 // Expõe window.LaiftAssistantSources.

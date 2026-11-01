@@ -5,7 +5,7 @@
  */
 /**
  * assistantService.js
- * Guia, o assistente da plataforma. Orienta e leva até a tela certa; NUNCA altera dados.
+ * Guia da plataforma. Orienta e leva até a tela certa; NUNCA altera dados.
  *
  * Camadas, da mais barata para a mais cara (a IA só entra no fim):
  *   1. flag chatbot_enabled (botão de emergência; falha fechada);
@@ -76,7 +76,7 @@ const EVENT_TITLE_MAX = 80;
 const EVENT_PLACE_MAX = 60;
 const RETRIEVAL_QUERY_MAX = 300; // mesmo teto de ragService (QUERY_MAX); a pergunta atual cabe inteira
 
-const MSG_DISABLED = 'O Guia está indisponível no momento. Tente novamente mais tarde.';
+const MSG_DISABLED = 'Guia está indisponível no momento. Tente novamente mais tarde.';
 const MSG_REFUSAL = 'Não posso seguir esse tipo de instrução, mas posso te ajudar a usar a plataforma: eventos, módulos de estudo, seu crachá e seu perfil.';
 const MSG_FALLBACK = 'Ainda não sei responder isso por aqui. Posso te ajudar com eventos, módulos de estudo (laboratório, atlas 3D, quiz, casos clínicos), seu crachá e seu perfil. Escolha uma opção ou pergunte de outro jeito.';
 const MSG_AI_DOWN = 'A IA está indisponível agora, então respondo só com o que já sei: eventos, módulos de estudo, seu crachá e seu perfil. Escolha uma opção ou tente de novo mais tarde.';
@@ -147,7 +147,7 @@ async function flagOn(sql, identity, key = FLAG_CHATBOT) {
   try {
     return await isEnabled(sql, key, identity);
   } catch (err) {
-    return false; // falha fechada: sem saber, o Guia fica desligado
+    return false; // falha fechada: sem saber, Guia fica desligado
   }
 }
 
@@ -194,7 +194,7 @@ async function askAiCore(sql, env, identity, message, history, context = null, r
       }
       if (refined) used = refined.chunks;
       const messages = buildAssistantMessages({ question: message, history, role, context: used });
-      // smartWhenRoom: o Guia do membro sobe para o modelo inteligente quando há folga de tokens (ai/orchestrator.js).
+      // smartWhenRoom: Guia do membro sobe para o modelo inteligente quando há folga de tokens (ai/orchestrator.js).
       const out = await Orchestrator.complete(
         sql, env, identity,
         { feature: C.AI_FEATURE.ASSISTANT, messages, profileId: identity.profileId },
@@ -206,7 +206,7 @@ async function askAiCore(sql, env, identity, message, history, context = null, r
       return answer({ reply, source: 'ai', cached: !!out.cached, ...(out.degraded ? { degraded: true } : {}) });
     });
   } catch (err) {
-    // IA fora, orçamento do dia ou resposta vazia: o Guia continua útil com a base fixa.
+    // IA fora, orçamento do dia ou resposta vazia: Guia continua útil com a base fixa.
     if (isEmptyOutput(err) && context) return done(null);
     if (err && (err.aiUnavailable || isEmptyOutput(err))) return done(answer({ reply: MSG_AI_DOWN, source: 'fallback' }));
     throw err;
@@ -229,7 +229,7 @@ function asDegradedIfNotAi(result) {
   return result.source === 'ai' ? result : Object.assign({}, result, { degraded: true });
 }
 
-/** Cota do Guia ainda livre para a pessoa? Só lê: não consome cota nem chama a IA. */
+/** Cota de Guia ainda livre para a pessoa? Só lê: não consome cota nem chama a IA. */
 async function hasAiQuota(sql, env, identity) {
   const { quotas } = await getMyQuota(sql, env, identity);
   return quotas.assistant.remaining > 0;
@@ -318,7 +318,7 @@ export function __resetKbIndexForTests() {
 
 /**
  * Versão do registro: hash do conteúdo que a busca usa; com o reranker ligado, ':r' (trocar o reranker invalida);
- * com o Guia híbrida, ':h' (a escolha de seções muda o que é lido, então o registro antigo não vale).
+ * com Guia híbrida, ':h' (a escolha de seções muda o que é lido, então o registro antigo não vale).
  */
 function versionOf(index, rerank, hybrid = false) {
   if (index.empty || !index.hash) return NO_INDEX;
@@ -330,7 +330,7 @@ async function fromResearchLog(sql, message, version, hybrid = false) {
   const hit = await ResearchLog.lookup(sql, { provider: KB_PROVIDER, question: message, kbVersion: version });
   if (!hit) return null;
   if (hit.outcome === 'empty') return staticKbFallback(MSG_KB_EMPTY);
-  // O registro guarda só origem e seção; no Guia híbrida a fonte volta com o link da página pública (allowlist), como na resposta nova.
+  // O registro guarda só origem e seção; em Guia híbrida a fonte volta com o link da página pública (allowlist), como na resposta nova.
   const sources = hybrid ? hit.results.sources.map((s) => sourceEntry(s.source, s.section)) : hit.results.sources;
   return answer({ reply: hit.results.reply, sources, source: 'ai', cached: true });
 }
@@ -396,7 +396,7 @@ async function recordAnswer(sql, identity, message, result, correlationId) {
   }
 }
 
-/** Quem não tem direito à IA (sem login ou papel com cota 0): no Guia híbrida recebe o trecho do acervo. */
+/** Quem não tem direito à IA (sem login ou papel com cota 0): em Guia híbrida recebe o trecho do acervo. */
 function lacksAiRight(identity) {
   return !identity || quotaLimit(identity.role, C.AI_FEATURE.ASSISTANT) <= 0;
 }
@@ -476,7 +476,7 @@ async function askWithKnowledge(sql, env, identity, ctx) {
 }
 
 /**
- * Modo do Guia híbrida para esta pergunta. `hybrid` exige a flag lia_hibrida_enabled E rag_enabled (sem o acervo
+ * Modo de Guia híbrida para esta pergunta. `hybrid` exige a flag lia_hibrida_enabled E rag_enabled (sem o acervo
  * não há o que escolher nem extrair); a prévia de IA do visitante exige ainda lia_visitor_ai_enabled. Com
  * lia_hibrida_enabled desligada nada muda: o resto do fluxo é o de sempre. `turnstileToken` é de uso único.
  */
@@ -525,7 +525,7 @@ async function chatCore(sql, env, identity, rawInput, correlationId) {
   const input = asObject(rawInput);
   // Só texto: um número ou objeto não é pergunta (cleanText aceitaria o número).
   const message = typeof input.message === 'string' ? cleanText(input.message, C.AI_LIMITS.QUESTION_MAX + 1) : '';
-  if (!message) throw E.ValidationError('Escreva sua pergunta para o Guia.');
+  if (!message) throw E.ValidationError('Escreva sua pergunta para Guia.');
   if (message.length > C.AI_LIMITS.QUESTION_MAX) throw E.ValidationError('A pergunta passou do limite de ' + C.AI_LIMITS.QUESTION_MAX + ' caracteres.');
   // O teto de mensagens por hora vem ANTES do portão: quem está suspenso também gasta o teto (60/h) e não
   // consegue martelar o endpoint só porque a resposta é um texto fixo.
@@ -564,7 +564,7 @@ async function routeQuestion(sql, env, identity, ctx) {
   const { input, message, history, correlationId } = ctx;
   const role = identity ? identity.role : null;
   // O papel limita as intenções: a de administração não existe para quem não é admin (cai no fluxo normal).
-  // Com library_enabled desligada o Guia não fala da Biblioteca: a intenção é ignorada e os botões para ela somem.
+  // Com library_enabled desligada Guia não fala da Biblioteca: a intenção é ignorada e os botões para ela somem.
   const libraryOn = await flagOn(sql, identity, FLAG_LIBRARY);
   const mode = await hybridMode(sql, identity, input, libraryOn);
   const kind = mode.hybrid ? questionKind(message) : null;
@@ -573,14 +573,14 @@ async function routeQuestion(sql, env, identity, ctx) {
 
   let hit = matchIntent(message, history, role);
   if (hit && hit.intent.library && !libraryOn) hit = null;
-  // Processo seletivo na plataforma: as intenções dele só existem com selection_enabled; com ele ligado, a do processo
+  // Processo seletivo na plataforma: as intenções dele só existem com selection_enabled; com Guia ligado, a do processo
   // geral troca para a versão "a inscrição é aqui".
   const selectionOn = await flagOn(sql, identity, FLAG_SELECTION);
   if (hit && hit.intent.selection && !selectionOn) hit = null;
   if (hit && selectionOn && hit.intent.whenSelection) hit = Object.assign({}, hit, { intent: await withSelectionStatus(sql, Object.assign({}, hit.intent, hit.intent.whenSelection)) });
   // Guia híbrido: pergunta de definição só é respondida por regra pelas intenções que de fato definem.
   if (hit && mode.hybrid && !allowIntent(kind, hit)) hit = null;
-  // Artigos da Biblioteca: só com library_enabled; quem não tem login só no Guia híbrida (o degrau do visitante).
+  // Artigos da Biblioteca: só com library_enabled; quem não tem login só em Guia híbrida (o degrau do visitante).
   const wantsRefs = libraryOn && (!!identity || mode.hybrid);
   const plan = wantsRefs ? libraryPlan(message, kind || questionKind(message), !!hit) : null;
   if (hit) {

@@ -119,7 +119,7 @@ function staticChecks() {
     if (isStudioPage && !script.includes("'unsafe-eval'")) problems.push(`${rel}: Estúdio sem 'unsafe-eval' — RDKit (embind) não inicializa`);
     if (isAtlasPage && script.includes("'unsafe-eval'")) problems.push(`${rel}: Atlas só pode ter 'wasm-unsafe-eval' (não precisa de 'unsafe-eval')`);
     if (isAtlasPage && !script.includes("'wasm-unsafe-eval'")) problems.push(`${rel}: Atlas sem 'wasm-unsafe-eval' — DRACOLoader (WebAssembly) não inicializa`);
-    // O Turnstile (captcha da prévia de IA do Guia para visitante) só é permitido na plataforma (index.html).
+    // O Turnstile (captcha da prévia de IA de Guia para visitante) só é permitido na plataforma (index.html).
     const allowedHosts = rel === 'index.html' ? ['https://cdn.jsdelivr.net', TURNSTILE_HOST] : ['https://cdn.jsdelivr.net'];
     if (script.some((s) => /^https?:\/\//.test(s) && !allowedHosts.includes(s))) problems.push(`${rel}: script-src com host além do jsDelivr`);
     // A plataforma (index.html) não carrega script de terceiro: o gráfico do painel admin é SVG próprio (charts.js).

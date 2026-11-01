@@ -46,7 +46,7 @@ Acrescentar, depois do parágrafo "Guia, assistente da plataforma":
 
 ## C. Política de Privacidade: texto proposto para a seção 7 ("Retenção e exclusão dos seus dados")
 
-Acrescentar, depois do trecho sobre o Guia:
+Acrescentar, depois do trecho sobre Guia:
 
 **Tutor Clínico e memória de estudo.**
 

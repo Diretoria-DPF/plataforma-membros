@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * entrada.e2e.js — tela de entrada (#screen-welcome) em cartões, sem o Guia do hero.
+ * entrada.e2e.js — tela de entrada (#screen-welcome) em cartões, sem Guia do hero.
  * Substitui hero-ux2.e2e.js (apagado). Roda sobre o BUILD (frontend/dist/), sem login.
  * Cenários: claro e escuro em 375x812 e 1280x800 com as flags ligadas; 375 claro com as flags
  * desligadas; 375 escuro com movimento reduzido. Fotos: .shots/entrada-<tema>-<largura>x<altura>.png.
@@ -57,7 +57,7 @@ function lerTela(seletorLia) {
   };
 }
 
-/** Guia flutuante e alvos que ele pode cobrir (chamada com a rolagem no fim). */
+/** Guia flutuante e alvos que Guia pode cobrir (chamada com a rolagem no fim). */
 function lerLiaNoFimDaRolagem() {
   const r = (el) => {
     const b = el.getBoundingClientRect();
@@ -149,16 +149,16 @@ async function verificarTela(page, s, rotulo, flags, largura) {
   verificarBlocos(s, rotulo, largura);
 }
 
-/** Com a rolagem no fim, o Guia flutuante não pode cobrir botões nem a publicação. */
+/** Com a rolagem no fim, Guia flutuante não pode cobrir botões nem a publicação. */
 async function verificarLiaNoFim(page, rotulo) {
   await page.evaluate(() => window.scrollTo(0, document.scrollingElement.scrollHeight));
   await page.waitForTimeout(250);
   const { lancador, alvos } = await page.evaluate(lerLiaNoFimDaRolagem);
   await page.evaluate(() => window.scrollTo(0, 0));
-  check(lancador !== null, `${rotulo}: botão flutuante do Guia (#lia-launcher) visível`);
+  check(lancador !== null, `${rotulo}: botão flutuante de Guia (#lia-launcher) visível`);
   const cobertos = alvos.filter((a) => cruzam(lancador, a)).map((a) => a.nome);
   check(lancador !== null && cobertos.length === 0,
-    `${rotulo}: no fim da rolagem o Guia não cobre botões nem a publicação (${cobertos.join(' | ') || 'nada coberto'})`);
+    `${rotulo}: no fim da rolagem Guia não cobre botões nem a publicação (${cobertos.join(' | ') || 'nada coberto'})`);
 }
 
 /** Violações de CSP e erros de JavaScript da página. */
@@ -189,7 +189,7 @@ async function cenarioComFlags(cen) {
   }
 }
 
-/** Flags desligadas (375 claro): sem botão do Guia, sem aviso, mesmos cartões. */
+/** Flags desligadas (375 claro): sem botão de Guia, sem aviso, mesmos cartões. */
 async function cenarioSemFlags() {
   const rotulo = 'claro/375x812 (flags desligadas)';
   console.log(`\n▶ ${rotulo}`);
@@ -202,7 +202,7 @@ async function cenarioSemFlags() {
     const s = await app.page.evaluate(lerTela, SELETOR_LIA_NA_TELA);
     await verificarTela(app.page, s, rotulo, FLAGS_OFF, 375);
     const lia = await app.page.locator('#lia-launcher:not(.hidden)').count();
-    check(lia === 0, `${rotulo}: sem chatbot, sem botão do Guia (achou ${lia})`);
+    check(lia === 0, `${rotulo}: sem chatbot, sem botão de Guia (achou ${lia})`);
     await verificarSaude(app, rotulo);
     await app.page.screenshot({ path: path.join(SHOTS_DIR, 'entrada-claro-375x812-sem-flags.png'), fullPage: true });
   } finally {

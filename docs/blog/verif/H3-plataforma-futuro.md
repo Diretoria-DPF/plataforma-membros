@@ -33,9 +33,9 @@ Leitura do repositorio. Producao: 1 chamada de flags (2026-10-09 03:37:35 UTC) e
 | 017 | sql/017_mfa.sql:4 | Verificacao em duas etapas (TOTP) | APLICADA em 2026-10-07 (docs/ANDAMENTO.md:26) |
 | 018 | sql/018_ai_orchestrator.sql:4 | Metricas diarias da IA e cache semantico | APLICADA em 2026-10-07 (docs/ANDAMENTO.md:26) |
 | 019 | sql/019_assistant.sql:4 | Guia, guia da plataforma | APLICADA em 2026-10-07 (docs/ANDAMENTO.md:26) |
-| 020 | sql/020_rag.sql:4 | Base de conhecimento do Guia (busca hibrida) | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
-| 021 | sql/021_assistant_feedback.sql:4 | Respostas do Guia e feedback | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
-| 022 | sql/022_assistant_moderation.sql:4 | Moderacao do Guia (niveis, decaimento e redencao) | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
+| 020 | sql/020_rag.sql:4 | Base de conhecimento de Guia (busca hibrida) | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
+| 021 | sql/021_assistant_feedback.sql:4 | Respostas de Guia e feedback | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
+| 022 | sql/022_assistant_moderation.sql:4 | Moderacao de Guia (niveis, decaimento e redencao) | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
 | 023 | sql/023_flags_v2.sql:4 | Flags da renovacao (UX v2, Guia, RAG, feedback, moderacao) | PENDENTE, por ultimo (docs/ANDAMENTO.md:6, :71; docs/AMBIENTES.md:212) |
 | 024 | sql/024_indices.sql:4 | Indices da faxina diaria e das series do Inicio | PENDENTE (docs/CHANGELOG.md:57; docs/ANDAMENTO.md:6, :69) |
 
@@ -198,7 +198,7 @@ Selos: EM PRODUCAO; PRONTO AGUARDANDO ATIVACAO; PLANEJADO; EM ESTUDO. Sem datas 
 | Item | Selo | Fonte | O que falta |
 |---|---|---|---|
 | Guia, guia da plataforma (migracao 019) | EM PRODUCAO | sql/019_assistant.sql:21; docs/ANDAMENTO.md:26 | nada no escopo; chatbot_enabled volta true na API (03:37 UTC) |
-| RAG, feedback e moderacao do Guia (migracoes 020 a 024) | PRONTO AGUARDANDO ATIVACAO | docs/CHANGELOG.md:57; docs/ANDAMENTO.md:69-71 | aplicar 020 a 022 e 024, reindexar, por ultimo 023; as flags rag_enabled, moderation_enabled e feedback_enabled nascem na 023 (sql/023_flags_v2.sql:49-51) |
+| RAG, feedback e moderacao de Guia (migracoes 020 a 024) | PRONTO AGUARDANDO ATIVACAO | docs/CHANGELOG.md:57; docs/ANDAMENTO.md:69-71 | aplicar 020 a 022 e 024, reindexar, por ultimo 023; as flags rag_enabled, moderation_enabled e feedback_enabled nascem na 023 (sql/023_flags_v2.sql:49-51) |
 | Inscricao nativa na Liga (migracao 025, Etapa 2) | PLANEJADO | docs/TIME_CONTRATO.md:65; docs/liga/fontes/forms-processo-seletivo.md:3 | sem sql/025 no main; sem action de inscricao em worker/src/handlers.js; CTA externo em frontend/liga.js:6 |
 | Acervo e busca global (F4) | EM ESTUDO | docs/F4_DECISOES_JURIDICAS.md:123, :145 | decisoes (a) a (e) do dono e do advogado; branches feat/v5-f4-acervo (ceeb467) e feat/v5-f4-arte (f106b86) fora do main; migracao 026 quando retomada |
 | Contas de jovens com responsavel | EM ESTUDO | docs/riscos-residuais.md:40; docs/TIME_CONTRATO.md:67 | - |

@@ -594,7 +594,7 @@ test('agents-tutor.js: sem innerHTML, sem armazenamento do navegador, sem eval; 
   assert.ok(js.split('\n').length < 800);
 });
 
-test('o Tutor roda no shell: nenhuma ação de agente entra na ponte dos módulos nem na lista do Guia', () => {
+test('o Tutor roda no shell: nenhuma ação de agente entra na ponte dos módulos nem na lista de Guia', () => {
   const app = read('frontend/app.js');
   assert.doesNotMatch(app, /apiAgents/);
   assert.doesNotMatch(read('frontend/assistant.js'), /apiAgents|agents-tutor/);

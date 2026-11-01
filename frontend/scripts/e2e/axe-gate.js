@@ -43,7 +43,7 @@ async function ensureAxe(page) {
 /**
  * Espera as animações finitas em andamento (ex.: panel-enter, fade de 280 ms ao abrir uma seção).
  * Durante o fade a opacidade é parcial e o axe calcula contraste com o texto misturado ao fundo,
- * dando um falso positivo. Animações infinitas (respiração do Guia, partículas) não são esperadas.
+ * dando um falso positivo. Animações infinitas (respiração de Guia, partículas) não são esperadas.
  */
 async function waitFiniteAnimations(page) {
   await page.evaluate(() => Promise.race([

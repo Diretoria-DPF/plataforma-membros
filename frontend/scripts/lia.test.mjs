@@ -81,7 +81,7 @@ function fakeWaapiAnimation(frames, options) {
   };
 }
 
-/** DOM mínimo. innerHTML lança: o Guia nunca pode converter texto em marcação. */
+/** DOM mínimo. innerHTML lança: Guia nunca pode converter texto em marcação. */
 function fakeEl(tag, ns, ownerDocument = null) {
   const el = {
     tag,
@@ -105,7 +105,7 @@ function fakeEl(tag, ns, ownerDocument = null) {
       child.parentNode = null;
       return child;
     },
-    /** Só seletores #id: é o que o Guia usa para achar olhos e braços. */
+    /** Só seletores #id: é o que Guia usa para achar olhos e braços. */
     querySelector(selector) { return selector.startsWith('#') ? findById(el, selector.slice(1)) : null; },
     animate(frames, options) {
       const anim = fakeWaapiAnimation(frames, options);
@@ -199,7 +199,7 @@ function fakeAnim(log, failing = null) {
   };
 }
 
-/** Monta o Guia numa seção nova e devolve o host (o <div class="lia">) junto com a instância. */
+/** Monta Guia numa seção nova e devolve o host (o <div class="lia">) junto com a instância. */
 function mountLia(opts) {
   const doc = fakeDocument();
   const stage = fakeEl('section', null);
@@ -295,10 +295,10 @@ test('planFor: toda peça pedida está na lista de nomes conhecidos e o plano é
   });
 });
 
-test('suspended: estado suspended com rótulo "Guia está suspenso"', () => {
+test('suspended: estado suspended com rótulo "Chat suspenso"', () => {
   const s = States.resolve('suspended');
   assert.equal(s.state, 'suspended');
-  assert.equal(s.ariaLabel, 'Guia está suspenso');
+  assert.equal(s.ariaLabel, 'Chat suspenso');
 });
 
 test('módulos: cada um com o prop e a emoção do mapa', () => {
@@ -490,7 +490,7 @@ test('gerador aceita instrução <?xml e comentários, e ignora-os na árvore', 
   assert.ok(!source.includes('x --'));
 });
 
-// ---------- higiene: nenhum innerHTML nos arquivos do Guia ----------
+// ---------- higiene: nenhum innerHTML nos arquivos de Guia ----------
 
 test('build-lia-art, lia-art, lia-states e lia não usam innerHTML, outerHTML, insertAdjacentHTML ou DOMParser', () => {
   const forbidden = /innerHTML|outerHTML|insertAdjacentHTML|DOMParser|document\.write/;
@@ -607,7 +607,7 @@ test('suspend muda para suspensa; redeem (sem a arte das cenas) volta ao idle fe
   const { lia, host } = mountLia();
   lia.suspend();
   assert.equal(host.attrs['data-state'], 'suspended');
-  assert.equal(host.attrs['aria-label'], 'Guia está suspenso');
+  assert.equal(host.attrs['aria-label'], 'Chat suspenso');
   lia.redeem();
   assert.equal(host.attrs['data-state'], 'idle');
   assert.equal(host.attrs['data-arm-right'], 'wave');
@@ -730,7 +730,7 @@ test('crop head: o recorte sobrevive às mudanças de estado e o tom admin conti
 
 // ---------- integração: lia-anim.js real (sem stub), documento e janela falsos ----------
 
-/** Monta o Guia com o LiaAnim de verdade; o host herda o documento (ownerDocument) como no navegador. */
+/** Monta Guia com o LiaAnim de verdade; o host herda o documento (ownerDocument) como no navegador. */
 function mountWithRealAnim(opts) {
   const win = fakeWindow();
   const doc = fakeDocument(win);

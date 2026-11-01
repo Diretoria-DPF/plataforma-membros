@@ -16,7 +16,7 @@ Todo agente lê este arquivo antes de editar. Plano completo: `C:\Users\Administ
 - **Movimento**: só `transform` e `opacity`; duração e curva só via `--dur-*` e `--ease-*` de `modulos/shared/laift-tokens.css`.
 - **Sem bordas de card** sob `:root[data-flag-ux-v2-enabled]`: separar por tom (`--layer-0..3`), raio 24–32px, sombra de luz e hairline.
 - **Atlas 3D congelado** (`docs/ATLAS_UX_SPEC.md`): não mexer em `#organ-hud`, `#organ-name`, `#bio-search-input`; sem `backdrop-filter` sobre o canvas.
-- **LGPD / IA**: nenhum dado pessoal vai para a IA; o Guia **nunca altera dados**; texto de IA nunca vira botão (só a lista branca de `ACTION_KEYS`).
+- **LGPD / IA**: nenhum dado pessoal vai para a IA; Guia **nunca altera dados**; texto de IA nunca vira botão (só a lista branca de `ACTION_KEYS`).
 - **Worker**: toda action nova entra no `API_REGISTRY` (`worker/src/handlers.js`) com `runWithSession`, validação de entrada, cota e testes; segredo nunca no código nem no chat. Migração nova = `sql/NNN_*.sql` + `sql/down/NNN_*.sql` e `npm run validate:sql` verde. Próxima numeração livre: 025.
 - **Imutabilidade, funções < 50 linhas, arquivos < 800 linhas.**
 

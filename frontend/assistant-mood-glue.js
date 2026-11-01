@@ -22,7 +22,7 @@
   var QUICK_REPLY_MS = 4000;
   var NEGATIVE_MODES = ['warning', 'suspended']; // moderação de nível 1 ou mais
   var ASKS_DETAIL = /\b(detalhe|explique melhor|mais)/;
-  var GREETING_REST = 'Eu sou o Guia, o assistente da plataforma LAIFT. Posso te explicar cada parte e te levar direto para a tela certa. Sobre o que você quer saber?';
+  var GREETING_REST = 'Eu sou Guia da plataforma LAIFT. Posso te explicar cada parte e te levar direto para a tela certa. Sobre o que você quer saber?';
 
   /** Texto sem acento e em minúsculas, para casar "mais" e "explique melhor" com qualquer grafia. */
   function fold(text) {
@@ -97,7 +97,7 @@
     };
   }
 
-  /** Frase fixa do Guia (confirmação ou erro). No tom reflexivo ganha uma variação na frente; fora dele, fica igual. */
+  /** Frase fixa de Guia (confirmação ou erro). No tom reflexivo ganha uma variação na frente; fora dele, fica igual. */
   function fixedLine(session, kind, text, rand) {
     if (Mood.toneOf(session.mood) !== 'reflective') return { session: session, text: text };
     var line = Mood.pickVariation(kind, session.mood, rand, session.lastLine);

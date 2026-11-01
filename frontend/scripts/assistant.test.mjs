@@ -58,7 +58,7 @@ test('sanitizeActions: descarta o inválido, repetidos e limita a 4; rótulo vir
   assert.deepEqual(Lia.sanitizeActions('panel-events'), []);
 });
 
-test('pickHistory: só as últimas 8 perguntas da PESSOA, nunca as respostas do Guia', () => {
+test('pickHistory: só as últimas 8 perguntas da PESSOA, nunca as respostas de Guia', () => {
   const messages = [];
   for (let i = 1; i <= 8; i += 1) {
     messages.push({ role: 'user', text: 'pergunta ' + i });
@@ -131,17 +131,17 @@ test('sanitizeSources: no máximo 4 fontes, só texto curto, sem vazias', () => 
   assert.deepEqual(Lia.sanitizeSources('Manual'), []);
 });
 
-test('fontes e avisos do Guia são texto (só fonte com url da allowlist vira link), e o card de feedback é opcional', () => {
+test('fontes e avisos de Guia são texto (só fonte com url da allowlist vira link), e o card de feedback é opcional', () => {
   const src = read('frontend/assistant.js');
   assert.doesNotMatch(src, /node\(doc, 'a'|el\(doc, 'a'|\.href\s*=/);
   const sources = read('frontend/assistant-sources.js');
   assert.equal((sources.match(/node\(doc, 'a'/g) || []).length, 3); // a fonte com url, o convite e o artigo da Biblioteca, nada mais
   assert.doesNotMatch(sources, /\.href\s*=|innerHTML/);
-  // sem o módulo carregado, o Guia segue funcionando (sem card)
+  // sem o módulo carregado, Guia segue funcionando (sem card)
   assert.match(src, /root\.LaiftAssistantFeedback \|\| null/);
 });
 
-test('o app avisa o Guia ao entrar e ao sair da conta', () => {
+test('o app avisa Guia ao entrar e ao sair da conta', () => {
   const app = read('frontend/app.js');
   assert.match(app, /LaiftAssistant/);
   assert.match(app, /LaiftAssistant\.refresh\(\)/);
@@ -149,7 +149,7 @@ test('o app avisa o Guia ao entrar e ao sair da conta', () => {
   assert.ok((app.match(/LaiftAssistant\.refresh\(\)/g) || []).length >= 3, 'faltam chamadas de refresh em app.js');
 });
 
-test('o Guia é montada com window.Lia: recorte da cabeça na bolha, corpo inteiro no painel, desmontada ao fechar', () => {
+test('Guia é montada com window.Lia: recorte da cabeça na bolha, corpo inteiro no painel, desmontada ao fechar', () => {
   const src = read('frontend/assistant.js');
   assert.match(src, /mountLia\(ui\.launcherFigure, \{ crop: 'head' \}\)/);
   assert.match(src, /mountLia\(ui\.headFigure, \{ size: PANEL_LIA_SIZE \}\)/);
@@ -158,7 +158,7 @@ test('o Guia é montada com window.Lia: recorte da cabeça na bolha, corpo intei
   assert.doesNotMatch(src, /'lia-orb'/, 'o orb "L" saiu');
 });
 
-test('reações do Guia: pensa ao enviar, fala ao responder, fica confusa em degradação ou erro, comemora o 👍', () => {
+test('reações de Guia: pensa ao enviar, fala ao responder, fica confusa em degradação ou erro, comemora o 👍', () => {
   const src = read('frontend/assistant.js');
   assert.match(src, /reactLia\('think'\)/);
   assert.match(src, /speakThenRest\(\)/);
@@ -283,9 +283,9 @@ test('constantes da moderação batem com o bloco MODERATION de worker/src/const
   assert.equal(Number(block.match(/MAX_LEVEL:\s*(\d+)/)[1]), Moderation.SUSPEND_LEVEL);
 });
 
-test('contextos do Guia usados pela moderação existem em lia-states.js com os rótulos certos', () => {
+test('contextos de Guia usados pela moderação existem em lia-states.js com os rótulos certos', () => {
   const States = require('../modulos/shared/lia/lia-states.js');
-  assert.equal(States.resolve('suspended').ariaLabel, 'Guia está suspenso');
+  assert.equal(States.resolve('suspended').ariaLabel, 'Chat suspenso');
   assert.equal(States.resolve('alert').context, 'alert');
   assert.equal(States.resolve('warning').context, 'warning');
 });
@@ -302,7 +302,7 @@ test('moderação na tela: aviso com papel de status, um só relógio (sem setIn
   assert.equal((chat.match(/'apiAssistantModerationState'/g) || []).length, 0);
 });
 
-test('a cola do Guia delega a moderação ao módulo: cria uma vez, consulta ao abrir, pinta e para o relógio', () => {
+test('a cola de Guia delega a moderação ao módulo: cria uma vez, consulta ao abrir, pinta e para o relógio', () => {
   const src = read('frontend/assistant.js');
   assert.match(src, /var moderation = modLib\(\)\.createModeration\(moderationContext\(app, doc, composer\.input, panel\)\);/);
   assert.match(src, /root\.AssistantModeration/);
@@ -341,12 +341,12 @@ test('tocar na dica abre o painel com a pergunta no campo e NÃO envia', () => {
   assert.doesNotMatch(body, /callApi/);
 });
 
-test('o painel do Guia abre no contexto da tela ou do módulo (react com o prop certo)', () => {
+test('o painel de Guia abre no contexto da tela ou do módulo (react com o prop certo)', () => {
   const src = read('frontend/assistant.js');
   assert.match(src, /reactLia\('react', hint\('context'\) \|\| moduleOf\(currentPanel\(\)\)\)/);
 });
 
-test('a dica some ao abrir o Guia, ao sair da conta e quando o Guia é desligado; a cola não guarda nada', () => {
+test('a dica some ao abrir Guia, ao sair da conta e quando Guia é desligado; a cola não guarda nada', () => {
   const src = read('frontend/assistant.js');
   assert.match(bodyOf(src, 'function openPanel() {'), /hint\('hide'\)/);
   assert.match(bodyOf(src, 'function resetConversation() {'), /hint\('reset'\)/);
@@ -364,7 +364,7 @@ test('app.js emite laift:panelchange só quando a tela muda de fato; learning.js
   assert.match(learning, /if \(wasOpen\) emitModuleChange\(''\);/);
 });
 
-// ---------- Humor do Guia (L7): cola em assistant.js (lógica em assistant-mood-glue.js) ----------
+// ---------- Humor de Guia (L7): cola em assistant.js (lógica em assistant-mood-glue.js) ----------
 
 test('a cola do humor: sessão só na memória, zerada ao trocar de conta, eventos ligados nos pontos certos', () => {
   const src = read('frontend/assistant.js');
@@ -380,7 +380,7 @@ test('a cola do humor: sessão só na memória, zerada ao trocar de conta, event
   assert.doesNotMatch(src, /setInterval/);
 });
 
-test('idle do Guia: uma pose por vez, só em repouso, parada ao fechar e ao reagir', () => {
+test('idle de Guia: uma pose por vez, só em repouso, parada ao fechar e ao reagir', () => {
   const src = read('frontend/assistant.js');
   const body = (name, next) => src.slice(src.indexOf(`function ${name}`), src.indexOf(`function ${next}`));
   assert.match(src, /ui\.idle = moodLib\(\)\.createIdle\(/);

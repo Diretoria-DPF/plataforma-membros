@@ -136,7 +136,7 @@ function feedbackItem(id, username, comment) {
     createdAt: '2026-10-08T10:00:00Z',
     author: { username },
     comment,
-    answer: { topic: 'dose', text: 'resposta do Guia' },
+    answer: { topic: 'dose', text: 'resposta de Guia' },
   };
 }
 
@@ -337,17 +337,17 @@ test('logout (reset) limpa filtros e controles da Satisfação', () => {
   assert.equal(lastCall('apiAdminListAssistantFeedback').params.status, undefined);
 });
 
-// Base do Guia: botão "Reindexar base do Guia" (cartão criado por JS, ids só no DOM montado).
+// Base de Guia: botão "Reindexar base de Guia" (cartão criado por JS, ids só no DOM montado).
 const reindexRequest = () => pending.filter((p) => p.name === 'apiAdminReindexKb').pop();
 const reindexStatus = () => textOf(field('msg-admin-ai-kb'));
 const clickReindex = () => field('btn-admin-ai-kb-reindex').listeners.click.forEach((fn) => fn());
 
-test('Base do Guia: sucesso mostra os trechos e os com busca semântica', async () => {
+test('Base de Guia: sucesso mostra os trechos e os com busca semântica', async () => {
   Admin.loadPanel();
   clickReindex();
   reindexRequest().resolve({
     success: true,
-    message: 'Base do Guia reindexada.',
+    message: 'Base de Guia reindexada.',
     report: { total: 42, upserted: 3, unchanged: 39, removed: 0, embedded: 3, embeddingAvailable: true, embeddingError: null },
   });
   await flush();
@@ -356,7 +356,7 @@ test('Base do Guia: sucesso mostra os trechos e os com busca semântica', async 
   assert.equal(field('msg-admin-ai-kb').getAttribute('role'), 'status');
 });
 
-test('Base do Guia: sem embeddings a mensagem diz que o Guia usa busca por palavras, sem o erro técnico', async () => {
+test('Base de Guia: sem embeddings a mensagem diz que Guia usa busca por palavras, sem o erro técnico', async () => {
   Admin.loadPanel();
   clickReindex();
   reindexRequest().resolve({
@@ -366,12 +366,12 @@ test('Base do Guia: sem embeddings a mensagem diz que o Guia usa busca por palav
   await flush();
   assert.equal(
     reindexStatus(),
-    'Base reindexada: 42 trechos. Busca semântica indisponível agora; o Guia usa busca por palavras.'
+    'Base reindexada: 42 trechos. Busca semântica indisponível agora; Guia usa busca por palavras.'
   );
   assert.doesNotMatch(reindexStatus(), /binding/);
 });
 
-test('Base do Guia: limite de uma reindexação por minuto pede para aguardar 1 minuto', async () => {
+test('Base de Guia: limite de uma reindexação por minuto pede para aguardar 1 minuto', async () => {
   Admin.loadPanel();
   clickReindex();
   reindexRequest().resolve({ success: false, message: 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.' });
@@ -382,7 +382,7 @@ test('Base do Guia: limite de uma reindexação por minuto pede para aguardar 1 
   assert.equal(field('btn-admin-ai-kb-reindex').disabled, false);
 });
 
-test('Base do Guia: falha genérica mostra mensagem amigável, sem detalhe técnico nem referência', async () => {
+test('Base de Guia: falha genérica mostra mensagem amigável, sem detalhe técnico nem referência', async () => {
   Admin.loadPanel();
   clickReindex();
   reindexRequest().resolve({ success: false, message: 'Não foi possível concluir a operação. Tente novamente em instantes. (ref: 3f2a9c)' });
@@ -392,13 +392,13 @@ test('Base do Guia: falha genérica mostra mensagem amigável, sem detalhe técn
   assert.equal(field('msg-admin-ai-kb').getAttribute('role'), 'alert');
 });
 
-test('Base do Guia: botão ocupado durante a chamada, clique extra não repete, liberado ao terminar', async () => {
+test('Base de Guia: botão ocupado durante a chamada, clique extra não repete, liberado ao terminar', async () => {
   Admin.loadPanel();
   clickReindex();
   const btn = field('btn-admin-ai-kb-reindex');
   assert.equal(btn.disabled, true);
   assert.equal(btn.getAttribute('aria-busy'), 'true');
-  assert.equal(reindexStatus(), 'Reindexando a base do Guia...');
+  assert.equal(reindexStatus(), 'Reindexando a base de Guia...');
   clickReindex();
   assert.equal(calls.filter((c) => c.name === 'apiAdminReindexKb').length, 1);
   reindexRequest().resolve({ success: true, report: { total: 1, embedded: 1, embeddingAvailable: true } });

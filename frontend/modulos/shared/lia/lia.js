@@ -148,7 +148,7 @@
         slot.stop = result;
       } else if (result && typeof result.then === 'function') {
         var release = function () {
-          // Roda depois da Promise: se o Guia foi destruída ou outra animação tomou o lugar, não mexe em nada.
+          // Roda depois da Promise: se Guia foi destruída ou outra animação tomou o lugar, não mexe em nada.
           if (alive && transient === slot) transient = null;
         };
         result.then(release, release);
@@ -201,8 +201,8 @@
   }
 
   /**
-   * Peças extras (LiaProps, sob demanda) e cena (LiaScenes) do contexto, ondas 2-4. O Guia de recorte (bolha de 48 px)
-   * nunca as recebe. Sem LiaProps/LiaScenes, ou com a arte ainda carregando, o Guia base segue como está.
+   * Peças extras (LiaProps, sob demanda) e cena (LiaScenes) do contexto, ondas 2-4. Guia de recorte (bolha de 48 px)
+   * nunca as recebe. Sem LiaProps/LiaScenes, ou com a arte ainda carregando, Guia base segue como está.
    * O atributo data-extras do host lista as peças que estão na tela: é o gancho do lia.css (costas, braços cruzados).
    */
   function createStage(host, svg, cropped, motion) {
@@ -266,7 +266,7 @@
         return false;
       }
       if (stage.propsReady()) return showPlan(plan, wanted, reduced);
-      stage.clear(); // até a arte chegar, vale o Guia base
+      stage.clear(); // até a arte chegar, vale Guia base
       if (plan.late) loadThen(plan, wanted, reduced, core.version);
       return false;
     }
@@ -351,7 +351,7 @@
     live = live.filter(function (item) { return item !== instance; });
   }
 
-  /** Monta o Guia dentro de `target` (elemento ou seletor). Devolve a instância, ou null se não der. */
+  /** Monta Guia dentro de `target` (elemento ou seletor). Devolve a instância, ou null se não der. */
   function mount(target, options) {
     var doc = root.document;
     var art = root.LiaArt;

@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * libraryRefsPlan.test.js — quando o Guia busca artigos da Biblioteca para citar (libraryPlan, regra PURA):
+ * libraryRefsPlan.test.js — quando Guia busca artigos da Biblioteca para citar (libraryPlan, regra PURA):
  * pedido explícito de artigos, ou pergunta de conteúdo científico/estudo (definição) que não é de uso da
  * plataforma, não é clínica e não foi respondida por regra. Nunca para uso da plataforma nem conduta.
  */

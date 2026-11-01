@@ -7,7 +7,7 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
 ### Alterado (nome do assistente: Lia passa a se chamar Guia)
-- O assistente da plataforma agora se chama **Guia** em telas, respostas, blog e documentação viva. Motivo: nome mais amplo, que cobre a plataforma inteira. Os registros históricos abaixo mantêm o nome da época.
+- O assistente da plataforma agora se chama **Guia** ("Guia da plataforma") em telas, respostas, blog e documentação viva. Motivo: nome mais amplo, que cobre a plataforma inteira. O nome é usado **sem artigo e sem pronome** ("pergunte a Guia", "painel de Guia"), para não conflitar com a representação visual. Os registros históricos abaixo mantêm o nome da época.
 - Identificadores internos **não mudaram** (`window.Lia`, classes `lia-*`, nomes de arquivo, flag `lia_visitor_ai_enabled`, ações `apiAssistant*`, slug do post `lia-a-guia`). A intenção da base "por onde começar" deixou de usar a palavra-chave `guia` sozinha, para não colidir com o nome. O documento-fonte do Guia passou de "Guia da plataforma" a "Manual da plataforma".
 - Fora desta troca, por falta de parecer jurídico: Política de Privacidade (`frontend/privacidade.html`, `docs/POLITICA_DE_PRIVACIDADE.md`) e dossiê jurídico seguem com o nome antigo.
 - Depois de publicar: reindexar a base do Guia (Admin → IA → Reindexar), porque os trechos guardados no banco ainda citam o nome antigo.

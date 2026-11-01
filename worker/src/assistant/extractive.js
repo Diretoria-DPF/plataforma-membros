@@ -5,7 +5,7 @@
  */
 /**
  * assistant/extractive.js
- * Resposta EXTRATIVA do Guia híbrida (sem LLM, sem cota de IA): devolve o melhor trecho do acervo, com até
+ * Resposta EXTRATIVA de Guia híbrida (sem LLM, sem cota de IA): devolve o melhor trecho do acervo, com até
  * TREE.VISITOR_SNIPPET_MAX caracteres, cortado em fim de frase, e a fonte (com `url` quando a seção tem
  * página pública). É o degrau de fallback da prévia de IA do visitante e a resposta de quem não usa IA.
  */
@@ -16,7 +16,7 @@ import { publicPathFor } from './publicLinks.js';
 const MIN_SNIPPET_CHARS = 40;
 const ELLIPSIS = '…';
 
-/** Quando nada passa do piso: convite amigável, com os temas que o Guia cobre. */
+/** Quando nada passa do piso: convite amigável, com os temas que Guia cobre. */
 export const NO_MATCH_REPLY = 'Não encontrei isso na minha base de conhecimento. Posso falar sobre a LAIFT e as suas áreas, o processo seletivo, os módulos de estudo e o blog com as publicações. Tente perguntar de outro jeito ou escolha um tema.';
 export const NO_MATCH_SUGGESTIONS = Object.freeze(['O que é a LAIFT?', 'Processo seletivo', 'Módulos de estudo', 'Blog e publicações']);
 

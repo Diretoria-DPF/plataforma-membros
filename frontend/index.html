@@ -1053,13 +1053,13 @@
           </div>
           <div class="card" data-cap="assistant.feedback.moderate">
             <div class="ai-admin-head">
-              <h2 id="h-admin-ai-sat">Satisfação do Guia</h2>
+              <h2 id="h-admin-ai-sat">Satisfação de Guia</h2>
               <span role="group" aria-labelledby="h-admin-ai-sat">
                 <button type="button" class="secondary" id="btn-admin-ai-sat-7" aria-pressed="true">7 dias</button>
                 <button type="button" class="secondary" id="btn-admin-ai-sat-30" aria-pressed="false">30 dias</button>
               </span>
             </div>
-            <p class="muted">Respostas do Guia marcadas como úteis ou não úteis pelos membros. Revise cada item. Os comentários são apagados depois de 90 dias.</p>
+            <p class="muted">Respostas de Guia marcadas como úteis ou não úteis pelos membros. Revise cada item. Os comentários são apagados depois de 90 dias.</p>
             <div id="msg-admin-ai-sat" class="status-msg" role="status" aria-live="polite"></div>
             <div id="admin-ai-sat-totals"></div>
             <div id="admin-ai-sat-categories"></div>
@@ -1086,10 +1086,10 @@
           </div>
           <div class="card" id="admin-moderation-card" data-cap="reports.moderate">
             <div class="ai-admin-head">
-              <h2 id="h-admin-moderation">Moderação do Guia</h2>
+              <h2 id="h-admin-moderation">Moderação de Guia</h2>
               <button type="button" class="secondary" data-action="LaiftAdminModeration.reload">Atualizar</button>
             </div>
-            <p class="muted">Incidentes de moderação do Guia, situação atual e taxa de redenção. Só tipo de detecção, nível e data: o texto das mensagens nunca é guardado nem aparece aqui.</p>
+            <p class="muted">Incidentes de moderação de Guia, situação atual e taxa de redenção. Só tipo de detecção, nível e data: o texto das mensagens nunca é guardado nem aparece aqui.</p>
             <div id="admin-moderation"></div>
           </div>
           <div class="card" data-cap="metrics.read">
@@ -1302,7 +1302,7 @@
   <script src="memory.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
   <script src="admin-ai.js" defer></script>
-  <!-- Moderação do Guia no painel admin (ADR 0004, O28): safe-dom.js dá o LaiftDom.h e o data-action. -->
+  <!-- Moderação de Guia no painel admin (ADR 0004, O28): safe-dom.js dá o LaiftDom.h e o data-action. -->
   <script src="modulos/shared/safe-dom.js" defer></script>
   <script src="admin-moderation.js" defer></script>
   <!-- Uso da plataforma no painel admin (DAT-01): mesmo LaiftDom. -->
