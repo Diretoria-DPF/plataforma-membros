@@ -52,6 +52,14 @@
 .blog-deck__placar[hidden],
 .blog-carta[hidden] { display: none; }
 
+/* Até o feed decidir se há campanha, a seção reserva a altura do cartão (invisível):
+   quando ela aparece, o mapa da plataforma não é empurrado (CLS). */
+.blog-campanha-destaque[hidden][data-aguarda] {
+  display: block;
+  visibility: hidden;
+  min-height: 340px;
+}
+
 /* ---------- 3. Títulos opcionais dos blocos (h3) ----------
    Painel, deck, comparativo e faixas trazem o h3 dentro do contêiner;
    guia e hábitos trazem o h3 como irmão antes da lista. */

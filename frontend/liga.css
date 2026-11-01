@@ -854,14 +854,14 @@ html:has(.lp-pagina) {
   }
 }
 
+/* Só desliza: o texto nunca fica com opacidade menor que 1, para manter o
+   contraste mínimo (4,5:1) mesmo antes de a seção entrar na tela. */
 @keyframes lp-revela {
   from {
-    opacity: 0;
     transform: translateY(var(--move-md));
   }
 
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
