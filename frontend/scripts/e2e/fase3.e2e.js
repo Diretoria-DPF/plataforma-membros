@@ -168,8 +168,22 @@ module.exports = async function fase3() {
   const state = { generateRemaining: 6, generateExceeded: false };
   const app = await startApp({ role: 'member', workerHandlers: workerHandlers(state) });
   const dialogs = [];
+  let modalPoll = null;
   try {
     await app.context.addInitScript(bridgeStub);
+    // Avisos do módulo agora são modais (LaiftDialog): registra o texto e fecha clicando no botão principal.
+    modalPoll = setInterval(() => {
+      for (const frame of app.page.frames()) {
+        frame.evaluate(() => {
+          const msg = document.querySelector('.laift-dialog-message');
+          if (!msg) return null;
+          const text = msg.textContent;
+          const ok = document.querySelector('.laift-dialog-btn-primary');
+          if (ok) ok.click();
+          return text;
+        }).then((text) => { if (text) dialogs.push(text); }, () => {});
+      }
+    }, 100);
     app.page.on('dialog', (d) => {
       dialogs.push(d.message());
       if (d.type() === 'prompt') d.accept('Intoxicação por organofosforado');
@@ -305,6 +319,7 @@ module.exports = async function fase3() {
     const realErrors = app.errors.filter((e) => !IGNORABLE.test(e));
     check(realErrors.length === 0, 'sem erros de JavaScript nas páginas' + (realErrors.length ? ': ' + realErrors.join(' | ') : ''));
   } finally {
+    if (modalPoll) clearInterval(modalPoll);
     await app.close();
   }
 
