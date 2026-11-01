@@ -168,7 +168,7 @@ function renderCabecalho() {
     + '<a class="pub-voltar" href="/blog.html" data-history-back aria-label="Voltar à tela anterior">'
     + '<svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg>'
     + '<span class="pub-voltar__rotulo">Voltar</span></a>'
-    + '<a class="pub-barra__marca" href="/blog.html"><img src="/modulos/cracha/laift-marca.png" alt="" width="40" height="40"><span>Blog LAIFT</span></a>'
+    + '<a class="pub-barra__marca" href="/blog.html"><img src="/modulos/cracha/laift-marca-80.png" alt="" width="40" height="40"><span>Blog LAIFT</span></a>'
     + '<button class="pub-instalar" type="button" data-instalar hidden>'
     + '<svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>'
     + '<span>Instalar</span></button></div>'
