@@ -1778,7 +1778,7 @@ console.log(
           'Hidrogênios disponíveis: 0\n\n' +
           'Adicionar ' + novoSimbolo + ' criará uma valência estendida (radical livre).\n\n' +
           'Deseja continuar?';
-        if (!confirm(msg)) {
+        if (!(await window.LaiftDialog.confirm(msg, { title: 'Adição gera estrutura instável', okLabel: 'Continuar' }))) {
           console.log('[EDIT-ADD] Usuário cancelou');
           mostrarNotificacao('Adição cancelada.', 'info');
           return;
