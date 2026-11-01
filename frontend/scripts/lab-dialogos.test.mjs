@@ -1,6 +1,11 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 // Laboratório e Estúdio 3D usam LaiftDialog no lugar de alert/confirm/prompt nativos (MOB-03).
-// O vendor (vendor/3dmol, smiles-drawer) não é alterado: o 3Dmol-min.js contém apenas referências
-// internas a "alert"/"prompt" de bibliotecas empacotadas, nunca chamadas do código da plataforma.
+// O vendor (vendor/3dmol, smiles-drawer) não é alterado: o 3Dmol-min.js tem dois alert() ("Wrong PDB ID",
+// "Wrong Compound ID") dentro de $3Dmol.download, que o código da plataforma nunca chama.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
