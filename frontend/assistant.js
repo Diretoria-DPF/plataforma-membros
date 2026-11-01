@@ -752,7 +752,7 @@
     module.exports = api;
   } else {
     root.LaiftAssistant = api;
-    if (root.document.readyState === 'complete') start();
+    if (root.document.readyState !== 'loading') start(); // carregada sob demanda (lazy-bundles.js): o DOM já está pronto
     else root.document.addEventListener('DOMContentLoaded', start);
   }
 })(typeof window !== 'undefined' ? window : globalThis);

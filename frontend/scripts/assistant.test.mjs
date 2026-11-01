@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
@@ -105,10 +106,8 @@ test('o front não abre URL nem navega por endereço vindo da resposta', () => {
   hrefs.forEach((h) => assert.match(h, /(PUBLIC_PATHS|CTA_PATHS)\[(PUBLIC_PATHS|CTA_PATHS)\.indexOf\(|REFERENCE_HOSTS\[REFERENCE_HOSTS\.indexOf\(/));
 });
 
-test('assistant.js está no index.html, na lista do build e no precache do service worker', () => {
-  assert.match(read('frontend/index.html'), /<script src="assistant\.js" defer><\/script>/);
-  assert.match(read('frontend/scripts/build.js'), /'assistant\.js'/);
-  assert.match(read('frontend/sw.js'), /'assistant\.js'/);
+test('assistant.js está no pacote da Lia (sob demanda) e na lista do build; fora do index e do precache', () => {
+  assertSobDemanda('lia', 'assistant.js');
 });
 
 test('sanitizeSources: no máximo 4 fontes, só texto curto, sem vazias', () => {
@@ -442,8 +441,9 @@ test('assistant-sources.js: fonte vira <a> só com href da allowlist; sem url, t
 
 test('assistant-sources.js está no index.html (antes de assistant.js), no build e no precache do service worker', () => {
   const html = read('frontend/index.html');
+  // Fica no shell (agents-tutor.js o lê ao carregar), portanto sempre antes do pacote da Lia, que vem sob demanda.
   assert.ok(html.indexOf('<script src="assistant-sources.js" defer></script>') !== -1);
-  assert.ok(html.indexOf('assistant-sources.js') < html.indexOf('<script src="assistant.js"'));
+  assert.ok(html.indexOf('assistant-sources.js') < html.indexOf('<script src="lazy-bundles.js"'));
   assert.ok(read('frontend/scripts/build.js').includes("'assistant-sources.js'"));
   assert.ok(read('frontend/sw.js').includes("'assistant-sources.js'"));
 });
@@ -479,12 +479,9 @@ test('toda lista tem de 2 a 4 sugestões curtas e sem repetição', () => {
   });
 });
 
-test('assistant-suggestions.js: só texto (sem innerHTML), no index.html antes de assistant.js, no build e no precache; cache do SW subiu', () => {
-  const html = read('frontend/index.html');
-  assert.ok(html.indexOf('<script src="assistant-suggestions.js" defer></script>') !== -1);
-  assert.ok(html.indexOf('assistant-suggestions.js') < html.indexOf('<script src="assistant.js"'));
-  assert.ok(read('frontend/scripts/build.js').includes("'assistant-suggestions.js'"));
-  assert.ok(read('frontend/sw.js').includes("'assistant-suggestions.js'"));
+test('assistant-suggestions.js: só texto (sem innerHTML), no pacote da Lia antes de assistant.js e no build; cache do SW subiu', () => {
+  assertSobDemanda('lia', 'assistant-suggestions.js');
+  assertAntes('lia', 'assistant-suggestions.js', 'assistant.js');
   // v9: memory (ADR 0007, etapa 7); v8: agents-tutor (etapa 5). Exige o mínimo: novas subidas não quebram o teste.
   const cacheVersion = Number((read('frontend/sw.js').match(/CACHE_NAME = CACHE_PREFIX \+ 'v(\d+)'/) || [])[1]);
   assert.ok(cacheVersion >= 9, 'cache do SW em v9 ou mais (achado: ' + cacheVersion + ')');

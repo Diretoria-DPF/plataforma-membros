@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8');
@@ -423,8 +424,10 @@ test('index.html: cartão "Moderação da Lia" dentro do painel de IA, com botã
   assert.match(panel[0], /<h2 id="h-admin-moderation">Moderação da Lia<\/h2>/);
   assert.match(panel[0], /<button type="button" class="secondary" data-action="LaiftAdminModeration\.reload">Atualizar<\/button>/);
   assert.match(panel[0], /<div id="admin-moderation"><\/div>/);
-  const order = ['modulos/shared/safe-dom.js', 'admin-moderation.js', 'app.js'].map((f) => html.indexOf(`<script src="${f}" defer></script>`));
-  assert.ok(order.every((i) => i > 0) && order[0] < order[1] && order[1] < order[2], 'safe-dom.js, admin-moderation.js e app.js, nesta ordem');
+  // safe-dom.js continua no index (antes do app.js); admin-moderation.js vem no pacote admin, depois dele.
+  assert.ok(html.indexOf('<script src="modulos/shared/safe-dom.js" defer></script>') > 0);
+  assert.ok(html.indexOf('modulos/shared/safe-dom.js') < html.indexOf('<script src="app.js" defer></script>'));
+  assertSobDemanda('admin', 'admin-moderation.js');
 });
 
 test('app.js liga a seção ao painel de IA e ao fim da sessão', () => {
