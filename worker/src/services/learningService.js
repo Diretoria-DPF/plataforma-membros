@@ -100,6 +100,8 @@ function assertDetailsSize(details) {
   if (bytes > C.LIMITS.LEARN_DETAILS_MAX_BYTES) throw E.ValidationError('Detalhes da atividade grandes demais.');
 }
 
+const IDEMPOTENCY_KEY_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 async function insertAttempt(sql, identity, row) {
   const rows = await sql`
     INSERT INTO learning_attempts (profile_id, module, activity, score, max_score, duration_seconds, details)
@@ -108,6 +110,29 @@ async function insertAttempt(sql, identity, row) {
     RETURNING id
   `;
   return rows[0].id;
+}
+
+/**
+ * Tentativa com chave de idempotência (fila offline do navegador, MOB-02): a chave vai em
+ * details.idempotencyKey. Duplicata (mesmo perfil + mesma chave) é ignorada e devolve null.
+ * Sem a migração 046 aplicada não há índice único: o SELECT prévio ainda barra o reenvio comum e o
+ * ON CONFLICT DO NOTHING vira inofensivo (degradação segura: tudo segue funcionando como antes).
+ */
+async function insertAttemptOnce(sql, identity, row, key) {
+  const seen = await sql`
+    SELECT id FROM learning_attempts
+    WHERE profile_id = ${identity.profileId}::uuid AND details->>'idempotencyKey' = ${key}
+    LIMIT 1
+  `;
+  if (seen && seen.length) return null;
+  const rows = await sql`
+    INSERT INTO learning_attempts (profile_id, module, activity, score, max_score, duration_seconds, details)
+    VALUES (${identity.profileId}::uuid, ${row.module}, ${row.activity}, ${row.score}, ${row.maxScore},
+            ${row.durationSeconds}, ${JSON.stringify(row.details)}::jsonb)
+    ON CONFLICT DO NOTHING
+    RETURNING id
+  `;
+  return rows && rows.length ? rows[0].id : null;
 }
 
 // =============================================================================
@@ -132,12 +157,23 @@ export async function submitQuizAttempt(sql, identity, input, correlationId) {
   const durationSeconds = validateDuration(input.durationSeconds);
   const topics = validateTextList(input.topics, 'Tópicos');
   const details = { topics };
+  let idempotencyKey = null;
+  if (input.idempotencyKey !== undefined && input.idempotencyKey !== null) {
+    if (typeof input.idempotencyKey !== 'string' || !IDEMPOTENCY_KEY_RE.test(input.idempotencyKey)) {
+      throw E.ValidationError('Chave de idempotência inválida.');
+    }
+    idempotencyKey = input.idempotencyKey.toLowerCase();
+    details.idempotencyKey = idempotencyKey;
+  }
   assertDetailsSize(details);
 
   const activity = mode === 'prova' ? 'quiz_prova' : 'quiz_estudo';
-  const attemptId = await insertAttempt(sql, identity, {
-    module, activity, score: correct, maxScore: total, durationSeconds, details,
-  });
+  const row = { module, activity, score: correct, maxScore: total, durationSeconds, details };
+  const attemptId = idempotencyKey
+    ? await insertAttemptOnce(sql, identity, row, idempotencyKey)
+    : await insertAttempt(sql, identity, row);
+  // Reenvio da fila offline: já registrado antes. Não audita, não conta e não repete o sinal de memória.
+  if (attemptId === null) return { success: true, duplicate: true };
 
   // Auditoria sem conteúdo (tópicos/placar ficam só na própria tabela).
   await Logging.logAudit(sql, correlationId, identity.profileId, 'LEARN_SUBMIT_QUIZ', 'learning_attempt', attemptId, 'success', { module, activity });

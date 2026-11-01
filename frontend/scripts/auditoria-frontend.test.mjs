@@ -64,7 +64,7 @@ test('F-09: limite padrão de 20 s; Lia e reindexação da base têm mais tempo'
   assert.equal(apiTimeoutFor('apiGetMyProfile'), 20000);
   assert.ok(apiTimeoutFor('apiAssistantChat') > 20000);
   assert.ok(apiTimeoutFor('apiAdminReindexKb') > 20000);
-  assert.match(APP, /function api\(fnName\) \{[\s\S]*?fetchJsonWithTimeout\([\s\S]*?apiTimeoutFor\(fnName\)/);
+  assert.match(APP, /function api\(fnName\) \{[\s\S]*?fetchJsonWith(?:Timeout|Retry)\([\s\S]*?apiTimeoutFor\(fnName\)/);
 });
 
 test('F-09: recarga sem rede não derruba a sessão; só a recusa do servidor volta ao login', () => {
