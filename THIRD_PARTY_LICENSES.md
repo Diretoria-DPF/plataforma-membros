@@ -12,18 +12,24 @@ Itens marcados com "confirmar" não foram verificados em arquivo do projeto.
 | 3Dmol.js | 2.5.5 | BSD-3-Clause | `.../vendor/3dmol/` | `LICENSE` do projeto |
 | Chart.js | 4.5.1 | MIT | `.../vendor/chartjs/` | `LICENSE.md` do projeto |
 | qrcode-generator (Kazuhiko Arase) | — | MIT | `frontend/vendor/qrcode-generator.js` | cabeçalho do arquivo |
+| 3Dmol.js (cópia do Laboratório/Estúdio) | 2.5.5 | BSD-3-Clause | `frontend/modulos/laboratorio/vendor/3dmol/` | `LICENSE` do pacote npm; SRI idêntico ao do CDN |
+| SmilesDrawer | 2.1.7 | MIT | `frontend/modulos/laboratorio/vendor/smiles-drawer-2.1.7/` e `frontend/modulos/quiz/vendor/smiles-drawer/` | `LICENSE.md` do pacote; SRI idêntico ao do CDN |
+| SmilesDrawer | 2.3.0 | MIT | `frontend/modulos/laboratorio/vendor/smiles-drawer-2.3.0/` | `LICENSE.md` do pacote; SRI idêntico ao do CDN |
+| OpenChemLib (build `full`, 3,1 MB) | 8.6.0 | BSD-3-Clause | `frontend/modulos/laboratorio/vendor/openchemlib/` | `LICENSE` do pacote; SRI idêntico ao do CDN |
+| html5-qrcode | 2.3.8 | Apache-2.0 | `frontend/modulos/fiscal/vendor/html5-qrcode/` | `LICENSE` do pacote; SRI idêntico ao do CDN |
 | Draco decoder (Google) | — | Apache-2.0 | `.../vendor/draco/` | confirmar |
 | meshoptimizer decoder | — | MIT | `.../vendor/three/libs/meshopt_decoder.module.js` | confirmar |
 
 ## Carregadas por CDN (jsDelivr) com versão fixa e SRI
 | Biblioteca | Versão | Licença | Verificação |
 |---|---|---|---|
-| Chart.js | 4.5.1 | MIT | igual à cópia vendorizada |
-| 3Dmol.js | 2.5.5 | BSD-3-Clause | igual à cópia vendorizada |
-| html5-qrcode | 2.3.8 | Apache-2.0 | fonte pública do pacote; confirmar |
-| smiles-drawer | 2.1.7 e 2.3.0 | MIT | fonte pública do pacote; confirmar |
-| RDKit (MinimalLib) | 2026.3.6 | BSD-3-Clause | fonte pública do projeto; confirmar |
-| OpenChemLib | — | BSD-3-Clause | confirmar |
+| RDKit (MinimalLib: `RDKit_minimal.js` 105 KB + `.wasm` 7,3 MB) | 2026.3.6 | BSD-3-Clause | `LICENSE` do pacote npm `@rdkit/rdkit`; SRI do `.js` em `studio-loader.js` |
+
+Decisão TEC-01: o RDKit **não** foi vendorizado porque o `.wasm` passa de 5 MB
+(7,3 MB) e engordaria o repositório para sempre (cada versão nova duplica o
+binário no histórico do git). Ele é carregado sob demanda só no Estúdio
+(`laboratorio/studio`), com SRI, e a página mantém `cdn.jsdelivr.net` em
+`script-src`/`connect-src`. As demais bibliotecas dos módulos saíram do CDN.
 
 ## Back-end (Worker)
 | Pacote | Versão | Licença |
