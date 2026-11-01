@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -74,14 +75,11 @@ test('configurações: valida números e data e monta a carga', () => {
 test('fiação: html, app, build, sw e sem innerHTML nem estilo inline', () => {
   const html = read('index.html');
   assert.match(html, /<link rel="stylesheet" href="selection-admin\.css">/);
-  assert.match(html, /<script src="selection-admin\.js" defer><\/script>/);
+  assertSobDemanda('admin', 'selection-admin.js');
   assert.match(html, /<section id="panel-admin-selection" class="hidden">[\s\S]*?id="selection-admin-root"/);
   assert.match(html, /<button type="button" data-panel="panel-admin-selection" data-scope="admin">/);
-  assert.match(read('app.js'), /'panel-admin-selection': function \(\) \{ if \(window\.LaiftSelectionAdmin\) window\.LaiftSelectionAdmin\.load\(/);
-  for (const f of ['scripts/build.js', 'sw.js']) {
-    assert.match(read(f), /'selection-admin\.js'/);
-    assert.match(read(f), /'selection-admin\.css'/);
-  }
+  assert.match(read('app.js'), /'panel-admin-selection': function \(\) \{ withBundle\('admin', function \(\) \{ if \(window\.LaiftSelectionAdmin\) window\.LaiftSelectionAdmin\.load\(/);
+  for (const f of ['scripts/build.js', 'sw.js']) assert.match(read(f), /'selection-admin\.css'/); // o CSS fica no shell
   const js = read('selection-admin.js');
   assert.ok(!/innerHTML|outerHTML|insertAdjacentHTML|\.style\.|setAttribute\('style'/.test(js));
   assert.ok(!/style=/.test(js));

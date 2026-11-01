@@ -1164,10 +1164,16 @@
     // nunca ter aberto a aba "Mensagens" (pedido: "sem precisar alterar de
     // tela") — por isso começa aqui, não só dentro do painel de mensagens.
     if (window.LaiftMessaging) window.LaiftMessaging.startBackgroundSync();
-    // Lia: relê a flag e zera a conversa da conta anterior.
-    if (window.LaiftAssistant) window.LaiftAssistant.refresh();
-    // Primeira entrada da pessoa: apresentação curta por papel (a Lia e o crachá).
-    if (window.LaiftOnboarding) window.LaiftOnboarding.maybeShow({ role: state.profile.role, profileId: state.profile.id });
+    // Lia: relê a flag e zera a conversa da conta anterior. Se o pacote acabou de chegar, o start()
+    // da própria Lia já leu a flag com a sessão nova (não repetir a chamada).
+    var liaJaCarregada = !!window.LaiftAssistant;
+    var perfilEntrada = state.profile;
+    withBundle('lia', function () {
+      if (!state.profile) return; // saiu da conta enquanto o pacote chegava
+      if (liaJaCarregada && window.LaiftAssistant) window.LaiftAssistant.refresh();
+      // Primeira entrada da pessoa: apresentação curta por papel (a Lia e o crachá); depois da Lia, que ela cita.
+      if (window.LaiftOnboarding) window.LaiftOnboarding.maybeShow({ role: perfilEntrada.role, profileId: perfilEntrada.id });
+    });
   }
 
   /** Atualiza o "!" de votação aberta e o número de tarefas ativas na navegação inferior. Chamada no login e sempre que uma ação relevante (votar, aderir/concluir tarefa) muda esses números. */
@@ -1308,6 +1314,14 @@
   document.getElementById('btn-enter-admin-mode').addEventListener('click', function () { setAdminMode(true); });
   document.getElementById('btn-exit-admin-mode').addEventListener('click', function () { setAdminMode(false); });
 
+  // MOB-04: o código do painel admin e o da Lia não vêm no carregamento inicial (lazy-bundles.js).
+  // Roda fn depois que o pacote chegar; se falhar (sem rede e sem cache), roda mesmo assim: cada
+  // chamada abaixo já confere se o módulo existe e o painel fica no vazio de sempre.
+  function withBundle(name, fn) {
+    if (!window.LaiftLazy) { fn(); return; }
+    window.LaiftLazy.load(name).then(fn, fn);
+  }
+
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
     'panel-home': function () { if (window.LaiftHome) window.LaiftHome.load(window.App, document); },
@@ -1322,7 +1336,7 @@
     },
     'panel-admin-dashboard': function () {
       loadAdminDashboard();
-      if (window.LaiftAdminUsage) window.LaiftAdminUsage.load(window.App); // uso da plataforma (DAT-01)
+      withBundle('admin', function () { if (window.LaiftAdminUsage) window.LaiftAdminUsage.load(window.App); }); // uso da plataforma (DAT-01)
     },
     'panel-admin-users': function () { loadAdminUsers(1); },
     'panel-admin-events': loadAdminEvents,
@@ -1336,19 +1350,21 @@
     'panel-admin-fiscal': function () { if (window.LaiftLearning) window.LaiftLearning.loadFiscalPanel(); },
     // Fase 3 — painel admin de IA (frontend/admin-ai.js)
     'panel-admin-ai': function () {
-      if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel();
-      // moderação da Lia (ADR 0004, O28): só para quem modera (admin ou cargo moderador).
-      if (window.LaiftAdminModeration && window.LaiftRoles && window.LaiftRoles.has('reports.moderate')) window.LaiftAdminModeration.load(window.App);
+      withBundle('admin', function () {
+        if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel();
+        // moderação da Lia (ADR 0004, O28): só para quem modera (admin ou cargo moderador).
+        if (window.LaiftAdminModeration && window.LaiftRoles && window.LaiftRoles.has('reports.moderate')) window.LaiftAdminModeration.load(window.App);
+      });
     },
     // Biblioteca LAIFT (CONTRATO-B2 §7). Fora de MEMBER_PANEL_ORDER de propósito (§1: gate por flag só no CSS).
     'panel-library': function () { if (window.LaiftLibrary) window.LaiftLibrary.loadPanel(); },
     // Processo seletivo (selection.js): jornada do candidato; só aparece no menu de quem ainda não é membro.
     'panel-selection': function () { if (window.LaiftSelection) window.LaiftSelection.load(window.App, document); },
-    'panel-admin-selection': function () { if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.load(window.App, document); },
-    'panel-admin-privacy': function () { if (window.LaiftPrivacyAdmin) window.LaiftPrivacyAdmin.load(window.App, document); },
-    'panel-admin-library': function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); },
+    'panel-admin-selection': function () { withBundle('admin', function () { if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.load(window.App, document); }); },
+    'panel-admin-privacy': function () { withBundle('admin', function () { if (window.LaiftPrivacyAdmin) window.LaiftPrivacyAdmin.load(window.App, document); }); },
+    'panel-admin-library': function () { withBundle('admin', function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); }); },
     // Cargos funcionais (ADR 0010): só o admin concede e retira (frontend/admin-roles.js).
-    'panel-admin-roles': function () { if (window.LaiftAdminRoles) window.LaiftAdminRoles.load(window.App); },
+    'panel-admin-roles': function () { withBundle('admin', function () { if (window.LaiftAdminRoles) window.LaiftAdminRoles.load(window.App); }); },
     // Cargo na liga para o gestor (capacidade orgchart.edit; frontend/orgchart-edit.js).
     'panel-gestao-orgchart': function () { if (window.LaiftOrgChartEdit) window.LaiftOrgChartEdit.load(window.App); },
   };

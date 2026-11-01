@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8');
@@ -71,10 +72,8 @@ test('expõe as três abas e não usa innerHTML, handler inline nem estilo inlin
   assert.doesNotMatch(code, /style\s*[:=]/);
 });
 
-test('está no index.html, no build e no cache do service worker', () => {
-  assert.match(read('index.html'), /admin-library-publicar\.js/);
-  assert.match(read('scripts/build.js'), /admin-library-publicar\.js/);
-  assert.match(read('sw.js'), /admin-library-publicar\.js/);
+test('está no pacote admin (sob demanda) e no build; fora do index.html e do precache', () => {
+  assertSobDemanda('admin', 'admin-library-publicar.js');
 });
 
 test('as caixas de seleção da curadoria ficam ao lado do texto (classe pub-check) e a lista não tem marcadores', () => {

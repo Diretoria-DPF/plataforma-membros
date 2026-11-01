@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const require = createRequire(import.meta.url);
 const raiz = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -146,13 +147,13 @@ test('index.html: botão Cargos na barra do modo admin e o painel com reautentic
 test('arquivos novos entram no index.html, no build e no precache do sw; scripts antes do app.js', () => {
   const sw = ler('sw.js');
   const build = ler('scripts/build.js');
-  ['roles-ui.js', 'admin-roles.js', 'roles.css'].forEach((f) => {
+  ['roles-ui.js', 'roles.css'].forEach((f) => {
     assert.ok(sw.includes(`'${f}'`), f + ' fora do precache');
     assert.ok(build.includes(`'${f}'`), f + ' fora do build');
   });
   assert.match(HTML, /<link rel="stylesheet" href="roles\.css">/);
   assert.ok(HTML.indexOf('src="roles-ui.js"') < HTML.indexOf('src="app.js"'));
-  assert.ok(HTML.indexOf('src="admin-roles.js"') < HTML.indexOf('src="app.js"'));
+  assertSobDemanda('admin', 'admin-roles.js'); // painel Cargos: só o admin, carregado sob demanda
 });
 
 test('sem innerHTML nem estilo inline nos módulos novos', () => {

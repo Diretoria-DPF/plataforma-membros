@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -192,8 +193,8 @@ test('dispose: remove o widget e o contêiner', () => {
 
 test('index.html: carrega o módulo antes de assistant.js, a CSP abre só a Cloudflare e o build/SW o conhecem', () => {
   const html = fs.readFileSync(path.join(frontend, 'index.html'), 'utf8');
-  assert.ok(html.indexOf('<script src="assistant-turnstile.js" defer></script>') !== -1);
-  assert.ok(html.indexOf('assistant-turnstile.js') < html.indexOf('<script src="assistant.js"'));
+  assertSobDemanda('lia', 'assistant-turnstile.js');
+  assertAntes('lia', 'assistant-turnstile.js', 'assistant.js');
   const csp = /http-equiv="Content-Security-Policy"\s+content="([^"]+)"/.exec(html)[1];
   const policy = Object.fromEntries(csp.split(';').map((d) => d.trim().split(/\s+/)).filter((d) => d[0]).map((d) => [d[0], d.slice(1)]));
   const CF = 'https://challenges.cloudflare.com';
@@ -204,8 +205,6 @@ test('index.html: carrega o módulo antes de assistant.js, a CSP abre só a Clou
   assert.deepEqual(policy['object-src'], ["'none'"]);
   assert.ok(!policy['script-src'].includes("'unsafe-inline'") && !policy['script-src'].includes("'unsafe-eval'"));
   assert.ok(!policy['img-src'].includes(CF) && !policy['style-src'].includes(CF) && !policy['form-action'].includes(CF));
-  assert.ok(fs.readFileSync(path.join(frontend, 'scripts', 'build.js'), 'utf8').includes("'assistant-turnstile.js'"));
-  assert.ok(fs.readFileSync(path.join(frontend, 'sw.js'), 'utf8').includes("'assistant-turnstile.js'"));
 });
 
 test('assistant.js: o desafio só é criado para visitante com a flag; membro nunca carrega o script', () => {

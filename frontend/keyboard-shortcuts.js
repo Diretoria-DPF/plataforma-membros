@@ -200,6 +200,11 @@
 
     function openLia() {
       var assistant = win && win.LaiftAssistant;
+      if (!assistant && win && win.LaiftLazy && win.LaiftLazy.isRequested('lia')) {
+        // A Lia é carregada sob demanda (MOB-04) e ainda está chegando: abre assim que subir.
+        win.LaiftLazy.load('lia').then(function () { if (win.LaiftAssistant) win.LaiftAssistant.open(); }, function () { /* sem rede: nada a abrir */ });
+        return true;
+      }
       if (!assistant || typeof assistant.open !== 'function') return false;
       assistant.open();
       return true;

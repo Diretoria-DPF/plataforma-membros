@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -94,14 +95,15 @@ test('fiação: index.html, app.js, build e service worker', () => {
   assert.match(html, /<div id="privacy-admin-root"><\/div>/);
   assert.match(html, /<button type="button" data-panel="panel-admin-privacy" data-scope="admin">/);
   assert.match(html, /href="privacy\.css"/);
-  assert.ok(html.indexOf('<script src="privacy.js"') < html.indexOf('<script src="privacy-admin.js"'));
+  assert.ok(html.indexOf('<script src="privacy.js"') > 0 && !html.includes('src="privacy-admin.js"'));
+  assertSobDemanda('admin', 'privacy-admin.js'); // a fila do admin vem no pacote admin, depois do privacy.js do shell
   const app = read('app.js');
-  assert.match(app, /'panel-admin-privacy': function \(\) \{ if \(window\.LaiftPrivacyAdmin\) window\.LaiftPrivacyAdmin\.load\(/);
+  assert.match(app, /'panel-admin-privacy': function \(\) \{ withBundle\('admin', function \(\) \{ if \(window\.LaiftPrivacyAdmin\) window\.LaiftPrivacyAdmin\.load\(/);
   assert.match(app, /window\.LaiftPrivacy\.load\(window\.App, document\)/);
   assert.equal((app.match(/window\.LaiftPrivacy\.reset\(\)/g) || []).length, 2);
   assert.equal((app.match(/window\.LaiftPrivacyAdmin\.reset\(\)/g) || []).length, 2);
   for (const f of ['scripts/build.js', 'sw.js']) {
-    for (const asset of ['privacy.js', 'privacy-admin.js', 'privacy.css']) assert.ok(read(f).includes(`'${asset}'`), `${f} lista ${asset}`);
+    for (const asset of ['privacy.js', 'privacy.css']) assert.ok(read(f).includes(`'${asset}'`), `${f} lista ${asset}`);
   }
 });
 
