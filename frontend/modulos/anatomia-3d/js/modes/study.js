@@ -9,6 +9,13 @@ import { EVENTS } from '../core/bus.js';
 import { ATLAS_FLAGS } from '../core/flags.js';
 import { buildExport, validateImport, planMerge, summarize, studyStats } from './study-io.js';
 
+// Aviso em modal acessível (shared/laift-dialog.js, MOB-03); sem ele, cai no alert nativo.
+function avisar(mensagem) {
+  if (window.LaiftDialog) return window.LaiftDialog.alert(mensagem);
+  window.alert(mensagem);
+  return Promise.resolve();
+}
+
 // CSS para impressão de PDF
 const DOSSIE_CSS = `
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -416,7 +423,7 @@ export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHis
         const pdfWindow = window.open('', '_blank');
 
         if (!pdfWindow) {
-          alert('Não foi possível abrir a janela de impressão.');
+          avisar('Não foi possível abrir a janela de impressão.');
           return;
         }
 

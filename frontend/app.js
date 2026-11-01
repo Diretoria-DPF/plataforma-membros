@@ -2958,6 +2958,11 @@
     notifyActivity: resetSessionExpiryOnActivity,
     // Fase 2 — ponte dos módulos (allowlist + token só daqui) e tema efetivo.
     callLearningApi: callLearningApi,
+    // CON-01: "Reportar erro" dos módulos reaproveita o feedback existente (texto curto, sessão da plataforma).
+    submitContentReport: function (text) {
+      if (!state.sessionToken) return Promise.resolve({ success: false, message: 'Sessão indisponível. Faça login novamente.' });
+      return callApi('apiSubmitFeedback', state.sessionToken, String(text || '').slice(0, 600));
+    },
     getTheme: getEffectiveTheme,
     getThemePreference: function () { return themePreference; },
     callApi: function (fnName) {

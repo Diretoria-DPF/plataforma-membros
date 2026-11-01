@@ -347,6 +347,23 @@
       return btn;
     }
 
+    // CON-01: selo ⓘ discreto em questão sem revisor (o banco não traz o campo => sem revisor); refeito a cada questão.
+    function renderReviewSeal(q) {
+      var host = el.questionText && el.questionText.parentNode;
+      if (!host) return;
+      var old = host.querySelector('.laift-review-seal-row');
+      if (old) old.parentNode.removeChild(old);
+      if (!global.LaiftReviewSeal) return;
+      var seal = global.LaiftReviewSeal.create(q, {
+        kind: 'questão', module: cfg.module, id: q.id, topic: q.topic, excerpt: q.question,
+      }, { whenMissing: 'unreviewed' });
+      if (!seal) return;
+      var row = global.document.createElement('div');
+      row.className = 'laift-review-seal-row';
+      row.appendChild(seal);
+      host.insertBefore(row, el.options);
+    }
+
     function loadQuestion() {
       if (!state.active || state.index >= state.questions.length) return;
       var q = state.questions[state.index];
@@ -361,6 +378,7 @@
 
       LaiftDom.clear(el.options);
       q.options.forEach(function (text, i) { el.options.appendChild(optionButton(text, i)); });
+      renderReviewSeal(q);
 
       el.prev.disabled = state.index === 0;
       var last = state.index === state.questions.length - 1;
