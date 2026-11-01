@@ -15,7 +15,7 @@ const { default: worker } = await import('../src/index.js');
 const EXPECTED = {
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'no-referrer',
-  'Strict-Transport-Security': 'max-age=604800',
+  'Strict-Transport-Security': 'max-age=2592000',
 };
 
 function expectSecure(res) {

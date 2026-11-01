@@ -184,7 +184,7 @@ test('termos e privacidade: Open Graph e Twitter Card completos', () => {
 
 test('_headers: HSTS de 7 dias sem includeSubDomains/preload, COOP e sem CORP', () => {
   const geral = /^\/\*\r?\n((?:[ \t]+.*\r?\n?)+)/m.exec(read('_headers'))?.[1] ?? '';
-  assert.match(geral, /Strict-Transport-Security: max-age=604800\s*$/m);
+  assert.match(geral, /Strict-Transport-Security: max-age=2592000\s*$/m);
   assert.ok(!/includeSubDomains|preload/i.test(geral), 'HSTS sem includeSubDomains/preload nesta etapa');
   assert.match(geral, /Cross-Origin-Opener-Policy: same-origin-allow-popups/);
   assert.ok(!/Cross-Origin-Resource-Policy/i.test(geral), 'sem CORP no site');
