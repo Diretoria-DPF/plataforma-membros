@@ -305,7 +305,7 @@
     byId(doc, 'modal-learn-credential').classList.remove('hidden');
     byId(doc, 'learn-credential-close').focus({ preventScroll: true });
 
-    // Foto e "membro desde" são enfeite: se o perfil falhar, o crachá segue sem Guias.
+    // Foto e "membro desde" são enfeite: se o perfil falhar, o crachá segue sem eles.
     app.callApi('apiGetMyProfile', (app.getState() && app.getState().sessionToken) || '').then(function (res) {
       if (id !== requestId || !res || !res.success || !res.profile) return;
       var since = formatMemberSince(res.profile.memberSince);
@@ -333,7 +333,7 @@
       byId(doc, 'learn-credential-save').disabled = chosen.kind !== 'v2';
     }).catch(function () {
       if (id !== requestId) return;
-      // O erro fica no próprio modal: ele abre do Perfil, do Início, de Guia e do
+      // O erro fica no próprio modal: ele abre do Perfil, do Início, da Guia e do
       // onboarding, e um status no painel Aprender ficaria invisível.
       showQrError(doc);
     });

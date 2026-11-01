@@ -16,7 +16,7 @@
  *  - moderação do acervo da clínica (apiAdminLearnListPendingCases /
  *    apiAdminLearnReviewCase): casos gerados por IA só aparecem para os
  *    outros depois de aprovados aqui;
- *  - reindexação da base de Guia (apiAdminReindexKb), com confirmação. O
+ *  - reindexação da base da Guia (apiAdminReindexKb), com confirmação. O
  *    cartão é criado por JS logo depois da Satisfação, sem id novo no HTML.
  *
  * Mesmo padrão de frontend/messaging.js: script clássico, carregado antes
@@ -472,7 +472,7 @@
   }
 
   // ===========================================================================
-  // Base de conhecimento de Guia (apiAdminReindexKb). Um botão com confirmação.
+  // Base de conhecimento da Guia (apiAdminReindexKb). Um botão com confirmação.
   // O servidor aceita uma reindexação por minuto para a plataforma inteira.
   // ===========================================================================
   var KB_BUTTON_ID = 'btn-admin-ai-kb-reindex';
@@ -495,7 +495,7 @@
     // report.embedded conta só os trechos vetorizados nesta rodada (0 quando nada mudou), então não vira "N com busca semântica".
     var message = 'Base reindexada: ' + countLabel(report.total, 'trecho', 'trechos') + '.';
     message += report.embeddingAvailable === false
-      ? ' Busca semântica indisponível agora; Guia usa busca por palavras.'
+      ? ' Busca semântica indisponível agora; a Guia usa busca por palavras.'
       : ' Busca semântica ativa.';
     return { kind: 'success', message: message };
   }
@@ -511,7 +511,7 @@
     if (kbBusy || !token()) return;
     var gen = generation;
     setKbBusy(true);
-    setPanelStatus(KB_STATUS_ID, 'Reindexando a base de Guia...', 'info');
+    setPanelStatus(KB_STATUS_ID, 'Reindexando a base da Guia...', 'info');
     App().callApi('apiAdminReindexKb', token()).then(function (res) {
       if (gen !== generation) return;
       setKbBusy(false);
@@ -522,7 +522,7 @@
 
   function confirmReindex() {
     if (kbBusy || !token()) return;
-    App().openConfirm('Reindexar a base de conhecimento de Guia? Pode levar alguns segundos.', startReindex);
+    App().openConfirm('Reindexar a base de conhecimento da Guia? Pode levar alguns segundos.', startReindex);
   }
 
   /** Só texto no DOM. O status tem id próprio, então setPanelStatus funciona como nos outros cartões. */
@@ -531,15 +531,15 @@
     var text = App().text;
     return h('div', { className: 'card' }, [
       h('div', { className: 'ai-admin-head' }, [
-        h('h2', {}, ['Base de conhecimento de Guia']),
-        h('button', { type: 'button', className: 'secondary', id: KB_BUTTON_ID }, ['Reindexar base de Guia']),
+        h('h2', {}, ['Base de conhecimento da Guia']),
+        h('button', { type: 'button', className: 'secondary', id: KB_BUTTON_ID }, ['Reindexar base da Guia']),
       ]),
-      text('p', 'Reindexar monta o índice de busca de Guia a partir do acervo; use depois de atualizar o conteúdo.', { className: 'muted' }),
+      text('p', 'Reindexar monta o índice de busca da Guia a partir do acervo; use depois de atualizar o conteúdo.', { className: 'muted' }),
       h('div', { id: KB_STATUS_ID, className: 'status-msg', role: 'status', 'aria-live': 'polite' }),
     ]);
   }
 
-  /** Põe o cartão logo depois da Satisfação de Guia; se essa seção não existir, no fim do painel. */
+  /** Põe o cartão logo depois da Satisfação da Guia; se essa seção não existir, no fim do painel. */
   function mountKbCard() {
     var panel = $('panel-admin-ai');
     if (!panel) return;
@@ -556,7 +556,7 @@
   // Ciclo de vida
   // ===========================================================================
   // ===========================================================================
-  // Satisfação de Guia (avaliações dos membros, apiAdminAssistantStats e
+  // Satisfação da Guia (avaliações dos membros, apiAdminAssistantStats e
   // apiAdminListAssistantFeedback). Só texto no DOM; cada item é revisado aqui.
   // ===========================================================================
   var SAT_CATEGORY_LABELS = { incorreta: 'Incorreta', incompleta: 'Incompleta', confusa: 'Confusa', ofensiva: 'Ofensiva', outra: 'Outra', sem_categoria: 'Sem categoria' };
@@ -647,7 +647,7 @@
       if (gen !== generation || mine !== satStatsSeq) return;
       setBusy(SAT_STAT_IDS, false);
       if (!res || !res.success) {
-        setPanelStatus('msg-admin-ai-sat', (res && res.message) || 'Não foi possível carregar a satisfação de Guia.', 'error');
+        setPanelStatus('msg-admin-ai-sat', (res && res.message) || 'Não foi possível carregar a satisfação da Guia.', 'error');
         return;
       }
       setPanelStatus('msg-admin-ai-sat', '', null);
@@ -688,7 +688,7 @@
         text('span', author + ' · ' + dateText),
       ]),
       summaryLine('Assunto', answer.topic),
-      summaryLine('Resposta de Guia', clipText(answer.text, SAT_ANSWER_MAX)),
+      summaryLine('Resposta da Guia', clipText(answer.text, SAT_ANSWER_MAX)),
       summaryLine('Origem', answer.source),
       satCommentLine(item),
       buttons.length ? h('div', { className: 'actions-row' }, buttons) : null,

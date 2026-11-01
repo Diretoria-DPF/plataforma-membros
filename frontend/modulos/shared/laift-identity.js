@@ -182,6 +182,22 @@
     });
   }
 
-  global.LaiftApi = { call: call };
+  // CON-01: "Reportar erro" dos selos de conteúdo sem revisor. Usa o feedback que já existe
+  // (apiSubmitFeedback) pela plataforma, que é quem tem o token; só texto curto passa daqui.
+  function reportContent(text) {
+    var h = findHost();
+    if (!h || typeof h.App.submitContentReport !== 'function') {
+      return Promise.resolve({ success: false, message: UNAVAILABLE });
+    }
+    return Promise.resolve(h.App.submitContentReport(String(text === undefined || text === null ? '' : text))).then(function (res) {
+      return res && typeof res === 'object'
+        ? { success: res.success === true, message: typeof res.message === 'string' ? res.message : '' }
+        : { success: false, message: 'Resposta inválida do servidor.' };
+    }, function () {
+      return { success: false, message: 'Falha de comunicação com o servidor.' };
+    });
+  }
+
+  global.LaiftApi = { call: call, reportContent: reportContent };
   global.LaiftIdentity = { get: get, backToHub: backToHub, loginUrl: LOGIN_URL, getTheme: getTheme, applyTheme: applyTheme };
 })(window);

@@ -1,6 +1,6 @@
 # L09: Integração no `assistantService` (dono único do arquivo quente)
 
-**Objetivo.** Ligar ao fluxo da Lia o registro (L04), a seleção (L05) e a pesquisa externa (L07), cada um atrás da **sua** flag, desligada por padrão. Com as três flags desligadas, o comportamento e as respostas ficam **idênticos** aos de hoje.
+**Objetivo.** Ligar ao fluxo da Guia o registro (L04), a seleção (L05) e a pesquisa externa (L07), cada um atrás da **sua** flag, desligada por padrão. Com as três flags desligadas, o comportamento e as respostas ficam **idênticos** aos de hoje.
 
 **Passo 0.** Leia `worker/src/services/assistantService.js` inteiro (344 linhas): `askAi` (142), `retrieveContext` (212), `answerFromKnowledge` (268), `recordAnswer` (282), `askWithKnowledge` (299) e `chat` (311). Leia também `worker/test/assistantService.test.js` (como as flags e o banco são simulados), `researchLogService.js` (L04), `rerankService.js` e `ragService.retrieve(…, opts)` (L05), `researchService.js` (L07) e o contrato de retorno em `docs/lia/fichas/L07-pesquisa-externa.md` e `L08-interacao-front.md`. Se faltar algum desses arquivos, pare e reporte.
 

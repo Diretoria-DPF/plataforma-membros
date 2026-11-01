@@ -21,7 +21,7 @@ Fontes: https://developers.cloudflare.com/workers-ai/models/ (lido); https://dev
 - **Custo:** US$ 0,00311 por milhão de tokens de entrada, equivale a 283 neurônios por milhão (página de preview; confirmar). Franquia grátis: 10.000 neurônios por dia, o que dá cerca de 35 milhões de tokens de entrada por dia. Excedente: US$ 0,011 por 1.000 neurônios.
 
 ## 3. Ideias de apoio
-- **G-Eval** (https://arxiv.org/abs/2303.16634, lido): "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment"; LLM como juiz com raciocínio em cadeia. Para a Lia, serve como juiz offline no golden set. Como exige uma chamada extra de LLM, não serve para o corte em tempo real.
+- **G-Eval** (https://arxiv.org/abs/2303.16634, lido): "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment"; LLM como juiz com raciocínio em cadeia. Para a Guia, serve como juiz offline no golden set. Como exige uma chamada extra de LLM, não serve para o corte em tempo real.
 - **JEPA e GEPA:** o JEPA (Meta) é de representação de visão e vídeo, fora de busca em texto (plano; não lido aqui). O GEPA (https://arxiv.org/abs/2507.19457, via busca) é um otimizador de prompt reflexivo, em Python (`dspy.GEPA`, pacote `gepa`). Fica fora do stack do Worker, em JS; só offline e se o dono aceitar Python.
 - **EmbeddingGemma** (https://ai.google.dev/gemma/docs/embeddinggemma, via busca): cerca de 308 M de parâmetros, multilíngue (mais de 100 idiomas), contexto de 2K. Não confirmado na Workers AI. Trocar o embedding exige reindexar; se a dimensão mudar, exige migração.
 

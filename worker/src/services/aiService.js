@@ -51,7 +51,7 @@ const QUOTA_LABELS = {
   evaluate: 'avaliações do preceptor',
   generate_case: 'casos gerados com IA',
   lab_preceptor: 'perguntas ao preceptor do laboratório',
-  assistant: 'perguntas a Guia que usam IA',
+  assistant: 'perguntas à Guia que usam IA',
   agent_tutor: 'perguntas ao Tutor Clínico',
   agent_curator: 'pedidos ao Curador de Conteúdo',
 };

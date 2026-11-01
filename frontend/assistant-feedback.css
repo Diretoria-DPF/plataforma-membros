@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-/* Micro-card "Isso te ajudou?" de Guia (frontend/assistant-feedback.js).
+/* Micro-card "Isso te ajudou?" da Guia (frontend/assistant-feedback.js).
    Sem borda de card: a separação é por tom, raio e sombra. Só tokens, sem cor
    fixa, para valer nos dois temas. Vidro só quando há backdrop-filter. */
 
@@ -27,7 +27,7 @@
   }
 }
 
-/* Resposta aproximada (IA indisponível) e fontes citadas, sob o texto de Guia. */
+/* Resposta aproximada (IA indisponível) e fontes citadas, sob o texto da Guia. */
 .lia-degraded {
   margin: 0;
   padding: 6px 10px;

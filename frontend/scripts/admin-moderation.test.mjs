@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Seção "Moderação de Guia" do painel admin (frontend/admin-moderation.js, ADR 0004, O28):
+// Seção "Moderação da Guia" do painel admin (frontend/admin-moderation.js, ADR 0004, O28):
 // funções puras, estados carregando/erro com nova tentativa/vazio, aria-busy, respostas
 // fora de ordem, logout, foco, data-action e higiene (sem innerHTML, sem handler inline).
 import { test, beforeEach } from 'node:test';
@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8');
@@ -414,17 +415,19 @@ test('o arquivo nunca converte texto em HTML nem usa handler inline', () => {
   assert.ok(src.split('\n').length < 800, 'arquivo abaixo do teto de 800 linhas');
 });
 
-test('index.html: cartão "Moderação de Guia" dentro do painel de IA, com botão por data-action e safe-dom antes do módulo', () => {
+test('index.html: cartão "Moderação da Guia" dentro do painel de IA, com botão por data-action e safe-dom antes do módulo', () => {
   const html = read('index.html');
   const panel = /<section id="panel-admin-ai"[\s\S]*?<\/section>/.exec(html);
   assert.ok(panel, 'painel de IA do admin existe');
   // data-cap (ROL-03): o cartão aparece para o admin e para o cargo moderador.
   assert.match(panel[0], /<div class="card" id="admin-moderation-card" data-cap="reports\.moderate">/);
-  assert.match(panel[0], /<h2 id="h-admin-moderation">Moderação de Guia<\/h2>/);
+  assert.match(panel[0], /<h2 id="h-admin-moderation">Moderação da Guia<\/h2>/);
   assert.match(panel[0], /<button type="button" class="secondary" data-action="LaiftAdminModeration\.reload">Atualizar<\/button>/);
   assert.match(panel[0], /<div id="admin-moderation"><\/div>/);
-  const order = ['modulos/shared/safe-dom.js', 'admin-moderation.js', 'app.js'].map((f) => html.indexOf(`<script src="${f}" defer></script>`));
-  assert.ok(order.every((i) => i > 0) && order[0] < order[1] && order[1] < order[2], 'safe-dom.js, admin-moderation.js e app.js, nesta ordem');
+  // safe-dom.js continua no index (antes do app.js); admin-moderation.js vem no pacote admin, depois dele.
+  assert.ok(html.indexOf('<script src="modulos/shared/safe-dom.js" defer></script>') > 0);
+  assert.ok(html.indexOf('modulos/shared/safe-dom.js') < html.indexOf('<script src="app.js" defer></script>'));
+  assertSobDemanda('admin', 'admin-moderation.js');
 });
 
 test('app.js liga a seção ao painel de IA e ao fim da sessão', () => {

@@ -5,9 +5,9 @@
  */
 /**
  * rerankService.js
- * Camada de seleção de Guia (L05): reordena os candidatos da fusão RRF com um reranker,
+ * Camada de seleção da Guia (L05): reordena os candidatos da fusão RRF com um reranker,
  * dá uma nota a cada trecho e decide `answerable` ("há trecho bom o bastante?").
- * Assim Guia corta a busca antes do LLM quando a base não cobre a pergunta.
+ * Assim a Guia corta a busca antes do LLM quando a base não cobre a pergunta.
  *
  * Neutra de provedor: hoje só 'workers-ai' (@cf/baai/bge-reranker-base, o mesmo operador
  * do embedding). Qualquer outro provedor cai na degradação. Só roda com rag_rerank_enabled

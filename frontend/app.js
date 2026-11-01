@@ -165,7 +165,7 @@
       if (window.LaiftLearning) window.LaiftLearning.reset();
       // Fase 3 — painel admin de IA: descarta respostas pendentes e dados exibidos.
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
-      if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação de Guia: some da tela com a sessão
+      if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Guia: some da tela com a sessão
       if (window.LaiftAdminRoles) window.LaiftAdminRoles.reset();
       if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.reset();
       if (window.LaiftPrivacy) window.LaiftPrivacy.reset();
@@ -381,7 +381,7 @@
   // ===========================================================================
   // >>> api-fetch (puro)
   // Toda chamada tem tempo limite: sem ele, uma requisição presa deixava
-  // "Carregando…" para sempre. Guia e a reindexação da base podem demorar
+  // "Carregando…" para sempre. A Guia e a reindexação da base podem demorar
   // mais (IA), por isso têm um limite maior. Os erros saem em português.
   var API_TIMEOUT_MS = 20000;
   var API_LONG_TIMEOUT_MS = 90000;
@@ -1101,7 +1101,7 @@
     if (window.LaiftLearning) window.LaiftLearning.reset();
     // Fase 3 — painel admin de IA
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
-    if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação de Guia: some da tela com a sessão
+    if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Guia: some da tela com a sessão
     if (window.LaiftAdminRoles) window.LaiftAdminRoles.reset();
     if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.reset();
     if (window.LaiftPrivacy) window.LaiftPrivacy.reset();
@@ -1164,10 +1164,16 @@
     // nunca ter aberto a aba "Mensagens" (pedido: "sem precisar alterar de
     // tela") — por isso começa aqui, não só dentro do painel de mensagens.
     if (window.LaiftMessaging) window.LaiftMessaging.startBackgroundSync();
-    // Guia: relê a flag e zera a conversa da conta anterior.
-    if (window.LaiftAssistant) window.LaiftAssistant.refresh();
-    // Primeira entrada da pessoa: apresentação curta por papel (Guia e o crachá).
-    if (window.LaiftOnboarding) window.LaiftOnboarding.maybeShow({ role: state.profile.role, profileId: state.profile.id });
+    // Guia: relê a flag e zera a conversa da conta anterior. Se o pacote acabou de chegar, o start()
+    // da própria Guia já leu a flag com a sessão nova (não repetir a chamada).
+    var liaJaCarregada = !!window.LaiftAssistant;
+    var perfilEntrada = state.profile;
+    withBundle('lia', function () {
+      if (!state.profile) return; // saiu da conta enquanto o pacote chegava
+      if (liaJaCarregada && window.LaiftAssistant) window.LaiftAssistant.refresh();
+      // Primeira entrada da pessoa: apresentação curta por papel (a Guia e o crachá); depois da Guia, que ela cita.
+      if (window.LaiftOnboarding) window.LaiftOnboarding.maybeShow({ role: perfilEntrada.role, profileId: perfilEntrada.id });
+    });
   }
 
   /** Atualiza o "!" de votação aberta e o número de tarefas ativas na navegação inferior. Chamada no login e sempre que uma ação relevante (votar, aderir/concluir tarefa) muda esses números. */
@@ -1308,6 +1314,14 @@
   document.getElementById('btn-enter-admin-mode').addEventListener('click', function () { setAdminMode(true); });
   document.getElementById('btn-exit-admin-mode').addEventListener('click', function () { setAdminMode(false); });
 
+  // MOB-04: o código do painel admin e o da Guia não vêm no carregamento inicial (lazy-bundles.js).
+  // Roda fn depois que o pacote chegar; se falhar (sem rede e sem cache), roda mesmo assim: cada
+  // chamada abaixo já confere se o módulo existe e o painel fica no vazio de sempre.
+  function withBundle(name, fn) {
+    if (!window.LaiftLazy) { fn(); return; }
+    window.LaiftLazy.load(name).then(fn, fn);
+  }
+
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
     'panel-home': function () { if (window.LaiftHome) window.LaiftHome.load(window.App, document); },
@@ -1322,7 +1336,7 @@
     },
     'panel-admin-dashboard': function () {
       loadAdminDashboard();
-      if (window.LaiftAdminUsage) window.LaiftAdminUsage.load(window.App); // uso da plataforma (DAT-01)
+      withBundle('admin', function () { if (window.LaiftAdminUsage) window.LaiftAdminUsage.load(window.App); }); // uso da plataforma (DAT-01)
     },
     'panel-admin-users': function () { loadAdminUsers(1); },
     'panel-admin-events': loadAdminEvents,
@@ -1336,19 +1350,21 @@
     'panel-admin-fiscal': function () { if (window.LaiftLearning) window.LaiftLearning.loadFiscalPanel(); },
     // Fase 3 — painel admin de IA (frontend/admin-ai.js)
     'panel-admin-ai': function () {
-      if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel();
-      // moderação de Guia (ADR 0004, O28): só para quem modera (admin ou cargo moderador).
-      if (window.LaiftAdminModeration && window.LaiftRoles && window.LaiftRoles.has('reports.moderate')) window.LaiftAdminModeration.load(window.App);
+      withBundle('admin', function () {
+        if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel();
+        // moderação da Guia (ADR 0004, O28): só para quem modera (admin ou cargo moderador).
+        if (window.LaiftAdminModeration && window.LaiftRoles && window.LaiftRoles.has('reports.moderate')) window.LaiftAdminModeration.load(window.App);
+      });
     },
     // Biblioteca LAIFT (CONTRATO-B2 §7). Fora de MEMBER_PANEL_ORDER de propósito (§1: gate por flag só no CSS).
     'panel-library': function () { if (window.LaiftLibrary) window.LaiftLibrary.loadPanel(); },
     // Processo seletivo (selection.js): jornada do candidato; só aparece no menu de quem ainda não é membro.
     'panel-selection': function () { if (window.LaiftSelection) window.LaiftSelection.load(window.App, document); },
-    'panel-admin-selection': function () { if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.load(window.App, document); },
-    'panel-admin-privacy': function () { if (window.LaiftPrivacyAdmin) window.LaiftPrivacyAdmin.load(window.App, document); },
-    'panel-admin-library': function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); },
+    'panel-admin-selection': function () { withBundle('admin', function () { if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.load(window.App, document); }); },
+    'panel-admin-privacy': function () { withBundle('admin', function () { if (window.LaiftPrivacyAdmin) window.LaiftPrivacyAdmin.load(window.App, document); }); },
+    'panel-admin-library': function () { withBundle('admin', function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); }); },
     // Cargos funcionais (ADR 0010): só o admin concede e retira (frontend/admin-roles.js).
-    'panel-admin-roles': function () { if (window.LaiftAdminRoles) window.LaiftAdminRoles.load(window.App); },
+    'panel-admin-roles': function () { withBundle('admin', function () { if (window.LaiftAdminRoles) window.LaiftAdminRoles.load(window.App); }); },
     // Cargo na liga para o gestor (capacidade orgchart.edit; frontend/orgchart-edit.js).
     'panel-gestao-orgchart': function () { if (window.LaiftOrgChartEdit) window.LaiftOrgChartEdit.load(window.App); },
   };
@@ -1376,7 +1392,7 @@
       else btn.removeAttribute('aria-current');
     });
     window.scrollTo(0, 0);
-    // Dica de Guia (assistant-hints.js): só avisa quando a tela muda de fato.
+    // Dica da Guia (assistant-hints.js): só avisa quando a tela muda de fato.
     if (previousPanelId !== panelId) document.dispatchEvent(new CustomEvent('laift:panelchange', { detail: { panel: panelId } }));
   }
 
@@ -2779,7 +2795,7 @@
     UPDATE_EVENT_STATUS: 'Mudança de status de evento', UPDATE_EVENT_IMAGE: 'Imagem de evento atualizada',
     CREATE_TASK: 'Criação de tarefa', UPDATE_TASK_STATUS: 'Mudança de status de tarefa',
     CHANGE_USER_ROLE: 'Alteração de papel de usuário', BAN_USER: 'Banimento de conta', UNBAN_USER: 'Reativação de conta',
-    assistant_moderation_alert: 'Alerta de moderação de Guia (nível 2)', assistant_auto_report: 'Denúncia automática de Guia (nível 3)',
+    assistant_moderation_alert: 'Alerta de moderação da Guia (nível 2)', assistant_auto_report: 'Denúncia automática da Guia (nível 3)',
   };
 
   var adminAuditState = { action: '', result: '' };
@@ -2839,8 +2855,8 @@
   // Administração — denúncias
   // ===========================================================================
   var REPORT_STATUS_LABELS = { open: 'Aberta', under_review: 'Em análise', resolved: 'Resolvida', dismissed: 'Arquivada' };
-  // Denúncia sem denunciante: a automática de Guia traz o aviso do servidor em details; as demais são de ex-membro.
-  var AUTO_REPORT_PREFIX = 'Denúncia automática de Guia:';
+  // Denúncia sem denunciante: a automática da Guia traz o aviso do servidor em details; as demais são de ex-membro.
+  var AUTO_REPORT_PREFIX = 'Denúncia automática da Guia:';
   function reporterLabel(item) {
     if (item.reporterName) return item.reporterName;
     if (item.reporterHidden) return 'Oculto (só o administrador vê)'; // moderador decide pelo conteúdo (ADR 0010)
@@ -2958,6 +2974,11 @@
     notifyActivity: resetSessionExpiryOnActivity,
     // Fase 2 — ponte dos módulos (allowlist + token só daqui) e tema efetivo.
     callLearningApi: callLearningApi,
+    // CON-01: "Reportar erro" dos módulos reaproveita o feedback existente (texto curto, sessão da plataforma).
+    submitContentReport: function (text) {
+      if (!state.sessionToken) return Promise.resolve({ success: false, message: 'Sessão indisponível. Faça login novamente.' });
+      return callApi('apiSubmitFeedback', state.sessionToken, String(text || '').slice(0, 600));
+    },
     getTheme: getEffectiveTheme,
     getThemePreference: function () { return themePreference; },
     callApi: function (fnName) {

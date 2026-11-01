@@ -33,7 +33,7 @@
     dau: 'Pessoas ativas (soma dos dias)',
     quiz_completed: 'Simulados concluídos',
     case_completed: 'Casos clínicos concluídos',
-    lia_message: 'Mensagens para Guia',
+    lia_message: 'Mensagens para a Guia',
   };
   var METRIC_ORDER = ['signup', 'email_confirmed', 'dau', 'quiz_completed', 'case_completed', 'lia_message'];
 

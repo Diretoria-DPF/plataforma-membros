@@ -1,7 +1,7 @@
 -- Plataforma de Membros LAIFT
 -- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
 -- Licença proprietária: ver LICENSE na raiz do repositório.
--- 034_lia_membros_flags.sql — flag do registro de respostas do Guia para membros.
+-- 034_lia_membros_flags.sql — flag do registro de respostas da Guia para membros.
 --
 --   rag_cache_enabled   registro de respostas (tabela lia_pesquisas, sql/026): pergunta repetida de membro,
 --                       sem histórico, na mesma versão do acervo, é respondida sem IA e sem gastar cota.

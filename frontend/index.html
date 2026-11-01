@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-app-version="v25">
+<html lang="pt-BR" data-app-version="v27">
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
@@ -1053,13 +1053,13 @@
           </div>
           <div class="card" data-cap="assistant.feedback.moderate">
             <div class="ai-admin-head">
-              <h2 id="h-admin-ai-sat">Satisfação de Guia</h2>
+              <h2 id="h-admin-ai-sat">Satisfação da Guia</h2>
               <span role="group" aria-labelledby="h-admin-ai-sat">
                 <button type="button" class="secondary" id="btn-admin-ai-sat-7" aria-pressed="true">7 dias</button>
                 <button type="button" class="secondary" id="btn-admin-ai-sat-30" aria-pressed="false">30 dias</button>
               </span>
             </div>
-            <p class="muted">Respostas de Guia marcadas como úteis ou não úteis pelos membros. Revise cada item. Os comentários são apagados depois de 90 dias.</p>
+            <p class="muted">Respostas da Guia marcadas como úteis ou não úteis pelos membros. Revise cada item. Os comentários são apagados depois de 90 dias.</p>
             <div id="msg-admin-ai-sat" class="status-msg" role="status" aria-live="polite"></div>
             <div id="admin-ai-sat-totals"></div>
             <div id="admin-ai-sat-categories"></div>
@@ -1086,10 +1086,10 @@
           </div>
           <div class="card" id="admin-moderation-card" data-cap="reports.moderate">
             <div class="ai-admin-head">
-              <h2 id="h-admin-moderation">Moderação de Guia</h2>
+              <h2 id="h-admin-moderation">Moderação da Guia</h2>
               <button type="button" class="secondary" data-action="LaiftAdminModeration.reload">Atualizar</button>
             </div>
-            <p class="muted">Incidentes de moderação de Guia, situação atual e taxa de redenção. Só tipo de detecção, nível e data: o texto das mensagens nunca é guardado nem aparece aqui.</p>
+            <p class="muted">Incidentes de moderação da Guia, situação atual e taxa de redenção. Só tipo de detecção, nível e data: o texto das mensagens nunca é guardado nem aparece aqui.</p>
             <div id="admin-moderation"></div>
           </div>
           <div class="card" data-cap="metrics.read">
@@ -1274,24 +1274,9 @@
   <script src="home.js" defer></script>
   <script src="mfa.js" defer></script>
   <script src="credential.js" defer></script>
-  <script src="modulos/shared/lia/lia-art.js" defer></script>
-  <script src="modulos/shared/lia/lia-states.js" defer></script>
-  <script src="modulos/shared/lia/lia-mood.js" defer></script>
-  <script src="assistant-mood-glue.js" defer></script>
-  <script src="modulos/shared/lia/lia-anim.js" defer></script>
-  <script src="modulos/shared/lia/lia-props.js" defer></script>
-  <script src="modulos/shared/lia/lia-scenes.js" defer></script>
-  <script src="modulos/shared/lia/lia.js" defer></script>
-  <script src="assistant-feedback.js" defer></script>
-  <script src="assistant-research.js" defer></script>
-  <script src="assistant-moderation.js" defer></script>
-  <script src="assistant-hints.js" defer></script>
-  <script src="assistant-typing.js" defer></script>
-  <script src="assistant-drag.js" defer></script>
+  <!-- Guia (assistente) e painel admin NÃO são carregados aqui: lazy-bundles.js os injeta sob demanda (MOB-04). assistant-sources.js fica porque agents-tutor.js o lê ao carregar. -->
   <script src="assistant-sources.js" defer></script>
-  <script src="assistant-suggestions.js" defer></script>
-  <script src="assistant-turnstile.js" defer></script>
-  <script src="assistant.js" defer></script>
+  <script src="lazy-bundles.js" defer></script>
   <script src="keyboard-shortcuts.js" defer></script>
   <script src="onboarding.js" defer></script>
   <script src="learning.js" defer></script>
@@ -1300,32 +1285,19 @@
   <!-- Memória de estudo no Perfil (ADR 0007, etapa 7): só usa window.App dentro de funções; o Tutor chama LaiftMemory.reveal. -->
   <script src="memory-core.js" defer></script>
   <script src="memory.js" defer></script>
-  <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
-  <script src="admin-ai.js" defer></script>
-  <!-- Moderação de Guia no painel admin (ADR 0004, O28): safe-dom.js dá o LaiftDom.h e o data-action. -->
+  <!-- safe-dom.js (LaiftDom.h e data-action) é usado por módulos de membro e pelos pacotes admin carregados sob demanda. -->
   <script src="modulos/shared/safe-dom.js" defer></script>
-  <script src="admin-moderation.js" defer></script>
-  <!-- Uso da plataforma no painel admin (DAT-01): mesmo LaiftDom. -->
-  <script src="admin-usage.js" defer></script>
-  <!-- Biblioteca LAIFT (CONTRATO-B2 §7): citação → ficha → painel; extras antes do admin. -->
+  <!-- Biblioteca LAIFT (CONTRATO-B2 §7): citação → ficha → painel; o admin da biblioteca vem no pacote admin. -->
   <script src="library-cite.js" defer></script>
   <script src="library-detail.js" defer></script>
   <script src="library.js" defer></script>
   <script src="selection.js" defer></script>
-  <!-- Painel da comissão do processo seletivo (só admin): mesmo LaiftDom. -->
-  <script src="selection-admin.js" defer></script>
-  <!-- Direitos do titular (LGPD): Perfil e fila de exclusões do admin; privacy.js antes de privacy-admin.js. -->
+  <!-- Direitos do titular (LGPD) no Perfil; a fila de exclusões do admin vem no pacote admin. -->
   <script src="privacy.js" defer></script>
-  <script src="privacy-admin.js" defer></script>
-  <script src="admin-library-extras.js" defer></script>
-  <script src="admin-library-publicar.js" defer></script>
-  <script src="admin-library-lote.js" defer></script>
-  <script src="admin-library.js" defer></script>
   <script src="blog-novidade.js" defer></script>
   <script src="voltar-app.js" defer></script>
   <script src="session-view.js" defer></script>
   <script src="roles-ui.js" defer></script>
-  <script src="admin-roles.js" defer></script>
   <script src="orgchart-edit.js" defer></script>
   <script src="app.js" defer></script>
   <script src="entrada.js" defer></script>

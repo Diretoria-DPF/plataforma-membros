@@ -5,7 +5,7 @@
  */
 /**
  * liaLibraryService.js
- * Artigos da Biblioteca que Guia cita na resposta (flag lia_library_enabled, que exige também library_enabled).
+ * Artigos da Biblioteca que a Guia cita na resposta (flag lia_library_enabled, que exige também library_enabled).
  *
  *   - Reaproveita a busca do catálogo (libraryService.searchForLia): só `publicado`, português primeiro, UMA
  *     consulta com LIMIT 3. Quem decide QUANDO buscar é assistant/libraryRefs.js (libraryPlan); aqui só se executa.
@@ -15,7 +15,7 @@
  *     nas repetições; sem resultado não grava (o plano gratuito do KV aceita 1.000 gravações por dia e uma
  *     consulta aleatória de visitante não pode consumi-las). O conteúdo é o mesmo para qualquer pessoa (não há
  *     resumo), então a chave não leva papel nem pessoa.
- *   - Nunca lança: qualquer falha vira lista vazia e Guia responde como sempre. Nada de pergunta em log.
+ *   - Nunca lança: qualquer falha vira lista vazia e a Guia responde como sempre. Nada de pergunta em log.
  */
 import { getCached, setCached } from '../cache.js';
 import { searchNorm } from '../library/normalize.js';
@@ -31,7 +31,7 @@ const MIN_QUERY_CHARS = 2;
 const KEY_PREFIX = 'cache:liab:';
 export const CACHE_TTL_SECONDS = 600;
 
-/** Falha fechada: sem saber o valor da flag, Guia não cita artigos. */
+/** Falha fechada: sem saber o valor da flag, a Guia não cita artigos. */
 async function flagOn(sql, identity, key) {
   try {
     return await isEnabled(sql, key, identity);

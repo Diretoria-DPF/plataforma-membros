@@ -5,7 +5,7 @@
  */
 /**
  * frontend/admin-moderation.js
- * Seção "Moderação de Guia" do painel admin de IA (ADR 0004, risco O28). Mostra o que
+ * Seção "Moderação da Guia" do painel admin de IA (ADR 0004, risco O28). Mostra o que
  * apiAdminAssistantModeration já devolve: incidentes por tipo de detecção, pessoas com
  * incidente (nível atual e maior nível, data do último incidente, suspensão em curso, última
  * detecção e última redenção), pessoas hoje em cada nível, tentativas e taxa de redenção.
@@ -35,7 +35,7 @@
     3: 'Nível 3 — suspensão de 24 h',
   };
   var DETECTION_LABELS = { terms: 'por termos', llm: 'pela análise automática' };
-  var ERROR_TITLE = 'Não foi possível carregar a moderação de Guia.';
+  var ERROR_TITLE = 'Não foi possível carregar a moderação da Guia.';
   // Regra do ADR 0004: aparece na tela para quem administra saber por que o nível sobe e desce.
   var RULE_LINES = [
     'O nível sobe a cada incidente: 1 é alerta, 2 é aviso sério e 3 é suspensão de 24 horas.',

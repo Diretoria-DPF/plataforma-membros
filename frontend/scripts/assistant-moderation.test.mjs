@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Moderação de Guia (frontend/assistant-moderation.js): o controlador (createModeration)
+// Moderação da Guia (frontend/assistant-moderation.js): o controlador (createModeration)
 // com um DOM falso mínimo, e as regras de fonte do módulo. As funções puras de formatação
 // e validação são cobertas em assistant.test.mjs, que as importa deste módulo.
 import { test } from 'node:test';
@@ -107,7 +107,7 @@ test('warningBand: faixa com papel de status, ícone escondido e texto "Aviso N 
   assert.equal(band.children[1].textContent, 'Aviso 2 de 3');
 });
 
-test('suspender: mostra o bloco com o horário de retorno, sincroniza os campos, repousa Guia e foca "Pedir redenção"', () => {
+test('suspender: mostra o bloco com o horário de retorno, sincroniza os campos, repousa a Guia e foca "Pedir redenção"', () => {
   const { ctx, calls } = fakeCtx();
   const m = Moderation.createModeration(ctx);
   try {
@@ -123,7 +123,7 @@ test('suspender: mostra o bloco com o horário de retorno, sincroniza os campos,
   }
 });
 
-test('com o painel fechado, a suspensão só fica guardada: nada é pintado, Guia não reage', () => {
+test('com o painel fechado, a suspensão só fica guardada: nada é pintado, a Guia não reage', () => {
   const { ctx, calls } = fakeCtx();
   ctx.isOpen = () => false;
   const m = Moderation.createModeration(ctx);
@@ -134,7 +134,7 @@ test('com o painel fechado, a suspensão só fica guardada: nada é pintado, Gui
   assert.equal(calls.sync, 0);
 });
 
-test('redenção aceita: a explicação vai com a sessão da pessoa, a suspensão sai, Guia reage e o foco volta à pergunta', async () => {
+test('redenção aceita: a explicação vai com a sessão da pessoa, a suspensão sai, a Guia reage e o foco volta à pergunta', async () => {
   const { ctx, calls, input } = fakeCtx((name) => (name === 'apiAssistantRedeem' ? { success: true, accepted: true, message: 'ok' } : {}));
   const m = Moderation.createModeration(ctx);
   try {
@@ -150,7 +150,7 @@ test('redenção aceita: a explicação vai com a sessão da pessoa, a suspensã
     assert.equal(m.isSuspended(), false);
     assert.equal(m.root.classList.contains('hidden'), true);
     assert.deepEqual(calls.lia, ['redeem']);
-    assert.equal(calls.restLia, 1, 'só o restLia da suspensão: a redenção aceita não repousa Guia, a cena de redenção a põe de frente');
+    assert.equal(calls.restLia, 1, 'só o restLia da suspensão: a redenção aceita não repousa a Guia, a cena de redenção a põe de frente');
     assert.deepEqual(calls.note, [BACK]);
     assert.equal(input.focused, 1);
     assert.equal(area.value, '');

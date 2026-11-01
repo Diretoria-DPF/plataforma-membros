@@ -1,4 +1,4 @@
-# L08: Ajustes na conversa com a Lia (frontend): fontes legíveis, "já pesquisado", "Pesquisar mais a fundo"
+# L08: Ajustes na conversa com a Guia (frontend): fontes legíveis, "já pesquisado", "Pesquisar mais a fundo"
 
 **Objetivo.** Deixar visível o que muda no backend, sem quebrar nada quando as flags estiverem desligadas:
 (1) rótulos legíveis para as fontes;
@@ -22,13 +22,13 @@
 - A resposta da pesquisa traz `source: 'research'` e `research: { provider, query, cached, failed, items: [{ title, journal, year, url, ids }] }`.
 
 **Requisitos: `assistant-research.js`** (expõe `window.LaiftAssistantResearch`; só `createElement`/`textContent`/`setAttribute`, **sem `innerHTML`**):
-- `sourceLabel(id)`: `kb` → "Guia da plataforma", `destinos` → "Telas e módulos", `guia` → "Guia da Lia", `privacidade` → "Privacidade", `convivencia` → "Convivência", `liga` → "A Liga", `plataforma` → "Plataforma", `modulos` → "Módulos de estudo", `publicacoes` → "Blog e publicações", `processo` → "Processo seletivo", `faq` → "Perguntas frequentes", `saude` → "Avisos de saúde"; id desconhecido volta como veio.
+- `sourceLabel(id)`: `kb` → "Guia da plataforma", `destinos` → "Telas e módulos", `guia` → "Guia da Guia", `privacidade` → "Privacidade", `convivencia` → "Convivência", `liga` → "A Liga", `plataforma` → "Plataforma", `modulos` → "Módulos de estudo", `publicacoes` → "Blog e publicações", `processo` → "Processo seletivo", `faq` → "Perguntas frequentes", `saude` → "Avisos de saúde"; id desconhecido volta como veio.
 - `sanitizeResearch(r)`: até 10 itens; título até 300 caracteres, revista até 200, ano inteiro; `url` só `https:` com host em `['europepmc.org','www.ebi.ac.uk','pubmed.ncbi.nlm.nih.gov','doi.org','www.scielo.br','scielo.org','openalex.org']`, senão o item fica sem link.
 - `renderResearch(doc, r)`:
   - lista `<ul aria-label="Referências encontradas">`;
   - cada item com título em texto, "revista · ano" e, se houver url, link "Abrir" com `target="_blank"` e `rel="noopener noreferrer"`;
   - estados: vazio ("Nada encontrado para esses termos.") e falha ("A base externa não respondeu agora. Tente mais tarde.");
-  - rodapé "Referências de base externa (Europe PMC). A Lia não resume artigos nem dá orientação de saúde."
+  - rodapé "Referências de base externa (Europe PMC). A Guia não resume artigos nem dá orientação de saúde."
 - `cachedNote(doc)`: texto "Resposta já pesquisada antes, sem gastar IA."
 - `researchButton(doc, onClick)`: `<button type="button" class="lia-chip lia-research-btn">Pesquisar mais a fundo</button>`.
 - `shouldShowPrivacyHint(storage)` e `markPrivacyHintSeen(storage)`: chave `lia.research.hint.v1`, com `try/catch` (o armazenamento pode faltar).
@@ -56,6 +56,6 @@ cd "C:/Users/Administrador/Desktop/plataforma membro/frontend" && node --test sc
 ```
 Esperado: o teste novo verde; nos `*.test.mjs`, só as 2 falhas conhecidas de CRLF no Windows; o e2e `assistant` verde (comportamento antigo preservado).
 
-**Regras.** Sem git. **Não edite** `index.html`, `build.js`, `sw.js` nem `ux.css`: no relatório, informe à sessão principal a linha `<script defer src="assistant-research.js"></script>` (depois de `assistant-feedback.js`) e a entrada de `PRECACHE`. Cabeçalho de copyright; LF. GateGuard: se o hook pedir fatos, escreva 2 linhas (quem usa: o painel da Lia em `assistant.js`; a instrução: "vamos ajustar na interação") e repita a mesma chamada.
+**Regras.** Sem git. **Não edite** `index.html`, `build.js`, `sw.js` nem `ux.css`: no relatório, informe à sessão principal a linha `<script defer src="assistant-research.js"></script>` (depois de `assistant-feedback.js`) e a entrada de `PRECACHE`. Cabeçalho de copyright; LF. GateGuard: se o hook pedir fatos, escreva 2 linhas (quem usa: o painel da Guia em `assistant.js`; a instrução: "vamos ajustar na interação") e repita a mesma chamada.
 
 **Relatório (até 12 linhas).** Os arquivos com o número de linhas de cada um, o resultado dos três comandos, os trechos para a sessão principal (`index.html`, `sw.js`, `build.js`) e as capturas, se tiver feito.

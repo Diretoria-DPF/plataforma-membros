@@ -1,7 +1,7 @@
 -- Plataforma de Membros LAIFT
 -- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
 -- Licença proprietária: ver LICENSE na raiz do repositório.
--- 033_lia_hibrida_flag.sql — flags do Guia híbrida (RAG + árvore de seções + guarda de intenção + visitante).
+-- 033_lia_hibrida_flag.sql — flags da Guia híbrida (RAG + árvore de seções + guarda de intenção + visitante).
 --
 --   lia_hibrida_enabled      guarda de intenção, resposta clínica segura, escolha de seções pela árvore e
 --                            resposta extrativa para quem não usa IA (exige também rag_enabled).
@@ -13,6 +13,6 @@
 -- Requer a 016 (feature_flags). Idempotente. Reversão: sql/down/033_lia_hibrida_flag.sql.
 
 INSERT INTO feature_flags (key, enabled, description) VALUES
-  ('lia_hibrida_enabled', FALSE, 'Guia híbrido: guarda de intenção, escolha de seções pela árvore e resposta extrativa para quem não usa IA'),
+  ('lia_hibrida_enabled', FALSE, 'Guia híbrida: guarda de intenção, escolha de seções pela árvore e resposta extrativa para quem não usa IA'),
   ('lia_visitor_ai_enabled', FALSE, 'Guia: prévia de IA para visitante sem conta (Workers AI, com Turnstile, limite por IP e teto de neurons)')
 ON CONFLICT (key) DO NOTHING;

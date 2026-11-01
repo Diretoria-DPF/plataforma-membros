@@ -1,6 +1,6 @@
-# L04: Registro de pesquisas da Lia (migração 026 e serviço)
+# L04: Registro de pesquisas da Guia (migração 026 e serviço)
 
-**Objetivo.** Guardar o que a Lia já pesquisou, para não pagar de novo: (a) a resposta com base de conhecimento (provedor `kb`), válida enquanto a versão da base for a mesma; (b) os resultados de bases externas (só metadados). As perguntas da base que ficaram sem resposta (`outcome='empty'`) formam a lista de lacunas para escrever conteúdo. Ninguém usa isto antes de L09 e da flag `rag_cache_enabled`.
+**Objetivo.** Guardar o que a Guia já pesquisou, para não pagar de novo: (a) a resposta com base de conhecimento (provedor `kb`), válida enquanto a versão da base for a mesma; (b) os resultados de bases externas (só metadados). As perguntas da base que ficaram sem resposta (`outcome='empty'`) formam a lista de lacunas para escrever conteúdo. Ninguém usa isto antes de L09 e da flag `rag_cache_enabled`.
 
 **Passo 0.** Leia:
 - `sql/018_ai_orchestrator.sql` (`ai_semantic_cache`, índices trigrama) e `sql/020_rag.sql` (estilo, `lock_timeout`, reversão);
@@ -62,6 +62,6 @@ CREATE TABLE IF NOT EXISTS lia_pesquisas (
 cd "C:/Users/Administrador/Desktop/plataforma membro/worker" && npm run validate:sql && npm test -- -i test/researchLogService.test.js test/semanticCache.test.js
 ```
 
-**Regras.** Sem git. **Não aplique a 026 em banco nenhum fora do PGlite**: a sessão principal aplica, com o OK do dono. Sem flag; cabeçalho de copyright em `.js` e `.sql`; LF; funções com menos de 50 linhas. GateGuard: se o hook pedir fatos, escreva 2 linhas (quem usa: L07 `researchService`, L09 `assistantService`, L10 `maintenance`; a instrução: "registrar as pesquisas que a Lia fizer, para economizar nas futuras pesquisas") e repita a mesma chamada.
+**Regras.** Sem git. **Não aplique a 026 em banco nenhum fora do PGlite**: a sessão principal aplica, com o OK do dono. Sem flag; cabeçalho de copyright em `.js` e `.sql`; LF; funções com menos de 50 linhas. GateGuard: se o hook pedir fatos, escreva 2 linhas (quem usa: L07 `researchService`, L09 `assistantService`, L10 `maintenance`; a instrução: "registrar as pesquisas que a Guia fizer, para economizar nas futuras pesquisas") e repita a mesma chamada.
 
 **Relatório (até 12 linhas).** As assinaturas exportadas, os casos de teste e o resultado do aceite.

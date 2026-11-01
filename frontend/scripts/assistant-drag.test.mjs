@@ -3,13 +3,14 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Posição livre de Guia (frontend/assistant-drag.js): contas de posição, guarda no navegador e fiação no app.
+// Posição livre da Guia (frontend/assistant-drag.js): contas de posição, guarda no navegador e fiação no app.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -79,13 +80,8 @@ test('assistant-drag.js: sem innerHTML, eval nem style inline; guarda só no nav
 });
 
 test('fiação: index.html, build.js e sw.js carregam o módulo; assistant.js o usa de forma opcional', () => {
-  const html = fs.readFileSync(path.join(frontend, 'index.html'), 'utf8');
-  const drag = html.indexOf('<script src="assistant-drag.js" defer></script>');
-  const lia = html.indexOf('<script src="assistant.js" defer></script>');
-  assert.ok(drag > 0 && drag < lia, 'assistant-drag.js antes de assistant.js');
-  for (const file of ['scripts/build.js', 'sw.js']) {
-    assert.ok(fs.readFileSync(path.join(frontend, file), 'utf8').includes("'assistant-drag.js'"), file);
-  }
+  assertSobDemanda('lia', 'assistant-drag.js');
+  assertAntes('lia', 'assistant-drag.js', 'assistant.js');
   const assistant = fs.readFileSync(path.join(frontend, 'assistant.js'), 'utf8');
   assert.match(assistant, /root\.AssistantDrag \? root\.AssistantDrag\.attach/);
   assert.match(assistant, /note: note/); // o módulo cria o "Voltar ao canto" na nota do painel

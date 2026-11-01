@@ -726,7 +726,7 @@ test('memory.js: sem innerHTML, sem armazenamento do navegador, sem eval, sem re
   assert.doesNotMatch(read('frontend/memory.js'), /Para que serve|O que NÃO guardamos/, 'o texto não é copiado no controlador');
 });
 
-test('as ações de memória NÃO entram na ponte dos módulos nem na lista de Guia', () => {
+test('as ações de memória NÃO entram na ponte dos módulos nem na lista da Guia', () => {
   const app = read('frontend/app.js');
   assert.doesNotMatch(app, /apiMemory/);
   const allow = new RegExp(app.match(/LEARNING_API_ALLOWLIST = \/(.+)\/;/)[1]);

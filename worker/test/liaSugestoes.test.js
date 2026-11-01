@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * liaSugestoes.test.js — sugestões de Guia por contexto (frontend/assistant-suggestions.js) e as do servidor
+ * liaSugestoes.test.js — sugestões da Guia por contexto (frontend/assistant-suggestions.js) e as do servidor
  * (kb.js, para quem não tem login). Regra de ouro: TODA sugestão tem resposta boa na base, ou por intenção
  * por regra (que responde aquele tipo de pergunta) ou por um trecho do acervo que a busca de fato devolve.
  */

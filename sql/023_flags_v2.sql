@@ -47,8 +47,8 @@ INSERT INTO feature_flags (key, enabled, description) VALUES
   ('ux_v2_enabled',      TRUE, 'Interface renovada (Início, onboarding, hero)'),
   ('chatbot_enabled',    TRUE, 'Guia, guia da plataforma (chat que orienta e leva às telas)'),
   ('rag_enabled',        TRUE, 'Guia consulta a base de conhecimento (busca híbrida) antes de responder'),
-  ('feedback_enabled',   TRUE, 'Polegar e comentário sobre as respostas do Guia'),
-  ('moderation_enabled', TRUE, 'Moderação do Guia (alerta, aviso, suspensão e redenção)')
+  ('feedback_enabled',   TRUE, 'Polegar e comentário sobre as respostas da Guia'),
+  ('moderation_enabled', TRUE, 'Moderação da Guia (alerta, aviso, suspensão e redenção)')
 ON CONFLICT (key) DO NOTHING;
 
 -- Liga as herdadas só se estiverem intocadas (regra 2). Não grava updated_at: o gatilho faz isso,

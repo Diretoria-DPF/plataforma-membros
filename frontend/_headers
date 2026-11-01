@@ -73,3 +73,13 @@ https://:version.:name.:subdomain.workers.dev/*
 /biblioteca/index.json
   ! Cache-Control
   Cache-Control: public, max-age=300
+
+# MOB-09: cache longo e imutável SÓ onde a versão está no próprio caminho (a pasta traz o número da
+# versão e o <script> confere o hash por SRI): trocar de versão = trocar de URL. Nada do shell
+# (HTML, sw.js, JS/CSS próprios) entra aqui: esses nomes não têm hash e continuam revalidando a cada
+# visita (nomes com hash do shell ficaram de fora; ver docs/DESEMPENHO_MOBILE.md).
+/modulos/laboratorio/vendor/smiles-drawer-2.1.7/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/modulos/laboratorio/vendor/smiles-drawer-2.3.0/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -5,7 +5,7 @@
  */
 /**
  * researchService.js
- * "Pesquisar mais a fundo": Guia busca referências numa base científica externa (v1: Europe PMC).
+ * "Pesquisar mais a fundo": a Guia busca referências numa base científica externa (v1: Europe PMC).
  * Atrás da flag research_enabled, desligada por padrão.
  *
  * Só termos gerais saem do servidor: buildQuery recusa o que tiver dado pessoal, instrução ou
@@ -25,7 +25,7 @@ const RATE = { BUCKET: 'ASSISTANT_RESEARCH', MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3
 const QUERY_TERMS_MAX = 8;
 const QUERY_CHARS_MAX = 120;
 const TERM_MIN_LENGTH = 3;
-const ADVISORY = 'Referências de base externa; Guia não resume artigos nem dá orientação de saúde.';
+const ADVISORY = 'Referências de base externa; a Guia não resume artigos nem dá orientação de saúde.';
 const MSG = {
   DISABLED: 'A pesquisa em artigos não está disponível agora.',
   ANONYMOUS: 'Entre na plataforma para pesquisar em bases científicas.',

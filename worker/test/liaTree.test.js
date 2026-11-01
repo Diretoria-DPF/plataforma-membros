@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * liaTree.test.js — árvore de seções de Guia (assistant/tree.js): ids estáveis e únicos, resumo de uma
+ * liaTree.test.js — árvore de seções da Guia (assistant/tree.js): ids estáveis e únicos, resumo de uma
  * linha, resumo compacto para o prompt com teto de tamanho e consulta por id.
  */
 import { buildTree, renderOutline, byId, byKey, bodyOf, nodeId, SUMMARY_MAX } from '../src/assistant/tree.js';

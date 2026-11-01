@@ -90,22 +90,22 @@ Critério de falha: número sem rótulo; aba atual não indicada; gráfico que r
 ### 4. Guia (assistente)
 
 Passos:
-1. Use Tab até o botão "Abrir Guia", ou use Ctrl/Cmd+K. Ouça o nome e o estado do botão.
-2. Abra Guia. Ouça o painel e confira em que lugar o foco foi parar.
+1. Use Tab até o botão "Abrir a Guia", ou use Ctrl/Cmd+K. Ouça o nome e o estado do botão.
+2. Abra a Guia. Ouça o painel e confira em que lugar o foco foi parar.
 3. Digite uma pergunta de teste genérica e envie. Ouça a resposta quando chegar.
-4. Feche pelo botão "Fechar Guia" e, em outra execução, com Esc. Ouça onde o foco volta.
+4. Feche pelo botão "Fechar a Guia" e, em outra execução, com Esc. Ouça onde o foco volta.
 5. Se o ambiente de teste tiver uma conta com aviso ou suspensão, ouça a faixa de aviso e o pedido de redenção.
 
 Deve anunciar:
-- botão "Abrir Guia", com estado recolhido ou expandido.
-- painel "Guia" e botão "Fechar Guia".
-- campo "Pergunte a Guia", com a dica "Pergunte sobre a plataforma".
+- botão "Abrir a Guia", com estado recolhido ou expandido.
+- painel "Guia" e botão "Fechar a Guia".
+- campo "Pergunte à Guia", com a dica "Pergunte sobre a plataforma".
 - botão "Enviar".
-- "Guia está digitando…" enquanto Guia responde. Conferir se é anunciado.
+- "Guia está digitando…" enquanto ela responde. Conferir se é anunciado.
 - faixa de aviso (`role="status"`), com o texto "Aviso N de 3".
 - com suspensão: botão "Pedir redenção" e campo de pergunta desabilitado.
 
-Critério de falha: o foco não vai ao campo ao abrir Guia; a resposta não é anunciada; botão sem nome; foco que não volta ao botão ao fechar.
+Critério de falha: o foco não vai ao campo ao abrir a Guia; a resposta não é anunciada; botão sem nome; foco que não volta ao botão ao fechar.
 Conferir: a área de mensagens (`#lia-log`) tem `role="log"` e `aria-live="polite"` (`frontend/assistant.js`, linhas 573 e 574), então cada resposta deve ser anunciada sozinha. Se não for, registre como falha.
 Não digite dado pessoal na pergunta.
 
@@ -133,13 +133,13 @@ Passos:
 2. Ouça o diálogo e a lista de atalhos.
 3. Use Tab. O foco deve ficar no diálogo.
 4. Feche com Esc ou com o botão "Fechar". Ouça onde o foco volta.
-5. Pressione Ctrl+K (ou Cmd+K). Guia deve abrir e o foco deve ir para o campo "Pergunte a Guia".
+5. Pressione Ctrl+K (ou Cmd+K). A Guia deve abrir e o foco deve ir para o campo "Pergunte à Guia".
 6. Dentro de um campo de texto, Ctrl+K não dispara. Isso é esperado: o atalho pertence ao campo.
 
 Deve anunciar:
 - diálogo com o título "Atalhos de teclado" (título de nível 3). Conferir.
 - botão "Fechar".
-- os dois itens: "Ctrl/Cmd + /: Mostra esta lista de atalhos" e "Ctrl/Cmd + K: Abre Guia e foca o campo de pergunta".
+- os dois itens: "Ctrl/Cmd + /: Mostra esta lista de atalhos" e "Ctrl/Cmd + K: Abre a Guia e foca o campo de pergunta".
 
 Critério de falha: a lista não é lida; o foco não entra no diálogo; ao fechar, o foco se perde; a combinação não é a informada no diálogo.
 

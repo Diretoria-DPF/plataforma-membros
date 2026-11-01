@@ -5,7 +5,7 @@
  */
 /**
  * ragService.js
- * Base de conhecimento de Guia (sql/020): embedding por Workers AI
+ * Base de conhecimento da Guia (sql/020): embedding por Workers AI
  * (@cf/baai/bge-m3, 1024 dimensões) e busca HÍBRIDA, vetor (pgvector, cosseno)
  * + trigramas (pg_trgm), fundida por posição (Reciprocal Rank Fusion).
  *
@@ -117,7 +117,7 @@ async function vectorRows(sql, literal) {
 /**
  * Busca híbrida. Devolve { chunks, mode: 'hybrid'|'trigram', embeddingError }.
  * Com opts.rerank === true (L09, flag rag_rerank_enabled), funde até CANDIDATES, reordena com
- * rerankService e acrescenta reranked e answerable. Com opts.limit (Guia híbrido), devolve até `limit` trechos
+ * rerankService e acrescenta reranked e answerable. Com opts.limit (Guia híbrida), devolve até `limit` trechos
  * em vez de TOP_K (sem rerank). Sem opts, o retorno é o de sempre.
  * Lança só se a busca por trigramas (a base de qualquer modo) falhar.
  */

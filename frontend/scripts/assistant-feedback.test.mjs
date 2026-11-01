@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Micro-card "Isso te ajudou?" de Guia (frontend/assistant-feedback.js): validação do
+// Micro-card "Isso te ajudou?" da Guia (frontend/assistant-feedback.js): validação do
 // comentário, montagem do payload, máquina de estados (pura) e fiação de segurança.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -19,7 +19,7 @@ const FB = require('../assistant-feedback.js');
 
 const UUID = '3f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b';
 
-/** Atalho: estado inicial já com a resposta de Guia pronto para avaliar. */
+/** Atalho: estado inicial já com a resposta da Guia pronta para avaliar. */
 const ready = () => FB.initialState({ enabled: true, messageId: UUID });
 
 test('categorias e avaliações são exatamente as aceitas pelo Worker (constants.js FEEDBACK)', () => {
@@ -182,7 +182,7 @@ test('o CSS do card usa só tokens (sem cor fixa) e respeita prefers-reduced-mot
   assert.match(css, /:focus-visible/);
 });
 
-test('admin-ai.js: painel "Satisfação de Guia" usa só as ações do servidor e nunca innerHTML', () => {
+test('admin-ai.js: painel "Satisfação da Guia" usa só as ações do servidor e nunca innerHTML', () => {
   const src = read('frontend/admin-ai.js');
   for (const action of ['apiAdminAssistantStats', 'apiAdminListAssistantFeedback', 'apiAdminUpdateAssistantFeedback']) {
     assert.match(src, new RegExp(action), 'falta a ação ' + action);

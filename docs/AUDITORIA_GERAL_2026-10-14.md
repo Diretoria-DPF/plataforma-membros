@@ -78,12 +78,12 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 | MOB-01 | Botão voltar do Android: `router.js` + `pushState`/`popstate` (3 passos) | ALTO | sem `pushState`/`popstate` (só `replaceState`: `app.js` ~L930, ~L2700) | corrigido (mergeado; falta conferir em Android real) | A | G | #81 | — |
 | MOB-02 | Fila offline do quiz (IndexedDB + `idempotencyKey`) | MÉDIO | `modulos/quiz/quiz-engine.js:434` ("Não foi possível registrar") | aberto | A | M | — | — |
 | MOB-03 | Trocar `alert()`/`confirm()` nativos por modais | MÉDIO | `modulos/clinica/clinic-engine.js:1073,1243`; `modulos/quiz/quiz-engine.js:299,495` | aberto | A | M | — | — |
-| MOB-04 | Admin/Guia carregados sob demanda por papel (hoje ~140 KB admin + ~124 KB Guia para todos) | MÉDIO | `frontend/index.html` | aberto | A | M | — | — |
+| MOB-04 | Admin/Guia carregados sob demanda por papel (hoje ~140 KB admin + ~124 KB Guia para todos) | MÉDIO | `frontend/index.html` | corrigido (PR aberta; ver docs/DESEMPENHO_MOBILE.md) | A | M | — | — |
 | MOB-05 | Imagens (WebP/AVIF; `laift-marca.png` 285 KB exibido a 40 px; `icon-512.png` 269 KB) e Cache-Control de JS/CSS | MÉDIO | `frontend/_headers`, `frontend/scripts/build.js` | aberto | A | M | — | — |
 | MOB-06 | Laboratório: fontes < 12 px (117 declarações; HUD 8,3 px) e alvos < 44 px (links de Termos/Política) | MÉDIO | `docs/ux-progresso/AUDITORIA.md` K7/M1 | aberto | A | M | — | — |
-| MOB-07 | Service worker com módulos (hoje só a casca é pré-cacheada) | MÉDIO | `frontend/sw.js` (`laift-shell-v9`) | aberto | A | M | — | U1 |
+| MOB-07 | Service worker com módulos (hoje só a casca é pré-cacheada) | MÉDIO | `frontend/sw.js` (`laift-shell-v9`) | corrigido (PR aberta; precache só do shell, v25) | A | M | — | U1 |
 | MOB-08 | Instalação do PWA no app logado, `shortcuts`, `screenshots`, `id` no manifest | BAIXO | `frontend/manifest.webmanifest`; prompt só em `blog/instalar.js` | aberto | A | P | — | — |
-| MOB-09 | Orçamento de desempenho no CI (hoje só no Atlas); Lighthouse **logado** | MÉDIO | `docs/LIGHTHOUSE_2026-10-08b.md` mediu só a tela de login | aberto | A | M | — | — |
+| MOB-09 | Orçamento de desempenho no CI (hoje só no Atlas); Lighthouse **logado** | MÉDIO | `docs/LIGHTHOUSE_2026-10-08b.md` mediu só a tela de login | parcial (orçamento no CI + cache imutável em vendor versionado; hash de nomes do shell adiado) | A | M | — | — |
 | MOB-11 | Atlas: fallback de WebGL (detectar renderização por software, avisar, modo lista/busca/ficha sem 3D) | MÉDIO | `modulos/anatomia-3d/js/engine/renderer.js` trata `webglcontextlost`, não software rendering | aberto | A | M | — | — |
 
 ### Engajamento (ENG)
@@ -172,6 +172,7 @@ Diferencial defensável: Tutor com guardrails, simulação clínica, Atlas 3D em
 - 2026-10-14 (tarde) — Dono respondeu: cadastro ok, consumo baixo, `laift_worker` em uso, cargos acumuláveis (decisões em §7). Mapa dos papéis feito (ver ROL-01..05). Abertas as PRs #70 (OPS-01, CI verde) e #71 (SEC-09; CI verde exceto 1 teste instável do Atlas, reexecutado). SEC-01 com implementação pronta no worktree, falta commit, revisão e PR. Próximo: ROL-01 + ROL-02 (migração 038).
 
 - 2026-10-17 — Verificado contra a `main` (`6ee7c74`): mesclados #69–#79. Corrigidos SEC-01/02/03/04/07/09, OPS-01 (falta o monitor do dono), DAT-01, ROL-01/02/03 e a Biblioteca simples (#78, #79). `/health`, site, `/biblioteca` e API respondem 200 em produção. Em curso: SEC-06 + SEO-01 (agente), MOB-01 e SEC-08 (ADR 0011).
+- 2026-11-01 — MOB-04/07/09 (branch `perf/mob-04-07-09`): admin e Guia sob demanda (`lazy-bundles.js`), precache do SW só com o shell (v25), orçamento de peso em `perf-budget.test.mjs` e `Cache-Control: immutable` em vendor com versão no caminho. Detalhes e números em `docs/DESEMPENHO_MOBILE.md`.
 
 ## 10. Fases e critérios de saída
 | Fase | Itens | Critério de saída |

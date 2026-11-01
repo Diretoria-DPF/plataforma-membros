@@ -17,7 +17,7 @@
         "frontend/liga.html:23-31 (o que é a Liga e para quem)",
         "frontend/learning.js:60-86 (cinco módulos e nomes)",
         "frontend/liga.html:26 e :121 (status e Instagram)",
-        "docs/riscos-residuais.md:25 (limite de Guia, I2)",
+        "docs/riscos-residuais.md:25 (limite da Guia, I2)",
         "docs/FATOS_VERIFICADOS_2026-10-09.md secoes 2 e 4 (checado em 2026-10-09)"
       ],
       "blocos": [
@@ -40,7 +40,7 @@
           "Guia, que orienta e leva você às telas"
         ] },
         { "t": "p", "texto": "Use o Atlas 3D e os demais módulos como apoio aos estudos, junto com o livro-texto e a aula." },
-        { "t": "destaque", "tom": "info", "titulo": "Sobre Guia", "texto": "Guia pode errar, sobretudo em temas clínicos. Confira qualquer resposta antes de usá-la." },
+        { "t": "destaque", "tom": "info", "titulo": "Sobre a Guia", "texto": "A Guia pode errar, sobretudo em temas clínicos. Confira qualquer resposta antes de usá-la." },
         { "t": "p", "texto": "A [página da Liga](/liga.html) explica quem somos, as áreas de interesse e as etapas do processo seletivo. Para acompanhar a Liga, siga o Instagram @laift.liga, que também mostra os membros." },
         { "t": "p", "texto": "Quer saber como funciona o seletivo? Leia o [post sobre o processo seletivo 2026](/blog/processo-seletivo-2026.html)." },
         { "t": "contato", "titulo": "Fale com a Liga" }

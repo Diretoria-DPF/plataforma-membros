@@ -1,6 +1,6 @@
-# Lia - arte SVG modular
+# Guia - arte SVG modular
 
-Fonte da arte (ADR 0003). Sem script, sem fonte externa; cores por `--lia-*` (fallback hex). `preview.html` e `preview.js` sao so para revisao e nao entram no build. `lab.html`, `lab.js`, `lab.css` e `build-lab.mjs` formam o Lia Lab (secao abaixo).
+Fonte da arte (ADR 0003). Sem script, sem fonte externa; cores por `--lia-*` (fallback hex). `preview.html` e `preview.js` sao so para revisao e nao entram no build. `lab.html`, `lab.js`, `lab.css` e `build-lab.mjs` formam o Guia Lab (secao abaixo).
 
 ## Grupos (ids preservados, `viewBox` 200x300)
 Estrutura: `lia-body` (contêiner) > `lia-ground` (sombra), `lia-torso` (pescoco, pernas, sapatos, casaco) e `lia-head` (cabelo, mecha, rosto, olhos, boca). `lia-limbs` (bracos e props) fica fora do corpo e acompanha o tronco.
@@ -47,8 +47,8 @@ Emocao -> boca: neutral/curious = neutral, happy = smile, focused/sad = flat, wo
 
 Altura da cabeca = 118 x `--lia-head-scale` (topo do cabelo ate a base do rosto). Razao cabeca:corpo = altura total (topo ate os sapatos) / altura da cabeca.
 
-## Lia Lab
-Pagina interativa para ajustar proporcao, traco, cores e estados, e para comparar a Lia lado a lado.
+## Guia Lab
+Pagina interativa para ajustar proporcao, traco, cores e estados, e para comparar a Guia lado a lado.
 
 **Como abrir**
 - Duplo clique em `lab.html` (funciona em `file://`, sem servidor).
@@ -80,13 +80,13 @@ Dentro de `.lia`, monte a arte com `createElementNS` a partir de `window.LiaArt`
 
 ## Props e poses da Onda 2 (lia-props-art.js)
 Fonte: `lia-props.svg`. `build-lia-art.mjs` gera `lia-props-art.js` com o mesmo gerador do `lia-art.js` e expoe `window.LIA_PROPS_ART = { viewBox, tree }` (UMD, com `module.exports`). Carregue por `<script>` sob demanda (a CSP nao permite `fetch`). Orcamento: 16 KB (hoje 4,9 KB).
-Regras do arquivo: cada no de topo e um `<g id="lia-pv-*">`. `data-cena` (1-7); `data-pai` = `svg` (raiz do `.lia-svg`, coordenadas do viewBox 200x300) ou um id existente de `lia.svg` (coordenadas do proprio grupo); `data-posicao="primeiro"` = inserir antes de `#lia-body` (atras da Lia). So as tags `g path rect circle ellipse`; sem `style`, `on*`, `xmlns` nem `use`.
+Regras do arquivo: cada no de topo e um `<g id="lia-pv-*">`. `data-cena` (1-7); `data-pai` = `svg` (raiz do `.lia-svg`, coordenadas do viewBox 200x300) ou um id existente de `lia.svg` (coordenadas do proprio grupo); `data-posicao="primeiro"` = inserir antes de `#lia-body` (atras da Guia). So as tags `g path rect circle ellipse`; sem `style`, `on*`, `xmlns` nem `use`.
 Para o `build-lia-art.mjs` falhar: id fora de `lia-pv-*`, id repetido (de topo ou aninhado), id ja existente em `lia.svg`, `data-cena` fora de 1-7 ou `data-pai` invalido.
 
 ### Contrato de ids
 | id | o que e | cena | pai | como aparece |
 |---|---|---|---|---|
-| `lia-pv-veu` | veu escuro atras do corpo (opacity 0 ate 0,35) | 5 | svg, primeiro | com o balao; recortado pelo cartao da Lia (`.lia[data-extras~="veu"]` em `lia.css`), nao pelo palco inteiro (desvio aceito pelo dono) |
+| `lia-pv-veu` | veu escuro atras do corpo (opacity 0 ate 0,35) | 5 | svg, primeiro | com o balao; recortado pelo cartao da Guia (`.lia[data-extras~="veu"]` em `lia.css`), nao pelo palco inteiro (desvio aceito pelo dono) |
 | `lia-pv-liquido-b` | liquido 2 (ambar) do frasco | 1 | `#lia-prop-flask` | com `data-prop="flask"`; troca de cor por opacity; acompanha o chacoalhar do frasco |
 | `lia-pv-bolha-1`, `-2`, `-3` | bolhas no liquido | 1 | `#lia-prop-flask` | sobem e somem (translateY + opacity) |
 | `lia-pv-monitor` | moldura do monitor; filhos `lia-pv-ecg` (traco) e `lia-pv-coracao` (ponto) | 2 | svg | com `data-prop="none"` e `data-arm-right="point"` |
@@ -113,7 +113,7 @@ As pecas usam as classes da paleta que ja existem (`p k c h a t s n rd`) e quatr
 `--laift-danger` ja muda no escuro (tokens). A copia de referencia usada na prova esta em `preview-props.css`.
 
 ### Pose de costas (regra para lia.css e S2)
-Ocultar `#lia-eyes-*`, `#lia-brows-*`, `#lia-mouth-*`, `#lia-lock`, `#lia-glasses`, `.bl` e `#lia-coat > path.a` (lapela). Inserir `lia-pv-costas-cabeca` e `lia-pv-costas-costura`. A Lia fica com `data-state="suspended"` (opacidade 0,55). Sobreposicoes e nao um corpo copiado: assim a pose segue os `--lia-*`.
+Ocultar `#lia-eyes-*`, `#lia-brows-*`, `#lia-mouth-*`, `#lia-lock`, `#lia-glasses`, `.bl` e `#lia-coat > path.a` (lapela). Inserir `lia-pv-costas-cabeca` e `lia-pv-costas-costura`. A Guia fica com `data-state="suspended"` (opacidade 0,55). Sobreposicoes e nao um corpo copiado: assim a pose segue os `--lia-*`.
 
 ### Animacao, CSP e carregamento
 - Origem de transformacao: ajuste pelo CSSOM (nao use `style` no atributo, a CSP bloqueia). `transform-box: fill-box` com origem na base em `lia-pv-liquido-b` e `#lia-prop-thermometer path.g`; origem `0% 50%` (esquerda) em `lia-pv-ecg` e `lia-pv-folha`; centro em `lia-pv-aviso`, `lia-pv-estrela` e `#lia-prop-skeleton`.
@@ -126,9 +126,9 @@ Ocultar `#lia-eyes-*`, `#lia-brows-*`, `#lia-mouth-*`, `#lia-lock`, `#lia-glasse
 - Revisao: `preview-ondas.html` (cenas) e `preview-props.html` (prova de fidelidade: cada id isolado e as composicoes finais).
 
 ## Codigo das ondas 2-4 (S2)
-Ordem dos scripts em `index.html`: `lia-art`, `lia-states`, `lia-mood`, `lia-anim`, `lia-props`, `lia-scenes`, `lia`. Tudo opcional para a Lia base: sem `LiaProps` ou `LiaScenes`, ou com a arte das props ainda carregando, a Lia segue como na onda 1.
-- `lia-states.js`: `planFor(contexto)` devolve `{ extras, sceneExtras, scene, late }`. `extras` entram com o contexto e ficam; `sceneExtras` so existem durante a animacao; `late` = a cena comeca quando a arte chegar. O `aria-label` e o do contexto (um por estado; o e2e `assistant` confere "Lia emitiu um alerta", "Lia esta suspensa" e "Lia" depois da redencao). Contextos novos: `redeem` (pose final da cena 6) e `warning` (preocupada, cena 5). Plano: `warning` (veu, cruzados, aviso), `suspended` (costas), `redeem` (costas so na animacao), `confused`, `lab`, `clinic`, `atlas`, `learn`.
-- `lia-props.js`: `load()` injeta UM `<script>` de `lia-props-art.js` (mesma origem), com cache; falha = Lia base, sem erro visivel (nova tentativa so apos 60 s). `createSet(svg)` monta as pecas nos pais de `data-pai` (`primeiro` = antes de `#lia-body`) e as tira do DOM ao sair. O host ganha `data-extras="nome nome"`: e o gancho do `lia.css` (costas, bracos cruzados, recorte do veu). A Lia da bolha (`crop: 'head'`) nunca recebe pecas nem cenas.
+Ordem dos scripts em `index.html`: `lia-art`, `lia-states`, `lia-mood`, `lia-anim`, `lia-props`, `lia-scenes`, `lia`. Tudo opcional para a Guia base: sem `LiaProps` ou `LiaScenes`, ou com a arte das props ainda carregando, a Guia segue como na onda 1.
+- `lia-states.js`: `planFor(contexto)` devolve `{ extras, sceneExtras, scene, late }`. `extras` entram com o contexto e ficam; `sceneExtras` so existem durante a animacao; `late` = a cena comeca quando a arte chegar. O `aria-label` e o do contexto (um por estado; o e2e `assistant` confere "Guia emitiu um alerta", "Guia esta suspensa" e "Guia" depois da redencao). Contextos novos: `redeem` (pose final da cena 6) e `warning` (preocupada, cena 5). Plano: `warning` (veu, cruzados, aviso), `suspended` (costas), `redeem` (costas so na animacao), `confused`, `lab`, `clinic`, `atlas`, `learn`.
+- `lia-props.js`: `load()` injeta UM `<script>` de `lia-props-art.js` (mesma origem), com cache; falha = Guia base, sem erro visivel (nova tentativa so apos 60 s). `createSet(svg)` monta as pecas nos pais de `data-pai` (`primeiro` = antes de `#lia-body`) e as tira do DOM ao sair. O host ganha `data-extras="nome nome"`: e o gancho do `lia.css` (costas, bracos cruzados, recorte do veu). A Guia da bolha (`crop: 'head'`) nunca recebe pecas nem cenas.
 - `lia-scenes.js`: as 7 linhas do tempo de `preview-ondas.js` (`lab`, `clinic`, `atlas`, `learn`, `warning`, `redeem`, `confused`), em WAAPI com `fill: both`: a pose final dura ate o proximo estado. Passos trocam `data-*` do host e removem pecas. Movimento reduzido = animacoes terminadas na hora e todos os passos aplicados (pose final). Origens de transformacao por CSSOM, nunca `style` no atributo.
 - Redencao: `Lia.redeem()` toca a cena 6 (de costas -> gira em escala X -> de frente, sorri, coracoes) se as costas e `LiaScenes` estiverem prontos; senao, o aceno da onda 1.
 - `assistant-typing.js` (fora desta pasta): digitacao do balao; leitor de tela recebe o texto completo de uma vez.

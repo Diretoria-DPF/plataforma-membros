@@ -23,7 +23,7 @@ const VISITOR = { profileId: '55555555-5555-4555-8555-555555555555', role: 'visi
 let db;
 let sql;
 
-async function seedMessage(profileId, { source = 'kb', answer = 'Resposta de Guia.', createdAt = null } = {}) {
+async function seedMessage(profileId, { source = 'kb', answer = 'Resposta da Guia.', createdAt = null } = {}) {
   const res = await db.query(
     `INSERT INTO assistant_messages (profile_id, question_hash, topic, source, answer, created_at)
      VALUES ($1, $2, 'eventos', $3, $4, COALESCE($5::timestamptz, now())) RETURNING id`,
@@ -105,7 +105,7 @@ describe('submitFeedback — autorização, ownership e upsert', () => {
   test('não avalia resposta de outra pessoa: mesma recusa de "não encontrada" e nada gravado', async () => {
     const msgDeB = await seedMessage(B);
     await expect(F.submitFeedback(sql, MEMBER_A, { messageId: msgDeB, rating: 'up' }, CID))
-      .rejects.toMatchObject({ name: 'NotFoundError', message: 'Resposta de Guia não encontrada.' });
+      .rejects.toMatchObject({ name: 'NotFoundError', message: 'Resposta da Guia não encontrada.' });
     expect(await countRows('assistant_feedback')).toBe(0);
   });
 
@@ -124,7 +124,7 @@ describe('submitFeedback — autorização, ownership e upsert', () => {
 describe('submitFeedback — validação e texto puro', () => {
   test.each([
     ['avaliação fora de up/down', { rating: 'talvez' }, 'Avaliação inválida.'],
-    ['id que não é UUID', { messageId: 'abc', rating: 'up' }, 'Resposta de Guia inválida.'],
+    ['id que não é UUID', { messageId: 'abc', rating: 'up' }, 'Resposta da Guia inválida.'],
     ['categoria fora da allowlist', { rating: 'up', category: 'inventada' }, 'Categoria inválida.'],
     ['comentário que não é texto', { rating: 'up', comment: 123 }, 'Comentário inválido.'],
   ])('recusa %s', async (_label, extra, message) => {
@@ -331,7 +331,7 @@ describe('listKbSources — fontes para citações', () => {
   test('lista distinta de source e section, sem conteúdo', async () => {
     await db.exec(`
       INSERT INTO kb_chunks (source, section, content, content_hash) VALUES
-        ('guia', 'O que Guia faz', 'texto longo do trecho', 'h1'),
+        ('guia', 'O que a Guia faz', 'texto longo do trecho', 'h1'),
         ('guia', 'Modo limitado', 'outro texto', 'h2'),
         ('destinos', 'Eventos', 'texto de destino', 'h3')`);
     const res = await F.listKbSources(sql);
@@ -339,7 +339,7 @@ describe('listKbSources — fontes para citações', () => {
     expect(res.sources).toEqual([
       { source: 'destinos', section: 'Eventos' },
       { source: 'guia', section: 'Modo limitado' },
-      { source: 'guia', section: 'O que Guia faz' },
+      { source: 'guia', section: 'O que a Guia faz' },
     ]);
     res.sources.forEach((s) => expect(Object.keys(s).sort()).toEqual(['section', 'source']));
   });

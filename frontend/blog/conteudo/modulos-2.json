@@ -111,8 +111,8 @@
     },
     {
       "slug": "lia-a-guia",
-      "titulo": "Guia da plataforma: o que faz",
-      "resumo": "Guia orienta você no app e leva você às telas certas. Quem está logado também conversa no chat.",
+      "titulo": "Guia da plataforma: o que ela faz",
+      "resumo": "A Guia orienta você no app e leva você às telas certas. Quem está logado também conversa com ela no chat.",
       "data": "2026-10-09",
       "atualizado_em": "2026-10-09",
       "tags": ["lia", "guia", "app"],
@@ -129,17 +129,17 @@
         "docs/blog/FATOS_VERIFICADOS_2026-10-09.md (checado em 2026-10-09)"
       ],
       "blocos": [
-        { "t": "p", "texto": "Guia da plataforma LAIFT explica onde estão as coisas no app e leva você até a tela que procura. É um bom ponto de partida quando você não sabe por onde começar." },
+        { "t": "p", "texto": "A Guia é a guia da plataforma LAIFT. Ela explica onde estão as coisas no app e leva você até a tela que procura. É um bom ponto de partida quando você não sabe por onde começar." },
         { "t": "h2", "texto": "O que você encontra" },
         { "t": "lista", "itens": [
           "Orientação sobre as áreas do app, como Aprender, Eventos e Mensagens.",
           "Atalhos que levam você direto à tela indicada.",
-          "Um chat com Guia, para quem está logado.",
-          "Um passo com Guia no roteiro de boas-vindas que aparece depois do login."
+          "Um chat com a Guia, para quem está logado.",
+          "Um passo com a Guia no roteiro de boas-vindas que aparece depois do login."
         ] },
         { "t": "h2", "texto": "Como usar" },
-        { "t": "p", "texto": "Entre na plataforma e abra Guia. Escreva a sua dúvida no chat. Você pode perguntar sobre as áreas do app, como Eventos, Propostas ou Perfil." },
-        { "t": "p", "texto": "Se Guia indicar uma tela, toque no atalho para ir até lá. Use Guia como um guia para achar o caminho certo dentro do app." },
+        { "t": "p", "texto": "Entre na plataforma e abra a Guia. Escreva a sua dúvida no chat. Você pode perguntar sobre as áreas do app, como Eventos, Propostas ou Perfil." },
+        { "t": "p", "texto": "Se a Guia indicar uma tela, toque no atalho para ir até lá. Use a Guia como um guia para achar o caminho certo dentro do app." },
         { "t": "p", "texto": "Quem ainda não entrou não tem acesso ao chat. Para conhecer a Liga antes, leia a [página da Liga](/liga.html). Depois, entre pelo [app](/index.html)." },
         { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
       ]

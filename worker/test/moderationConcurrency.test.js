@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * Moderação de Guia sob concorrência (banco real, PGlite). O driver HTTP do Neon não tem
+ * Moderação da Guia sob concorrência (banco real, PGlite). O driver HTTP do Neon não tem
  * transação interativa: aqui se prova que incidentes, decaimento e redenção paralelos não
  * perdem atualização nem furam o cooldown. Cada teste dispara as chamadas com Promise.all.
  */

@@ -1,14 +1,14 @@
-# Jev (TypeSafe AI) na Lia: intenção e roteiro
+# Jev (TypeSafe AI) na Guia: intenção e roteiro
 
 Registrado em 2026-10-09. **Nada disto está implementado.** É a intenção do dono, guardada para qualquer chat retomar.
-Fatos pesquisados (API, preço, retenção, acesso): `docs/lia/pesquisa/SELECAO.md` §1. Plano da Lia: `docs/lia/PLANO.md` §3.
+Fatos pesquisados (API, preço, retenção, acesso): `docs/lia/pesquisa/SELECAO.md` §1. Plano da Guia: `docs/lia/PLANO.md` §3.
 
 ## 1. Decisão do dono (2026-10-09)
 - "jev" é o **Jev, da TypeSafe AI** (identidade confirmada pelo dono).
 - O dono diz que há **modelos em formato gratuito no GitHub**. Isso **não foi verificado**: falta achar o repositório, a licença, o
   tamanho e o suporte a português.
 - Quer usar **a arquitetura ou o próprio serviço** para a plataforma ter "uma direção maior, uma linha de raciocínio maior" do que o
-  LLM que a Lia usa hoje.
+  LLM que a Guia usa hoje.
 - Por ora: **só registrar**. Integrar no futuro, depois de verificar as possibilidades.
 
 ## 2. O que já existe no código para receber o Jev
@@ -50,7 +50,7 @@ Fatos pesquisados (API, preço, retenção, acesso): `docs/lia/pesquisa/SELECAO.
 ## 7. Ficha J2 (esboço do adaptador, só depois do OK)
 - Dono: Haiku 5.5, ≤ 3 arquivos: `worker/src/services/rerankService.js` (provedor `'jev'`), `worker/src/research/jevClient.js` (novo, `fetch` com
   timeout, sem retry em loop), `worker/test/jevClient.test.js`.
-- Flag nova `jev_enabled`, **desligada**; se falhar ou estourar o tempo, cai no `workers-ai` e, depois, na fusão RRF (a Lia nunca fica sem resposta).
+- Flag nova `jev_enabled`, **desligada**; se falhar ou estourar o tempo, cai no `workers-ai` e, depois, na fusão RRF (a Guia nunca fica sem resposta).
 - Aceite: `cd worker && npm test -- -i` verde; teste do golden set; nenhum segredo no diff.
 - Ligar a flag: só o dono, em staging primeiro, depois produção, com a PR de Política mesclada.
 

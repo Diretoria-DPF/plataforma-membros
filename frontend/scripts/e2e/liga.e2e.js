@@ -53,7 +53,7 @@ const LINKS_DA_BARRA = ['./', 'blog.html', '/biblioteca', './#entrar', './#cadas
 const REGEX_HREF_BLOG = /^blog\/[a-z0-9-]+\.html$/;
 const SELOS_NOVIDADE = ['Nova publicação no blog', ''];
 const MAPA_EMBED = 'https://www.openstreetmap.org/export/embed.html?bbox=';
-// Imagem de Guia que outra ficha cria: se ela ainda não existir, o 404 é ignorado.
+// Imagem da Guia que outra ficha cria: se ela ainda não existir, o 404 é ignorado.
 const IMAGEM_OPCIONAL = 'lia-estatica.svg';
 const APARELHO_IPHONE = {
   ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',

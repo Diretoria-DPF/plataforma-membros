@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Digitação do balão de Guia (frontend/assistant-typing.js): caractere a caractere em requestAnimationFrame,
+// Digitação do balão da Guia (frontend/assistant-typing.js): caractere a caractere em requestAnimationFrame,
 // tempo limitado, texto completo para o leitor de tela de uma vez, texto inteiro com movimento reduzido.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -121,14 +122,14 @@ test('sem movimento reduzido: o balão digita em quadros e termina com o texto i
 test('leitor de tela: o texto completo entra de uma vez num trecho só para leitores; a camada que digita é aria-hidden', () => {
   const win = fakeWin();
   const bubble = fakeNode('p');
-  Typing.render(doc, bubble, 'Resposta completa de Guia.', { win });
-  assert.equal(srOnly(bubble).textContent, 'Resposta completa de Guia.');
+  Typing.render(doc, bubble, 'Resposta completa da Guia.', { win });
+  assert.equal(srOnly(bubble).textContent, 'Resposta completa da Guia.');
   assert.equal(layer(bubble).attrs['aria-hidden'], 'true');
   assert.equal(srOnly(bubble).attrs['aria-hidden'], undefined);
   assert.equal(spans(bubble).length, 2);
   win.tick(0);
   win.tick(60);
-  assert.equal(srOnly(bubble).textContent, 'Resposta completa de Guia.', 'o trecho dos leitores nunca muda durante a digitação');
+  assert.equal(srOnly(bubble).textContent, 'Resposta completa da Guia.', 'o trecho dos leitores nunca muda durante a digitação');
 });
 
 test('a parte ainda não digitada fica transparente (opacity por CSSOM) e ocupa o lugar dela', () => {
@@ -229,9 +230,7 @@ test('assistant.js: só respostas novas digitam e o que vem depois do balão fic
   assert.match(src, /finishTyping\(\); \/\/ a resposta anterior termina/);
 });
 
-test('index.html carrega assistant-typing.js antes de assistant.js', () => {
-  const html = fs.readFileSync(path.join(frontend, 'index.html'), 'utf8');
-  const typing = html.indexOf('<script src="assistant-typing.js" defer></script>');
-  const assistant = html.indexOf('<script src="assistant.js" defer></script>');
-  assert.ok(typing > 0 && assistant > typing);
+test('o pacote da Guia carrega assistant-typing.js antes de assistant.js (sob demanda)', () => {
+  assertSobDemanda('lia', 'assistant-typing.js');
+  assertAntes('lia', 'assistant-typing.js', 'assistant.js');
 });

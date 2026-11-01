@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Guia da plataforma: botão flutuante + painel de conversa que orienta e leva até a tela certa. Guia NÃO
+// Guia da plataforma: botão flutuante + painel de conversa que orienta e leva até a tela certa. Ela NÃO
 // altera dados: os botões só navegam (abrir tela, módulo de estudo, crachá) e só existem se o destino estiver na
 // lista branca abaixo, IGUAL à do servidor (worker/src/assistant/targets.js; o teste assistant.test.mjs confere).
 // O texto da resposta entra por textContent. A conversa fica só na memória da página (nada vai para o
@@ -28,8 +28,8 @@
   var ERROR_TEXT = 'Não consegui responder agora. Tente de novo em instantes.';
   var DEGRADED_TEXT = 'Resposta aproximada: a IA está indisponível no momento.';
   var PANEL_LIA_SIZE = 72; // px de largura do corpo inteiro no cabeçalho (altura ≈ 108 px, proporção 2:3)
-  var SPEAK_MS = 2500; // depois da resposta, Guia fica falando por este tempo e volta ao repouso
-  var WARNING_HOLD_MS = 8000; // aviso de moderação (braços cruzados e balão): a pose dura isto e Guia volta ao repouso
+  var SPEAK_MS = 2500; // depois da resposta, a Guia fica falando por este tempo e volta ao repouso
+  var WARNING_HOLD_MS = 8000; // aviso de moderação (braços cruzados e balão): a pose dura isto e a Guia volta ao repouso
   var REDEEM_REST_MS = 4500; // redenção aceita: a cena (2,2 s) e um tempo de sorriso, depois repouso
   var MODULE_BY_PANEL = { 'panel-events': 'events', 'panel-proposals': 'proposals', 'panel-learn': 'learn' };
 
@@ -72,7 +72,7 @@
   // Fontes e convite: assistant-sources.js (no navegador vem de window; no Node, dos testes, de require).
   var Sources = root.LaiftAssistantSources || (typeof require === 'function' ? require('./assistant-sources.js') : null);
   var Suggestions = root.LaiftAssistantSuggestions || (typeof require === 'function' ? require('./assistant-suggestions.js') : null);
-  /** As últimas 8 perguntas DA PESSOA (sugestões por tela: assistant-suggestions.js); as respostas de Guia nunca voltam. */
+  /** As últimas 8 perguntas DA PESSOA (sugestões por tela: assistant-suggestions.js); as respostas da Guia nunca voltam. */
   function pickHistory(messages) {
     return (messages || [])
       .filter(function (m) { return m && m.role === 'user' && typeof m.text === 'string' && m.text; })
@@ -121,14 +121,14 @@
     return !!(state && state.profile && state.profile.role === 'admin');
   }
 
-  /** Monta Guia em `parent` (tom laranja para admin). Sem window.Lia, devolve null e a UI segue sem Guia. */
+  /** Monta a Guia em `parent` (tom laranja para admin). Sem window.Lia, devolve null e a UI segue sem ela. */
   function mountLia(parent, extra) {
     var api = liaApi();
     if (!api) return null;
     return api.mount(parent, Object.assign({ tone: isAdmin() ? 'admin' : undefined }, extra));
   }
 
-  /** Desmonta Guia: cancela as animações pendentes e tira o elemento do DOM. Devolve null para reatribuir. */
+  /** Desmonta a Guia: cancela as animações pendentes e tira o elemento do DOM. Devolve null para reatribuir. */
   function destroyLia(inst) {
     if (inst) {
       if (root.LiaAnim && typeof root.LiaAnim.destroy === 'function') root.LiaAnim.destroy(inst.element);
@@ -142,7 +142,7 @@
     ui.restTimer = null;
   }
 
-  /** Aplica um método de Guia nas instâncias montadas (bolha e painel). Toda reação cancela o repouso pendente. */
+  /** Aplica um método da Guia nas instâncias montadas (bolha e painel). Toda reação cancela o repouso pendente. */
   function reactLia(method) {
     clearRestTimer();
     ui.idle.disarm(); // qualquer reação suspende as micro-poses idle
@@ -152,19 +152,19 @@
     });
   }
 
-  /** Resposta chegou: Guia fala e volta ao repouso, se nada mais acontecer antes. */
+  /** Resposta chegou: a Guia fala e volta ao repouso, se nada mais acontecer antes. */
   function speakThenRest() {
     reactLia('say');
     ui.restTimer = root.setTimeout(function () { reactLia('setState', 'idle'); ui.idle.arm(); }, SPEAK_MS);
   }
 
-  /** Depois de `ms`, Guia volta ao repouso da tela (módulo) ou à suspensão, se nada mais acontecer antes. */
+  /** Depois de `ms`, a Guia volta ao repouso da tela (módulo) ou à suspensão, se nada mais acontecer antes. */
   function restAfter(ms) {
     clearRestTimer();
     ui.restTimer = root.setTimeout(function () { ui.restTimer = null; restLiaState(); }, ms);
   }
 
-  /** Aviso de moderação: nível 2 = braços cruzados e balão vermelho (cena 5); nível 1 = atenta. Depois Guia relaxa. */
+  /** Aviso de moderação: nível 2 = braços cruzados e balão vermelho (cena 5); nível 1 = atenta. Depois a Guia relaxa. */
   function warnLia(level) {
     reactLia('setState', level === 2 ? 'warning' : 'alert');
     restAfter(WARNING_HOLD_MS);
@@ -179,12 +179,12 @@
     return Object.prototype.hasOwnProperty.call(MODULE_BY_PANEL, panelId) ? MODULE_BY_PANEL[panelId] : '';
   }
 
-  /** Dica contextual (assistant-hints.js, opcional): sem o módulo, Guia segue igual. */
+  /** Dica contextual (assistant-hints.js, opcional): sem o módulo, a Guia segue igual. */
   function hint(method, arg) {
     return ui && ui.hints ? ui.hints[method](arg) : undefined;
   }
 
-  /** O que decide se a dica aparece: Guia ligado, painel de Guia fechado e sem suspensão. */
+  /** O que decide se a dica aparece: Guia ligada, painel da Guia fechado e sem suspensão. */
   function hintFlags() {
     return { chatbot_enabled: ui.enabled, panelOpen: ui.open, moderated: ui.moderation.isSuspended() };
   }
@@ -199,7 +199,7 @@
     if (!ui.launcherLia) ui.launcherLia = mountLia(ui.launcherFigure, { crop: 'head' });
   }
 
-  /** Repouso de Guia: suspensa enquanto o chat estiver suspenso; senão, reage à tela atual. */
+  /** Repouso da Guia: suspensa enquanto o chat estiver suspenso; senão, reage à tela atual. */
   function restLiaState() {
     if (ui.moderation.isSuspended()) reactLia('suspend');
     else { reactLia('react', hint('context') || moduleOf(currentPanel())); ui.idle.arm(); }
@@ -219,7 +219,7 @@
 
   function runAction(action) {
     var app = ui.app;
-    // O botão clicado some junto com o painel: o foco vai para o botão de Guia, que continua
+    // O botão clicado some junto com o painel: o foco vai para o botão da Guia, que continua
     // na tela, para o crachá (ou o teclado) ter onde voltar depois.
     ui.launcher.focus({ preventScroll: true });
     closePanel(false);
@@ -253,10 +253,10 @@
     return root.LaiftAssistantTurnstile || { withToken: function (p) { return p; }, wanted: function () { return false; }, sync: function () { return null; } };
   }
 
-  // Micro-card de feedback: módulo opcional (assistant-feedback.js). Sem ele, Guia funciona igual.
+  // Micro-card de feedback: módulo opcional (assistant-feedback.js). Sem ele, a Guia funciona igual.
   function feedbackLib() { return root.LaiftAssistantFeedback || null; }
 
-  // Pesquisa externa e referências (assistant-research.js, opcional): sem o módulo, Guia segue igual.
+  // Pesquisa externa e referências (assistant-research.js, opcional): sem o módulo, a Guia segue igual.
   function researchLib() { var lib = root.LaiftAssistantResearch; return lib && typeof lib === 'object' ? lib : null; }
 
   /** Moderação (assistant-moderation.js): obrigatória, carregada antes deste arquivo. */
@@ -264,7 +264,7 @@
 
   /** Humor da sessão (assistant-mood-glue.js, antes deste arquivo). Fica só em ui.mood, na memória. */
   function moodLib() { return root.AssistantMood; }
-  /** Frase fixa de Guia; no tom reflexivo ganha uma variação na frente. */
+  /** Frase fixa da Guia; no tom reflexivo ganha uma variação na frente. */
   function fixedLine(kind, text) { var out = moodLib().fixedLine(ui.mood, kind, text, Math.random); ui.mood = out.session; return out.text; }
 
   function feedbackFlag(flags) {
@@ -302,7 +302,7 @@
     if (card) wrap.appendChild(card);
   }
 
-  /** Digitação (assistant-typing.js, opcional): só respostas novas de Guia. Devolve a lista a revelar no fim. */
+  /** Digitação (assistant-typing.js, opcional): só respostas novas da Guia. Devolve a lista a revelar no fim. */
   function typingLib() { return root.AssistantTyping || null; }
 
   /** Termina já todo balão que ainda digita (nova pergunta, painel fechado, conversa zerada). */
@@ -388,7 +388,7 @@
     scrollToEnd();
   }
 
-  /** Campo e envio: presos enquanto Guia responde (envio) ou quando o chat está suspenso (os dois). */
+  /** Campo e envio: presos enquanto a Guia responde (envio) ou quando o chat está suspenso (os dois). */
   function syncInputs() {
     var suspended = ui.moderation.isSuspended();
     ui.input.disabled = suspended;
@@ -458,7 +458,7 @@
     });
   }
 
-  /** Reações de Guia depois da resposta: suspensão, aviso, resposta aproximada ou fala. */
+  /** Reações da Guia depois da resposta: suspensão, aviso, resposta aproximada ou fala. */
   function reactToReply(mod, res) {
     if (mod.mode === 'suspended') {
       ui.moderation.suspend(mod.until, 0);
@@ -486,7 +486,7 @@
     addMessage({ role: 'lia', text: lib.PRIVACY_HINT });
   }
 
-  /** Pesquisa desligada no servidor: Guia só diz a frase, sem estado de falha, sem botão e sem mexer no lançador. */
+  /** Pesquisa desligada no servidor: a Guia só diz a frase, sem estado de falha, sem botão e sem mexer no lançador. */
   function showOffReply(res) {
     ui.researchOff = true;
     addMessage({ role: 'lia', text: clip(res.reply, 2000) || ERROR_TEXT, typing: true });
@@ -542,7 +542,7 @@
   function openPanel() {
     if (!ui.enabled) return;
     if (token() !== ui.lastToken) { refresh(); return; } // conta diferente da última conversa: zera antes de abrir
-    hint('hide'); // a dica some quando Guia abre
+    hint('hide'); // a dica some quando a Guia abre
     ui.panel.classList.remove('hidden');
     ui.launcher.setAttribute('aria-expanded', 'true');
     ui.open = true;
@@ -585,7 +585,7 @@
     ui.moderation.reset();
   }
 
-  /** Botão flutuante de Guia: a bolha fechada mostra só a cabeça (crop 'head'). */
+  /** Botão flutuante da Guia: a bolha fechada mostra só a cabeça (crop 'head'). */
   function buildLauncher(doc) {
     var button = el(doc, 'button', 'lia-launcher hidden');
     button.type = 'button';
@@ -593,7 +593,7 @@
     button.setAttribute('aria-haspopup', 'dialog');
     button.setAttribute('aria-expanded', 'false');
     button.setAttribute('aria-controls', 'lia-panel');
-    button.setAttribute('aria-label', 'Abrir Guia');
+    button.setAttribute('aria-label', 'Abrir a Guia');
     var figure = el(doc, 'span', 'lia-launcher-figure');
     figure.setAttribute('aria-hidden', 'true'); // o botão já tem nome; a figura é só desenho
     button.appendChild(figure);
@@ -601,7 +601,7 @@
     return { button: button, figure: figure };
   }
 
-  /** Cabeçalho do painel: Guia de corpo inteiro, o título e o botão de fechar. */
+  /** Cabeçalho do painel: a Guia de corpo inteiro, o título e o botão de fechar. */
   function buildHead(doc) {
     var node = el(doc, 'header', 'lia-head');
     var figure = el(doc, 'span', 'lia-head-figure');
@@ -612,15 +612,15 @@
     node.appendChild(title);
     var close = el(doc, 'button', 'lia-close', '×');
     close.type = 'button';
-    close.setAttribute('aria-label', 'Fechar Guia');
+    close.setAttribute('aria-label', 'Fechar a Guia');
     node.appendChild(close);
     return { node: node, figure: figure, close: close };
   }
 
-  /** Campo da pergunta e botão Enviar (o envio fica preso enquanto Guia responde). */
+  /** Campo da pergunta e botão Enviar (o envio fica preso enquanto a Guia responde). */
   function buildComposer(doc) {
     var form = el(doc, 'form', 'lia-form');
-    var label = el(doc, 'label', 'visually-hidden', 'Pergunte a Guia');
+    var label = el(doc, 'label', 'visually-hidden', 'Pergunte à Guia');
     label.setAttribute('for', 'lia-input');
     var input = el(doc, 'input');
     input.id = 'lia-input';
@@ -645,13 +645,13 @@
       restLia: function () { restLiaState(); },
       lia: function (method) {
         reactLia(method);
-        if (method === 'redeem') restAfter(REDEEM_REST_MS); // a cena dura ~2 s; depois Guia volta ao repouso da tela
+        if (method === 'redeem') restAfter(REDEEM_REST_MS); // a cena dura ~2 s; depois a Guia volta ao repouso da tela
       },
       note: function (text) { addMessage({ role: 'lia', text: fixedLine('confirmation', text) }); },
     };
   }
 
-  /** Monta Guia: bolha, painel (cabeçalho, conversa, moderação e campo) e os eventos. */
+  /** Monta a Guia: bolha, painel (cabeçalho, conversa, moderação e campo) e os eventos. */
   function build(app, doc) {
     var launcher = buildLauncher(doc);
     var head = buildHead(doc);
@@ -664,7 +664,7 @@
     log.id = 'lia-log';
     log.setAttribute('role', 'log');
     log.setAttribute('aria-live', 'polite');
-    var note = el(doc, 'p', 'lia-note', 'Guia orienta e leva às telas; não altera seus dados. Arraste Guia (ou use Alt + setas) para mudar de lugar.');
+    var note = el(doc, 'p', 'lia-note', 'A Guia orienta e leva às telas; ela não altera seus dados. Arraste a Guia (ou use Alt + setas) para mudar de lugar.');
     var moderation = modLib().createModeration(moderationContext(app, doc, composer.input, panel));
     [head.node, log, moderation.root, composer.form, note].forEach(function (node) { panel.appendChild(node); });
     doc.body.appendChild(launcher.button);
@@ -702,7 +702,7 @@
       ui.mood = moodLib().newSession(); // humor da sessão: nasce com a conta e some com ela
       resetConversation();
       closePanel(false);
-      ui.launcherLia = destroyLia(ui.launcherLia); // Guia da conta anterior não fica montada (tom e listeners)
+      ui.launcherLia = destroyLia(ui.launcherLia); // a Guia da conta anterior não fica montada (tom e listeners)
     }
     var id = ++ui.refreshId;
     var inApp = ui.doc.getElementById('app-root');
@@ -752,7 +752,7 @@
     module.exports = api;
   } else {
     root.LaiftAssistant = api;
-    if (root.document.readyState === 'complete') start();
+    if (root.document.readyState !== 'loading') start(); // carregada sob demanda (lazy-bundles.js): o DOM já está pronto
     else root.document.addEventListener('DOMContentLoaded', start);
   }
 })(typeof window !== 'undefined' ? window : globalThis);

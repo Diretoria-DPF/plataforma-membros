@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * entrada.e2e.js — tela de entrada (#screen-welcome) em cartões, sem Guia do hero.
+ * entrada.e2e.js — tela de entrada (#screen-welcome) em cartões, sem a Guia do hero.
  * Substitui hero-ux2.e2e.js (apagado). Roda sobre o BUILD (frontend/dist/), sem login.
  * Cenários: claro e escuro em 375x812 e 1280x800 com as flags ligadas; 375 claro com as flags
  * desligadas; 375 escuro com movimento reduzido. Fotos: .shots/entrada-<tema>-<largura>x<altura>.png.
@@ -57,7 +57,7 @@ function lerTela(seletorLia) {
   };
 }
 
-/** Guia flutuante e alvos que Guia pode cobrir (chamada com a rolagem no fim). */
+/** Guia flutuante e alvos que ela pode cobrir (chamada com a rolagem no fim). */
 function lerLiaNoFimDaRolagem() {
   const r = (el) => {
     const b = el.getBoundingClientRect();
@@ -128,7 +128,7 @@ function verificarBlocos(s, rotulo, largura) {
 /** Conferências da tela: Guia fora do topo, cartões, botões, aviso, rolagem. */
 async function verificarTela(page, s, rotulo, flags, largura) {
   check(s.visivel, `${rotulo}: tela de entrada visível`);
-  check(s.liaNaTela === 0, `${rotulo}: nenhum Guia no topo da tela de entrada (achou ${s.liaNaTela})`);
+  check(s.liaNaTela === 0, `${rotulo}: nenhuma Guia no topo da tela de entrada (achou ${s.liaNaTela})`);
   check(s.h1.length === 1 && s.h1[0] === 'Entrar', `${rotulo}: um único h1 "Entrar" (achou ${JSON.stringify(s.h1)})`);
   check(JSON.stringify(s.blocos) === JSON.stringify(['div', 'nav.welcome-liga']),
     `${rotulo}: dois cartões, login (div) e atalhos (nav.welcome-liga) (achou ${JSON.stringify(s.blocos)})`);
@@ -149,16 +149,16 @@ async function verificarTela(page, s, rotulo, flags, largura) {
   verificarBlocos(s, rotulo, largura);
 }
 
-/** Com a rolagem no fim, Guia flutuante não pode cobrir botões nem a publicação. */
+/** Com a rolagem no fim, a Guia flutuante não pode cobrir botões nem a publicação. */
 async function verificarLiaNoFim(page, rotulo) {
   await page.evaluate(() => window.scrollTo(0, document.scrollingElement.scrollHeight));
   await page.waitForTimeout(250);
   const { lancador, alvos } = await page.evaluate(lerLiaNoFimDaRolagem);
   await page.evaluate(() => window.scrollTo(0, 0));
-  check(lancador !== null, `${rotulo}: botão flutuante de Guia (#lia-launcher) visível`);
+  check(lancador !== null, `${rotulo}: botão flutuante da Guia (#lia-launcher) visível`);
   const cobertos = alvos.filter((a) => cruzam(lancador, a)).map((a) => a.nome);
   check(lancador !== null && cobertos.length === 0,
-    `${rotulo}: no fim da rolagem Guia não cobre botões nem a publicação (${cobertos.join(' | ') || 'nada coberto'})`);
+    `${rotulo}: no fim da rolagem a Guia não cobre botões nem a publicação (${cobertos.join(' | ') || 'nada coberto'})`);
 }
 
 /** Violações de CSP e erros de JavaScript da página. */
@@ -189,7 +189,7 @@ async function cenarioComFlags(cen) {
   }
 }
 
-/** Flags desligadas (375 claro): sem botão de Guia, sem aviso, mesmos cartões. */
+/** Flags desligadas (375 claro): sem botão da Guia, sem aviso, mesmos cartões. */
 async function cenarioSemFlags() {
   const rotulo = 'claro/375x812 (flags desligadas)';
   console.log(`\n▶ ${rotulo}`);
@@ -202,7 +202,7 @@ async function cenarioSemFlags() {
     const s = await app.page.evaluate(lerTela, SELETOR_LIA_NA_TELA);
     await verificarTela(app.page, s, rotulo, FLAGS_OFF, 375);
     const lia = await app.page.locator('#lia-launcher:not(.hidden)').count();
-    check(lia === 0, `${rotulo}: sem chatbot, sem botão de Guia (achou ${lia})`);
+    check(lia === 0, `${rotulo}: sem chatbot, sem botão da Guia (achou ${lia})`);
     await verificarSaude(app, rotulo);
     await app.page.screenshot({ path: path.join(SHOTS_DIR, 'entrada-claro-375x812-sem-flags.png'), fullPage: true });
   } finally {

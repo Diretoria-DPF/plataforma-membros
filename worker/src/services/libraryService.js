@@ -287,9 +287,9 @@ export async function search(sql, identity, input = {}) {
 }
 
 /**
- * Busca de Guia (services/liaLibraryService.js): a MESMA consulta da busca do catálogo (só `publicado`, português
+ * Busca da Guia (services/liaLibraryService.js): a MESMA consulta da busca do catálogo (só `publicado`, português
  * primeiro, todos os termos), UMA consulta com LIMIT. Sem sessão e sem o limite de buscas da pessoa: quem chama
- * (Guia) já tem o próprio limite de mensagens e confere as flags. Itens no formato PÚBLICO (sem indício de resumo).
+ * (a Guia) já tem o próprio limite de mensagens e confere as flags. Itens no formato PÚBLICO (sem indício de resumo).
  */
 export async function searchForLia(sql, query, limit) {
   const patterns = searchPatterns(query);

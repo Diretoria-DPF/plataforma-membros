@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Verificador da ficha S1 (tela de entrada em cartões, sem Guia do hero).
+// Verificador da ficha S1 (tela de entrada em cartões, sem a Guia do hero).
 // Uso, a partir da RAIZ do worktree: node docs/identidade/ajustes-2/verificadores/s1-entrada.js
 // Gera as capturas entrada-*.png em docs/identidade/ajustes-2/capturas/ (portão visual do dono).
 'use strict';
@@ -36,7 +36,7 @@ function estaticos() {
   const teste = fs.existsSync(path.join(v.FRONT, 'scripts', 'entrada.test.mjs')) ? v.lerFonte('scripts/entrada.test.mjs') : '';
   const e2e = fs.existsSync(path.join(v.FRONT, 'scripts', 'e2e', 'entrada.e2e.js')) ? v.lerFonte('scripts/e2e/entrada.e2e.js') : '';
   v.confere(/\btest\(/.test(teste) && teste.includes('Acessar blog') && teste.includes('hero'), 'scripts/entrada.test.mjs com testes de verdade (textos do dono e ausência do hero)');
-  v.confere(e2e.includes('lia-launcher') && e2e.includes('Acessar blog') && e2e.includes('module.exports'), 'scripts/e2e/entrada.e2e.js confere botões e Guia flutuante');
+  v.confere(e2e.includes('lia-launcher') && e2e.includes('Acessar blog') && e2e.includes('module.exports'), 'scripts/e2e/entrada.e2e.js confere botões e a Guia flutuante');
   v.confere(!v.lerFonte('styles.css').includes('.welcome-liga'), 'styles.css sem .welcome-liga (regras migraram para ux.css)');
   for (const morto of ['hero.js', 'scripts/hero.test.mjs', 'scripts/e2e/hero-ux2.e2e.js']) {
     v.confere(!fs.existsSync(path.join(v.FRONT, morto)), `${morto} removido`);
@@ -81,7 +81,7 @@ async function cenario(app, c, flags, nomeCaptura) {
     if (flags.chatbot_enabled) await page.waitForSelector('#lia-launcher:not(.hidden)', { timeout: 8000 }).catch(() => null);
     const s = await page.evaluate(lerTela);
     v.confere(s.visivel, `${onde}: #screen-welcome visível`);
-    v.confere(s.hero === 0, `${onde}: nenhum Guia dentro da tela de entrada (achou ${s.hero})`);
+    v.confere(s.hero === 0, `${onde}: nenhuma Guia dentro da tela de entrada (achou ${s.hero})`);
     v.confere(s.h1.length === 1 && s.h1[0] === 'Entrar', `${onde}: um h1 "Entrar" (achou ${JSON.stringify(s.h1)})`);
     v.confere(s.cartoes.length === 2 && s.cartoes[0] === 'div' && s.cartoes[1] === 'nav.welcome-liga', `${onde}: cartões div.auth-card + nav.auth-card.welcome-liga (achou ${JSON.stringify(s.cartoes)})`);
     v.confere(s.loginCompleto, `${onde}: cartão de login com formulário, Criar conta e Esqueci minha senha`);
@@ -113,12 +113,12 @@ async function cenario(app, c, flags, nomeCaptura) {
       const lancador = await page.evaluate(() => { const r = document.getElementById('lia-launcher')?.getBoundingClientRect(); return r && r.width ? { x: r.left, y: r.top, d: r.right, b: r.bottom } : null; });
       const alvos = await page.evaluate(() => Array.from(document.querySelectorAll('#form-login button[type="submit"], .welcome-liga__botao, .blog-novidade--faixa .blog-novidade__item'))
         .map((el) => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, d: r.right, b: r.bottom, nome: el.textContent.trim().slice(0, 24) }; }));
-      v.confere(lancador !== null, `${onde}: botão flutuante de Guia visível embaixo`);
+      v.confere(lancador !== null, `${onde}: botão flutuante da Guia visível embaixo`);
       const cobertos = alvos.filter((a) => v.cruzam(lancador, a)).map((a) => a.nome);
-      v.confere(cobertos.length === 0, `${onde}: no fim da rolagem Guia flutuante não cobre botões nem a publicação (${cobertos.join(' | ') || 'nada coberto'})`);
+      v.confere(cobertos.length === 0, `${onde}: no fim da rolagem a Guia flutuante não cobre botões nem a publicação (${cobertos.join(' | ') || 'nada coberto'})`);
       await page.evaluate(() => window.scrollTo(0, 0));
     } else {
-      v.confere(await page.locator('#lia-launcher:not(.hidden)').count() === 0, `${onde}: sem chatbot, sem botão de Guia`);
+      v.confere(await page.locator('#lia-launcher:not(.hidden)').count() === 0, `${onde}: sem chatbot, sem botão da Guia`);
     }
     v.confere(s.csp.length === 0, `${onde}: sem violação de CSP (${s.csp.join(' | ')})`);
     v.confere(erros.length === 0, `${onde}: sem erro de JavaScript (${erros.join(' | ')})`);

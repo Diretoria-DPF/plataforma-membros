@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * ragEval.test.js — golden set da base de Guia (test/fixtures/rag-eval.json).
+ * ragEval.test.js — golden set da base da Guia (test/fixtures/rag-eval.json).
  *
  * Mede a recuperação (ragService.retrieve) sobre o corpus REAL de assistant/docs.js,
  * em Postgres de verdade (PGlite, migrações reais) e SEM binding AI: só a busca
@@ -33,7 +33,7 @@ const POSITIVES = GOLD.filter((g) => g.secao !== null);
 const NEGATIVES = GOLD.filter((g) => g.secao === null);
 
 // Baseline medido DEPOIS da calibração de RAG.MIN_TRIGRAM_SCORE (constants.js) e com o golden set atual
-// (24 positivas, sendo 10 de cobertura de Guia): 13 de 24 com o negativo rejeitado. Com as 14 positivas
+// (24 positivas, sendo 10 de cobertura da Guia): 13 de 24 com o negativo rejeitado. Com as 14 positivas
 // da calibração era 5 de 14; antes dela, 11 de 14, aceitando o negativo.
 // 2026-10-09 (L06): golden set ampliado para 42 positivas (18 novas, 3 em cada fonte nova: plataforma,
 // modulos, publicacoes, processo, faq, saude) e 14 negativas (12 novas, fora do domínio): 21 de 42 (0,500),
@@ -43,7 +43,7 @@ const BASELINE_RECALL_AT_4 = 13 / 24;
 const RECALL_REGRESSION_TOLERANCE = 0.07;
 const RECALL_FLOOR = BASELINE_RECALL_AT_4 - RECALL_REGRESSION_TOLERANCE;
 
-describe('ragEval — golden set de Guia (trigramas, banco real)', () => {
+describe('ragEval — golden set da Guia (trigramas, banco real)', () => {
   let db;
   let sql;
   let docs;

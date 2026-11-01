@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * questionKind.test.js — guarda de intenção de Guia híbrida (assistant/questionKind.js) medida no golden set
+ * questionKind.test.js — guarda de intenção da Guia híbrida (assistant/questionKind.js) medida no golden set
  * (test/fixtures/lia-golden.json): o classificador acerta o tipo de TODAS as perguntas, e a guarda só deixa
  * responder por regra, numa pergunta de definição, as intenções marcadas `defines`.
  */
@@ -18,7 +18,7 @@ import { getTree, byId } from '../src/assistant/tree.js';
 const GOLDEN = JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), 'fixtures', 'lia-golden.json'), 'utf8'));
 const treeIds = byId(getTree());
 
-describe('golden set de Guia (lia-golden.json) — formato', () => {
+describe('golden set da Guia (lia-golden.json) — formato', () => {
   test('entre 70 e 120 perguntas, cada tipo bem representado, sem repetição', () => {
     expect(GOLDEN.length).toBeGreaterThanOrEqual(70);
     expect(GOLDEN.length).toBeLessThanOrEqual(120);
@@ -52,7 +52,7 @@ describe('golden set de Guia (lia-golden.json) — formato', () => {
       'O que é farmacocinética?',
       'O que posso fazer na plataforma?',
       'Quanto custa participar da liga?',
-      'Posso confiar em Guia para dúvidas clínicas?',
+      'Posso confiar na Guia para dúvidas clínicas?',
     ].forEach((q) => expect(asked.has(q)).toBe(true));
   });
 });
@@ -127,8 +127,8 @@ describe('resposta segura para pergunta clínica', () => {
   test('não dá dose nem conduta, remete a profissional e à emergência, e cita a seção de saúde', () => {
     expect(CLINICAL_REPLY.reply).toMatch(/profissional de saúde/);
     expect(CLINICAL_REPLY.reply).toMatch(/emergência/);
-    expect(CLINICAL_REPLY.reply).toMatch(/Fonte: seção Guia pode errar em temas clínicos/);
+    expect(CLINICAL_REPLY.reply).toMatch(/Fonte: seção A Guia pode errar em temas clínicos/);
     expect(CLINICAL_REPLY.reply).not.toMatch(/\d+\s?(mg|ml|comprimidos?)/i);
-    expect(CLINICAL_REPLY.sources).toEqual([{ source: 'saude', section: 'Guia pode errar em temas clínicos' }]);
+    expect(CLINICAL_REPLY.sources).toEqual([{ source: 'saude', section: 'A Guia pode errar em temas clínicos' }]);
   });
 });

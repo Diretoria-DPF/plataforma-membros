@@ -5,7 +5,7 @@
  */
 /**
  * assistant/tree.js
- * Árvore de seções de Guia (o "PageIndex" do desenho híbrido), montada de forma determinística dos
+ * Árvore de seções da Guia (o "PageIndex" do desenho híbrido), montada de forma determinística dos
  * MESMOS documentos de buildDocuments (assistant/docs.js). Sem banco, sem vetor, sem IA.
  *
  * Nó = { id, source, section, summary, content }:

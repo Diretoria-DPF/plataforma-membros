@@ -3,17 +3,17 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Posição livre de Guia (assistant.js): a pessoa arrasta a bolha (e o painel, pelo cabeçalho) para qualquer ponto
+// Posição livre da Guia (assistant.js): a pessoa arrasta a bolha (e o painel, pelo cabeçalho) para qualquer ponto
 // da tela, para que ela não cubra o que está sendo usado. A posição é só uma conveniência de quem usa o aparelho:
 // fica em localStorage (fração da área livre, então sobrevive a girar a tela ou mudar o tamanho da janela) e nunca
-// vai ao servidor. Sem arrastar, nada muda: Guia continua no canto de sempre.
+// vai ao servidor. Sem arrastar, nada muda: a Guia continua no canto de sempre.
 //
 // Como funciona (sem style inline no HTML; só variáveis CSS pelo CSSOM, como o resto do app):
 //   - html[data-lia-moved] + --lia-x/--lia-y/--lia-w/--lia-h: posição da bolha (a dica acompanha, ver ux.css);
 //   - html[data-lia-panel] + --lia-px/--lia-py: posição do painel (só em telas largas; no celular o painel
 //     continua ocupando a largura, como uma folha).
 // Acessível: Alt + setas movem a bolha pelo teclado (Shift = passo maior) e "Voltar ao canto" desfaz tudo.
-// Um toque ou clique sem arrastar abre Guia como antes: só passa de 6 px vira arrasto.
+// Um toque ou clique sem arrastar abre a Guia como antes: só passa de 6 px vira arrasto.
 // Expõe window.AssistantDrag (ou module.exports, no Node).
 (function (root) {
   'use strict';
@@ -213,7 +213,7 @@
       },
       function (moved) {
         if (!moved) return;
-        suppressClick = true; // o clique que acompanha o fim do arrasto não abre nem fecha Guia
+        suppressClick = true; // o clique que acompanha o fim do arrasto não abre nem fecha a Guia
         win.setTimeout(function () { suppressClick = false; }, 0);
         state = { launcher: toStored(launcherDrag.last, launcherDrag.size, viewOf(win)), panel: null };
         writeStore(win, state);

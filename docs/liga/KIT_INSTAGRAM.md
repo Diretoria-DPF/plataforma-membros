@@ -19,7 +19,7 @@ Campo "Site" da bio: laift.com.br/liga, para as duas opções.
 
 ## 2. Destaques (cinco)
 
-Capa: Guia pequena (variante A) ou Guia com halo (variante B), com o número do destaque. A capa segue a identidade.
+Capa: a Guia pequena (variante A) ou a Guia com halo (variante B), com o número do destaque. A capa segue a identidade.
 
 1. **Processo seletivo**
    - Link para o edital e para o formulário, quando a diretoria publicar.

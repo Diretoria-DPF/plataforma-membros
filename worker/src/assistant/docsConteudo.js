@@ -5,13 +5,13 @@
  */
 /**
  * assistant/docsConteudo.js
- * Conteúdo factual da base de Guia (kb_chunks), no mesmo formato markdown de assistant/docs.js:
+ * Conteúdo factual da base da Guia (kb_chunks), no mesmo formato markdown de assistant/docs.js:
  * uma lista { source, markdown } com as fontes plataforma, modulos, publicacoes, processo, faq e saude.
  * Cada "## Seção" tem título único em todo o corpus, porque o golden set casa por título de seção.
  *
  * Só entra fato que está nas fontes: frontend/blog/conteudo/*.json, docs/blog/FATOS_VERIFICADOS_2026-10-09.md,
  * frontend/liga.html, /privacidade.html e /termos.html. O que é desconhecido vira "a definir pela diretoria".
- * Nenhum nome de pessoa; o único e-mail é o oficial da Liga. Saúde: Guia orienta sobre a plataforma e
+ * Nenhum nome de pessoa; o único e-mail é o oficial da Liga. Saúde: a Guia orienta sobre a plataforma e
  * não faz diagnóstico, dose nem conduta; o conteúdo de estudo é educacional.
  */
 
@@ -23,13 +23,13 @@ export const CONTENT_DOCS = [
       '## Instalar a LAIFT no celular',
       'A plataforma pode ser instalada no celular: você a salva na tela inicial do telefone como um aplicativo chamado LAIFT, com o ícone da marca. Depois de instalada, ela abre em tela cheia, sem a barra do navegador.',
       '## Uso sem internet',
-      'Os arquivos principais do app (estilos, scripts, Guia, o ícone e a tela de abertura) ficam guardados no aparelho. Sem conexão, o app usa esse conteúdo guardado e mostra um aviso de que você está offline. Envios de dados e consultas ao servidor precisam de internet.',
+      'Os arquivos principais do app (estilos, scripts, a Guia, o ícone e a tela de abertura) ficam guardados no aparelho. Sem conexão, o app usa esse conteúdo guardado e mostra um aviso de que você está offline. Envios de dados e consultas ao servidor precisam de internet.',
       '## Desempenho medido na tela de entrada',
       'Em 2026-10-08, a tela de entrada foi medida com o Lighthouse, ferramenta do Google, com a mediana de três rodadas. No celular: desempenho 94 de 100; acessibilidade, boas práticas e SEO 100 de 100; tempo até o conteúdo principal de 1,2 s. No computador: desempenho 100 de 100, com 369 ms até o conteúdo principal. Esses números valem só para a tela de entrada, pois as outras telas não foram medidas.',
       '## Acessibilidade da plataforma',
       'A meta para alvos de toque é de 44 px. As janelas de confirmação mantêm o foco dentro delas, fecham com a tecla Esc e devolvem o foco ao ponto de partida. Se o aparelho pedir menos movimento, as animações são reduzidas.',
       '## Limites conhecidos da plataforma',
-      'A equipe registra os limites que conhece e não promete segurança absoluta. Guia pode errar, sobretudo em temas clínicos. A cifragem das mensagens protege o texto no navegador, mas não substitui cuidados com a senha e com a verificação em duas etapas.',
+      'A equipe registra os limites que conhece e não promete segurança absoluta. A Guia pode errar, sobretudo em temas clínicos. A cifragem das mensagens protege o texto no navegador, mas não substitui cuidados com a senha e com a verificação em duas etapas.',
     ].join('\n'),
   },
   {
@@ -85,9 +85,9 @@ export const CONTENT_DOCS = [
       '## Ficha diagnóstica e análise de cenário',
       'A inscrição é feita aqui na plataforma, com uma conta, e o rascunho fica salvo. Uma das etapas é a análise de cenário: a pessoa descreve um mecanismo, uma evidência ou uma notícia recente, com a sua escolha e o impacto, com as próprias palavras. Nos campos de texto livre, não se escrevem dados de saúde, seus ou de terceiros.',
       '## Quando o seletivo está aberto ou fechado',
-      'A tela do processo seletivo, na plataforma, mostra se as inscrições estão abertas ou fechadas agora, e a data da próxima análise da comissão. Enquanto estiver fechado, aparece a mensagem de inscrições fechadas no momento. Quando estiver aberto, quem tem conta toca em Processo seletivo, no menu, e em Começar. Guia só diz que as inscrições estão abertas quando estão de fato.',
+      'A tela do processo seletivo, na plataforma, mostra se as inscrições estão abertas ou fechadas agora, e a data da próxima análise da comissão. Enquanto estiver fechado, aparece a mensagem de inscrições fechadas no momento. Quando estiver aberto, quem tem conta toca em Processo seletivo, no menu, e em Começar. A Guia só diz que as inscrições estão abertas quando estão de fato.',
       '## Edital 2026: onde conferir as regras',
-      'As regras, as datas e as vagas do processo seletivo ficam na página da Liga, na seção Edital, e são divulgadas também no Instagram @laift.liga. A seção Edital mostra a situação atual do edital. Enquanto não houver divulgação, datas e vagas são a divulgar pela diretoria. Guia não apresenta como definitiva uma regra que ainda não foi publicada.',
+      'As regras, as datas e as vagas do processo seletivo ficam na página da Liga, na seção Edital, e são divulgadas também no Instagram @laift.liga. A seção Edital mostra a situação atual do edital. Enquanto não houver divulgação, datas e vagas são a divulgar pela diretoria. A Guia não apresenta como definitiva uma regra que ainda não foi publicada.',
     ].join('\n'),
   },
   {
@@ -104,7 +104,7 @@ export const CONTENT_DOCS = [
       'Entre com a sua conta, abra a seção Eventos, escolha o encontro e faça a inscrição. Para desistir, use Cancelar inscrição na mesma tela, antes de o evento começar e antes de a presença ser registrada. No dia, o crachá virtual com o QR de presença é o que você mostra na portaria.',
       '## Como encontro um módulo de estudo?',
       'Abra o Aprender, a área dos módulos de estudo. Ele reúne cinco módulos: Farmacologia Básica, Toxicologia Clínica e Forense, Clínica Médica Virtual, Laboratório Virtual e Anatomia e Farmacocinética 3D. Escolha um para abrir.',
-      '## Guia tem limite de perguntas por dia?',
+      '## A Guia tem limite de perguntas por dia?',
       'Perguntas de rotina, como as sobre eventos, crachá, módulos e perfil, são respondidas sem IA e sem limite diário. As perguntas abertas com IA têm cota diária por pessoa, e a resposta em modo limitado não gasta essa cota.',
       '## Onde leio os Termos e a Política de Privacidade?',
       'Os Termos de Uso ficam na página termos.html e a Política de Privacidade na página privacidade.html, ambas dentro da plataforma. Os dois documentos explicam como os dados são tratados e quais são os direitos do titular.',
@@ -118,18 +118,18 @@ export const CONTENT_DOCS = [
     source: 'saude',
     markdown: [
       '# Saúde e estudo: avisos',
-      '## Papel de Guia em temas de saúde',
-      'Guia não diz qual remédio tomar nem quanto tomar. Guia orienta sobre a plataforma: onde ficam as telas, os módulos e as regras de uso. Guia não faz diagnóstico, não indica medicamento, dose ou tempo de uso, não define conduta e não substitui orientação de profissional de saúde. Os conteúdos de Farmacologia e de Anatomia e Farmacocinética são de estudo.',
+      '## Papel da Guia em temas de saúde',
+      'A Guia não diz qual remédio tomar nem quanto tomar. Ela orienta sobre a plataforma: onde ficam as telas, os módulos e as regras de uso. Ela não faz diagnóstico, não indica medicamento, dose ou tempo de uso, não define conduta e não substitui orientação de profissional de saúde. Os conteúdos de Farmacologia e de Anatomia e Farmacocinética são de estudo.',
       '## Emergências: onde buscar ajuda',
-      'Em caso de intoxicação real, procure um serviço de emergência na hora. Para sintomas que preocupam, procure avaliação médica, por exemplo em uma Unidade Básica de Saúde (UBS). Guia não é canal de emergência e não avalia sintomas.',
+      'Em caso de intoxicação real, procure um serviço de emergência na hora. Para sintomas que preocupam, procure avaliação médica, por exemplo em uma Unidade Básica de Saúde (UBS). A Guia não é canal de emergência e não avalia sintomas.',
       '## Casos de treino não definem conduta',
       'Os casos e simuladores da plataforma são de treino educacional. Eles não servem para decidir o atendimento de ninguém e não substituem aula, livro-texto nem orientação profissional. As respostas da IA devem ser conferidas com o material do seu curso.',
       '## Atlas 3D: apoio ao estudo',
       'O Atlas 3D é apoio ao estudo: mostra modelos 3D do corpo humano e simulações de farmacocinética (PK). As fichas das estruturas ainda não foram conferidas por profissional com registro, então o Atlas não substitui o livro-texto, a aula nem a orientação de profissional de saúde, e não deve ser a fonte única.',
       '## Alteração nas mamas: onde buscar avaliação',
       'Se você encontrar um caroço ou nódulo na mama, ou notar outra alteração, procure avaliação, por exemplo em uma Unidade Básica de Saúde (UBS). Só a avaliação de um profissional de saúde diz o que é. A publicação Outubro Rosa 2026 é informativa e não diagnostica nada.',
-      '## Guia pode errar em temas clínicos',
-      'Guia pode errar, sobretudo em temas clínicos. Qualquer resposta sobre sintomas, tratamento ou medicamento precisa de avaliação de um profissional de saúde antes de ser usada. Em caso de dúvida sobre a saúde de alguém, o caminho é procurar atendimento.',
+      '## A Guia pode errar em temas clínicos',
+      'A Guia pode errar, sobretudo em temas clínicos. Qualquer resposta sobre sintomas, tratamento ou medicamento precisa de avaliação de um profissional de saúde antes de ser usada. Em caso de dúvida sobre a saúde de alguém, o caminho é procurar atendimento.',
     ].join('\n'),
   },
 ];

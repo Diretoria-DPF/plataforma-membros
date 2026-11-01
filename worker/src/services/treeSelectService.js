@@ -5,7 +5,7 @@
  */
 /**
  * treeSelectService.js
- * Guia híbrido (flag lia_hibrida_enabled): depois da busca (RAG, para o recall), UMA chamada curta ao modelo
+ * Guia híbrida (flag lia_hibrida_enabled): depois da busca (RAG, para o recall), UMA chamada curta ao modelo
  * rápido escolhe, na árvore de seções (assistant/tree.js), quais trechos a resposta deve ler, e diz se a base
  * cobre a pergunta (answerable). Quem lê e responde continua sendo o fluxo de sempre.
  *
@@ -13,7 +13,7 @@
  * TREE.MAX_SECTIONS), e qualquer falha, tempo esgotado ou saída inválida devolve os candidatos do RRF (o
  * comportamento anterior), sem erro para a pessoa. O texto da pergunta não vai para log.
  *
- * Custo: a chamada passa pelo Orchestrator (orçamento, reserva, métricas e ai_usage_log). Guia NÃO consome
+ * Custo: a chamada passa pelo Orchestrator (orçamento, reserva, métricas e ai_usage_log). Ela NÃO consome
  * cota própria: quem chama (assistantService) a faz DENTRO da unidade de cota da pergunta, então uma
  * pergunta continua gastando uma unidade.
  */

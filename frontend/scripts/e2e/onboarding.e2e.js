@@ -5,10 +5,10 @@
  */
 /**
  * onboarding.e2e.js — onboarding por papel (frontend/onboarding.js). Na primeira entrada
- * autenticada, um <dialog> modal com 3 passos (4 com Guia ligado), diferente por papel.
+ * autenticada, um <dialog> modal com 3 passos (4 com a Guia ligada), diferente por papel.
  * Verifica: passos de visitante, membro e admin; foco inicial e preso no diálogo; Esc e
  * "Pular" fecham e marcam como visto; nova entrada (logout e login) não reabre; logout e
- * sessão expirada fecham sem marcar; o passo de Guia só com chatbot_enabled; os botões da
+ * sessão expirada fecham sem marcar; o passo da Guia só com chatbot_enabled; os botões da
  * Guia e do crachá; 375x812 sem rolagem horizontal, alvos >= 44 px e axe (axe-gate.js).
  */
 const { startApp, check, E2E_PROFILE_ID, ONBOARDING_SEEN_PREFIX } = require('./harness');
@@ -18,7 +18,7 @@ const DIALOG = 'dialog.onboarding-dialog';
 const KEY = ONBOARDING_SEEN_PREFIX + E2E_PROFILE_ID;
 const MOBILE = { width: 375, height: 812 };
 const TARGET_MIN_PX = 44;
-const LIA_TITLE = 'Conheça Guia';
+const LIA_TITLE = 'Conheça a Guia';
 const FLAGS_LIA = { ux_v2_enabled: true, chatbot_enabled: true };
 const FLAGS_SEM_LIA = { ux_v2_enabled: true, chatbot_enabled: false };
 const PASSOS = {
@@ -108,7 +108,7 @@ async function checaMobile(page, rotulo) {
   check(small.length === 0, `${rotulo}: botões do diálogo abaixo de ${TARGET_MIN_PX}x${TARGET_MIN_PX}${lista ? ': ' + lista : ''}`);
 }
 
-/** Passos por papel: 4 passos com Guia ligado, títulos próprios e progresso correto. */
+/** Passos por papel: 4 passos com a Guia ligada, títulos próprios e progresso correto. */
 async function passosPorPapel() {
   for (const role of Object.keys(PASSOS)) {
     const app = await startApp({ role, firstLogin: true, workerHandlers: comFlags(FLAGS_LIA) });
@@ -190,30 +190,30 @@ async function sessaoExpirada() {
   }
 }
 
-/** Sem chatbot_enabled, o passo de Guia não existe: são 3 passos. */
+/** Sem chatbot_enabled, o passo da Guia não existe: são 3 passos. */
 async function semLia() {
   const app = await startApp({ role: 'member', firstLogin: true, workerHandlers: comFlags(FLAGS_SEM_LIA) });
   try {
     await app.login();
     await esperaDialogo(app.page);
     const titulos = await percorrer(app.page);
-    check(titulos.length === 3 && !titulos.includes(LIA_TITLE), `sem a flag de Guia: são 3 passos e nenhum é de Guia (${titulos.join(' → ')})`);
+    check(titulos.length === 3 && !titulos.includes(LIA_TITLE), `sem a flag da Guia: são 3 passos e nenhum é da Guia (${titulos.join(' → ')})`);
   } finally {
     await app.close();
   }
 }
 
-/** Botões do passo de Guia (abre Guia) e do crachá (abre o crachá); ambos fecham e gravam "visto". */
+/** Botões do passo da Guia (abre a Guia) e do crachá (abre o crachá); ambos fecham e gravam "visto". */
 async function botoesAbremLiaECracha() {
   const lia = await startApp({ role: 'member', firstLogin: true, workerHandlers: comFlags(FLAGS_LIA) });
   try {
     await lia.login();
     await esperaDialogo(lia.page);
-    check(await irAte(lia.page, LIA_TITLE), 'o passo "Conheça Guia" é alcançado com Próximo');
-    await lia.page.click(`${DIALOG} button:has-text("Abrir Guia")`);
+    check(await irAte(lia.page, LIA_TITLE), 'o passo "Conheça a Guia" é alcançado com Próximo');
+    await lia.page.click(`${DIALOG} button:has-text("Abrir a Guia")`);
     await lia.page.waitForSelector('#lia-panel:not(.hidden)', { timeout: 10000 });
-    check((await dialogoAberto(lia.page)) === 0, 'o botão "Abrir Guia" fecha o diálogo e abre Guia');
-    check((await lia.page.evaluate((k) => localStorage.getItem(k), KEY)) === '1', 'abrir Guia pelo diálogo grava "visto"');
+    check((await dialogoAberto(lia.page)) === 0, 'o botão "Abrir a Guia" fecha o diálogo e abre a Guia');
+    check((await lia.page.evaluate((k) => localStorage.getItem(k), KEY)) === '1', 'abrir a Guia pelo diálogo grava "visto"');
   } finally {
     await lia.close();
   }
@@ -230,7 +230,7 @@ async function botoesAbremLiaECracha() {
   }
 }
 
-/** 375x812: sem rolagem, alvos >= 44 px, axe nos passos (com e sem Guia). */
+/** 375x812: sem rolagem, alvos >= 44 px, axe nos passos (com e sem a Guia). */
 async function celularEAxe() {
   const app = await startApp({ role: 'member', firstLogin: true, viewport: MOBILE, workerHandlers: comFlags(FLAGS_LIA) });
   try {
@@ -239,7 +239,7 @@ async function celularEAxe() {
     await checaMobile(app.page, 'passo 1');
     await axeGate(app.page, 'onboarding 375x812 (passo 1)');
     await irAte(app.page, LIA_TITLE);
-    await checaMobile(app.page, 'passo de Guia');
+    await checaMobile(app.page, 'passo da Guia');
     await axeGate(app.page, 'onboarding 375x812 (Guia)');
   } finally {
     await app.close();

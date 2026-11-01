@@ -4,8 +4,8 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Onboarding por papel: na primeira entrada autenticada, um <dialog> com showModal() (foco preso,
-// Esc fecha, foco volta) mostra 3 passos para visitante, membro ou administrador (4 quando Guia
-// está disponível). O passo de Guia abre Guia; o do crachá usa [data-open-credential], que
+// Esc fecha, foco volta) mostra 3 passos para visitante, membro ou administrador (4 quando a Guia
+// está disponível). O passo da Guia abre a Guia; o do crachá usa [data-open-credential], que
 // credential.js já trata. "Visto" fica em localStorage por perfil, só como conveniência: se o
 // storage estiver bloqueado, o passo volta na próxima entrada. Sem innerHTML e sem animação
 // própria (prefers-reduced-motion). Expõe window.LaiftOnboarding; as funções são testadas em Node.
@@ -19,7 +19,7 @@
   var BODY_ID = 'onboarding-body';
   var ROLES = ['visitor', 'member', 'admin'];
   var TOUCH_SIZE = '44px';
-  var ACTION_LABEL = { lia: 'Abrir Guia', credential: 'Abrir meu crachá' };
+  var ACTION_LABEL = { lia: 'Abrir a Guia', credential: 'Abrir meu crachá' };
 
   var COPY = {
     visitor: {
@@ -38,7 +38,7 @@
       credential: ['Seu crachá', 'O crachá virtual tem o QR de presença. O terminal fiscal lê esse QR na portaria.'],
     },
   };
-  var LIA_COPY = ['Conheça Guia', 'Guia da plataforma explica as telas e responde dúvidas. Guia não altera seus dados.'];
+  var LIA_COPY = ['Conheça a Guia', 'A Guia é a guia da plataforma: explica as telas e responde dúvidas. Ela não altera seus dados.'];
 
   function normalizeRole(role) {
     return ROLES.indexOf(role) >= 0 ? role : 'visitor';
@@ -149,7 +149,7 @@
       setHidden(nodes.action, !isAction);
       if (!isAction) return;
       nodes.action.textContent = ACTION_LABEL[step.kind];
-      // O crachá é aberto pela delegação de credential.js; Guia, por runAction.
+      // O crachá é aberto pela delegação de credential.js; a Guia, por runAction.
       if (step.kind === 'credential') nodes.action.setAttribute('data-open-credential', '');
       else nodes.action.removeAttribute('data-open-credential');
     }

@@ -253,7 +253,7 @@
   /**
    * Toca a cena. env = { host, svg, reduced, detach(nomes) }. Devolve { stop(), finished } ou null (cena desconhecida).
    * As animações ficam presas no quadro final (fill both) até stop(): a pose final dura até o próximo estado.
-   * stop() só cancela animações e relógios; os atributos do host quem reescreve é o próximo estado de Guia.
+   * stop() só cancela animações e relógios; os atributos do host quem reescreve é o próximo estado da Guia.
    */
   function play(name, env) {
     var def = Object.prototype.hasOwnProperty.call(SCENES, name) ? SCENES[name] : null;

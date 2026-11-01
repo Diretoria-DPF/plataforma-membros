@@ -193,7 +193,7 @@
       'Você já está com a conta criada: é só começar.',
       'São seis passos, no seu ritmo, no celular ou no computador.',
       'Seu rascunho fica salvo: você pode parar e voltar. O prazo é individual: ' + days + ' dias a partir do início.',
-      'A comissão analisa as inscrições em lotes' + (review ? ' (próxima análise: ' + review + ')' : '') + '. Guia ajuda em qualquer dúvida.',
+      'A comissão analisa as inscrições em lotes' + (review ? ' (próxima análise: ' + review + ')' : '') + '. A Guia ajuda em qualquer dúvida.',
     ];
     return frame('Entre para a LAIFT', 'Inscrição sempre aberta. Faça no seu ritmo, no celular ou no computador.', [
       h('div', { className: 'sel-how' }, [h('h3', { className: 'sel-how__t' }, 'Como funciona'), h('ol', { className: 'sel-how__l' }, how.map(function (t) { return h('li', null, t); }))]),

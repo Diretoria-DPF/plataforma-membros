@@ -3,12 +3,12 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Efeito de digitação do balão de Guia (onda 4): o texto aparece caractere a caractere, em requestAnimationFrame,
+// Efeito de digitação do balão da Guia (onda 4): o texto aparece caractere a caractere, em requestAnimationFrame,
 // num tempo total limitado. O leitor de tela NUNCA ouve letra por letra: o texto completo entra de uma vez num
 // <span> só para leitores (visually-hidden) e a camada que digita fica em aria-hidden. Quem tem
 // prefers-reduced-motion (ou navegador sem requestAnimationFrame) recebe o texto inteiro, sem efeito.
 // A parte ainda não digitada fica transparente e ocupa o lugar dela, então o balão não cresce linha a linha.
-// Texto sempre por textContent. Módulo opcional de assistant.js: sem ele, Guia mostra o texto direto.
+// Texto sempre por textContent. Módulo opcional de assistant.js: sem ele, a Guia mostra o texto direto.
 // Expõe window.AssistantTyping (ou module.exports, no Node).
 (function (root) {
   'use strict';

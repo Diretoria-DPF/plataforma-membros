@@ -923,7 +923,7 @@ describe('Guia — pesquisa externa (research_enabled, L07/L09): canResearch e r
     expect(res).not.toHaveProperty('canResearch');
   });
 
-  test('research: true com a flag desligada: resposta researchDisabled do serviço (Guia segue), sem IA e sem gravar', async () => {
+  test('research: true com a flag desligada: resposta researchDisabled do serviço (a Guia segue), sem IA e sem gravar', async () => {
     const sql = routedSql([ON, SAVED]);
     const res = await chat(sql, MEMBER, { message: 'pesquisa sobre agonistas', research: true });
     expect(res).toMatchObject({ success: true, researchDisabled: true });

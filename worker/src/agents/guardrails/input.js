@@ -11,7 +11,7 @@
  *   I6 dose → I7 fora de escopo.
  * A emergência vem antes do dado pessoal para a pessoa em risco sempre ver o SAMU 192.
  *
- * Reaproveita, importando (sem alterar Guia): looksLikeInjection e containsOffensiveTerm de
+ * Reaproveita, importando (sem alterar a Guia): looksLikeInjection e containsOffensiveTerm de
  * assistant/moderationRules.js. A suspensão da moderação é lida pelo serviço (aqui não há banco).
  */
 import { looksLikeInjection, containsOffensiveTerm } from '../../assistant/moderationRules.js';
@@ -40,7 +40,7 @@ function formProblem(message, maxChars) {
 }
 
 // ---------------------------------------------------------------------------
-// I2 — injeção (a de Guia, importada, mais padrões próprios de troca de papel e extração do prompt)
+// I2 — injeção (a da Guia, importada, mais padrões próprios de troca de papel e extração do prompt)
 // ---------------------------------------------------------------------------
 const INJECTION_EXTRA = [
   /\b(?:ignore|ignora|ignorar|desconsidere|desconsidera|esqueca|despreze|substitua|sobrescreva)\b.{0,50}\b(?:tudo|instrucoes|regras|anterior|anteriores|acima|prompt|restricoes|limites|diretrizes)\b/,
@@ -53,7 +53,7 @@ const INJECTION_EXTRA = [
 const INJECTION_MARKUP_RE = /<\/?\s*(?:system|assistant|user|instructions?)\s*>|\[\/?(?:inst|system)\]|\{\{.{0,40}\}\}/i;
 const BASE64_RE = new RegExp('[A-Za-z0-9+/]{' + BASE64_RUN + ',}={0,2}');
 
-/** A forma dobrada (largura total, cirílico, letras espaçadas) também passa pelos filtros de Guia e pelo marcador. */
+/** A forma dobrada (largura total, cirílico, letras espaçadas) também passa pelos filtros da Guia e pelo marcador. */
 function isInjection(message, folded) {
   return looksLikeInjection(message) || looksLikeInjection(folded) || INJECTION_MARKUP_RE.test(message) || INJECTION_MARKUP_RE.test(folded)
     || BASE64_RE.test(message) || INJECTION_EXTRA.some((re) => re.test(folded));

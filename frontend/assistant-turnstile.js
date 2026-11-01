@@ -5,7 +5,7 @@
  */
 // Guia: desafio Cloudflare Turnstile da PRÉVIA de IA para visitante (flag pública lia_visitor_ai_enabled).
 // Só entra em cena para quem NÃO tem sessão e só quando a flag está ligada: o script da Cloudflare é
-// injetado sob demanda (ao abrir o painel de Guia) e o widget é renderizado de forma explícita, no modo
+// injetado sob demanda (ao abrir o painel da Guia) e o widget é renderizado de forma explícita, no modo
 // 'interaction-only' (invisível, a menos que a Cloudflare precise de interação). O token é de USO ÚNICO:
 // vai junto da pergunta (turnstileToken) e o widget é reiniciado depois de cada envio, com sucesso ou erro.
 // Falha ao carregar o script, widget sem token ou qualquer erro NÃO atrapalham o chat: a pergunta segue sem

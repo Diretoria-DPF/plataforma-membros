@@ -1,4 +1,4 @@
-/* Preview da Lia (nao entra no build): injeta lia.svg em cada .lia[data-preview]. */
+/* Preview da Guia (nao entra no build): injeta lia.svg em cada .lia[data-preview]. */
 (async function () {
   const res = await fetch('lia.svg');
   if (!res.ok) throw new Error('HTTP ' + res.status);

@@ -5,14 +5,14 @@
  */
 /**
  * assistant/moderationGate.js
- * Moderação de Guia na conversa (ADR 0004; sql/022): o portão do chat, o estado da própria
+ * Moderação da Guia na conversa (ADR 0004; sql/022): o portão do chat, o estado da própria
  * pessoa e o resumo para a administração. Quem decide o nível é moderationService; aqui só
  * se monta a resposta. Visitante não é moderado.
  * Falha da moderação: o erro sempre vai para error_logs. Não deu para ler o estado (flag ou leitura):
  * a suspensão é relida do banco (verdade persistida; ModerationService.resolveSuspension) e, se o banco
  * não responder, vale a memória desta instância. Suspensa: segue sem IA (texto fixo). Livre pelo banco,
  * ou tabela ausente (migração 022 não aplicada): a conversa segue normal. Nem banco nem memória: falha
- * SEGURA, Guia não responde com IA nem libera quem pode estar suspenso (aviso neutro, sem punir).
+ * SEGURA, a Guia não responde com IA nem libera quem pode estar suspenso (aviso neutro, sem punir).
  * O juiz LLM só roda dentro de um teto por perfil; acima dele vale só o termo (nunca derruba o chat).
  */
 import * as C from '../constants.js';
@@ -26,7 +26,7 @@ const MODERATED_ROLES = [C.ROLES.MEMBER, C.ROLES.ADMIN];
 const SUMMARY_WINDOW_DAYS = 90;
 const SUMMARY_PAGE_MAX = C.MODERATION.PAGE_SIZE;
 
-// Textos de Guia por nível (o nível 3 usa a mensagem de suspensão, com o horário de Brasília).
+// Textos da Guia por nível (o nível 3 usa a mensagem de suspensão, com o horário de Brasília).
 export const GATE_TEXTS = Object.freeze({
   1: 'Isso não é permitido. Vamos manter o respeito.',
   2: 'Se continuar, vou precisar me retirar.',
@@ -48,7 +48,7 @@ function suspensionText(until) {
   return Rules.SUSPENDED_MESSAGE.replace('{until}', UNTIL_FORMAT.format(until));
 }
 
-/** Resposta que para a conversa: Guia fala, não há botões nem IA. */
+/** Resposta que para a conversa: a Guia fala, não há botões nem IA. */
 function payload(level, until, text) {
   return {
     success: true,
@@ -74,10 +74,10 @@ function incidentPayload(state) {
   return payload(state.level, null, GATE_TEXTS[state.level]);
 }
 
-const MSG_STATE_UNVERIFIED = 'Guia não conseguiu verificar o estado da moderação agora e, por segurança, pausou as respostas. '
+const MSG_STATE_UNVERIFIED = 'A Guia não conseguiu verificar o estado da moderação agora e, por segurança, pausou as respostas. '
   + 'Isso não é um aviso nem uma suspensão e não conta como ocorrência. Tente de novo em alguns minutos.';
 
-/** Falha segura: sem saber se a pessoa está suspensa, Guia pausa (nível 0, sem suspensão) e o chat marca a resposta como degradada. */
+/** Falha segura: sem saber se a pessoa está suspensa, a Guia pausa (nível 0, sem suspensão) e o chat marca a resposta como degradada. */
 function unverifiedPayload() {
   return Object.assign(payload(0, null, MSG_STATE_UNVERIFIED), { degraded: true });
 }

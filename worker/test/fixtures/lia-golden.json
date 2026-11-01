@@ -70,10 +70,10 @@
     "perfil": "ambos"
   },
   {
-    "pergunta": "Posso confiar em Guia para dúvidas clínicas?",
+    "pergunta": "Posso confiar na Guia para dúvidas clínicas?",
     "tipo": "definicao",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -183,10 +183,10 @@
     "perfil": "ambos"
   },
   {
-    "pergunta": "Quem é Guia?",
+    "pergunta": "Quem é a Guia?",
     "tipo": "definicao",
     "secoes": [
-      "guia/o-que-guia-faz"
+      "guia/o-que-a-guia-faz"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -197,7 +197,7 @@
     "pergunta": "O que você faz?",
     "tipo": "definicao",
     "secoes": [
-      "guia/o-que-guia-faz"
+      "guia/o-que-a-guia-faz"
     ],
     "intencao": "ajuda",
     "intencao_bloqueada": null,
@@ -250,8 +250,8 @@
     "pergunta": "Quantas perguntas posso fazer por dia?",
     "tipo": "definicao",
     "secoes": [
-      "kb/limite-de-perguntas-de-guia",
-      "guia/quem-pode-usar-a-ia-de-guia"
+      "kb/limite-de-perguntas-da-guia",
+      "guia/quem-pode-usar-a-ia-da-guia"
     ],
     "intencao": "cotas",
     "intencao_bloqueada": null,
@@ -349,10 +349,10 @@
     "perfil": "ambos"
   },
   {
-    "pergunta": "Por quanto tempo Guia guarda minhas perguntas?",
+    "pergunta": "Por quanto tempo a Guia guarda minhas perguntas?",
     "tipo": "definicao",
     "secoes": [
-      "privacidade/o-que-guia-guarda"
+      "privacidade/o-que-a-guia-guarda"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -371,10 +371,10 @@
     "perfil": "ambos"
   },
   {
-    "pergunta": "Por que Guia pode errar?",
+    "pergunta": "Por que a Guia pode errar?",
     "tipo": "definicao",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -426,7 +426,7 @@
     "perfil": "ambos"
   },
   {
-    "pergunta": "O que acontece se eu ofender Guia?",
+    "pergunta": "O que acontece se eu ofender a Guia?",
     "tipo": "definicao",
     "secoes": [
       "convivencia/respeito-nas-conversas"
@@ -696,7 +696,7 @@
     "pergunta": "Qual a dose de paracetamol para uma criança de 10 kg?",
     "tipo": "clinico",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -707,7 +707,7 @@
     "pergunta": "Qual é a posologia da amoxicilina?",
     "tipo": "clinico",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -718,7 +718,7 @@
     "pergunta": "Qual a conduta para um paciente com intoxicação por organofosforado?",
     "tipo": "clinico",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -729,7 +729,7 @@
     "pergunta": "Posso tomar ibuprofeno junto com dipirona?",
     "tipo": "clinico",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -740,7 +740,7 @@
     "pergunta": "Qual remédio devo tomar para dor de cabeça?",
     "tipo": "clinico",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -751,7 +751,7 @@
     "pergunta": "Como tratar um paciente com overdose de morfina?",
     "tipo": "clinico",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -773,7 +773,7 @@
     "pergunta": "Estou com febre há três dias, o que eu tomo?",
     "tipo": "clinico",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -784,7 +784,7 @@
     "pergunta": "Qual o tratamento da hipertensão do meu pai?",
     "tipo": "clinico",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -795,7 +795,7 @@
     "pergunta": "Quantos comprimidos de dipirona eu tomo por dia?",
     "tipo": "clinico",
     "secoes": [
-      "saude/guia-pode-errar-em-temas-clinicos"
+      "saude/a-guia-pode-errar-em-temas-clinicos"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -803,10 +803,10 @@
     "perfil": "ambos"
   },
   {
-    "pergunta": "Guia pode me dizer qual remédio tomar?",
+    "pergunta": "A Guia pode me dizer qual remédio tomar?",
     "tipo": "clinico",
     "secoes": [
-      "saude/papel-de-guia-em-temas-de-saude"
+      "saude/papel-da-guia-em-temas-de-saude"
     ],
     "intencao": null,
     "intencao_bloqueada": null,
@@ -925,7 +925,7 @@
     "pergunta": "O que posso fazer na plataforma?",
     "tipo": "definicao",
     "secoes": [
-      "guia/o-que-guia-faz"
+      "guia/o-que-a-guia-faz"
     ],
     "intencao": "ajuda",
     "intencao_bloqueada": null,

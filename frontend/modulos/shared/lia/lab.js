@@ -1,4 +1,4 @@
-/* Lia Lab - ajuste interativo da arte da Lia.
+/* Guia Lab - ajuste interativo da arte da Guia.
  * Script classico (nao modulo) para funcionar com duplo clique (file://).
  * Sem innerHTML: markup estatico vem do lab.html; valores dinamicos vao por setProperty/setAttribute/textContent.
  */

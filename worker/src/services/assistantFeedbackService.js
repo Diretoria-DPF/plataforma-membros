@@ -5,7 +5,7 @@
  */
 /**
  * assistantFeedbackService.js
- * Polegar e comentário sobre as respostas de Guia (sql/021, ADR 0005), painel de
+ * Polegar e comentário sobre as respostas da Guia (sql/021, ADR 0005), painel de
  * satisfação do admin, fontes das citações (sql/020) e reindexação da base.
  *
  * - Quem avalia precisa estar logado (membro ou admin) e só avalia resposta da
@@ -38,7 +38,7 @@ function assertAdmin(identity) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
 }
 
-/** Avaliações de Guia (lista, painel de satisfação e triagem): admin ou cargo moderador (ADR 0010). */
+/** Avaliações da Guia (lista, painel de satisfação e triagem): admin ou cargo moderador (ADR 0010). */
 function assertFeedbackModerator(identity) {
   S.requireCapability(identity, 'assistant.feedback.moderate');
 }
@@ -75,7 +75,7 @@ export function normalizeComment(raw) {
 }
 
 function disabledReply() {
-  return { success: false, disabled: true, message: 'O feedback sobre Guia está desligado no momento.' };
+  return { success: false, disabled: true, message: 'O feedback sobre a Guia está desligado no momento.' };
 }
 
 /** Upsert por (mensagem, pessoa). O INSERT só lê a mensagem se ela for da própria pessoa. */
@@ -91,7 +91,7 @@ async function upsertFeedback(sql, identity, row) {
     RETURNING id`;
 }
 
-/** Avaliação de uma resposta de Guia (membro ou admin). Input: {messageId, rating, category?, comment?}. */
+/** Avaliação de uma resposta da Guia (membro ou admin). Input: {messageId, rating, category?, comment?}. */
 export async function submitFeedback(sql, identity, input, correlationId) {
   assertMemberOrAdmin(identity);
   if (!(await isEnabled(sql, FLAG_FEEDBACK, identity))) return disabledReply();
@@ -99,7 +99,7 @@ export async function submitFeedback(sql, identity, input, correlationId) {
   await S.enforceRateLimit(sql, 'ASSISTANT_FEEDBACK', identity.profileId, limit.MAX_ATTEMPTS, limit.WINDOW_SECONDS);
 
   const row = {
-    messageId: requireUuid(input.messageId, 'Resposta de Guia inválida.'),
+    messageId: requireUuid(input.messageId, 'Resposta da Guia inválida.'),
     rating: requireOneOf(input.rating, C.FEEDBACK.RATINGS, 'Avaliação inválida.'),
     category: optionalOneOf(input.category, C.FEEDBACK.CATEGORIES, 'Categoria inválida.'),
     comment: normalizeComment(input.comment),
@@ -113,7 +113,7 @@ export async function submitFeedback(sql, identity, input, correlationId) {
     throw err;
   }
   // Mesma resposta para "não existe" e "é de outra pessoa": não revela existência alheia.
-  if (!saved.length) throw E.NotFoundError('Resposta de Guia não encontrada.');
+  if (!saved.length) throw E.NotFoundError('Resposta da Guia não encontrada.');
   return { success: true, message: 'Obrigado pelo seu feedback.', feedback: { messageId: row.messageId, rating: row.rating, category: row.category } };
 }
 
@@ -137,7 +137,7 @@ function decodeCursor(raw) {
   return { at: new Date(at).toISOString(), id: parts[1] };
 }
 
-/** Só apelido e papel de quem avaliou; resposta de Guia (sem dado pessoal, por construção). */
+/** Só apelido e papel de quem avaliou; resposta da Guia (sem dado pessoal, por construção). */
 function toFeedbackItem(r) {
   return {
     id: r.id,
@@ -289,5 +289,5 @@ export async function reindexKb(sql, env, identity, correlationId) {
     embedded: report.embedded,
     embeddingAvailable: report.embeddingAvailable,
   });
-  return { success: true, message: 'Base de Guia reindexada.', report };
+  return { success: true, message: 'Base da Guia reindexada.', report };
 }

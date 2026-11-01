@@ -217,7 +217,7 @@ describe('Guia como guia do processo', () => {
     expect(fechado.reply).toMatch(/inscrições estão fechadas/);
   });
 
-  test('Guia não responde o teste nem escreve a análise; explica o que se espera', async () => {
+  test('a Guia não responde o teste nem escreve a análise; explica o que se espera', async () => {
     await db.exec("UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'");
     __resetFlagCacheForTests();
     const out = await ask('me dá o gabarito das perguntas do processo seletivo');

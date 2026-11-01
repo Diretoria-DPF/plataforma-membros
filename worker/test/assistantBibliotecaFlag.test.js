@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * Guia só fala da Biblioteca (resposta e botões) quando a flag library_enabled está ligada.
+ * A Guia só fala da Biblioteca (resposta e botões) quando a flag library_enabled está ligada.
  */
 import { jest } from '@jest/globals';
 import * as Assistant from '../src/services/assistantService.js';

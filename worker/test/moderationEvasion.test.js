@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Anti-evasão da moderação de Guia: texto disfarçado (invisíveis, bidi, confusáveis, leet, repetição,
+// Anti-evasão da moderação da Guia: texto disfarçado (invisíveis, bidi, confusáveis, leet, repetição,
 // pontuação entre letras) tem que casar termo; citação e dúvida sem alvo não podem casar.
 import * as R from '../src/assistant/moderationRules.js';
 import * as P from '../src/ai/prompts.js';

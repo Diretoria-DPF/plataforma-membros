@@ -59,5 +59,5 @@ não confirmar o e-mail, o bloco mostra "e-mail a divulgar" e o texto do post **
 
 ## Vocabulário fixo
 - **LAIFT** (a plataforma e a Liga); nome completo: Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia.
-- **Guia** (Guia da plataforma), **Atlas** (anatomia e PK 3D), **Crachá virtual**, **Aprender** (a área dos módulos).
+- **Guia** (a guia da plataforma), **Atlas** (anatomia e PK 3D), **Crachá virtual**, **Aprender** (a área dos módulos).
 - Nomes dos módulos exatamente como na barra inferior e no hub Aprender.

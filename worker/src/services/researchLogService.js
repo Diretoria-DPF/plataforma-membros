@@ -5,7 +5,7 @@
  */
 /**
  * researchLogService.js
- * Registro das pesquisas que Guia já fez (sql/026, tabela lia_pesquisas), para não
+ * Registro das pesquisas que a Guia já fez (sql/026, tabela lia_pesquisas), para não
  * pagar de novo por uma pergunta igual:
  *  - provedor 'kb': a resposta com base de conhecimento e suas fontes. Vale enquanto a
  *    versão da base (kbVersion) for a mesma: se o conteúdo mudou, a resposta antiga não volta;

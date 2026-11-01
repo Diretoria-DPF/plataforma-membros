@@ -1,4 +1,4 @@
-# Revisão da entrega da Lia (commit 98ef51b, 2026-10-09)
+# Revisão da entrega da Guia (commit 98ef51b, 2026-10-09)
 
 Feita só por leitura do diff `HEAD~1..HEAD` (44 arquivos). Não rodei testes; a sessão principal rodou a suíte do Worker.
 Aviso de processo: durante a revisão rodei por engano um `git add -N .` e desfiz na hora com `git reset -- <arquivos novos>`, antes do commit. O commit 98ef51b traz os 44 arquivos esperados (conferido em `git show --stat`).
@@ -9,17 +9,17 @@ Aviso de processo: durante a revisão rodei por engano um `git add -N .` e desfi
 1. **A versão da base vem do código, não do que está indexado** (`worker/src/services/assistantService.js:283-298`).
    - Risco: entre o deploy e a reindexação, respostas e lacunas (`empty`) são gravadas sob a versão nova, mas refletem o banco antigo, e ficam 30 dias. Exemplo: com `rag_cache_enabled` ligada, pergunta sobre o conteúdo novo grava `empty` e continua recebendo "Não encontrei…" mesmo depois de reindexar.
    - Correção (L09): `kbVersionOnce(sql)` lê o banco, com memória de 60 s por isolate: `SELECT coalesce(md5(string_agg(content_hash, ',' ORDER BY source, section)), '') AS v FROM kb_chunks`, cortado em 16 caracteres. Se a leitura falhar, não usa o registro (`logOn = false`). Com rerank ligado, acrescentar `':r'` à versão, porque o `empty` por `answerable=false` depende do limiar. Teste: mudar um `content_hash` muda a versão.
-2. **Desligar a pesquisa derruba a Lia inteira na tela**.
+2. **Desligar a pesquisa derruba a Guia inteira na tela**.
    - Onde: `researchService.js:134` devolve `disabled: true`; `frontend/assistant.js:520` trata `disabled` com `hideLauncher()`.
-   - Risco: o cache de flags dura 60 s por isolate. No rollback de `research_enabled` (justamente quando o admin desliga), quem clica no botão perde o lançador da Lia até recarregar a página.
+   - Risco: o cache de flags dura 60 s por isolate. No rollback de `research_enabled` (justamente quando o admin desliga), quem clica no botão perde o lançador da Guia até recarregar a página.
    - Correção: na linha 134, devolver `{ success: false, researchDisabled: true, message: MSG.DISABLED }` e trocar `disabled` por `researchDisabled` em `researchService.test.js:93` e `assistantService.test.js:893`. O front já cai em `failReply(message)`.
 3. **O próprio PR deixou um fato da base desatualizado** (`worker/src/assistant/docsConteudo.js:26`).
    - Risco: a base diz "49 arquivos", mas o `sw.js` agora tem 50 (entrou `assistant-research.js`). O post `frontend/blog/conteudo/plataforma.json:78` também diz 49.
-   - Correção: tirar o número. Texto: "Os arquivos principais do app (estilos, scripts, a Lia, o ícone e a tela de abertura) ficam guardados no aparelho." O blog fica para o dono decidir (mesma troca, ou 50).
-4. **"Em revisão" na base da Lia** (`docsConteudo.js:76`, `:83-84`, `:123-124`).
-   - Contexto: o dono não quer o termo, e a Lia responde a perguntas diretas. A saída é dizer o que é verdade sem inventar aprovação (FATOS, linha 112: 0 fichas do Atlas revisadas).
+   - Correção: tirar o número. Texto: "Os arquivos principais do app (estilos, scripts, a Guia, o ícone e a tela de abertura) ficam guardados no aparelho." O blog fica para o dono decidir (mesma troca, ou 50).
+4. **"Em revisão" na base da Guia** (`docsConteudo.js:76`, `:83-84`, `:123-124`).
+   - Contexto: o dono não quer o termo, e a Guia responde a perguntas diretas. A saída é dizer o que é verdade sem inventar aprovação (FATOS, linha 112: 0 fichas do Atlas revisadas).
    - `:76`, trocar "A regra está em revisão pela diretoria." por "Confira as condições no edital publicado pela diretoria na página da Liga."
-   - `:83-84`, trocar por `## Edital 2026: onde conferir as regras` e "As regras oficiais do processo seletivo são as publicadas pela diretoria na página da Liga e no Instagram @laift.liga. A Lia não apresenta como definitiva uma regra que ainda não foi publicada. Vagas e datas: a definir pela diretoria."
+   - `:83-84`, trocar por `## Edital 2026: onde conferir as regras` e "As regras oficiais do processo seletivo são as publicadas pela diretoria na página da Liga e no Instagram @laift.liga. A Guia não apresenta como definitiva uma regra que ainda não foi publicada. Vagas e datas: a definir pela diretoria."
    - `:123-124`, trocar por `## Atlas 3D: apoio ao estudo` e "O Atlas 3D é apoio ao estudo. As fichas das estruturas ainda não foram conferidas por profissional com registro: use junto com o livro-texto e a aula, e não como fonte única."
    - Nenhuma dessas seções está no golden set (conferido), então o `ragEval` não muda.
 
@@ -52,7 +52,7 @@ Aviso de processo: durante a revisão rodei por engano um `git add -N .` e desfi
   - Idempotente: `IF NOT EXISTS` e restrições declaradas dentro do `CREATE`.
   - Índices: GIN trigrama e `expires_at`. O down apaga a tabela e a linha do ledger.
   - Retenção pela validade (30 e 7 dias) com limpeza diária.
-  - Numeração: a `main` não tem 025, e a branch da F4 tem `025_shared_assets.sql`. Proposta: Lia = 026, F4 = 025, inscrição nativa = 027. O runner aplica o que falta no ledger, então a 025 depois da 026 não dá problema (tabelas independentes). Corrigir `TIME_CONTRATO.md:20,45`.
+  - Numeração: a `main` não tem 025, e a branch da F4 tem `025_shared_assets.sql`. Proposta: Guia = 026, F4 = 025, inscrição nativa = 027. O runner aplica o que falta no ledger, então a 025 depois da 026 não dá problema (tabelas independentes). Corrigir `TIME_CONTRATO.md:20,45`.
 - **(5) Calibração.** `rag_rerank_enabled` fica **desligada**. O `bge-reranker-base` não tem português confirmado (`SELECAO.md:17-18`), e ligar com limiares `null` só reordena, o que pode tirar a seção certa do top 4.
   - Falta uma ficha de calibração (L11): script no staging (Neon de homologação + Workers AI pela API REST, com token que o dono digita) que rode `rag-eval.json` com e sem rerank, meça o recall@4 e os falsos positivos e proponha `ANSWERABLE_MIN`, `MIN_SCORE` e `MIN_VECTOR_SCORE` (O36). Só liga se o recall não cair.
   - Religar `rag_enabled` só depois que a reindexação mostrar `total` 73, `embedded` 73 e `embeddingAvailable: true`, com `rollout_pct = 100` e `conditions = {}` (para o cron).

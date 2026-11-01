@@ -15,7 +15,7 @@
  *  (e) com prefers-reduced-motion, o Início já mostra os valores finais (sem contagem);
  *  (f) axe-core (axe-gate.js): violações serious/critical REPROVAM o cenário;
  *  (g) geometria (sem pixels): caixas (x, y, largura, altura) de cabeçalho, nav e abas,
- *      4 números do Início, gráfico principal, launcher e painel de Guia, em claro/escuro e
+ *      4 números do Início, gráfico principal, launcher e painel da Guia, em claro/escuro e
  *      nas duas telas, comparadas com geometry-baseline.json; diferença > 2 px reprova.
  *      UPDATE_GEOMETRY=1 regrava a baseline.
  * Usa a mesma API simulada do harness (sem rede). Não altera código de produção.
@@ -370,7 +370,7 @@ async function liaFlow(app, qa) {
   const mark = markErrors(app, qa);
   await app.showPanel('panel-home');
   await page.waitForSelector('#lia-launcher:not(.hidden)');
-  verify(await page.locator('#lia-panel.hidden').count() === 1, `${THEME_SLUG[qa.theme]}/${qa.vp.label}/lia-fechada: painel de Guia deveria estar fechado`);
+  verify(await page.locator('#lia-panel.hidden').count() === 1, `${THEME_SLUG[qa.theme]}/${qa.vp.label}/lia-fechada: painel da Guia deveria estar fechado`);
   await captureView(app, qa, 'lia-fechada', mark);
 
   const openMark = markErrors(app, qa);
@@ -381,7 +381,7 @@ async function liaFlow(app, qa) {
   await page.waitForSelector('#lia-log .lia-feedback', { timeout: 10000 }).catch(() => null);
   await page.waitForTimeout(SETTLE_MS);
   const where = `${THEME_SLUG[qa.theme]}/${qa.vp.label}/lia-aberta`;
-  verify(await page.locator('#lia-log .lia-sources li').count() > 0, `${where}: resposta de Guia sem lista de fontes`);
+  verify(await page.locator('#lia-log .lia-sources li').count() > 0, `${where}: resposta da Guia sem lista de fontes`);
   verify(await page.locator('#lia-log .lia-feedback').count() === 1, `${where}: micro-card de feedback não apareceu sob a resposta`);
   await captureView(app, qa, 'lia-aberta', openMark);
   await recordGeometry(app, qa, LIA_PANEL_GEOMETRY);

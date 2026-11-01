@@ -164,6 +164,12 @@ export function createInfoCard(container, { onAction = () => {}, tts = false, is
       ]);
       nameContainer.appendChild(badge);
     }
+    // CON-01: ⓘ com explicação e "Reportar erro" quando a ficha tem dado de revisão e ainda não tem revisor.
+    // Sem `review` no conteúdo o estado é desconhecido: nada é inventado, sem selo.
+    const seal = window.LaiftReviewSeal && window.LaiftReviewSeal.create(content, {
+      kind: 'ficha', module: 'Atlas 3D', id: entry.sid, excerpt: entry.names && entry.names.pt,
+    });
+    if (seal) nameContainer.appendChild(seal);
     if (entry.isNew) {
       nameContainer.appendChild(h('span', { className: 'atlas-card-new', text: 'Novo' }));
     }

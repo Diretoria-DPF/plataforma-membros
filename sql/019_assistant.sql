@@ -3,7 +3,7 @@
 -- Licença proprietária: ver LICENSE na raiz do repositório.
 -- 019_assistant.sql — Guia, guia da plataforma.
 --
--- 1) ai_usage_log.feature só aceitava 5 valores (013). O Guia usa 'assistant';
+-- 1) ai_usage_log.feature só aceitava 5 valores (013). A Guia usa 'assistant';
 --    sem esta migração o uso dela NÃO seria registrado (o erro é engolido) e o
 --    orçamento de tokens e o painel não a enxergariam.
 -- 2) Flag chatbot_enabled, DESLIGADA: ligar é decisão explícita do admin.

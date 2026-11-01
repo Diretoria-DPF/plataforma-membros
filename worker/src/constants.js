@@ -234,7 +234,7 @@ export const RATE_LIMITS = {
   ASSISTANT_CHAT_IP: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   ASSISTANT_FEEDBACK: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   ASSISTANT_REINDEX: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
-  // Prévia de IA do visitante (Guia híbrido): 5 tentativas por dia por IP (chave = hash do IP + sal). No Neon, não no
+  // Prévia de IA do visitante (Guia híbrida): 5 tentativas por dia por IP (chave = hash do IP + sal). No Neon, não no
   // KV: o KV gratuito só aceita 1.000 gravações por dia.
   LIA_VISITOR_AI_IP: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 86400 },
   // Gestão (confirmar cadastro, novos códigos, reautenticação): bucket separado
@@ -320,8 +320,8 @@ export const AI_FEATURE = {
 // membros e deixar o orçamento global de tokens (AI_DAILY_TOKEN_BUDGET) e o
 // disjuntor AI_GLOBAL_DAILY_MAX como freio de verdade. Se a comunidade crescer
 // (uma troca de chat gasta ~1,2 mil tokens), reduza estes números ou aumente o
-// orçamento; admin ~2x o membro. Visitante NÃO mudou (a prévia é o chat de Guia para visitante
-// própria, com limite por IP; aqui a cota de Guia de visitante é 0).
+// orçamento; admin ~2x o membro. Visitante NÃO mudou (a Guia dele é a prévia
+// própria, com limite por IP; aqui a cota da Guia de visitante é 0).
 export const AI_QUOTAS = {
   chat: { visitor: 15, member: 100, admin: 200 },
   evaluate: { visitor: 5, member: 25, admin: 50 },
@@ -355,7 +355,7 @@ export const AI_VISITOR_DAILY_MAX = Math.floor((AI_GLOBAL_DAILY_MAX * AI_VISITOR
 export const AI_DAILY_TOKEN_BUDGET = 450000;
 export const AI_BUDGET_REFRESH_MS = 30000; // reconsulta o uso a cada 30 s por instância
 
-// Modelo de Guia do MEMBRO (feature 'assistant'; ai/modelTier.js). Por padrão Guia usa o modelo rápido
+// Modelo da Guia do MEMBRO (feature 'assistant'; ai/modelTier.js). Por padrão a Guia usa o modelo rápido
 // (GROQ_MODEL_FAST, gpt-oss-20b); com FOLGA ela sobe para o modelo inteligente (GROQ_MODEL_SMART, gpt-oss-120b),
 // que responde melhor. "Folga" = as DUAS condições valem ao mesmo tempo:
 //   - uso de tokens das últimas 24 h (todos os modelos) abaixo de SMART_BELOW_BUDGET_PCT % do orçamento
@@ -457,7 +457,7 @@ export const RAG = {
   CONTEXT_CHARS: 900,       // máximo de caracteres de cada trecho no prompt
 };
 
-// ---- Guia híbrido (flag lia_hibrida_enabled, docs/lia/PLANO.md §"Desenho híbrido") ----
+// ---- Guia híbrida (flag lia_hibrida_enabled, docs/lia/PLANO.md §"Desenho híbrido") ----
 // RAG para recall + árvore de seções (assistant/tree.js) para decidir e ler + guarda de intenção +
 // resposta extrativa para quem não usa IA. Nada daqui vale com a flag desligada.
 export const TREE = {
@@ -546,9 +546,9 @@ Object.assign(RATE_LIMITS, {
 
 // ---- Guia: retenção de mensagens e incidentes (ADR 0005; limpeza em maintenance.js) ----
 // Comentário e avaliação usam FEEDBACK (acima). Pelo CASCADE de sql/021, a avaliação sai junto
-// com a resposta de Guia a que se refere (ASSISTANT_MESSAGES), antes dos 365 dias de FEEDBACK.
+// com a resposta da Guia a que se refere (ASSISTANT_MESSAGES), antes dos 365 dias de FEEDBACK.
 export const ASSISTANT_RETENTION = {
-  MESSAGES_PURGE_AFTER_DAYS: 180,   // resposta registrada de Guia (assistant_messages)
+  MESSAGES_PURGE_AFTER_DAYS: 180,   // resposta registrada da Guia (assistant_messages)
   INCIDENTS_PURGE_AFTER_DAYS: 365,  // incidente de moderação, sem texto (assistant_incidents)
 };
 

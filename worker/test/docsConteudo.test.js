@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * docsConteudo.test.js — conteúdo factual novo da base de Guia (assistant/docsConteudo.js).
+ * docsConteudo.test.js — conteúdo factual novo da base da Guia (assistant/docsConteudo.js).
  * Garante: fontes permitidas, títulos únicos, tamanho dos trechos, nada com cara de instrução,
  * nenhum e-mail fora do oficial, nenhuma sequência longa de dígitos e pelo menos 25 trechos novos.
  */
@@ -18,16 +18,16 @@ const EMAIL_RE = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
 const DIGITOS_LONGOS_RE = /\d{8,}/g;
 // Sequências de 8 ou mais dígitos aprovadas explicitamente (hoje, nenhuma).
 const DIGITOS_LISTA_BRANCA = [];
-// Repetição de título que já existia antes desta ficha: 'O que Guia faz' é a seção 'ajuda' de kb.js
-// e a seção '## O que Guia faz' do guia em docs.js. Dívida registrada; remover quando um deles for renomeado.
-const TITULOS_REPETIDOS_LEGADOS = ['O que Guia faz'];
+// Repetição de título que já existia antes desta ficha: 'O que a Guia faz' é a seção 'ajuda' de kb.js
+// e a seção '## O que a Guia faz' do guia em docs.js. Dívida registrada; remover quando um deles for renomeado.
+const TITULOS_REPETIDOS_LEGADOS = ['O que a Guia faz'];
 // Corpus antes desta ficha: 35 trechos (kb 23, destinos 1, guia 3, privacidade 2, convivencia 2, liga 4).
 const BASELINE_SEM_CONTEUDO = 35;
 
 const trechosNovos = () => buildDocuments().filter((d) => SOURCES_PERMITIDAS.includes(d.source));
 const contarSecoes = (markdown) => (markdown.match(/^##\s/gm) || []).length;
 
-describe('docsConteudo — conteúdo factual novo de Guia', () => {
+describe('docsConteudo — conteúdo factual novo da Guia', () => {
   test('as fontes de CONTENT_DOCS estão na lista permitida, sem repetição', () => {
     const fontes = CONTENT_DOCS.map((d) => d.source);
     expect(fontes.slice().sort()).toEqual(SOURCES_PERMITIDAS.slice().sort());

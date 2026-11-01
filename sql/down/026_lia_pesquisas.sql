@@ -3,7 +3,7 @@
 -- Licença proprietária: ver LICENSE na raiz do repositório.
 -- Reversão da 026_lia_pesquisas.sql. Não é aplicada no deploy: só à mão, em caso de rollback,
 -- e verificada por `npm run validate:sql`.
--- Apaga só o registro de pesquisas (cache: o Guia volta a pesquisar do zero). Antes de
+-- Apaga só o registro de pesquisas (cache: a Guia volta a pesquisar do zero). Antes de
 -- reverter, desligue a flag rag_cache_enabled, para o código não tentar ler a tabela.
 -- No fim, tira a migração do ledger (schema_migrations), para o runner poder reaplicá-la;
 -- sem o ledger (banco que nunca usou o runner), nada a fazer.

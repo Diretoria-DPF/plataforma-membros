@@ -15,7 +15,7 @@ perguntas ao dono (2026-10-10). Plano de escala do banco: `ESCALA-BANCO.md`.
 | 7 | Escala | Meta de **500 pessoas ao mesmo tempo**; banco em camadas: Neon principal, Neon de logs e D1 replicado para leitura pública |
 | 8 | Curadoria | Curadores cadastram por DOI/PMID (a plataforma completa os dados); membros também podem sugerir, com aprovação |
 | 9 | Acesso | Catálogo público (título, autores, link); resumo, coleções e favoritos só para membros |
-| 10 | Guia | Guia cita artigos aprovados da Biblioteca, com o botão "Ver na Biblioteca" |
+| 10 | Guia | A Guia cita artigos aprovados da Biblioteca, com o botão "Ver na Biblioteca" |
 | 11 | Resumo por IA | Workers AI como novo provedor do orquestrador, dentro do orçamento; o curador aprova antes de aparecer |
 | 12 | Curadores | Diretoria Científica aprova referências; um professor orientador é o revisor clínico |
 | 13 | Meta de lançamento | 50 a 100 artigos, uma área por vez (farmacologia clínica e toxicologia), com critério de inclusão escrito |
@@ -44,7 +44,7 @@ perguntas ao dono (2026-10-10). Plano de escala do banco: `ESCALA-BANCO.md`.
 **Interface:** catálogo com busca e filtros (área, ano, tipo, "acesso aberto"); ficha do artigo (abrir link oficial, salvar, citar em ABNT e Vancouver);
 membros: resumo, coleções, favoritos; admin: fila de triagem, aprovar, rejeitar, remover.
 **Flags (todas nascem desligadas):** `library_enabled`, `library_member_suggest`, `library_ai_summary`, `lia_library_enabled`.
-**Guia:** consulta só `publicado`; devolve até 3 referências com link; nunca inventa artigo; segue as regras de segurança de Guia (lista branca de botões, sem escrita).
+**Guia:** consulta só `publicado`; devolve até 3 referências com link; nunca inventa artigo; segue as regras de segurança da Guia (lista branca de botões, sem escrita).
 
 ## 4. Fases, ordem e critério de pronto
 | Fase | O quê | Quem (equipe) | Pronto quando |
@@ -53,7 +53,7 @@ membros: resumo, coleções, favoritos; admin: fila de triagem, aprovar, rejeita
 | **B1** Dados e curadoria | Migração, serviço, ações do Worker, fila admin, busca no Neon, testes TDD | 1 Sonnet (Worker e migração) + Haiku (testes, docs) + Opus revisa | Testes verdes; cadastro por DOI e fila funcionam em staging; banco com backup antes da migração |
 | **B2** Interface | Catálogo público, ficha, busca, citar, favoritos e coleções, SEO | Haiku (arquivos disjuntos) + sessão principal nos arquivos quentes | Portão visual aprovado (375 e 1280 px, claro e escuro); Lighthouse e axe sem regressão |
 | **B3** Resumo por IA e revisão clínica | Provedor Workers AI no orquestrador, marca "gerado por IA", fluxo do revisor | 1 Sonnet + Haiku | Orçamento por modelo respeitado; nada clínico publica sem revisor |
-| **B4** Guia e Biblioteca | Busca de Guia sobre `publicado`, botão "Ver na Biblioteca", testes de injeção | 1 Sonnet + Haiku | `ragEval` e corpus de injeção verdes; flag `lia_library_enabled` ligável por papel |
+| **B4** Guia e Biblioteca | Busca da Guia sobre `publicado`, botão "Ver na Biblioteca", testes de injeção | 1 Sonnet + Haiku | `ragEval` e corpus de injeção verdes; flag `lia_library_enabled` ligável por papel |
 | **E1** Escala do banco (em paralelo a B2 e B3) | Ver `ESCALA-BANCO.md` | 1 Sonnet + Haiku | Gatilhos medidos no painel; teste de carga simulando o pico |
 | **C** Agentes (Córtex Python) | Só depois de B1 a B4 em produção | A decidir | Nova rodada de perguntas sobre onde roda e custo real, com os números medidos da Biblioteca |
 
@@ -75,4 +75,4 @@ Cada fase tem flag desligada por padrão, rollback por flag, migração com `dow
 
 ## 7. Perguntas ainda abertas (próximas rodadas)
 Nome do módulo; taxonomia das áreas; formatos de citação além de ABNT e Vancouver; estrutura de coleções (por trilha, por evento); métricas de sucesso
-(uso por membro, citações de Guia, tempo de aprovação); relação com `docs/lia/JEV.md` e com o RAG híbrido do backlog; se e quando o blog passa a citar a Biblioteca.
+(uso por membro, citações da Guia, tempo de aprovação); relação com `docs/lia/JEV.md` e com o RAG híbrido do backlog; se e quando o blog passa a citar a Biblioteca.

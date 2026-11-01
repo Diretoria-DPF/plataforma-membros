@@ -18,7 +18,7 @@ const art = require('../modulos/shared/lia/lia-art.js');
 const ORIGIN = 'https://laift.test';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-// ---------- DOM mínimo (só o que Guia, as props e as cenas usam) ----------
+// ---------- DOM mínimo (só o que a Guia, as props e as cenas usam) ----------
 
 function findAll(el, test, out = []) {
   el.children.forEach((child) => {
@@ -149,7 +149,7 @@ afterEach(() => {
   saved.clear();
 });
 
-/** Monta Guia com props e cenas ligadas. `ready`: a arte já foi carregada antes do primeiro estado. */
+/** Monta a Guia com props e cenas ligadas. `ready`: a arte já foi carregada antes do primeiro estado. */
 async function mountStaged({ opts, ready = true, scenes = true, props = true, reduced = false } = {}) {
   const doc = fakeDocument();
   setGlobal('document', doc);
@@ -210,7 +210,7 @@ test('warning: um aria-label dado pelo chamador não é trocado pelo da pose', a
   assert.deepEqual(extrasOf(host), ['veu', 'cruzados', 'aviso']);
 });
 
-test('warning com a arte ainda carregando: começa em Guia base e a pose entra quando a arte chega', async () => {
+test('warning com a arte ainda carregando: começa na Guia base e a pose entra quando a arte chega', async () => {
   const { doc, lia, host, svg } = await mountStaged({ ready: false });
   lia.setState('warning');
   assert.deepEqual(extrasOf(host), []);
@@ -258,7 +258,7 @@ test('falha ao carregar a arte: Guia base, sem erro, sem peças e sem novo pedid
   assert.equal(doc.head.children.filter((c) => c.tag === 'script').length, 1);
 });
 
-test('sem LiaProps na página, Guia segue base e sem lançar', async () => {
+test('sem LiaProps na página, a Guia segue base e sem lançar', async () => {
   const { lia, host } = await mountStaged({ props: false, ready: false });
   assert.doesNotThrow(() => { lia.setState('warning'); lia.suspend(); lia.redeem(); });
   assert.deepEqual(extrasOf(host), []);
@@ -273,7 +273,7 @@ test('suspended: as costas entram (cabeça e costura) e o rótulo diz "de costas
   assert.equal(byId(svg, 'lia-pv-costas-cabeca').parentNode.attrs.id, 'lia-head');
   assert.equal(byId(svg, 'lia-pv-costas-costura').parentNode.attrs.id, 'lia-coat');
   assert.equal(host.attrs['data-state'], 'suspended');
-  assert.equal(host.attrs['aria-label'], 'Chat suspenso');
+  assert.equal(host.attrs['aria-label'], 'Guia está suspensa');
 });
 
 test('redeem animado: gira no host, troca costas por frente no meio e termina feliz com corações', async () => {
@@ -348,7 +348,7 @@ test('confused: cabeça balança por rotate e ombros sobem por translate, mesmo 
 
 test('módulos: cada contexto traz as suas peças (no pai certo) e toca a cena; a arte só é pedida quando um módulo a pede', async () => {
   const { doc, lia, svg, host } = await mountStaged({ ready: false });
-  assert.equal(doc.head.children.length, 0, 'montar Guia não carrega a arte');
+  assert.equal(doc.head.children.length, 0, 'montar a Guia não carrega a arte');
   lia.react('events');
   assert.equal(doc.head.children.length, 0, 'módulo sem peças não carrega a arte');
   lia.react('lab');
@@ -384,7 +384,7 @@ test('módulo: repetir o mesmo contexto reaproveita as peças e recomeça a cena
 
 // ---------- bolha fechada (recorte da cabeça) ----------
 
-test('Guia da bolha (crop head) nunca recebe peças nem cenas', async () => {
+test('a Guia da bolha (crop head) nunca recebe peças nem cenas', async () => {
   const { lia, host, svg } = await mountStaged({ opts: { crop: 'head' } });
   lia.setState('warning');
   lia.suspend();

@@ -6,7 +6,7 @@
 /**
  * agents/guardrails/clinicalScope.js
  * Escopo clínico do tutor (regras I5, I6 e I7). PRÓPRIO dos agentes: NÃO reutiliza assistant/questionKind.js,
- * que bloqueia dose e conduta de propósito (certo para Guia, errado para quem precisa explicar mecanismo e
+ * que bloqueia dose e conduta de propósito (certo para a Guia, errado para quem precisa explicar mecanismo e
  * toxicidade). Aqui o conceito PASSA e três coisas não:
  *   I5  caso pessoal ou real (o próprio estudante, família, "meu paciente"; emergência manda ao SAMU 192);
  *   I6  dose individualizada ou posologia (a decisão do dono é dose estrita: o tutor nunca dá número);

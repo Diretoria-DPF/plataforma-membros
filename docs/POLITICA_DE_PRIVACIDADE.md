@@ -13,7 +13,7 @@ retroativamente alterado).
 > trechos, como o restante do documento, ainda precisam de revisão
 > jurídica antes de serem considerados finais.
 >
-> A versão 2026-10-08 acrescenta a **Lia**, assistente da plataforma. Passam a
+> A versão 2026-10-08 acrescenta a **Guia**, assistente da plataforma. Passam a
 > ser registrados: perguntas e respostas da conversa (a pergunta é guardada só
 > como código, não como texto), avaliações com polegar para cima ou para baixo,
 > comentário opcional de até 500 caracteres e registros de moderação sem o texto
@@ -45,7 +45,7 @@ eventos, propostas enviadas, votos (o voto em si é vinculado à sua conta
 para impedir duplicidade — ver seção 6 sobre como isso é protegido),
 adesões a tarefas, comentários e mensagens de feedback enviadas por você.
 
-**Na Lia (assistente da plataforma):** as perguntas e respostas da conversa
+**Na Guia (assistente da plataforma):** as perguntas e respostas da conversa
 (a pergunta é guardada só como código, ver seção 5), as avaliações com
 polegar para cima ou para baixo, a categoria escolhida e o comentário
 opcional de até 500 caracteres que você envia sobre uma resposta.
@@ -56,7 +56,7 @@ confirmada em eventos (data, hora e forma do check-in) e o texto que você
 escreve nos recursos com inteligência artificial (ver seção 5).
 
 **Gerados automaticamente pelo sistema, nunca inseridos por você:**
-registros de moderação da Lia (nível e tipo de incidente, sem o texto da
+registros de moderação da Guia (nível e tipo de incidente, sem o texto da
 mensagem), registros de auditoria de ações administrativas e de autenticação
 (associados a um identificador de conta, nunca ao conteúdo de senha ou
 token), registros técnicos de erro para diagnóstico e dados técnicos de
@@ -76,9 +76,9 @@ seção 5).
 | Resultados de estudo na área "Aprender" e presença em eventos | Mostrar suas estatísticas e conquistas; registrar a presença em eventos da liga | Execução de contrato (inciso V) |
 | Perguntas e respostas escritas nos simuladores com IA (clínica virtual e laboratório), métricas de uso da IA | Oferecer o paciente virtual, o preceptor e a geração de casos; controlar custo e abuso (cota diária) | Execução de contrato (inciso V); métricas de uso: legítimo interesse (inciso IX) |
 | Dados técnicos de acesso (IP, navegador, página, país, desempenho) | Entregar o site, proteger contra ataques e abuso e medir de forma agregada a audiência e o desempenho da plataforma (analytics) | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
-| Perguntas, respostas e cache de perguntas genéricas da Lia | Responder dúvidas sobre a plataforma e levar você à tela certa; reaproveitar a resposta de perguntas iguais | Execução de contrato (inciso V) |
-| Avaliações (polegar), categoria e comentário opcional sobre a Lia | Medir a qualidade das respostas e corrigir a base de conhecimento. O comentário só existe se você decidir enviá-lo | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
-| Registros de moderação da Lia (nível, tipo de incidente, forma de detecção) | Proteger a comunidade e a assistente contra ofensas | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
+| Perguntas, respostas e cache de perguntas genéricas da Guia | Responder dúvidas sobre a plataforma e levar você à tela certa; reaproveitar a resposta de perguntas iguais | Execução de contrato (inciso V) |
+| Avaliações (polegar), categoria e comentário opcional sobre a Guia | Medir a qualidade das respostas e corrigir a base de conhecimento. O comentário só existe se você decidir enviá-lo | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
+| Registros de moderação da Guia (nível, tipo de incidente, forma de detecção) | Proteger a comunidade e a assistente contra ofensas | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
 
 ## 4. O que NÃO fazemos
 
@@ -88,7 +88,7 @@ seção 5).
   seção 3.
 - Não enviamos à IA seu nome, e-mail nem identificadores da sua conta. O
   texto que você digita, porém, é enviado: por isso, não escreva dados
-  pessoais seus ou de terceiros nas conversas com a IA ou com a Lia.
+  pessoais seus ou de terceiros nas conversas com a IA ou com a Guia.
 - Não armazenamos sua senha em texto puro em nenhum momento, em nenhum
   sistema, por nenhuma razão.
 - Não exibimos telefone, e-mail completo ou hash de senha em nenhuma
@@ -113,7 +113,7 @@ mediante solicitação ao canal da seção 1.
 
 **Inteligência artificial.** Os recursos de IA da área "Aprender" (paciente
 virtual, preceptor da clínica, geração de casos e preceptor do laboratório)
-e a Lia usam o serviço da **Groq, Inc.** como operador de dados. Quando você usa
+e a Guia usam o serviço da **Groq, Inc.** como operador de dados. Quando você usa
 esses recursos, o texto que você escreve (perguntas, hipótese diagnóstica e
 conduta) e o contexto do caso clínico **fictício** são enviados à Groq para
 gerar a resposta. **Não enviamos seu nome, e-mail ou qualquer identificador
@@ -128,7 +128,7 @@ administradores. O tratamento pela Groq segue os termos e a política de
 privacidade dela, com possível transferência internacional de dados (LGPD,
 art. 33).
 
-**Lia, assistente da plataforma.** A Lia responde dúvidas sobre a plataforma
+**Guia, assistente da plataforma.** A Guia responde dúvidas sobre a plataforma
 e leva você até a tela certa. Ela não altera dados da sua conta. Quando você
 conversa com ela:
 
@@ -167,7 +167,7 @@ políticas de privacidade de cada um:
   entrega o conteúdo por rede de distribuição (CDN), protege contra
   ataques e abuso, e guarda arquivos (fotos de perfil e imagens de eventos)
   e dados temporários de cache, além de gerar (Workers AI) o vetor numérico
-  das perguntas da Lia para a busca na base de conhecimento. A Cloudflare
+  das perguntas da Guia para a busca na base de conhecimento. A Cloudflare
   também faz a **medição de
   acesso (analytics) de forma agregada**, a partir das requisições que
   passam pela rede dela: quantidade de visitas, países de origem, páginas
@@ -182,7 +182,7 @@ políticas de privacidade de cada um:
   redefinição de senha); recebe o seu e-mail e, quando usado na mensagem, o
   seu nome, para entregar o aviso.
 - **Groq, Inc.** — recursos de inteligência artificial (área "Aprender" e
-  Lia), como descrito acima.
+  Guia), como descrito acima.
 - **NVIDIA Corporation** — reserva técnica de IA, desligada por padrão. Se a
   administração a ativar, esta Política será atualizada antes, e os mesmos
   textos descritos acima poderão ser enviados a ela.
@@ -218,17 +218,17 @@ denúncia em andamento envolvendo a conta) e para cumprir obrigação legal
 de guarda de registros de auditoria de segurança pelo prazo mínimo exigido
 pela legislação aplicável.
 
-**Lia: respostas, avaliações, comentários e registros de moderação.** Os
+**Guia: respostas, avaliações, comentários e registros de moderação.** Os
 prazos abaixo são aplicados automaticamente por uma rotina de limpeza que roda
 todos os dias na plataforma:
 
-- **Resposta registrada da Lia** (o texto da resposta e o código da pergunta,
+- **Resposta registrada da Guia** (o texto da resposta e o código da pergunta,
   nunca o texto da pergunta): removida após **180 dias**.
 - **Avaliação (polegar), categoria e comentário opcional:** o comentário fica em
   texto completo por até **90 dias**. Depois disso o texto é **apagado**, sem
   substituição por código ou resumo, e não pode ser recuperado. A avaliação e a
   categoria permanecem, sem o texto, para medir a qualidade das respostas. A
-  avaliação sai junto com a resposta da Lia a que se refere, ou seja, em até
+  avaliação sai junto com a resposta da Guia a que se refere, ou seja, em até
   180 dias. A regra de remoção da avaliação aos 365 dias é um limite de
   segurança e, na prática, não chega a ser aplicada.
 - **Registros de incidentes de moderação** (tipo do incidente, forma de detecção
@@ -262,7 +262,7 @@ expressa; eliminação dos dados tratados com base no seu consentimento
 foram eventualmente compartilhados; informação sobre a possibilidade de
 não fornecer consentimento e as consequências disso; e revogação do
 consentimento a qualquer momento, para os dados cuja base legal seja o
-consentimento (ver tabela da seção 3). Se a moderação da Lia limitar seu uso
+consentimento (ver tabela da seção 3). Se a moderação da Guia limitar seu uso
 (suspensão de 24 horas), você pode pedir a revisão da decisão por uma pessoa,
 pelo canal da seção 1 (LGPD, art. 20).
 

@@ -179,6 +179,9 @@ module.exports = async function fase3() {
           if (!msg) return null;
           const text = msg.textContent;
           const ok = document.querySelector('.laift-dialog-btn-primary');
+          // Pergunta do tema do caso (era prompt() nativo, MOB-03): campo rotulado dentro do modal.
+          const field = document.querySelector('.laift-dialog-input');
+          if (field) field.value = 'Intoxicação por organofosforado';
           if (ok) ok.click();
           return text;
         }).then((text) => { if (text) dialogs.push(text); }, () => {});

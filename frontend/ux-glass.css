@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /* Vidro (glassmorphism) das superfícies flutuantes da v5 UX: barra inferior,
-   popover de Guia, modais, cartão de boas-vindas da Início, seletores e o
+   popover da Guia, modais, cartão de boas-vindas da Início, seletores e o
    painel de agendamento. Vem DEPOIS de ux.css e só age sob
    :root[data-flag-ux-v2-enabled]. A base é sempre opaca; o translúcido e o
    backdrop-filter entram só dentro de @supports, então sem suporte nada muda.
