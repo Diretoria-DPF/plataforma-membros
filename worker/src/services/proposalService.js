@@ -20,6 +20,11 @@ const PUBLIC_STATUSES = [C.PROPOSAL_STATUS.VOTING_OPEN, C.PROPOSAL_STATUS.VOTING
 function canSeeProposal(identity, proposal) {
   if (PUBLIC_STATUSES.indexOf(proposal.status) !== -1) return true;
   if (proposal.author_id && proposal.author_id === identity.profileId) return true;
+  return canReviewProposals(identity);
+}
+
+/** Admin ou capacidade proposals.review (cargo gestor): vê propostas fora de votação e o placar a qualquer momento. */
+function canReviewProposals(identity) {
   if (identity.role === C.ROLES.ADMIN) return true;
   return Array.isArray(identity.capabilities) && identity.capabilities.indexOf('proposals.review') !== -1;
 }
@@ -122,7 +127,7 @@ export async function getProposalResults(sql, identity, proposalId) {
   if (!rows.length || !canSeeProposal(identity, rows[0])) throw E.NotFoundError('Proposta não encontrada.');
   const proposal = rows[0];
 
-  const canSeeAggregate = identity && (identity.role === C.ROLES.ADMIN || (identity.role === C.ROLES.MEMBER && proposal.status === C.PROPOSAL_STATUS.VOTING_CLOSED));
+  const canSeeAggregate = identity && (canReviewProposals(identity) || (identity.role === C.ROLES.MEMBER && proposal.status === C.PROPOSAL_STATUS.VOTING_CLOSED));
 
   const response = {
     success: true,

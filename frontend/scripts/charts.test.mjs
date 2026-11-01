@@ -559,8 +559,8 @@ test('charts.css: fundo do gráfico é camada 0 ou 1, nunca superfície 2 ou 3',
   assert.match(read('modulos/shared/charts.css'), /\.laift-chart \{[^}]*background:\s*var\(--layer-[01]\)/);
 });
 
-test('charts.css: rótulo de valor de 11 px, acima da regra geral de texto de 12 px', () => {
-  assert.match(read('modulos/shared/charts.css'), /\.laift-chart__svg \.laift-chart__value \{[^}]*font-size:\s*11px/);
+test('charts.css: rótulo de valor de 12 px (piso de fonte da MOB-06)', () => {
+  assert.match(read('modulos/shared/charts.css'), /\.laift-chart__svg \.laift-chart__value \{[^}]*font-size:\s*12px/);
 });
 
 // Rótulo que não cabe no espaço das barras horizontais vira "texto…" (antes vazava pela borda esquerda).

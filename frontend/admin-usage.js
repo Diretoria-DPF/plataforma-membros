@@ -21,6 +21,7 @@
 
   var CONTAINER_ID = 'admin-usage';
   var CARD_ID = 'admin-usage-card';
+  var ERRORS_ID = 'admin-client-errors'; // OPS-08: erros do navegador (apiAdminClientErrors), opcional na página
   var ACTION_RELOAD = 'LaiftAdminUsage.reload';
   var ERROR_TITLE = 'Não foi possível carregar o uso da plataforma.';
   var DEFAULT_WINDOW_DAYS = 30;
@@ -277,6 +278,42 @@
     mount(statsNodes(normalizeStats(res)), false);
   }
 
+  // ---------- Erros do navegador (OPS-08): os mais frequentes, só agregado ----------
+
+  /** Linhas { label, n } do ranking; mensagem e rota já vêm limpas do servidor, mas entram só como texto. */
+  function normalizeClientErrors(res) {
+    var list = res && Array.isArray(res.errors) ? res.errors : [];
+    return list.slice(0, 20).map(function (row) {
+      var r = row || {};
+      var where = [r.route, r.browser, r.appVersion].filter(function (v) { return typeof v === 'string' && v; }).join(' · ');
+      return { label: String(r.message || '').slice(0, 200) + (where ? ' (' + where + ')' : ''), n: toCount(r.count) };
+    }).filter(function (row) { return row.label; });
+  }
+
+  function renderClientErrors(res) {
+    var box = document.getElementById(ERRORS_ID);
+    if (!box || !dom()) return;
+    dom().clear(box);
+    if (!res || res.success !== true) {
+      box.appendChild(h('p', { className: 'muted' }, ['Não foi possível carregar os erros do navegador.']));
+      return;
+    }
+    var rows = normalizeClientErrors(res);
+    if (!rows.length) {
+      box.appendChild(h('p', { className: 'empty-state' }, [res.tableMissing ? 'A coleta de erros ainda não foi ativada no servidor.' : 'Nenhum erro do navegador registrado nos últimos 7 dias.']));
+      return;
+    }
+    box.appendChild(h('h3', null, ['Erros do navegador (últimos ' + (toCount(res.days) || 7) + ' dias)']));
+    rows.forEach(function (row) { box.appendChild(funnelRow(row.label, row.n.toLocaleString('pt-BR'))); });
+  }
+
+  function loadClientErrors(app, token, mine) {
+    if (!document.getElementById(ERRORS_ID)) return;
+    app.callApi('apiAdminClientErrors', token, { days: 7 }).then(function (res) {
+      if (mine === generation) renderClientErrors(res);
+    });
+  }
+
   /** Busca o resumo. Só a resposta do pedido mais recente (e de antes de um logout) é desenhada. */
   function load(app) {
     if (app) appRef = app;
@@ -288,7 +325,10 @@
     appRef.callApi('apiAdminUsageStats', token).then(function (res) {
       if (mine !== generation) return;
       if (!res || res.success !== true) showError(res);
-      else render(res);
+      else {
+        render(res);
+        loadClientErrors(appRef, token, mine); // só depois do resumo: um pedido a mais por vez
+      }
     });
   }
 
@@ -303,12 +343,14 @@
     if (!box || !dom()) return;
     dom().clear(box);
     box.removeAttribute('aria-busy');
+    var errorsBox = document.getElementById(ERRORS_ID);
+    if (errorsBox) dom().clear(errorsBox);
   }
 
   var api = { load: load, reload: reload, reset: reset };
   var pure = {
     plural: plural, ratioLabel: ratioLabel, dayLabel: dayLabel, normalizeStats: normalizeStats,
-    isEmptyStats: isEmptyStats, errorMessage: errorMessage,
+    isEmptyStats: isEmptyStats, errorMessage: errorMessage, normalizeClientErrors: normalizeClientErrors,
   };
 
   // Navegador: window.LaiftAdminUsage. Node: module.exports, para scripts/admin-usage.test.mjs.

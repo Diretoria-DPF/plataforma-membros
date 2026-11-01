@@ -24,7 +24,7 @@ import { newCorrelationId } from './security.js';
 import { readLimitedBody, bodyFitsAction } from './requestBody.js';
 import { statusOf, wantsRealStatus, STATUS_REQUEST_HEADER } from './httpStatus.js';
 import { securityHeaders } from './securityHeaders.js';
-import { HARDENING_BODY_LIMITS } from './constants.js';
+import { HARDENING_BODY_LIMITS, CLIENT_ERRORS } from './constants.js';
 import { isEnabled } from './services/featureFlagService.js';
 import {
   SESSION_CREATING_ACTIONS, SESSION_ENDING_ACTIONS, cookieAllowedForOrigin, isMarker, readSessionCookie, resolveArgs,
@@ -141,6 +141,8 @@ export default {
     const realStatus = wantsRealStatus(request);
     const action = body && typeof body.action === 'string' ? body.action : '';
     if (!bodyFitsAction(raw.bytes, action, HARDENING_BODY_LIMITS)) return jsonResponse(TOO_LARGE, request, env, 413);
+    // OPS-08: o relato de erro do navegador e pequeno por definicao.
+    if (action === 'apiLogClientError' && raw.bytes > CLIENT_ERRORS.BODY_MAX_BYTES) return jsonResponse(TOO_LARGE, request, env, 413);
     // Allowlist fechada — mesma lógica do API_REGISTRY do Apps Script:
     // hasOwnProperty explícito impede que "toString"/"constructor" resolvam
     // para um método herdado de Object.prototype.

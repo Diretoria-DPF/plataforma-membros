@@ -43,6 +43,7 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminAttendanceSearch"
                 - "$ref": "#/components/schemas/apiAdminBanUser"
                 - "$ref": "#/components/schemas/apiAdminChangeUserRole"
+                - "$ref": "#/components/schemas/apiAdminClientErrors"
                 - "$ref": "#/components/schemas/apiAdminCompleteDeletion"
                 - "$ref": "#/components/schemas/apiAdminCreateEvent"
                 - "$ref": "#/components/schemas/apiAdminCreateTask"
@@ -160,6 +161,7 @@ paths:
                 - "$ref": "#/components/schemas/apiListRecentCompletedEvents"
                 - "$ref": "#/components/schemas/apiListTaskComments"
                 - "$ref": "#/components/schemas/apiListTasks"
+                - "$ref": "#/components/schemas/apiLogClientError"
                 - "$ref": "#/components/schemas/apiLogin"
                 - "$ref": "#/components/schemas/apiLoginMfa"
                 - "$ref": "#/components/schemas/apiLogout"
@@ -432,6 +434,22 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 4
+    apiAdminClientErrors:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminClientErrors"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminCompleteDeletion:
       type: "object"
       required:
@@ -2279,6 +2297,21 @@ components:
           type: "array"
           prefixItems:
             - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiLogClientError:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiLogClientError"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "input"
           minItems: 0
           maxItems: 1
     apiLogin:
