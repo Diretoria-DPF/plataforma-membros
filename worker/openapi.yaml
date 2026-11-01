@@ -133,6 +133,7 @@ paths:
                 - "$ref": "#/components/schemas/apiLearnClinicalEvaluate"
                 - "$ref": "#/components/schemas/apiLearnClinicalGenerateCase"
                 - "$ref": "#/components/schemas/apiLearnClinicalLibrary"
+                - "$ref": "#/components/schemas/apiLearnGetEngagement"
                 - "$ref": "#/components/schemas/apiLearnGetMyAiQuota"
                 - "$ref": "#/components/schemas/apiLearnGetMyAttendanceQr"
                 - "$ref": "#/components/schemas/apiLearnGetMyStats"
@@ -146,6 +147,7 @@ paths:
                 - "$ref": "#/components/schemas/apiLearnLibrarySetFavorite"
                 - "$ref": "#/components/schemas/apiLearnLibrarySuggest"
                 - "$ref": "#/components/schemas/apiLearnRecordLabFormulation"
+                - "$ref": "#/components/schemas/apiLearnSetDailyGoal"
                 - "$ref": "#/components/schemas/apiLearnSubmitQuizAttempt"
                 - "$ref": "#/components/schemas/apiListConversations"
                 - "$ref": "#/components/schemas/apiListEvents"
@@ -1863,6 +1865,21 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 2
+    apiLearnGetEngagement:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnGetEngagement"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
     apiLearnGetMyAiQuota:
       type: "object"
       required:
@@ -2058,6 +2075,22 @@ components:
       properties:
         action:
           const: "apiLearnRecordLabFormulation"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnSetDailyGoal:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnSetDailyGoal"
         args:
           type: "array"
           prefixItems:

@@ -67,6 +67,7 @@
   <link rel="stylesheet" href="assistant-feedback.css">
   <link rel="stylesheet" href="modulos/shared/charts.css">
   <link rel="stylesheet" href="home-editorial.css">
+  <link rel="stylesheet" href="engagement.css">
   <link rel="stylesheet" href="modulos/shared/lia/lia.css">
   <link rel="stylesheet" href="assistant-hints.css">
   <link rel="stylesheet" href="splash.css">
@@ -533,6 +534,8 @@
                 <div class="learn-stat"><strong id="learn-stat-lab">—</strong><span>Formulações</span></div>
               </div>
               <div id="learn-status" class="status-msg" role="status" aria-live="polite"></div>
+              <!-- Sequência e meta do dia (engagement.js; só do próprio membro). -->
+              <div id="learn-engagement"></div>
             </div>
             <!-- Fase 2 — desempenho por módulo e conquistas (calculados na Worker; montados por learning.js). -->
             <div class="card learn-progress hidden" id="learn-progress">
@@ -1247,6 +1250,8 @@
   <script src="modulos/shared/charts-core.js" defer></script>
   <script src="modulos/shared/charts.js" defer></script>
   <script src="dashboardAdapter.js" defer></script>
+  <script src="engagement.js" defer></script>
+  <script src="daily-quiz.js" defer></script>
   <script src="home.js" defer></script>
   <script src="mfa.js" defer></script>
   <script src="credential.js" defer></script>

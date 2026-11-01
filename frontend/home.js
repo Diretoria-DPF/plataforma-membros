@@ -583,6 +583,23 @@
     ].concat(layout.metrics.sparks.map(function (block) { return isolated(drawSpark(ctx, block)); })));
   }
 
+  /**
+   * Retorno pessoal no topo (ENG-01/02/03, engagement.js): "Continuar de onde parou", sequência, meta e
+   * quiz do dia. Só para quem tem aprendizagem no resumo; isolado, nunca atrasa nem derruba o Início.
+   */
+  function mountReturn(app, doc, host, summary, token, isCurrent) {
+    var engagement = root.LaiftEngagement;
+    if (!engagement || !summary.learning) return;
+    try {
+      var slot = element(doc, 'div', 'home-retorno-slot');
+      if (host.firstChild && host.insertBefore) host.insertBefore(slot, host.firstChild);
+      else host.appendChild(slot);
+      isolated(engagement.mountHome(app, doc, slot, token, isCurrent));
+    } catch (err) {
+      if (root.console) root.console.warn('[Início]', err);
+    }
+  }
+
   /** `isCurrent()` diz se esta entrada ainda é a tela; respostas que chegam depois de trocada são descartadas. */
   function renderEditorial(app, doc, host, summary, now, token, isCurrent) {
     var ctx = {
@@ -593,6 +610,7 @@
     ctx.repaint = function (force) { return paintAll(ctx, layout, force); };
     bindRange(ctx, layout.main);
     renderBadges(ctx, layout.metrics.badges);
+    mountReturn(app, doc, host, summary, token, isCurrent);
     return ctx.repaint(false).then(function () {
       if (isCurrent()) host.setAttribute('aria-busy', 'false');
     });
