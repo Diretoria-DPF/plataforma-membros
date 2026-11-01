@@ -41,6 +41,7 @@ import * as MessagingKeyService from './services/messagingKeyService.js';
 import * as MessageService from './services/messageService.js';
 // Fase 2 — Dados & Presença (docs/PLANO_FASES_2_3_4.md, Contrato 2)
 import * as LearningService from './services/learningService.js';
+import * as EngagementService from './services/engagementService.js';
 import * as AttendanceService from './services/attendanceService.js';
 // Fase 3 — IA (Groq) e clínica virtual
 import * as AiService from './services/aiService.js';
@@ -75,18 +76,19 @@ import * as RolesService from './services/rolesService.js';
 // Analytics de produto mínimo (DAT-01; sql/040)
 import * as UsageStatsService from './services/usageStatsService.js';
 import { recordActivity } from './analytics/usage.js';
+import { statusForError, tagStatus } from './httpStatus.js';
 
-async function run(sql, callback) {
+export async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
   try {
     return await callback(correlationId);
   } catch (err) {
     if (err && err.expected) {
       // `payload` carrega sinais para a interface (ex.: mfaSetupRequired), nunca dados sensíveis.
-      return Object.assign({ success: false, message: err.message }, err.payload || {});
+      return tagStatus(Object.assign({ success: false, message: err.message }, err.payload || {}), statusForError(err));
     }
     await Logging.logError(sql, correlationId, (err && err.name) || 'UNEXPECTED_ERROR', String((err && err.message) || err), null);
-    return { success: false, message: GENERIC_ERROR_MESSAGE + ' (ref: ' + correlationId + ')' };
+    return tagStatus({ success: false, message: GENERIC_ERROR_MESSAGE + ' (ref: ' + correlationId + ')' }, 500);
   }
 }
 
@@ -296,9 +298,12 @@ export const API_REGISTRY = {
   // Resultado do simulado também alimenta a memória de estudo (sinal determinístico, em segundo plano; sem banco de memória, nada).
   apiLearnSubmitQuizAttempt: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity, cid) => {
     const result = await LearningService.submitQuizAttempt(sql, identity, asInput(input), cid);
-    await MemoryTutor.scheduleQuizSignal(sql, env, identity, asInput(input));
+    if (!result.duplicate) await MemoryTutor.scheduleQuizSignal(sql, env, identity, asInput(input));
     return result;
   }),
+  // Retorno pessoal (ENG-01/02/03, docs/engajamento.md): sequência, meta diária e última atividade; nada é público.
+  apiLearnGetEngagement: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => EngagementService.getEngagement(sql, identity)),
+  apiLearnSetDailyGoal: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => EngagementService.setDailyGoal(sql, identity, asInput(input))),
   apiLearnRecordLabFormulation: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LearningService.recordLabFormulation(sql, identity, asInput(input), cid)),
   apiLearnGetMyAttendanceQr: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.getMyAttendanceQr(env, identity)),
   apiAdminAttendanceListEvents: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.listEvents(sql, identity)),
