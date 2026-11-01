@@ -252,7 +252,10 @@
 
   function loadPanel() {
     renderHub();
-    if (!activeModuleId) loadStats();
+    if (!activeModuleId) {
+      loadStats();
+      if (window.LaiftEngagement) window.LaiftEngagement.refreshHub(app(), document);
+    }
   }
 
   // ===========================================================================
@@ -334,6 +337,7 @@
     if (openerCard && document.contains(openerCard)) openerCard.focus({ preventScroll: true });
     openerCard = null;
     loadStats();
+    if (window.LaiftEngagement) window.LaiftEngagement.refreshHub(app(), document);
     if (wasOpen) emitModuleChange('');
   }
 
@@ -408,6 +412,7 @@
       STAT_IDS.forEach(function (id) { setStat(id, null); });
       app().clearEl($('learn-by-module'));
       app().clearEl($('learn-badges'));
+      if ($('learn-engagement')) app().clearEl($('learn-engagement'));
       $('learn-progress').classList.add('hidden');
       if (window.LaiftCredential) window.LaiftCredential.close();
     }

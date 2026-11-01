@@ -70,6 +70,17 @@ const ClinicEngine = (() => {
     }
   }
 
+  // Avisos e confirmações: modal acessível (LaiftDialog, shared/laift-dialog.js); sem ele, cai nos nativos.
+  function dialogAlert(message) {
+    if (window.LaiftDialog) return window.LaiftDialog.alert(message);
+    window.alert(message);
+    return Promise.resolve();
+  }
+  function dialogConfirm(message) {
+    if (window.LaiftDialog) return window.LaiftDialog.confirm(message);
+    return Promise.resolve(window.confirm(message));
+  }
+
   /** Cria um elemento; `text` vira textContent, filhos string viram nós de texto. */
   function el(tag, props, children) {
     const node = document.createElement(tag);
@@ -454,7 +465,7 @@ const ClinicEngine = (() => {
     initDomReferences();
     const caso = casosAcervoCache.find((c) => String(c.id) === String(identificador));
     if (!caso) {
-      alert('Não foi possível localizar este caso no acervo carregado.');
+      dialogAlert('Não foi possível localizar este caso no acervo carregado.');
       return;
     }
 
@@ -548,9 +559,9 @@ const ClinicEngine = (() => {
     startCase(caseIdOrObject);
   }
 
-  function returnToBeds() {
+  async function returnToBeds() {
     if (isCaseActive) {
-      if (!confirm('Deseja pausar o atendimento atual e retornar ao mapa de leitos?')) return;
+      if (!(await dialogConfirm('Deseja pausar o atendimento atual e retornar ao mapa de leitos?'))) return;
       clearInterval(clockInterval);
       isCaseActive = false;
     }
@@ -1060,7 +1071,7 @@ const ClinicEngine = (() => {
     }
   }
 
-  function triggerCriticalOutcome(outcomeType) {
+  async function triggerCriticalOutcome(outcomeType) {
     isCaseActive = false;
     clearInterval(clockInterval);
     caseOutcome = outcomeType;
@@ -1070,9 +1081,9 @@ const ClinicEngine = (() => {
     if (dom.submitResolutionBtn) dom.submitResolutionBtn.disabled = true;
 
     if (outcomeType === 'OBITO') {
-      alert('DESFECHO CRÍTICO: O paciente evoluiu para colapso clínico irreversível por falta de suporte terapêutico em tempo hábil.');
+      await dialogAlert('DESFECHO CRÍTICO: O paciente evoluiu para colapso clínico irreversível por falta de suporte terapêutico em tempo hábil.');
     } else if (outcomeType === 'ABANDONO') {
-      alert('DESFECHO CLÍNICO: O paciente esgotou a paciência com o atendimento prolongado e optou por evadir da unidade.');
+      await dialogAlert('DESFECHO CLÍNICO: O paciente esgotou a paciência com o atendimento prolongado e optou por evadir da unidade.');
     }
 
     finalizeClinicalCase();
@@ -1240,7 +1251,7 @@ const ClinicEngine = (() => {
     const btn = dom.btnGenerateAiCase;
     if (btn && btn.disabled) {
       if (lastQuota && lastQuota.generateCase && lastQuota.generateCase.remaining <= 0) {
-        alert(`Você já usou os ${lastQuota.generateCase.limit} casos com IA de hoje; a cota volta amanhã. O plantão e o acervo continuam disponíveis.`);
+        dialogAlert(`Você já usou os ${lastQuota.generateCase.limit} casos com IA de hoje; a cota volta amanhã. O plantão e o acervo continuam disponíveis.`);
       }
       return;
     }
@@ -1266,14 +1277,14 @@ const ClinicEngine = (() => {
       const caso = Object.assign({}, res.case, { caseSource: 'ia' });
       if (typeof clinicalCases !== 'undefined' && Array.isArray(clinicalCases)) clinicalCases.unshift(caso);
       await refreshAiQuota();
-      alert(`✅ Novo paciente admitido no leito: ${(caso.paciente && caso.paciente.nome) || 'Paciente'} (${caso.titulo || 'Caso Clínico'}).\nO caso foi enviado para revisão da diretoria antes de entrar no Acervo da Liga.`);
+      await dialogAlert(`✅ Novo paciente admitido no leito: ${(caso.paciente && caso.paciente.nome) || 'Paciente'} (${caso.titulo || 'Caso Clínico'}).\nO caso foi enviado para revisão da diretoria antes de entrar no Acervo da Liga.`);
       openBed(caso);
       return;
     }
 
     if (res.quotaExceeded) {
       await refreshAiQuota();
-      alert(res.message);
+      await dialogAlert(res.message);
       return;
     }
 
@@ -1282,7 +1293,7 @@ const ClinicEngine = (() => {
     setGenerateButtonIdle();
     const casoBackup = gerarCasoLocalContingencia(tema);
     if (typeof clinicalCases !== 'undefined' && Array.isArray(clinicalCases)) clinicalCases.unshift(casoBackup);
-    alert(`${res.message || 'A IA está indisponível agora.'}\n\nUm caso simulado localmente foi admitido no lugar: ${casoBackup.paciente.nome}.`);
+    await dialogAlert(`${res.message || 'A IA está indisponível agora.'}\n\nUm caso simulado localmente foi admitido no lugar: ${casoBackup.paciente.nome}.`);
     openBed(casoBackup);
   }
 

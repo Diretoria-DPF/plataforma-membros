@@ -88,6 +88,54 @@ describe('LearningService.submitQuizAttempt', () => {
   });
 });
 
+describe('LearningService.submitQuizAttempt — idempotência (fila offline)', () => {
+  const KEY = '3f2b8c1e-5a47-4d9b-9c0e-7a1d2e3f4a5b';
+
+  test('com chave: confere duplicata, grava a chave em details e audita', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(RATE_OK).mockResolvedValueOnce([]).mockResolvedValueOnce([{ id: 'att-9' }]).mockResolvedValueOnce(undefined);
+    const res = await LearningService.submitQuizAttempt(sql, MEMBER, validQuiz({ idempotencyKey: KEY.toUpperCase() }), 'cid');
+    expect(res).toEqual({ success: true, attemptId: 'att-9' });
+    expect(queryText(sql, 1)).toContain("details->>'idempotencyKey'");
+    expect(boundValues(sql, 1)).toEqual([MEMBER.profileId, KEY]);
+    expect(queryText(sql, 2)).toContain('ON CONFLICT DO NOTHING');
+    expect(JSON.parse(boundValues(sql, 2)[6])).toEqual({ topics: ['Antídotos'], idempotencyKey: KEY });
+    expect(boundValues(sql, 3)).toContain('LEARN_SUBMIT_QUIZ');
+  });
+
+  test('reenvio da mesma chave: não grava, não audita e sinaliza duplicata', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(RATE_OK).mockResolvedValueOnce([{ id: 'att-9' }]);
+    const res = await LearningService.submitQuizAttempt(sql, MEMBER, validQuiz({ idempotencyKey: KEY }), 'cid');
+    expect(res).toEqual({ success: true, duplicate: true });
+    expect(sql).toHaveBeenCalledTimes(2); // rate limit + conferência
+  });
+
+  test('corrida (índice único da 046): ON CONFLICT sem linha também vira duplicata', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(RATE_OK).mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+    const res = await LearningService.submitQuizAttempt(sql, MEMBER, validQuiz({ idempotencyKey: KEY }), 'cid');
+    expect(res).toEqual({ success: true, duplicate: true });
+    expect(sql).toHaveBeenCalledTimes(3);
+  });
+
+  test.each([['texto livre', 'abc'], ['número', 123], ['objeto', { a: 1 }]])('chave inválida (%s) é recusada sem gravar', async (_l, key) => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(RATE_OK);
+    await expect(LearningService.submitQuizAttempt(sql, MEMBER, validQuiz({ idempotencyKey: key }), 'cid'))
+      .rejects.toMatchObject({ name: 'ValidationError', message: 'Chave de idempotência inválida.' });
+    expect(sql).toHaveBeenCalledTimes(1);
+  });
+
+  test('sem chave: caminho antigo intacto (sem conferência, sem ON CONFLICT)', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(RATE_OK).mockResolvedValueOnce([{ id: 'att-1' }]).mockResolvedValueOnce(undefined);
+    await LearningService.submitQuizAttempt(sql, MEMBER, validQuiz(), 'cid');
+    expect(queryText(sql, 1)).not.toContain('ON CONFLICT');
+    expect(sql).toHaveBeenCalledTimes(4); // limite, gravação, auditoria, métrica
+  });
+});
+
 describe('LearningService.recordLabFormulation', () => {
   const valid = { product: 'Ácido acetilsalicílico', reagents: ['Ácido salicílico', 'Anidrido acético'], temperature: 85.456, stirring: true, observation: 'Cristais brancos.' };
 

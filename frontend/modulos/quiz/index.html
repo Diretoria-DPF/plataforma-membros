@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://rxnav.nlm.nih.gov https://pubchem.ncbi.nlm.nih.gov https://www.ebi.ac.uk; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://rxnav.nlm.nih.gov https://pubchem.ncbi.nlm.nih.gov https://www.ebi.ac.uk; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
     <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
     <script src="../shared/laift-identity.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +12,7 @@
     <!-- Design system: tokens (claro/escuro) → layout do motor de quiz → acento do módulo -->
     <link rel="stylesheet" href="../shared/laift-tokens.css">
     <link rel="stylesheet" href="../shared/quiz-engine.css">
+    <link rel="stylesheet" href="../shared/laift-dialog.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -152,10 +153,12 @@
     <div class="signature" aria-hidden="true">LAIFT • DEPARTAMENTO DE ENSINO</div>
 
     <!-- Biblioteca de Renderização Vetorial 2D de Moléculas (versão fixa + SRI) -->
-    <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.1.7/dist/smiles-drawer.min.js" integrity="sha384-7qaH3wakC2tfDmCIw89VkGQ+G9iEvHeVV+GFGveOo/NLBcwW3TtGNHrL7HLDCbCm" crossorigin="anonymous"></script>
+    <script src="vendor/smiles-drawer/smiles-drawer.min.js" integrity="sha384-7qaH3wakC2tfDmCIw89VkGQ+G9iEvHeVV+GFGveOo/NLBcwW3TtGNHrL7HLDCbCm" crossorigin="anonymous"></script>
 
     <!-- DOM seguro e motor único de quiz (compartilhados com a Toxicologia) -->
     <script src="../shared/safe-dom.js"></script>
+    <script src="../shared/laift-dialog.js"></script>
+    <script src="../shared/quiz-offline-queue.js"></script>
     <script src="../shared/quiz-engine.js"></script>
 
     <!-- Módulos de Integração Científica e Dados -->
