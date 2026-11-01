@@ -1276,6 +1276,8 @@
     'panel-admin-library': function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); },
     // Cargos funcionais (ADR 0010): só o admin concede e retira (frontend/admin-roles.js).
     'panel-admin-roles': function () { if (window.LaiftAdminRoles) window.LaiftAdminRoles.load(window.App); },
+    // Cargo na liga para o gestor (capacidade orgchart.edit; frontend/orgchart-edit.js).
+    'panel-gestao-orgchart': function () { if (window.LaiftOrgChartEdit) window.LaiftOrgChartEdit.load(window.App); },
   };
 
   var currentPanelId = 'panel-home';
@@ -2017,6 +2019,24 @@
   // ===========================================================================
   // Perfil e preferências
   // ===========================================================================
+  function mergeServerProfile(raw) {
+    state.profile.email = raw.email;
+    state.profile.username = raw.username;
+    state.profile = mergeProfileId(state.profile, raw);
+    state.profile = withRoleInfo(state.profile, raw);
+    applyRoleUi();
+  }
+
+  // Relê cargos e capacidades logo depois de ativar/desativar o MFA, sem recarregar (ROL-03).
+  function refreshIdentity() {
+    if (!state.sessionToken || !state.profile) return Promise.resolve(false);
+    return callApi('apiGetMyProfile', state.sessionToken).then(function (res) {
+      if (!res || !res.success || !state.profile) return false;
+      mergeServerProfile(res.profile);
+      return true;
+    });
+  }
+
   function loadProfileAndPreferences() {
     callApi('apiGetMyProfile', state.sessionToken).then(function (res) {
       if (!res.success) { setStatus('msg-profile', res.message, 'error'); return; }
@@ -2025,11 +2045,7 @@
       // módulos de aprendizagem — ver learning.js) chega por aqui. O id nunca é apagado:
       // resposta sem id válido deixa o que já estava.
       if (state.profile) {
-        state.profile.email = res.profile.email;
-        state.profile.username = res.profile.username;
-        state.profile = mergeProfileId(state.profile, res.profile);
-        state.profile = withRoleInfo(state.profile, res.profile);
-        applyRoleUi();
+        mergeServerProfile(res.profile);
         if (window.LaiftLearning) window.LaiftLearning.onProfileReady();
       }
 
@@ -2754,6 +2770,7 @@
   var AUTO_REPORT_PREFIX = 'Denúncia automática da Lia:';
   function reporterLabel(item) {
     if (item.reporterName) return item.reporterName;
+    if (item.reporterHidden) return 'Oculto (só o administrador vê)'; // moderador decide pelo conteúdo (ADR 0010)
     var isAutomatic = String(item.details || '').indexOf(AUTO_REPORT_PREFIX) === 0;
     return isAutomatic ? 'Lia (automático)' : 'Ex-membro';
   }
@@ -2881,6 +2898,7 @@
     showPanelSection: showPanelSection,
     openConfirm: openConfirm,
     openStepUp: openStepUp,
+    refreshIdentity: refreshIdentity,
   };
 
   // Atalhos de URL das telas públicas (barras do blog e da Liga): /#cadastro abre o cadastro e
