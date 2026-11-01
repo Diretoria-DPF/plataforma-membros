@@ -22,6 +22,7 @@ import { API_REGISTRY } from './handlers.js';
 import { runMaintenance } from './maintenance.js';
 import { newCorrelationId } from './security.js';
 import { readLimitedBody, bodyFitsAction } from './requestBody.js';
+import { statusOf, wantsRealStatus, STATUS_REQUEST_HEADER } from './httpStatus.js';
 import { securityHeaders } from './securityHeaders.js';
 import { HARDENING_BODY_LIMITS, CLIENT_ERRORS } from './constants.js';
 import { isEnabled } from './services/featureFlagService.js';
@@ -57,7 +58,7 @@ function corsHeaders(request, env) {
   const allowed = parseAllowedOrigins(env);
   const headers = {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, ' + STATUS_REQUEST_HEADER,
     'Access-Control-Max-Age': '86400',
     Vary: 'Origin',
   };
@@ -136,6 +137,8 @@ export default {
       return jsonResponse({ success: false, message: 'Requisição inválida.' }, request, env, 400);
     }
 
+    // OPS-06: status HTTP real só para quem pede (X-Laift-Status: 1); sem o cabeçalho, erro de API segue HTTP 200.
+    const realStatus = wantsRealStatus(request);
     const action = body && typeof body.action === 'string' ? body.action : '';
     if (!bodyFitsAction(raw.bytes, action, HARDENING_BODY_LIMITS)) return jsonResponse(TOO_LARGE, request, env, 413);
     // OPS-08: o relato de erro do navegador e pequeno por definicao.
@@ -147,7 +150,7 @@ export default {
     const handler = hasAction ? API_REGISTRY[action] : null;
 
     if (!handler) {
-      return jsonResponse({ success: false, message: 'Ação desconhecida.' }, request, env, 200);
+      return jsonResponse({ success: false, message: 'Ação desconhecida.' }, request, env, realStatus ? 404 : 200);
     }
 
     let args = Array.isArray(body.args) ? body.args : [];
@@ -155,7 +158,7 @@ export default {
     // o Worker troca o marcador pelo token do cookie HttpOnly antes de chamar o handler.
     const usesCookie = isMarker(args[0]) && !SESSION_CREATING_ACTIONS.includes(action);
     if (usesCookie) {
-      if (!isCookieOrigin(request, env)) return jsonResponse(SESSION_INVALID, request, env, 200);
+      if (!isCookieOrigin(request, env)) return jsonResponse(SESSION_INVALID, request, env, realStatus ? 401 : 200);
       args = resolveArgs(args, readSessionCookie(request));
     }
     const sql = createDb(env.DATABASE_URL);
@@ -169,7 +172,8 @@ export default {
     try {
       const result = await handler(sql, requestEnv, args);
       const login = await cookieForLogin(sql, request, env, action, result);
-      return jsonResponse(login.body, request, env, 200, { ...login.headers, ...clearCookieHeaders(request, env, action) });
+      const errorStatus = realStatus ? statusOf(result) : null;
+      return jsonResponse(login.body, request, env, errorStatus || 200, { ...login.headers, ...clearCookieHeaders(request, env, action) });
     } catch (err) {
       // Cada handler já captura tudo internamente (run/runWithSession); isto
       // é a última rede de segurança para um erro realmente inesperado.
@@ -178,7 +182,7 @@ export default {
         { success: false, message: 'Não foi possível concluir a operação. Tente novamente em instantes.' },
         request,
         env,
-        200,
+        realStatus ? 500 : 200,
         clearCookieHeaders(request, env, action)
       );
     }

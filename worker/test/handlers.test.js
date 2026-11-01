@@ -38,7 +38,7 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     ];
     // Fase 2 — Dados & Presença (aprendizagem e presença)
     expected.push(
-      'apiLearnGetMyStats', 'apiLearnSubmitQuizAttempt', 'apiLearnRecordLabFormulation', 'apiLearnGetMyAttendanceQr',
+      'apiLearnGetMyStats', 'apiLearnGetEngagement', 'apiLearnSetDailyGoal', 'apiLearnSubmitQuizAttempt', 'apiLearnRecordLabFormulation', 'apiLearnGetMyAttendanceQr',
       'apiAdminAttendanceListEvents', 'apiAdminAttendanceCheckIn', 'apiAdminAttendanceSearch',
       'apiAdminAttendanceExportCsv', 'apiAdminAttendanceBadges'
     );
@@ -223,7 +223,7 @@ describe('handlers.js — endpoints da Fase 2 (aprendizagem e presença)', () =>
   });
 
   test('sem sessão válida, nenhum endpoint da Fase 2 responde dados', async () => {
-    const names = ['apiLearnGetMyStats', 'apiLearnGetMyAttendanceQr', 'apiAdminAttendanceListEvents'];
+    const names = ['apiLearnGetMyStats', 'apiLearnGetEngagement', 'apiLearnSetDailyGoal', 'apiLearnGetMyAttendanceQr', 'apiAdminAttendanceListEvents'];
     for (const name of names) {
       const sql = makeSql();
       sql.mockResolvedValueOnce([]);
