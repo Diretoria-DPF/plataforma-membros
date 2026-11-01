@@ -70,6 +70,12 @@
     profile: null, // { id, fullName, role } (+ email e username depois de apiGetMyProfile)
   };
 
+  // SEC-10: o que sai por window.App.getState() não tem o token (frontend/session-view.js).
+  var publicSession = window.LaiftSessionView.create(
+    function () { return state.sessionToken; },
+    function () { return state.profile; }
+  );
+
   // >>> profile-id (puro)
   // O id do PRÓPRIO perfil (UUID) chega em apiLogin, apiLoginMfa e apiGetMyProfile e serve ao onboarding.
   // O cache de sessão (localStorage) continua guardando só o token e a validade: ao restaurar, o perfil
@@ -2914,7 +2920,8 @@
   // nunca precise de innerHTML nem duplique essas funções.
   // ===========================================================================
   window.App = {
-    getState: function () { return state; },
+    // SEC-10: visão sem o token (só a alça opaca de session-view.js); o token fica em `state`, interno ao app.js.
+    getState: function () { return publicSession.view; },
     // Identidade para os módulos de aprendizagem (frontend/modulos/, via
     // modulos/shared/laift-identity.js): só dados de exibição, nunca o
     // token de sessão.
@@ -2936,7 +2943,11 @@
     callLearningApi: callLearningApi,
     getTheme: getEffectiveTheme,
     getThemePreference: function () { return themePreference; },
-    callApi: callApi,
+    callApi: function (fnName) {
+      var args = Array.prototype.slice.call(arguments, 1);
+      if (args.length) args[0] = publicSession.resolve(args[0]);
+      return callApi.apply(null, [fnName].concat(args));
+    },
     finishLogin: finishLogin,
     h: h,
     text: text,
