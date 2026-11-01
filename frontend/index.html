@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-app-version="v20">
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
@@ -81,6 +81,7 @@
   <link rel="stylesheet" href="agents-tutor.css">
   <link rel="stylesheet" href="memory.css">
   <!-- Flags de UI aplicadas antes da primeira pintura (sem piscar); script minúsculo e externo, compatível com a CSP. -->
+  <script src="client-errors.js"></script>
   <script src="ux-v2.js"></script>
 </head>
 <body>
@@ -801,6 +802,7 @@
             </div>
             <p class="muted">Só números agregados, sem cookies e sem terceiros: ninguém é identificado aqui. Os dias de atividade são guardados por 400 dias.</p>
             <div id="admin-usage"></div>
+            <div id="admin-client-errors"></div>
           </div>
         </section>
 
