@@ -17,7 +17,7 @@
 
   window.addEventListener('keydown', function(e) {
     if (e.ctrlKey && e.shiftKey && (e.key === 'd' || e.key === 'D')) {
-      alert("=== LAIFT: DIAGNÓSTICO DE BANCADA ===\n\n" + (relatorioErros.length ? relatorioErros.join('\n') : "✅ Sistema estável. Nenhum erro crítico registrado."));
+      window.LaiftDialog.alert("=== LAIFT: DIAGNÓSTICO DE BANCADA ===\n\n" + (relatorioErros.length ? relatorioErros.join('\n') : "✅ Sistema estável. Nenhum erro crítico registrado."), { title: 'Diagnóstico de bancada' });
     }
   });
 
@@ -1067,9 +1067,10 @@
     log('Bancada resetada e higienizada.', 'log-info');
   }
 
-  function trocarVidraria() {
+  async function trocarVidraria() {
     if (sys.vol > 0 || sys.especies.size > 0) {
-      if (!confirm('Trocar de vidraria descarta a mistura atual. Deseja prosseguir?')) return;
+      const prosseguir = await window.LaiftDialog.confirm('Trocar de vidraria descarta a mistura atual. Deseja prosseguir?', { title: 'Trocar de vidraria', okLabel: 'Prosseguir' });
+      if (!prosseguir) return;
     }
     const sel = document.getElementById('vidrariaSelect');
     const vessel = document.getElementById('vessel');
