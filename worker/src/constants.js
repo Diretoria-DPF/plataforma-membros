@@ -719,3 +719,15 @@ export const HARDENING_RATE_LIMITS = Object.freeze({
   AVATAR_UPDATE: Object.freeze({ MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 }),
   PROPOSAL_RESULTS: Object.freeze({ MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 }),
 });
+
+// OPS-08 - coleta agregada de erros do navegador (clientErrorService.js; sql/045; docs/erros-frontend.md).
+export const CLIENT_ERRORS = Object.freeze({
+  BODY_MAX_BYTES: 4096,
+  MESSAGE_MAX: 200,
+  ROUTE_MAX: 80,
+  MAX_ROWS: 2000,
+  TOP_LIMIT: 20,
+  STATS_DAYS: Object.freeze([1, 7, 30]),
+  RETENTION_DAYS: 30,
+  RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 20, WINDOW_SECONDS: 3600 }),
+});

@@ -36,6 +36,11 @@ describe('index.js — roteamento e CORS', () => {
     expect(await res.json()).toEqual({ success: false, message: 'Requisição grande demais.' });
   });
 
+  test('apiLogClientError tem teto próprio de 4 KB (OPS-08)', async () => {
+    const res = await worker.fetch(req({ action: 'apiLogClientError', args: [{ message: 'x'.repeat(5000) }] }), env);
+    expect(res.status).toBe(413);
+  });
+
   test('Content-Length gigante: 413 sem ler o corpo', async () => {
     const res = await worker.fetch(req({ action: 'apiLogin', args: [] }, { headers: { 'Content-Length': String(50 * 1024 * 1024) } }), env);
     expect(res.status).toBe(413);
