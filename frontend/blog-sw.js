@@ -24,7 +24,7 @@
   // Itens que falharem no precache são ignorados; a instalação segue.
   var PRECACHE = [
     '/blog', '/blog.css', '/blog-campanha.css', '/publico.css', '/static-page.js',
-    '/modulos/shared/laift-tokens.css', '/modulos/cracha/laift-marca.png', '/blog/icones.svg',
+    '/modulos/shared/laift-tokens.css', '/modulos/cracha/laift-marca.png', '/modulos/cracha/laift-marca-80.png', '/blog/icones.svg',
     '/blog/feed.js', '/blog/welcome.js', '/blog/post.js', '/blog/contato.js', '/blog/campanha.js',
     '/blog/instalar.js', '/blog/index.json', '/blog/404.html', '/blog/manifest.webmanifest',
     '/icons/icon-192.png', '/icons/favicon-32.png',
