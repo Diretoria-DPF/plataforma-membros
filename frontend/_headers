@@ -14,8 +14,9 @@
 #
 # HSTS sobe por degraus de propósito: se algo estiver errado no HTTPS do domínio,
 # o navegador esquece rápido. Escalonamento (cada passo só depois de uma semana
-# sem incidente): 7 dias (604800, atual) -> 30 dias (2592000) -> 1 ano (31536000)
-# -> só então includeSubDomains e, por último, preload. Hoje: sem includeSubDomains
+# sem incidente): 7 dias (604800, passado) -> 30 dias (2592000, atual) -> 1 ano (31536000)
+# -> só então includeSubDomains (apenas depois de listar os subdomínios com HTTPS
+# válido) e, por último, preload. Hoje: 30 dias, sem includeSubDomains
 # e sem preload.
 #
 # Cross-Origin-Opener-Policy same-origin-allow-popups isola a janela do site de
@@ -40,7 +41,7 @@ https://:version.:name.:subdomain.workers.dev/*
   X-Robots-Tag: noindex, nofollow
 
 /*
-  Strict-Transport-Security: max-age=604800
+  Strict-Transport-Security: max-age=2592000
   Cross-Origin-Opener-Policy: same-origin-allow-popups
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
