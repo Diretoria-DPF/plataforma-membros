@@ -1,4 +1,9 @@
 /*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/*
  * Otimiza as imagens da interface (MOB-05). Uso (sharp não é dependência do projeto):
  *   npm i --no-save sharp && node scripts/otimizar-imagens.mjs
  * Gera modulos/cracha/laift-marca-80.png (interface, exibida a 40 px) a partir do
