@@ -95,6 +95,10 @@ async function manage() {
     },
     apiAdminSaveHighlight: async (args) => {
       const input = args[1] || {};
+      if (input.id) {
+        rows = rows.map((r) => (r.id === input.id ? Object.assign({}, r, input) : r));
+        return { success: true, message: 'Destaque atualizado.', id: input.id, warning: null };
+      }
       rows = [Object.assign({ id: '33333333-3333-4333-8333-333333333333', subtitle: '', position: -1, isActive: true, endsAt: null }, input)].concat(rows);
       return { success: true, message: 'Destaque adicionado.', id: '33333333-3333-4333-8333-333333333333', warning: null };
     },
@@ -142,6 +146,23 @@ async function manage() {
     await app.page.click('#highlight-form button[type="submit"]');
     await app.page.waitForFunction(() => document.querySelectorAll('#highlights-list .hl-row').length === 3, null, { timeout: 5000 });
     check(app.calls.worker.some((c) => c.action === 'apiAdminSaveHighlight'), 'adicionar chama o servidor');
+
+    // editar: formulário preenchido, salva com id, foco volta ao item
+    const editBtn = app.page.locator('#highlights-list .hl-row', { hasText: 'Primeiro' }).locator('[data-action="edit"]');
+    const eb = await editBtn.boundingBox();
+    check(eb && eb.height >= 44 && eb.width >= 44, 'Editar tem alvo de pelo menos 44 px');
+    await editBtn.click();
+    check((await app.page.inputValue('#hl-title')) === 'Primeiro', 'Editar abre o formulário com o título preenchido');
+    check((await app.page.inputValue('#hl-kind')) === 'aviso', 'Editar preenche o tipo');
+    check(/Salvar/.test(await app.page.textContent('#btn-highlight-save')), 'o botão vira Salvar alterações');
+    await app.page.fill('#hl-title', 'Primeiro editado');
+    await app.page.click('#highlight-form button[type="submit"]');
+    await app.page.waitForFunction(() => /Primeiro editado/.test(document.querySelector('#highlights-list').textContent), null, { timeout: 5000 });
+    const saved = app.calls.worker.filter((c) => c.action === 'apiAdminSaveHighlight').pop();
+    check(saved && saved.args[1].id === '11111111-1111-4111-8111-111111111111' && saved.args[1].title === 'Primeiro editado', 'editar salva com o id do item');
+    const f = await app.page.evaluate(() => document.activeElement && document.activeElement.getAttribute('data-action') + ':' + document.activeElement.closest('.hl-row').getAttribute('data-id'));
+    check(f === 'edit:11111111-1111-4111-8111-111111111111', 'o foco volta ao botão Editar do item');
+    check(await app.page.locator('#highlight-form').evaluate((n) => n.classList.contains('hidden')), 'o formulário fecha depois de salvar');
 
     await app.page.locator('#highlights-list .hl-row').first().locator('button', { hasText: 'Remover' }).click();
     await app.page.click('#modal-confirm-ok');

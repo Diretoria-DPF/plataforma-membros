@@ -19,6 +19,7 @@
   var busy = false;
   var wired = false;
   var focusAfter = null;
+  var editingId = null;
   var generation = 0;
 
   function H() { return root.LaiftHighlights || (typeof require === 'function' ? require('./highlights.js') : null); }
@@ -54,6 +55,13 @@
     var moved = ids.splice(index, 1)[0];
     ids.splice(to, 0, moved);
     return ids;
+  }
+
+  /** ISO -> valor do campo de data (AAAA-MM-DD, dia local); vazio se não houver data. */
+  function toDateInput(iso) {
+    var d = new Date(iso);
+    if (!iso || Number.isNaN(d.getTime())) return '';
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
 
   /** Entrada do formulário -> corpo de apiAdminSaveHighlight, ou { error }. A Worker valida de novo. */
@@ -117,7 +125,9 @@
         run(app().callApi('apiAdminDeleteHighlight', token(), { id: item.id }), 'Destaque removido.');
       });
     });
-    [sw, up, down, del].forEach(function (b) { actions.appendChild(b); });
+    var editBtn = button('Editar', 'secondary hl-icon-btn', 'Editar: ' + item.title, function () { startEdit(item); });
+    editBtn.setAttribute('data-action', 'edit');
+    [sw, up, down, editBtn, del].forEach(function (b) { actions.appendChild(b); });
     li.setAttribute('data-id', item.id);
     li.appendChild(text);
     li.appendChild(actions);
@@ -191,30 +201,66 @@
     return { title: el('hl-title').value, kind: el('hl-kind').value, subtitle: el('hl-sub').value, link: el('hl-link').value, end: el('hl-end').value };
   }
 
-  function toggleForm(open) {
+  function toggleForm(open, keepFocus) {
     var form = el('highlight-form');
     var add = el('btn-highlight-add');
     form.classList.toggle('hidden', !open);
     add.setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (open) el('hl-title').focus(); else add.focus();
+    if (open) el('hl-title').focus(); else if (!keepFocus) add.focus();
+  }
+
+  function setMode(id) {
+    editingId = id;
+    el('btn-highlight-save').textContent = id ? 'Salvar alterações' : 'Publicar destaque';
+    el('btn-highlight-add').textContent = id ? 'Editando um destaque' : 'Adicionar destaque';
+  }
+
+  /** Abre o mesmo formulário de "Adicionar", preenchido com o item. */
+  function startEdit(item) {
+    setMode(item.id);
+    el('hl-title').value = item.title || '';
+    el('hl-kind').value = item.kind || 'aviso';
+    el('hl-sub').value = item.subtitle || '';
+    el('hl-link').value = item.linkPath || '';
+    el('hl-end').value = toDateInput(item.endsAt);
+    say('', null);
+    toggleForm(true);
+  }
+
+  function closeForm(returnToItem) {
+    var id = editingId;
+    el('highlight-form').reset();
+    setMode(null);
+    var row = id && returnToItem ? root.document.querySelector('#highlights-list [data-id="' + id + '"] [data-action="edit"]') : null;
+    toggleForm(false, Boolean(row));
+    if (row) row.focus();
   }
 
   function onSubmit(event) {
     event.preventDefault();
     var parsed = formInput(formValues());
     if (parsed.error) { say(parsed.error, 'error'); return; }
-    focusAfter = { id: null, action: 'add' };
-    run(app().callApi('apiAdminSaveHighlight', token(), parsed.input), 'Destaque adicionado.', function () {
+    var id = editingId;
+    var input = parsed.input;
+    if (id) input.id = id;
+    focusAfter = id ? { id: id, action: 'edit' } : { id: null, action: 'add' };
+    run(app().callApi('apiAdminSaveHighlight', token(), input), id ? 'Destaque atualizado.' : 'Destaque adicionado.', function () {
       el('highlight-form').reset();
-      toggleForm(false);
+      setMode(null);
+      toggleForm(false, true);
     });
   }
 
   function wire() {
     if (wired) return;
     wired = true;
-    el('btn-highlight-add').addEventListener('click', function () { toggleForm(el('highlight-form').classList.contains('hidden')); });
-    el('btn-highlight-cancel').addEventListener('click', function () { toggleForm(false); });
+    el('btn-highlight-add').addEventListener('click', function () {
+      var opening = el('highlight-form').classList.contains('hidden') || editingId !== null;
+      el('highlight-form').reset();
+      setMode(null);
+      toggleForm(opening);
+    });
+    el('btn-highlight-cancel').addEventListener('click', function () { closeForm(true); });
     el('highlight-form').addEventListener('submit', onSubmit);
   }
 
@@ -229,7 +275,7 @@
       .catch(function () { say('Não foi possível carregar os destaques.', 'error'); });
   }
 
-  var api = { KIND_ORDER: KIND_ORDER, describe: describe, capText: capText, movedIds: movedIds, formInput: formInput, load: load };
+  var api = { KIND_ORDER: KIND_ORDER, describe: describe, capText: capText, movedIds: movedIds, toDateInput: toDateInput, formInput: formInput, load: load };
   if (typeof module !== 'undefined' && module.exports) { module.exports = api; return; }
   root.LaiftHighlightsManage = api;
 })(typeof self !== 'undefined' ? self : this);

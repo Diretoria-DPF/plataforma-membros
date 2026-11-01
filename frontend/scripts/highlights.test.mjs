@@ -200,6 +200,22 @@ test('gestão: movedIds, formInput, aviso do teto e descrição', () => {
   assert.match(manage.describe({ kind: 'blog', isActive: true, inWindow: true, visible: true, endsAt: '2026-11-30T23:00:00Z' }), /sai em 30\/11/);
 });
 
+test('edição: data do campo, botão Editar por item e salvar com id', () => {
+  assert.equal(manage.toDateInput('2026-11-30T15:00:00'), '2026-11-30');
+  assert.equal(manage.toDateInput(null), '');
+  assert.equal(manage.toDateInput('lixo'), '');
+  const src = ler('highlights-manage.js');
+  assert.match(src, /button\('Editar', 'secondary hl-icon-btn', 'Editar: ' \+ item\.title/);
+  assert.match(src, /setAttribute\('data-action', 'edit'\)/);
+  assert.match(src, /if \(id\) input\.id = id;/);
+  assert.match(src, /focusAfter = id \? \{ id: id, action: 'edit' \}/);
+  assert.match(HTML, /id="btn-highlight-save"/);
+  // automáticos: só texto "Automático", sem botões
+  const auto = /hl-row--auto'\);[\s\S]*?autoUl\.appendChild/.exec(src)[0];
+  assert.match(auto, /Automático/);
+  assert.doesNotMatch(auto, /button\(/);
+});
+
 test('fiação: pacote sob demanda, ordem, build, fora do shell e do precache', () => {
   assertSobDemanda('destaques', 'highlights.js');
   assertSobDemanda('destaques', 'highlights-manage.js');
