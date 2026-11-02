@@ -662,10 +662,15 @@
         mountEntradaV2(); // a flag chega depois do primeiro desenho da tela pública
         if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
         if (res.flags && res.flags.home_v2_enabled === true) enableHomeV2(); // Início v3 e navegação responsiva
+        if (res.flags && res.flags.library_v2_enabled === true && currentPanelId === 'panel-library') mountLibraryV2(); // a flag chega depois da abertura da Biblioteca
         if (res.flags && res.flags.learn_v2_enabled === true && currentPanelId === 'panel-learn' && window.LaiftLearning) window.LaiftLearning.loadPanel(); // Aprender v2: a flag chega depois do primeiro desenho do hub
         if (res.flags && res.flags.events_v2_enabled === true && currentPanelId === 'panel-events') loadEvents(); // a flag chega depois do primeiro desenho de Eventos
         if (res.flags && res.flags.profile_v2_enabled === true && currentPanelId === 'panel-profile') mountProfileV2(); // a flag chega depois da abertura do Perfil
         if (res.flags && res.flags.admin_v2_enabled === true) syncAdminV2(currentPanelId); // a flag chega depois da abertura de um painel administrativo
+        if (res.flags && res.flags.messages_v2_enabled === true && currentPanelId === 'panel-messages') mountMessagesV2(); // idem, Mensagens
+        if (res.flags && res.flags.team_v2_enabled === true && currentPanelId === 'panel-orgchart') mountTeamV2(); // idem, Equipe
+        if (res.flags && res.flags.proposals_v2_enabled === true && currentPanelId === 'panel-proposals') mountProposalsV2(); // idem, Propostas
+        if (res.flags && res.flags.tasks_v2_enabled === true && currentPanelId === 'panel-tasks') mountTasksV2(); // idem, Tarefas
       }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
     }).catch(function () { /* sem rede: segue sem flags novas */ });
@@ -1424,6 +1429,36 @@
     else if (window.LaiftAdminV2) window.LaiftAdminV2.reset();
   }
 
+  // Mensagens v2 e Equipe v2 (flags messages_v2_enabled e team_v2_enabled; docs/mensagens-v2.md, docs/equipe-v2.md): os
+  // pacotes só reapresentam as telas de sempre. Sem a flag (ou se o pacote falhar) a tela fica como era.
+  function messagesV2On() { return document.documentElement.hasAttribute('data-flag-messages-v2-enabled'); }
+  function mountMessagesV2() {
+    withBundle('mensagens2', function () { if (window.LaiftMessagesV2) window.LaiftMessagesV2.mount(window.App, document); });
+  }
+  function teamV2On() { return document.documentElement.hasAttribute('data-flag-team-v2-enabled'); }
+  function mountTeamV2() {
+    withBundle('equipe2', function () { if (window.LaiftTeamV2) window.LaiftTeamV2.mount(window.App, document); });
+  }
+
+  // Propostas v2 e Tarefas v2 (flags proposals_v2_enabled e tasks_v2_enabled, desligadas por padrão; docs/propostas-v2.md e
+  // docs/tarefas-v2.md): pacotes propostas2 e tarefas2 só reposicionam e dão novo visual aos elementos de sempre. Sem a flag
+  // (ou se o pacote falhar) a tela fica como era.
+  function proposalsV2On() { return document.documentElement.hasAttribute('data-flag-proposals-v2-enabled'); }
+  function mountProposalsV2() {
+    withBundle('propostas2', function () { if (window.LaiftProposalsV2) window.LaiftProposalsV2.mount(window.App, document); });
+  }
+  function tasksV2On() { return document.documentElement.hasAttribute('data-flag-tasks-v2-enabled'); }
+  function mountTasksV2() {
+    withBundle('tarefas2', function () { if (window.LaiftTasksV2) window.LaiftTasksV2.mount(window.App, document); });
+  }
+
+  // Biblioteca v2 (flag library_v2_enabled, desligada por padrão; docs/biblioteca-v2.md): o pacote biblioteca2 só dá o visual novo
+  // à Biblioteca de sempre (library.js segue montando e buscando). Sem a flag (ou se o pacote falhar) a tela fica como era.
+  function libraryV2On() { return document.documentElement.hasAttribute('data-flag-library-v2-enabled'); }
+  function mountLibraryV2() {
+    withBundle('biblioteca2', function () { if (window.LaiftLibraryV2) window.LaiftLibraryV2.mount(window.App, document); });
+  }
+
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
     'panel-home': function () {
@@ -1435,9 +1470,21 @@
       mountHighlights();
     },
     'panel-events': loadEvents,
-    'panel-proposals': loadProposalsAndVoting,
-    'panel-tasks': loadTasks,
-    'panel-orgchart': loadOrgChartPanel,
+    'panel-orgchart': function () {
+      loadOrgChartPanel();
+      if (teamV2On()) mountTeamV2();
+      else if (window.LaiftTeamV2) window.LaiftTeamV2.reset(document);
+    },
+    'panel-proposals': function () {
+      loadProposalsAndVoting();
+      if (proposalsV2On()) mountProposalsV2();
+      else if (window.LaiftProposalsV2) window.LaiftProposalsV2.reset(document);
+    },
+    'panel-tasks': function () {
+      loadTasks();
+      if (tasksV2On()) mountTasksV2();
+      else if (window.LaiftTasksV2) window.LaiftTasksV2.reset(document);
+    },
     // Mentoria (ROL-04; frontend/mentoring.js, pacote sob demanda; o item do menu só aparece com a flag mentoring_enabled).
     'panel-mentoring': function () { withBundle('mentoria', function () { if (window.LaiftMentoring) window.LaiftMentoring.load(window.App); }); },
     'panel-profile': function () {
@@ -1460,7 +1507,11 @@
     'panel-admin-feedback': function () { loadAdminFeedback(1); },
     'panel-admin-audit': function () { loadAdminAudit(1); },
     'panel-admin-reports': function () { loadAdminReports(1); },
-    'panel-messages': function () { if (window.LaiftMessaging) window.LaiftMessaging.loadMessagingPanel(); },
+    'panel-messages': function () {
+      if (window.LaiftMessaging) window.LaiftMessaging.loadMessagingPanel();
+      if (messagesV2On()) mountMessagesV2();
+      else if (window.LaiftMessagesV2) window.LaiftMessagesV2.reset(document);
+    },
     'panel-learn': function () { if (window.LaiftLearning) window.LaiftLearning.loadPanel(); },
     'panel-admin-fiscal': function () { if (window.LaiftLearning) window.LaiftLearning.loadFiscalPanel(); },
     // Fase 3 — painel admin de IA (frontend/admin-ai.js)
@@ -1472,7 +1523,11 @@
       });
     },
     // Biblioteca LAIFT (CONTRATO-B2 §7). Fora de MEMBER_PANEL_ORDER de propósito (§1: gate por flag só no CSS).
-    'panel-library': function () { if (window.LaiftLibrary) window.LaiftLibrary.loadPanel(); },
+    'panel-library': function () {
+      if (libraryV2On()) mountLibraryV2();
+      else if (window.LaiftLibraryV2) window.LaiftLibraryV2.reset();
+      if (window.LaiftLibrary) window.LaiftLibrary.loadPanel();
+    },
     // Processo seletivo (selection.js): jornada do candidato; só aparece no menu de quem ainda não é membro.
     'panel-selection': function () { if (window.LaiftSelection) window.LaiftSelection.load(window.App, document); },
     'panel-admin-selection': function () { withBundle('admin', function () { if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.load(window.App, document); }); },
@@ -1800,7 +1855,7 @@
     showSkeleton('my-proposals-list', 2);
     callApi('apiListMyProposals', state.sessionToken).then(function (res) {
       renderAsyncList('my-proposals-list', res, res && res.proposals, function (p) {
-        return h('article', { className: 'list-item' }, [
+        return h('article', { className: 'list-item', 'data-status': p.status }, [
           text('h4', p.title),
           text('p', p.description),
           h('div', { className: 'meta-row' }, [
@@ -1855,7 +1910,7 @@
           }, ['Comentar']),
         ]);
 
-    return h('article', { className: 'list-item' }, [
+    return h('article', { className: 'list-item', 'data-voted': item.alreadyVoted ? 'true' : 'false' }, [
       text('h4', item.title),
       text('p', item.description),
       h('div', { className: 'meta-row' }, [text('span', 'Encerra em: ' + formatDate(item.votingClosesAt))]),
@@ -1907,7 +1962,7 @@
     }, ['Comentários']);
     actions.push(commentsToggle);
 
-    return h('article', { className: 'list-item' }, [
+    return h('article', { className: 'list-item', 'data-task-state': item.alreadySignedUp ? (item.completed ? 'done' : 'mine') : 'open' }, [
       text('h4', item.title),
       text('p', item.description),
       h('div', { className: 'meta-row' }, [
