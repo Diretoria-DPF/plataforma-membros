@@ -246,7 +246,115 @@ async function celularEAxe() {
   }
 }
 
+// ---------- ENG-04: primeiro quiz em até 2 toques ----------
+const MAX_TOQUES = 2;
+const PRIMEIRO_QUIZ = 'Fazer o primeiro quiz';
+const IGNORAVEL = /\b(THREE|QRCode|\$3Dmol|SmilesDrawer|Chart|OCL|Html5QrcodeScanner|initRDKitModule)\b/;
+
+function engajamento(last) {
+  return {
+    apiGetFeatureFlags: () => ({ success: true, flags: FLAGS_SEM_LIA }),
+    apiLearnGetEngagement: () => ({
+      success: true,
+      engagement: {
+        today: '2026-11-01', streak: { current: last ? 2 : 0, best: last ? 3 : 0, activeToday: false },
+        goal: { target: 10, todayQuestions: 0, reached: false, persisted: false }, dailyQuizDone: false,
+        last: last ? { module: 'toxicologia', activity: 'quiz_estudo', at: '2026-10-31T14:00:00.000Z' } : null,
+      },
+    }),
+  };
+}
+
+/** Conta só toques/cliques reais (isTrusted) do documento principal, a partir de zerarToques(). */
+async function contarToques(app) {
+  await app.context.addInitScript(() => {
+    window.__toques = 0;
+    document.addEventListener('click', (e) => { if (e.isTrusted) window.__toques += 1; }, true);
+  });
+}
+const zerarToques = (page) => page.evaluate(() => { window.__toques = 0; });
+const toques = (page) => page.evaluate(() => window.__toques);
+
+/** O quiz de Farmacologia está aberto e já na questão 1, sem passar pelo hub Aprender. */
+async function naPrimeiraQuestao(app, rotulo) {
+  const el = await app.page.waitForSelector('.learn-frame:not(.hidden)', { timeout: 15000 });
+  const frame = await el.contentFrame();
+  await frame.waitForSelector('#quizContainer:not([hidden]) .option', { timeout: 15000 });
+  const numero = await frame.textContent('#currentQuestion');
+  const total = await frame.textContent('#totalQuestions');
+  check(numero.trim() === '1' && Number(total) >= 1, `${rotulo}: o quiz abre direto na questão 1 de ${total.trim()}`);
+  check(await app.page.locator('#learn-hub.hidden').count() === 1, `${rotulo}: sem passar pelo hub Aprender`);
+  const erros = app.errors.filter((e) => !IGNORAVEL.test(e));
+  check(erros.length === 0, `${rotulo}: sem erros de JavaScript` + (erros.length ? ': ' + erros.join(' | ') : ''));
+}
+
+/** Anda com "Próximo" até o último passo. */
+async function percorrerAteUltimo(page) {
+  for (let i = 0; i < 6; i += 1) {
+    if ((await page.locator(`${DIALOG} button:has-text("Concluir")`).count()) === 1) return;
+    await page.click(`${DIALOG} button:has-text("Próximo")`);
+  }
+}
+
+/** Último passo do onboarding: 1 toque em "Fazer o primeiro quiz" abre a questão 1. */
+async function primeiroQuizNoOnboarding() {
+  const app = await startApp({ role: 'member', firstLogin: true, workerHandlers: engajamento(false) });
+  try {
+    await contarToques(app);
+    await app.login();
+    await esperaDialogo(app.page);
+    await percorrerAteUltimo(app.page);
+    check(await app.page.locator(`${DIALOG} button:has-text("${PRIMEIRO_QUIZ}")`).isVisible(), 'último passo: botão "Fazer o primeiro quiz" visível');
+    await zerarToques(app.page);
+    await app.page.click(`${DIALOG} button:has-text("${PRIMEIRO_QUIZ}")`);
+    await naPrimeiraQuestao(app, 'onboarding');
+    const n = await toques(app.page);
+    check(n <= MAX_TOQUES, `onboarding: do último passo à questão 1 em ${n} toque(s) (máximo ${MAX_TOQUES})`);
+    check((await dialogoAberto(app.page)) === 0, 'onboarding: o diálogo fecha');
+    check((await app.page.evaluate((k) => localStorage.getItem(k), KEY)) === '1', 'onboarding: grava "visto"');
+  } finally {
+    await app.close();
+  }
+}
+
+/** Início de quem nunca fez quiz: "Pular" no onboarding (1 toque) + "Fazer o primeiro quiz" (2º toque). */
+async function primeiroQuizNaInicio() {
+  const app = await startApp({ role: 'member', firstLogin: true, workerHandlers: engajamento(false) });
+  try {
+    await contarToques(app);
+    await app.login();
+    await esperaDialogo(app.page);
+    await zerarToques(app.page);
+    await app.page.click(`${DIALOG} button:has-text("Pular")`);
+    await app.page.waitForSelector(`.eng-first button:has-text("${PRIMEIRO_QUIZ}")`, { timeout: 15000 });
+    const primarios = await app.page.locator('.eng-panel .eng-btn-primary').allTextContents();
+    check(primarios.length === 1 && primarios[0] === PRIMEIRO_QUIZ, `Início: o único botão primário é "${PRIMEIRO_QUIZ}" (${primarios.join(' | ')})`);
+    await app.page.click(`.eng-first button:has-text("${PRIMEIRO_QUIZ}")`);
+    await naPrimeiraQuestao(app, 'Início');
+    const n = await toques(app.page);
+    check(n <= MAX_TOQUES, `Início: do onboarding à questão 1 em ${n} toque(s) (Pular + primeiro quiz; máximo ${MAX_TOQUES})`);
+  } finally {
+    await app.close();
+  }
+}
+
+/** Quem já tem histórico: a Início não ganha o botão do primeiro quiz. */
+async function inicioComHistoricoIgual() {
+  const app = await startApp({ role: 'member', workerHandlers: engajamento(true) });
+  try {
+    await app.login();
+    await app.page.waitForSelector('.eng-panel', { timeout: 15000 });
+    check(await app.page.locator('.eng-first').count() === 0, 'Início com histórico: sem o bloco do primeiro quiz');
+    check((await app.page.locator('.eng-panel').textContent()).includes('Continuar de onde parou'), 'Início com histórico: segue com "Continuar de onde parou"');
+  } finally {
+    await app.close();
+  }
+}
+
 module.exports = async function onboarding() {
+  await primeiroQuizNoOnboarding();
+  await primeiroQuizNaInicio();
+  await inicioComHistoricoIgual();
   await passosPorPapel();
   await escEnovaEntrada();
   await pular();

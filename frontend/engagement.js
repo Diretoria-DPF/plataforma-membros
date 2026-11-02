@@ -160,6 +160,21 @@
     return box;
   }
 
+  /** Quem nunca fez quiz: sem último módulo, sem recorde de sequência e sem questão hoje (ENG-04). */
+  function isFirstQuizCandidate(data) {
+    var eng = data && data.eng;
+    if (!eng || data.last) return false;
+    return !(eng.streak && eng.streak.best > 0) && !(eng.goal && eng.goal.todayQuestions > 0);
+  }
+
+  function firstQuizBlock(doc, onFirstQuiz) {
+    var box = el(doc, 'div', 'eng-continue eng-first');
+    box.appendChild(el(doc, 'h3', 'eng-title', 'Comece por um quiz'));
+    box.appendChild(el(doc, 'p', 'muted eng-detail', '5 questões de Farmacologia, com explicação a cada resposta. Leva poucos minutos.'));
+    box.appendChild(button(doc, 'eng-btn eng-btn-primary', 'Fazer o primeiro quiz', onFirstQuiz));
+    return box;
+  }
+
   function goalPicker(doc, current, onPick) {
     var group = el(doc, 'div', 'eng-goal-picker');
     group.setAttribute('role', 'group');
@@ -196,13 +211,13 @@
     return box;
   }
 
-  function dailyBlock(doc, eng, onDaily) {
+  function dailyBlock(doc, eng, onDaily, isPrimary) {
     var box = el(doc, 'div', 'eng-daily');
     box.appendChild(el(doc, 'h3', 'eng-title', 'Quiz do dia'));
     box.appendChild(el(doc, 'p', 'muted eng-detail', eng.dailyQuizDone
       ? 'Feito hoje. Amanhã tem um novo para todo mundo.'
       : '5 questões, as mesmas para todos hoje. Leva poucos minutos.'));
-    box.appendChild(button(doc, 'eng-btn' + (eng.dailyQuizDone ? '' : ' eng-btn-primary'), eng.dailyQuizDone ? 'Rever o quiz de hoje' : 'Fazer o quiz do dia', onDaily));
+    box.appendChild(button(doc, 'eng-btn' + (eng.dailyQuizDone || !isPrimary ? '' : ' eng-btn-primary'), eng.dailyQuizDone ? 'Rever o quiz de hoje' : 'Fazer o quiz do dia', onDaily));
     return box;
   }
 
@@ -227,10 +242,13 @@
     var section = el(doc, 'section', 'home-retorno eng-panel');
     section.setAttribute('aria-label', 'Seu ritmo');
     if (data.last) section.appendChild(continueBlock(doc, data.last, now, handlers.onOpenModule));
+    // Quem nunca fez quiz vê um único botão primário: o primeiro quiz (o do dia fica secundário).
+    var firstQuiz = !!handlers.onFirstQuiz && isFirstQuizCandidate(data);
+    if (firstQuiz) section.appendChild(firstQuizBlock(doc, handlers.onFirstQuiz));
     if (data.eng) {
       var change = changesSince(data.eng, data.goal);
       section.appendChild(rhythmBlock(doc, data.eng, data.goal, { popStreak: change.popStreak, popGoal: change.popGoal, onGoal: handlers.onGoal }));
-      if (handlers.onDaily) section.appendChild(dailyBlock(doc, data.eng, handlers.onDaily));
+      if (handlers.onDaily) section.appendChild(dailyBlock(doc, data.eng, handlers.onDaily, !firstQuiz));
     }
     return section.children && section.children.length === 0 ? null : section;
   }
@@ -269,6 +287,12 @@
     if (root.LaiftLearning && root.LaiftLearning.openModule) root.LaiftLearning.openModule(id);
   }
 
+  /** "Fazer o primeiro quiz" (ENG-04): vai ao Aprender e abre o simulado de Farmacologia na questão 1. */
+  function openFirstQuiz(app) {
+    app.showPanel('panel-learn');
+    if (root.LaiftLearning && root.LaiftLearning.openFirstQuiz) root.LaiftLearning.openFirstQuiz();
+  }
+
   /**
    * Monta o painel de retorno dentro de `host`. Nunca lança nem bloqueia a Início: sem dados, não desenha nada.
    * `isCurrent()` descarta respostas de uma entrada que já foi trocada.
@@ -281,6 +305,7 @@
       var data = assemble(eng);
       var section = buildSection(doc, data, {
         onOpenModule: function (id) { openModule(app, id); },
+        onFirstQuiz: function () { openFirstQuiz(app); },
         onGoal: function (value) {
           saveGoal(app, token, value).then(function () { return fetchEngagement(app, token); }).then(function (fresh) {
             paint(fresh || eng);
@@ -310,7 +335,7 @@
     dateKey: dateKey, seedFromKey: seedFromKey, pickDaily: pickDaily,
     streakText: streakText, goalText: goalText, whenText: whenText,
     effectiveGoal: effectiveGoal, resolveLast: resolveLast, rememberModule: rememberModule,
-    buildSection: buildSection, buildStrip: buildStrip,
+    buildSection: buildSection, isFirstQuizCandidate: isFirstQuizCandidate, openFirstQuiz: openFirstQuiz, buildStrip: buildStrip,
     fetchEngagement: fetchEngagement, assemble: assemble, mountHome: mountHome, refreshHub: refreshHub,
     // Início v3 (home-v3.js) reaproveita estes pedaços para montar o cartão de foco e o resumo do dia.
     openModule: openModule, saveGoal: saveGoal, MODULE_LABELS: MODULE_LABELS, ACTIVITY_LABELS: ACTIVITY_LABELS,

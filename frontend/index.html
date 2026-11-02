@@ -61,6 +61,7 @@
   }
   </script>
   <link rel="stylesheet" href="modulos/shared/laift-tokens.css">
+  <link rel="stylesheet" href="modulos/shared/laift-dialog.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="ux.css">
   <link rel="stylesheet" href="ux-glass.css">
@@ -782,9 +783,14 @@
                   <input type="checkbox" id="pref-email-notif">
                   <span>Quero receber notificações por e-mail (confirmação de inscrição em eventos). <span class="muted">Não afeta e-mails de cadastro e redefinição de senha, que são sempre enviados.</span></span>
                 </label>
+                <label class="checkbox-row" for="pref-vibration">
+                  <input type="checkbox" id="pref-vibration" checked>
+                  <span>Vibração ao responder o quiz <span class="muted">(só neste aparelho, quando ele permite). Sem som.</span></span>
+                </label>
                 <button type="submit">Salvar preferências</button>
               </form>
               <div id="msg-preferences" class="status-msg" role="alert" aria-live="polite"></div>
+              <button type="button" id="btn-whats-new" class="secondary">Ver novidades</button>
 
               <h3 style="margin-top:20px;">Feedback</h3>
               <form id="form-feedback" novalidate>
@@ -1013,8 +1019,9 @@
                 <input id="hl-sub" type="text" maxlength="160" autocomplete="off">
               </label>
               <label for="hl-link">Link (opcional)
-                <input id="hl-link" type="text" maxlength="200" inputmode="url" autocomplete="off" placeholder="/blog/ ou https://exemplo.org">
+                <input id="hl-link" type="text" maxlength="200" inputmode="url" autocomplete="off" aria-describedby="hl-link-help" placeholder="/blog/ ou https://doi.org/...">
               </label>
+              <p id="hl-link-help" class="muted">Aceitos: páginas da plataforma (começam com /) e endereços https de laift.com.br, instagram.com, doi.org, www.gov.br, www.planalto.gov.br e pubmed.ncbi.nlm.nih.gov.</p>
               <label for="hl-end">Data de saída (opcional)
                 <input id="hl-end" type="date">
               </label>

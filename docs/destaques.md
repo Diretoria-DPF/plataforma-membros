@@ -13,7 +13,8 @@ Bloco **"Na Liga"** da tela Início, gerenciado pela diretoria. Mostra no máxim
 Quem pode: administração (barra do modo admin, "Destaques") e quem tem a capacidade `home.curate` (cargo **gestor**, menu Gestão > "Destaques da Liga"). Cargo privilegiado exige a verificação em duas etapas ativa.
 
 - **Adicionar destaque**: título (até 120 caracteres), tipo, texto de apoio (até 160), link opcional e data de saída opcional. Novo item entra no topo.
-- **Link**: só caminho interno (começa com `/`, ex.: `/edital.html`) ou endereço `https://`. Outros formatos são recusados no navegador, no Worker e no banco.
+- **Link**: só caminho interno (começa com `/`, ex.: `/edital.html`) ou endereço `https://` de um domínio permitido (`HIGHLIGHT_LINK_HOSTS`, em `worker/src/constants.js`: `laift.com.br`, `www.laift.com.br`, `www.instagram.com`, `instagram.com`, `doi.org`, `www.gov.br`, `www.planalto.gov.br`, `pubmed.ncbi.nlm.nih.gov`). A comparação é pelo hostname exato em minúsculas; porta diferente da padrão, usuário/senha e subdomínios fora da lista são recusados. Outros formatos são recusados no navegador e no Worker; o banco (CHECK da 048) só garante https sem usuário/senha.
+- **Por que a lista fica só no Worker**: ampliar um domínio é mudar uma constante e fazer deploy, sem migração do banco. O CHECK do SQL permanece genérico de propósito. Links já gravados com outro domínio continuam funcionando na leitura; só um novo salvamento os revalida.
 - **Data de saída**: no fim do dia escolhido o item some sozinho (sem apagar). Sem data, fica até alguém ocultar ou remover.
 - **Exibido/Oculto**: interruptor por item. **↑ / ↓**: ordem. **Remover**: pede confirmação e apaga.
 - Se houver mais de 8 itens ativos, a tela avisa e só os 8 primeiros da ordem aparecem.

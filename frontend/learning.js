@@ -324,6 +324,23 @@
     if (previousModuleId !== id) emitModuleChange(id);
   }
 
+  /**
+   * "Fazer o primeiro quiz" (ENG-04): abre o simulado de Farmacologia já na primeira questão, sem passar
+   * pelo hub. Iframe novo: o módulo lê #primeiro-quiz; iframe já aberto: chama quickStart() (que não
+   * interrompe um simulado em andamento).
+   */
+  function openFirstQuiz() {
+    var mod = findModule('farmaco');
+    if (!mod) return false;
+    if (!frames.farmaco) {
+      frames.farmaco = createFrame($('learn-frames'), mod.path + '#primeiro-quiz', mod.title);
+    } else {
+      try { frames.farmaco.contentWindow.LaiftQuiz.quickStart(); } catch (e) { /* ainda carregando ou sem acesso: abre o módulo como está */ }
+    }
+    openModule('farmaco');
+    return true;
+  }
+
   /** Volta ao hub. Também chamado pelos módulos via LaiftIdentity.backToHub(). */
   function closeModule() {
     var wasOpen = activeModuleId !== null;
@@ -422,6 +439,7 @@
     loadPanel: loadPanel,
     loadFiscalPanel: loadFiscalPanel,
     openModule: openModule,
+    openFirstQuiz: openFirstQuiz,
     openAtlasLink: openAtlasLink,
     closeModule: closeModule,
     onProfileReady: onProfileReady,
