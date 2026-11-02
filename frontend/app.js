@@ -1419,6 +1419,8 @@
   function tasksV2On() { return document.documentElement.hasAttribute('data-flag-tasks-v2-enabled'); }
   function mountTasksV2() {
     withBundle('tarefas2', function () { if (window.LaiftTasksV2) window.LaiftTasksV2.mount(window.App, document); });
+  }
+
   // Biblioteca v2 (flag library_v2_enabled, desligada por padrão; docs/biblioteca-v2.md): o pacote biblioteca2 só dá o visual novo
   // à Biblioteca de sempre (library.js segue montando e buscando). Sem a flag (ou se o pacote falhar) a tela fica como era.
   function libraryV2On() { return document.documentElement.hasAttribute('data-flag-library-v2-enabled'); }
