@@ -177,11 +177,8 @@
       resetAdminDashboardChart();
       if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
       if (window.LaiftHighlights) window.LaiftHighlights.reset(document); // esconde o bloco Na Liga
-<<<<<<< HEAD
       if (window.LaiftMentoring) window.LaiftMentoring.reset(); // solta o resumo de progresso na tela
-=======
       resetHomeV2(); // solta a Início v3
->>>>>>> origin/main
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
       showPublicScreen('screen-welcome');
@@ -1124,11 +1121,8 @@
     resetAdminDashboardChart();
     if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
     if (window.LaiftHighlights) window.LaiftHighlights.reset(document); // esconde o bloco Na Liga
-<<<<<<< HEAD
     if (window.LaiftMentoring) window.LaiftMentoring.reset(); // solta o resumo de progresso na tela
-=======
     resetHomeV2(); // solta a Início v3
->>>>>>> origin/main
     clearSessionCache();
     document.getElementById('app-root').classList.add('hidden');
     document.getElementById('public-shell').classList.remove('hidden');
