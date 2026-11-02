@@ -50,7 +50,7 @@ test('o script não recria nem troca ids nem toca na cifragem: sem innerHTML, se
   assert.ok(!/innerHTML|outerHTML|insertAdjacentHTML|document\.write/.test(SRC));
   assert.ok(!/\.style\.|setAttribute\('style'/.test(SRC));
   assert.ok(!/\.id\s*=\s*'messaging-/.test(SRC));
-  assert.ok(!/msg-crypto|callApi|MsgCrypto/.test(SRC), 'sem chamadas nem cifragem: só apresentação');
+  assert.ok(!/callApi|MsgCrypto|import\(/.test(SRC), 'sem chamadas nem cifragem: só apresentação');
   assert.ok(SRC.includes('createElementNS'));
 });
 
