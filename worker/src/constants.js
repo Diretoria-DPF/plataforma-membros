@@ -741,6 +741,12 @@ export const HIGHLIGHTS = Object.freeze({
   TITLE_MAX: 120,
   SUBTITLE_MAX: 160,
   LINK_MAX: 200,
+  // Domínios https aceitos no link (hostname exato, minúsculo). A lista vive só no Worker: o CHECK do SQL (048)
+  // continua genérico (https, sem usuário/senha) para que ampliar a lista não exija migração.
+  LINK_HOSTS: Object.freeze([
+    'laift.com.br', 'www.laift.com.br', 'www.instagram.com', 'instagram.com', 'doi.org',
+    'www.gov.br', 'www.planalto.gov.br', 'pubmed.ncbi.nlm.nih.gov',
+  ]),
   FAR_FUTURE_YEARS: 5,  // data de saída além disto é recusada
   WRITE_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 }),
 });

@@ -7,7 +7,8 @@
 // Esc fecha, foco volta) mostra 3 passos para visitante, membro ou administrador (4 quando a Guia
 // está disponível). O passo da Guia abre a Guia; o do crachá usa [data-open-credential], que
 // credential.js já trata. "Visto" fica em localStorage por perfil, só como conveniência: se o
-// storage estiver bloqueado, o passo volta na próxima entrada. Sem innerHTML e sem animação
+// storage estiver bloqueado, o passo volta na próxima entrada. No último passo, "Fazer o primeiro quiz" (ENG-04)
+// leva direto à primeira questão de Farmacologia. Sem innerHTML e sem animação
 // própria (prefers-reduced-motion). Expõe window.LaiftOnboarding; as funções são testadas em Node.
 (function (root) {
   'use strict';
@@ -19,6 +20,7 @@
   var BODY_ID = 'onboarding-body';
   var ROLES = ['visitor', 'member', 'admin'];
   var TOUCH_SIZE = '44px';
+  var QUIZ_LABEL = 'Fazer o primeiro quiz';
   var ACTION_LABEL = { lia: 'Abrir a Guia', credential: 'Abrir meu crachá' };
 
   var COPY = {
@@ -126,9 +128,11 @@
       skip: touchButton(doc, 'Pular', 'secondary'),
       back: touchButton(doc, 'Voltar', 'secondary'),
       action: touchButton(doc, '', 'secondary'),
+      quiz: touchButton(doc, QUIZ_LABEL, ''),
       next: touchButton(doc, 'Próximo', ''),
     };
-    ['skip', 'back', 'action', 'next'].forEach(function (key) { actions.appendChild(nodes[key]); });
+    ['skip', 'back', 'action', 'quiz', 'next'].forEach(function (key) { actions.appendChild(nodes[key]); });
+    nodes.quiz.classList.add('hidden');
     [progress, title, body, actions].forEach(function (n) { box.appendChild(n); });
     dialog.appendChild(box);
     doc.body.appendChild(dialog);
@@ -154,6 +158,11 @@
       else nodes.action.removeAttribute('data-open-credential');
     }
 
+    /** O primeiro quiz só existe quando o app oferece o módulo (LaiftLearning.openFirstQuiz e App.showPanel). */
+    function quizAvailable() {
+      return !!(win && win.LaiftLearning && typeof win.LaiftLearning.openFirstQuiz === 'function' && win.App && typeof win.App.showPanel === 'function');
+    }
+
     function renderStep() {
       var cur = state.current;
       var step = cur.steps[cur.index];
@@ -162,7 +171,12 @@
       nodes.title.textContent = step.title;
       nodes.body.textContent = step.body;
       setHidden(nodes.back, cur.index === 0);
+      var offerQuiz = last && quizAvailable();
+      setHidden(nodes.quiz, !offerQuiz);
       nodes.next.textContent = last ? 'Concluir' : 'Próximo';
+      // Com o botão do quiz como ação principal, "Concluir" passa a secundário.
+      if (offerQuiz) nodes.next.classList.add('secondary');
+      else nodes.next.classList.remove('secondary');
       renderAction(step);
     }
 
@@ -173,7 +187,7 @@
 
     /** Botões visíveis do diálogo, na ordem do DOM. Os ocultos (Voltar no 1º passo, ação) não recebem foco. */
     function visibleButtons() {
-      return [nodes.skip, nodes.back, nodes.action, nodes.next].filter(function (b) {
+      return [nodes.skip, nodes.back, nodes.action, nodes.quiz, nodes.next].filter(function (b) {
         return !b.classList.contains('hidden');
       });
     }
@@ -248,6 +262,14 @@
       }
     }
 
+    /** Fecha (grava "visto") e abre o primeiro quiz: um toque a partir do último passo. */
+    function runFirstQuiz() {
+      if (!state.current || !quizAvailable()) return;
+      finish();
+      win.App.showPanel('panel-learn');
+      win.LaiftLearning.openFirstQuiz();
+    }
+
     function onNext() {
       if (!state.current) return;
       if (state.current.index >= state.current.steps.length - 1) finish();
@@ -268,6 +290,7 @@
       nodes.next.addEventListener('click', onNext);
       nodes.back.addEventListener('click', onBack);
       nodes.action.addEventListener('click', runAction);
+      nodes.quiz.addEventListener('click', runFirstQuiz);
       nodes.dialog.addEventListener('close', onNativeClose);
       // Esc do navegador passa por aqui: bloqueamos o fechamento nativo e seguimos pelo finish(), que grava "visto".
       nodes.dialog.addEventListener('cancel', function (evt) { evt.preventDefault(); finish(); });
