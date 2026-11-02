@@ -1,0 +1,96 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Administração v2 (admin-v2.js). Carregado sob demanda e só vale com a flag admin_v2_enabled (atributo
+   data-flag-admin-v2-enabled no <html>); a barra de baixo só some enquanto data-admin-v2 (modo administrador montado)
+   estiver no <html>. Só tokens de modulos/shared/laift-tokens.css, exceto o gradiente da faixa (identidade). */
+
+:root[data-flag-admin-v2-enabled] { --adm2-a: #7a2e8c; --adm2-b: #4b2a8a; }
+:root[data-flag-admin-v2-enabled][data-theme="dark"] { --adm2-a: #3f1a4a; --adm2-b: #271a52; }
+
+:root[data-flag-admin-v2-enabled] [hidden].adm2-bar,
+:root[data-flag-admin-v2-enabled] [hidden].adm2-strip,
+:root[data-flag-admin-v2-enabled] .adm2-flags [hidden] { display: none !important; }
+
+/* ===== A barra de baixo do modo administrador é trocada pela barra de seções do topo ===== */
+:root[data-flag-admin-v2-enabled][data-admin-v2] #app-nav { display: none; }
+:root[data-flag-admin-v2-enabled][data-admin-v2] #app-root { padding-left: 0; }
+:root[data-flag-admin-v2-enabled][data-admin-v2] .app-main { padding-bottom: var(--density-pad, 20px); }
+
+/* ===== Faixa de pendências ===== */
+:root[data-flag-admin-v2-enabled] .adm2-strip {
+  display: grid; gap: 6px; padding: 20px 18px; color: #fff; min-width: 0;
+  border-radius: var(--laift-radius-xl, 28px);
+  background: radial-gradient(120% 90% at 85% -10%, rgba(255, 255, 255, .2), transparent 55%), linear-gradient(160deg, var(--adm2-a), var(--adm2-b));
+  box-shadow: var(--elev-2, 0 8px 24px rgba(8, 40, 36, .22));
+}
+:root[data-flag-admin-v2-enabled] .adm2-strip__eyebrow { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: rgba(255, 255, 255, .9); }
+:root[data-flag-admin-v2-enabled] .adm2-strip__title { margin: 0; font-size: 22px; line-height: 1.2; color: #fff; }
+:root[data-flag-admin-v2-enabled] .adm2-strip__hint { margin: 0; font-size: 14px; color: rgba(255, 255, 255, .9); }
+:root[data-flag-admin-v2-enabled] .adm2-chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+@media (min-width: 720px) { :root[data-flag-admin-v2-enabled] .adm2-chips { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+:root[data-flag-admin-v2-enabled] .adm2-chip {
+  display: grid; align-content: center; justify-items: start; gap: 2px; min-height: 64px; width: 100%; padding: 10px 12px; text-align: left;
+  border: 1px solid rgba(255, 255, 255, .35); border-radius: var(--laift-radius-md, 14px); background: rgba(255, 255, 255, .14); color: #fff; box-shadow: none;
+}
+:root[data-flag-admin-v2-enabled] .adm2-chip__n { font-size: 24px; line-height: 1.1; }
+:root[data-flag-admin-v2-enabled] .adm2-chip__l { font-size: 12px; font-weight: 600; }
+:root[data-flag-admin-v2-enabled] .adm2-chip:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* ===== Barra de seções: "Voltar" fixo e seções roláveis ===== */
+:root[data-flag-admin-v2-enabled] .adm2-bar {
+  position: sticky; top: 0; z-index: 6; display: flex; align-items: center; gap: 8px; min-width: 0;
+  margin: 0 calc(-1 * var(--density-pad, 20px)); padding: 8px var(--density-pad, 20px);
+  background: color-mix(in srgb, var(--layer-0) 94%, transparent); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--hairline);
+}
+:root[data-flag-admin-v2-enabled] .adm2-back {
+  flex: none; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; min-width: 44px; width: auto; padding: 0 14px 0 8px;
+  border: 1px solid var(--hairline); border-radius: 99px; background: var(--layer-1); color: var(--laift-admin); font-size: 14px; font-weight: 700; box-shadow: none;
+}
+:root[data-flag-admin-v2-enabled] .adm2-back__icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+:root[data-flag-admin-v2-enabled] .adm2-tabs {
+  display: flex; gap: 8px; flex: 1 1 auto; min-width: 0; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; overscroll-behavior-x: contain; padding: 2px;
+}
+:root[data-flag-admin-v2-enabled] .adm2-tabs::-webkit-scrollbar { display: none; }
+:root[data-flag-admin-v2-enabled] .adm2-tab {
+  flex: 0 0 auto; scroll-snap-align: start; min-height: 44px; width: auto; padding: 0 16px; border-radius: 99px;
+  border: 1px solid var(--hairline); background: transparent; color: var(--laift-text); font-size: 14px; font-weight: 600; white-space: nowrap; box-shadow: none;
+}
+:root[data-flag-admin-v2-enabled] .adm2-tab.is-active { background: var(--laift-admin); color: var(--laift-on-admin); border-color: transparent; font-weight: 700; }
+:root[data-flag-admin-v2-enabled] .adm2-bar button:focus-visible { outline: 3px solid var(--laift-focus-color); outline-offset: 2px; }
+
+/* ===== Flags ===== */
+:root[data-flag-admin-v2-enabled] .adm2-flags__tools label { display: grid; gap: 4px; font-size: 14px; font-weight: 600; }
+:root[data-flag-admin-v2-enabled] .adm2-flags__list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; }
+:root[data-flag-admin-v2-enabled] .adm2-flag { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--hairline); min-width: 0; }
+:root[data-flag-admin-v2-enabled] .adm2-flag:first-child { border-top: 0; }
+:root[data-flag-admin-v2-enabled] .adm2-flag.is-changed { box-shadow: inset 3px 0 0 var(--laift-admin); padding-left: 10px; }
+:root[data-flag-admin-v2-enabled] .adm2-flag__info { min-width: 0; }
+:root[data-flag-admin-v2-enabled] .adm2-flag__key { font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+:root[data-flag-admin-v2-enabled] .adm2-flag__desc,
+:root[data-flag-admin-v2-enabled] .adm2-flag__meta { margin: 2px 0 0; font-size: 13px; color: var(--laift-muted); }
+:root[data-flag-admin-v2-enabled] .adm2-empty { padding: 16px 0; color: var(--laift-muted); font-size: 14px; }
+:root[data-flag-admin-v2-enabled] .adm2-switch {
+  flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; min-width: 44px; width: auto; padding: 0 6px;
+  border: 0; background: transparent; color: var(--laift-text); font-size: 13px; font-weight: 600; box-shadow: none;
+}
+:root[data-flag-admin-v2-enabled] .adm2-switch__track { position: relative; width: 44px; height: 26px; border-radius: 99px; background: var(--layer-3); border: 1px solid var(--laift-muted); transition: background var(--dur-base, .2s); }
+:root[data-flag-admin-v2-enabled] .adm2-switch__track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: var(--laift-muted); transition: transform var(--dur-base, .2s); }
+:root[data-flag-admin-v2-enabled] .adm2-switch[aria-checked="true"] .adm2-switch__track { background: var(--laift-primary); border-color: var(--laift-primary); }
+:root[data-flag-admin-v2-enabled] .adm2-switch[aria-checked="true"] .adm2-switch__track::after { transform: translateX(18px); background: #fff; }
+:root[data-flag-admin-v2-enabled] .adm2-switch:disabled { opacity: .6; }
+:root[data-flag-admin-v2-enabled] .adm2-switch:focus-visible { outline: 3px solid var(--laift-focus-color); outline-offset: 2px; }
+:root[data-flag-admin-v2-enabled] .adm2-savebar {
+  position: sticky; bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 12px; padding: 10px 14px;
+  border-radius: var(--laift-radius-lg, 20px); background: var(--layer-3); border: 1px solid var(--laift-border-strong, var(--hairline)); box-shadow: var(--elev-3);
+}
+:root[data-flag-admin-v2-enabled] .adm2-savebar__n { font-size: 14px; font-weight: 700; }
+:root[data-flag-admin-v2-enabled] .adm2-savebar button { width: auto; min-height: 44px; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-flag-admin-v2-enabled] .adm2-switch__track,
+  :root[data-flag-admin-v2-enabled] .adm2-switch__track::after { transition: none; }
+}

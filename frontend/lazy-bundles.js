@@ -15,6 +15,7 @@
 //  - inicio3: carregado quando a flag home_v2_enabled está ligada (Início v3 e Meu desempenho no Perfil; app.js);
 //  - eventos2: carregado quando a flag events_v2_enabled está ligada e a tela Eventos abre (app.js);
 //  - perfil2: carregado quando a flag profile_v2_enabled está ligada e o Perfil abre (app.js);
+//  - admin2: carregado quando a flag admin_v2_enabled está ligada e um painel administrativo abre (app.js);
 //  - mensagens2: carregado quando a flag messages_v2_enabled está ligada e Mensagens abre (app.js);
 //  - equipe2: carregado quando a flag team_v2_enabled está ligada e Equipe abre (app.js);
 //  - propostas2: carregado quando a flag proposals_v2_enabled está ligada e Propostas abre (app.js);
@@ -51,6 +52,8 @@
     eventos2: ['events-v2.js'],
     // Perfil v2: reorganiza o Perfil de sempre (cabeçalho, colunas e seções recolhíveis), só com a flag profile_v2_enabled ligada (app.js).
     perfil2: ['profile-v2.js'],
+    // Administração v2: barra de seções, faixa de pendências e seção Flags do modo administrador, só com a flag admin_v2_enabled ligada (app.js).
+    admin2: ['admin-v2.js'],
     // Mentoria v2: reposiciona a Mentoria de sempre (cabeçalho, resumo e duas colunas), só com a flag mentoring_v2_enabled ligada (app.js).
     mentoria2: ['mentoring-v2.js'],
     // Processo seletivo v2: desenha a jornada de sempre com progresso, etapas e avisos, só com a flag selection_v2_enabled ligada (app.js).
