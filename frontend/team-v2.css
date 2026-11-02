@@ -1,0 +1,104 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Equipe v2 (team-v2.js). Carregado sob demanda e só vale com a flag team_v2_enabled (atributo
+   data-flag-team-v2-enabled no <html>) e com a tela montada (data-tm2 no painel). Só tokens de
+   modulos/shared/laift-tokens.css, exceto os gradientes (identidade, iguais aos da Início v3 e da prévia). */
+
+:root[data-flag-team-v2-enabled] { --tm2-hero-a: #0f6f62; --tm2-hero-b: #0a4f6b; }
+:root[data-flag-team-v2-enabled][data-theme="dark"] { --tm2-hero-a: #0c3f3a; --tm2-hero-b: #0b2b45; }
+
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] { display: grid; gap: var(--density-gap, 16px); min-width: 0; align-content: start; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2].hidden { display: none; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] [hidden] { display: none; }
+
+/* ===== Cabeçalho e atalhos ===== */
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .tm2-hero {
+  display: grid; gap: 2px; padding: 22px 18px; color: #fff; border-radius: var(--laift-radius-xl, 28px); min-width: 0;
+  background:
+    radial-gradient(120% 90% at 85% -10%, rgba(255, 255, 255, .22), transparent 55%),
+    linear-gradient(160deg, var(--tm2-hero-a), var(--tm2-hero-b));
+  box-shadow: var(--elev-2, 0 8px 24px rgba(8, 40, 36, .22));
+}
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .tm2-hero__kicker { margin: 0; font-size: 13px; color: rgba(255, 255, 255, .88); }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .tm2-hero__title { margin: 0; font-size: 26px; line-height: 1.2; color: #fff; }
+:root[data-flag-team-v2-enabled][data-theme="dark"] #panel-orgchart[data-tm2] .tm2-hero { box-shadow: 0 14px 34px rgba(0, 0, 0, .5); }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .tm2-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; scroll-snap-type: x proximity; min-width: 0; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .tm2-tab {
+  flex: none; width: auto; min-height: 44px; padding: 0 18px; border-radius: var(--laift-radius-pill, 999px); scroll-snap-align: start;
+  font-size: 15px; font-weight: 700; white-space: nowrap; background: var(--layer-1); color: var(--laift-text);
+  border: 1px solid var(--hairline); box-shadow: none;
+}
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .tm2-tab[aria-pressed="true"] {
+  background: var(--laift-primary); color: var(--laift-on-primary, #fff); border-color: var(--laift-primary);
+}
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .tm2-tab:focus-visible { outline: 3px solid var(--laift-focus-color); outline-offset: 2px; }
+
+/* ===== Cartões ===== */
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] > .card {
+  margin: 0; min-width: 0; border-radius: var(--laift-radius-xl, 26px); background: var(--layer-1); box-shadow: var(--elev-2, none);
+}
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] > .card > h2,
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] > .card > h3 { margin: 0 0 4px; font-size: 18px; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] > .card > .muted { margin: 0 0 12px; font-size: 14px; color: var(--laift-muted); }
+
+/* Formulário de pedido */
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] #form-connection-request { gap: 10px; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] #connection-request-value { min-height: 46px; border-radius: var(--laift-radius-md, 14px); font-size: 16px; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] #form-connection-request button { min-height: 46px; padding: 0 22px; border-radius: var(--laift-radius-md, 14px); font-weight: 700; }
+
+/* ===== Organograma ===== */
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-level {
+  display: grid; justify-content: stretch; gap: 4px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--hairline);
+}
+@media (min-width: 600px) {
+  :root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-level { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1100px) {
+  :root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-level { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-level-label { grid-column: 1 / -1; text-align: left; font-size: 12px; color: var(--laift-muted); }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-card {
+  flex-direction: row; justify-content: flex-start; gap: 12px; width: 100%; min-height: 56px; padding: 6px 10px; border-radius: 16px;
+  text-align: left; color: var(--laift-text);
+}
+@media (hover: hover) {
+  :root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-card:hover { background: color-mix(in srgb, var(--laift-primary) 8%, transparent); }
+}
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-card:focus-visible { outline: 3px solid var(--laift-focus-color); outline-offset: 2px; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-avatar,
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-avatar-placeholder,
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorate-members .orgchart-avatar,
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorate-members .orgchart-avatar-placeholder { width: 44px; height: 44px; flex: none; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-name { font-size: 15px; text-align: left; overflow-wrap: anywhere; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorates { gap: 12px; }
+@media (min-width: 700px) {
+  :root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorate-box {
+  --tm2-c1: #0f6f62; --tm2-c2: #0a4f6b; padding: 0 8px 10px; overflow: hidden; border: 0; border-radius: 24px; background: var(--layer-2);
+}
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorate-box:nth-child(1) { --tm2-c1: #b4326e; --tm2-c2: #7a1f5c; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorate-box:nth-child(2) { --tm2-c1: #0f6f62; --tm2-c2: #0a4f6b; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorate-box:nth-child(3) { --tm2-c1: #3b5bb5; --tm2-c2: #27407f; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorate-box:nth-child(4) { --tm2-c1: #8a5a00; --tm2-c2: #5e3d00; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorate-title {
+  margin: 0 -8px 8px; padding: 14px 16px; font-size: 17px; color: #fff; background: linear-gradient(150deg, var(--tm2-c1), var(--tm2-c2));
+}
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorate-members { display: grid; gap: 0; margin-top: 4px; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-directorate-members .orgchart-card { width: 100%; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .orgchart-empty-hint { margin: 6px 10px; font-size: 14px; color: var(--laift-muted); }
+
+/* ===== Pedidos e adicionados ===== */
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .list-item {
+  padding: 10px 0; border: 0; border-top: 1px solid var(--hairline); border-radius: 0; background: transparent; box-shadow: none;
+}
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .list-item:first-child { border-top: 0; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .list-item .actions-row { margin-top: 6px; gap: 8px; }
+:root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] .list-item .actions-row button { min-height: 44px; padding: 0 18px; border-radius: var(--laift-radius-md, 14px); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-flag-team-v2-enabled] #panel-orgchart[data-tm2] * { transition: none !important; animation: none !important; scroll-behavior: auto; }
+}
