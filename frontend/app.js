@@ -662,6 +662,7 @@
         mountEntradaV2(); // a flag chega depois do primeiro desenho da tela pública
         if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
         if (res.flags && res.flags.home_v2_enabled === true) enableHomeV2(); // Início v3 e navegação responsiva
+        if (res.flags && res.flags.events_v2_enabled === true && currentPanelId === 'panel-events') loadEvents(); // a flag chega depois do primeiro desenho de Eventos
       }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
     }).catch(function () { /* sem rede: segue sem flags novas */ });
@@ -1568,16 +1569,45 @@
   // ===========================================================================
   // Eventos
   // ===========================================================================
+  // Eventos v2 (flag events_v2_enabled; docs/eventos-v2.md): o pacote eventos2 só desenha; os dados e as ações são estes mesmos.
+  // Flag desligada, ou pacote que falhou: a tela de sempre.
+  function eventsV2On() { return document.documentElement.hasAttribute('data-flag-events-v2-enabled'); }
+  function eventsV2Ready() {
+    if (!eventsV2On()) return Promise.resolve(false);
+    return new Promise(function (resolve) { withBundle('eventos2', function () { resolve(!!window.LaiftEventsV2); }); });
+  }
+  // A mensagem vai à região de aviso da tela de sempre e à da v2 (leitor de tela); a que não existe é ignorada.
+  function setEventsStatus(message, kind) {
+    setStatus('events-status', message, kind);
+    setStatus('events-v2-status', message, kind);
+  }
+  function eventsV2Context() {
+    return {
+      doc: document, loggedIn: !!state.sessionToken, formatDate: formatDate, canCancel: function (item) { return canCancelRegistration(item, Date.now()); },
+      onRegister: registerForEvent, onCancel: confirmCancelRegistration, imageButton: eventImageButton,
+    };
+  }
+
   function loadEvents() {
-    setStatus('events-status', 'Carregando eventos...', 'info');
+    var v2 = eventsV2Ready();
+    v2.then(function (on) { if (on) window.LaiftEventsV2.renderLoading(document); });
+    setEventsStatus('Carregando eventos...', 'info');
     showSkeleton('events-list', 3);
-    var loaded = callApi('apiListEvents', state.sessionToken || '').then(function (res) {
-      if (!res.success) { clearSkeleton('events-list'); setStatus('events-status', res.message, 'error'); return; }
-      setStatus('events-status', '', null);
+    var loaded = Promise.all([v2, callApi('apiListEvents', state.sessionToken || '')]).then(function (all) {
+      var useV2 = all[0], res = all[1];
+      if (useV2) {
+        if (!res.success) { setEventsStatus('', null); window.LaiftEventsV2.renderEventsError(document, res, loadEvents); return; }
+        setEventsStatus('', null);
+        window.LaiftEventsV2.renderEvents(eventsV2Context(), res.events);
+        return;
+      }
+      if (window.LaiftEventsV2) window.LaiftEventsV2.reset(document);
+      if (!res.success) { clearSkeleton('events-list'); setEventsStatus(res.message, 'error'); return; }
+      setEventsStatus('', null);
       renderList('events-list', res.events, renderEventItem, 'Não há eventos publicados no momento.');
       renderEventsOccupancy(ensureEventsOccupancyContainer(), res.events);
     });
-    loadEventsHistory();
+    loadEventsHistory(v2);
     return loaded;
   }
 
@@ -1611,10 +1641,17 @@
     });
   }
 
-  function loadEventsHistory() {
+  function loadEventsHistory(v2) {
+    var ready = v2 || eventsV2Ready();
     resetListForLoading('events-history-list');
     showSkeleton('events-history-list', 3);
-    callApi('apiListRecentCompletedEvents').then(function (res) {
+    ready.then(function (on) { if (on && window.LaiftEventsV2) window.LaiftEventsV2.renderHistoryLoading(document); });
+    Promise.all([ready, callApi('apiListRecentCompletedEvents')]).then(function (all) {
+      var res = all[1];
+      if (all[0] && window.LaiftEventsV2) {
+        window.LaiftEventsV2.renderHistory(document, res, formatDate, function () { loadEventsHistory(); });
+        return;
+      }
       renderAsyncList('events-history-list', res, res && res.events, renderEventHistoryItem,
         'Ainda não há eventos concluídos no histórico.', loadEventsHistory);
     });
@@ -1676,7 +1713,7 @@
   function registerForEvent(eventId) {
     callApi('apiRegisterForEvent', state.sessionToken, eventId).then(function (res) {
       loadEvents().then(function () {
-        setStatus('events-status', res.message, res.success ? 'success' : 'error');
+        setEventsStatus(res.message, res.success ? 'success' : 'error');
       });
     });
   }
@@ -1695,7 +1732,7 @@
     openConfirm('Cancelar sua inscrição neste evento?', function () {
       callApi('apiCancelEventRegistration', state.sessionToken, eventId).then(function (res) {
         loadEvents().then(function () {
-          setStatus('events-status', res.message, res.success ? 'success' : 'error');
+          setEventsStatus(res.message, res.success ? 'success' : 'error');
         });
       });
     });

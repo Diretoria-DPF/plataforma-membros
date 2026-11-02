@@ -1,0 +1,139 @@
+/* Eventos v2 (events-v2.js). Carregado sob demanda e só vale com a flag events_v2_enabled
+   (atributo data-flag-events-v2-enabled no <html>); sem a flag nada daqui se aplica. Só tokens de
+   modulos/shared/laift-tokens.css, exceto o gradiente do topo e o azul do destaque (identidade da tela). */
+
+:root[data-flag-events-v2-enabled] {
+  --ev2-hero-a: #0f6f62;
+  --ev2-hero-b: #0a4f6b;
+  --ev2-accent: #2455a6;
+  --ev2-accent-text: #2455a6;
+}
+:root[data-flag-events-v2-enabled][data-theme="dark"] {
+  --ev2-hero-a: #0c3f3a;
+  --ev2-hero-b: #0b2b45;
+  --ev2-accent: #3a6fc4;
+  --ev2-accent-text: #8db4f0;
+}
+
+/* A tela de sempre some só quando a v2 já está no ar */
+:root[data-flag-events-v2-enabled] #panel-events[data-v2] > .card { display: none; }
+:root[data-flag-events-v2-enabled] #panel-events[data-v2] > .ev2 { display: block; }
+:root:not([data-flag-events-v2-enabled]) #events-v2 { display: none; }
+
+.ev2 { min-width: 0; }
+.ev2 .hidden { display: none; }
+
+.ev2-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 20px 18px 76px; border-radius: var(--laift-radius-xl); color: #fff;
+  background:
+    radial-gradient(120% 90% at 85% -10%, rgba(255, 255, 255, 0.22), transparent 55%),
+    linear-gradient(160deg, var(--ev2-hero-a), var(--ev2-hero-b));
+}
+.ev2-hello { margin: 0; display: grid; gap: 2px; min-width: 0; }
+.ev2-hello small { font-size: 14px; color: rgba(255, 255, 255, 0.92); }
+.ev2-hello strong { font-size: 22px; line-height: 1.15; letter-spacing: -0.2px; }
+.ev2-icon-btn {
+  position: relative; flex: none; width: 44px; height: 44px; min-height: 44px; padding: 0; display: grid; place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 14px; background: rgba(255, 255, 255, 0.16); color: #fff;
+}
+.ev2-ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ev2-top :focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+.ev2-body { display: grid; gap: 16px; min-width: 0; margin-top: -56px; position: relative; z-index: 1; }
+
+/* Próximo evento em destaque */
+.ev2-next__card {
+  position: relative; overflow: hidden; padding: 20px; border-radius: var(--laift-radius-xl);
+  background: var(--layer-1); color: var(--laift-text);
+  box-shadow: inset 0 0 0 1px var(--hairline), var(--elev-3, 0 10px 28px rgba(8, 40, 36, 0.2));
+}
+.ev2-next__card::before {
+  content: ""; position: absolute; width: 200px; height: 200px; right: -60px; top: -70px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ev2-accent) 38%, transparent), transparent 70%);
+  pointer-events: none;
+}
+.ev2-kicker { position: relative; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ev2-accent-text); }
+.ev2-next__title { position: relative; margin: 6px 0 2px; font-size: 24px; line-height: 1.15; overflow-wrap: anywhere; }
+.ev2-next__meta { position: relative; margin: 0; color: var(--laift-muted); }
+.ev2-next__card .ev2-tags { position: relative; margin-top: 10px; }
+.ev2-next__card .ev2-btn { position: relative; margin-top: 14px; min-height: 52px; font-size: 17px; }
+.ev2-next__card .ev2-btn:not(.ev2-btn--sec) { background: var(--ev2-accent); }
+.ev2-btn--wide { width: 100%; }
+@media (min-width: 640px) { .ev2-btn--wide { width: auto; padding: 0 28px; } }
+
+/* Botões */
+.ev2-btn {
+  min-height: 44px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1px solid transparent; border-radius: 14px; background: var(--laift-primary); color: var(--laift-on-primary);
+  font-size: 15px; font-weight: 700;
+}
+.ev2-btn--sec { background: transparent; color: var(--laift-text); border-color: var(--field-border, var(--hairline)); }
+.ev2-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+/* Filtros */
+.ev2-filters { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: none; }
+.ev2-filters::-webkit-scrollbar { display: none; }
+.ev2-chip {
+  flex: none; min-height: 44px; padding: 0 16px; border: 1px solid var(--field-border, var(--hairline)); border-radius: 999px;
+  background: transparent; color: var(--laift-text); font-size: 14px; font-weight: 600;
+}
+.ev2-chip[aria-pressed="true"] { background: var(--laift-primary); border-color: transparent; color: var(--laift-on-primary); }
+
+.ev2-status { margin: 0; min-height: 20px; font-size: 14px; color: var(--laift-muted); }
+.ev2-status[data-kind="error"] { color: var(--danger, #b3261e); }
+.ev2-status[data-kind="success"] { color: var(--laift-primary-strong); }
+
+.ev2-section { display: grid; gap: 8px; min-width: 0; }
+.ev2-h { margin: 0; font-size: 18px; }
+.ev2-muted { margin: 0; font-size: 14px; color: var(--laift-muted); }
+
+/* Lista e cartões */
+.ev2-list { display: grid; gap: 12px; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .ev2-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ev2-card {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 14px; min-width: 0;
+  border-radius: 20px; background: var(--layer-1); color: var(--laift-text);
+  box-shadow: inset 0 0 0 1px var(--hairline), var(--elev-1);
+}
+.ev2-date {
+  flex: none; width: 56px; padding: 8px 0; text-align: center; border-radius: 14px;
+  background: var(--laift-primary-soft); color: var(--laift-primary-strong);
+}
+.ev2-date b { display: block; font-size: 22px; line-height: 1; }
+.ev2-date span { font-size: 12px; text-transform: uppercase; }
+.ev2-text { flex: 1 1 180px; min-width: 0; display: grid; gap: 4px; }
+.ev2-card__title { margin: 0; font-size: 16px; overflow-wrap: anywhere; }
+.ev2-card__meta { margin: 0; font-size: 14px; color: var(--laift-muted); }
+.ev2-card__desc {
+  margin: 0; font-size: 14px; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.ev2-card.is-past .ev2-date { background: var(--hairline); color: var(--laift-text); }
+.ev2-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+@media (max-width: 520px) { .ev2-actions { align-items: stretch; width: 100%; } .ev2-actions .ev2-btn { width: 100%; } }
+
+.ev2-tags { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.ev2-tag {
+  display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+  background: var(--laift-primary-soft); color: var(--laift-primary-strong);
+}
+.ev2-tag--ok { background: #d8f2e5; color: #07583b; }
+.ev2-tag--warn { background: #fdebd0; color: #7a3d00; }
+.ev2-tag--live { background: #dbe7fb; color: #173f80; }
+.ev2-tag--gray { background: var(--hairline); color: var(--laift-text); }
+html[data-theme="dark"] .ev2-tag--ok { background: #0f3a2a; color: #7fe0b3; }
+html[data-theme="dark"] .ev2-tag--warn { background: #3d2a0c; color: #ffc46b; }
+html[data-theme="dark"] .ev2-tag--live { background: #14284a; color: #a9c8f5; }
+
+/* Foto de evento dentro do cartão */
+.ev2-text .event-image-btn { justify-self: start; max-width: 100%; }
+
+/* Foco visível */
+.ev2-btn:focus-visible, .ev2-chip:focus-visible, .ev2-icon-btn:focus-visible { outline: 3px solid var(--laift-focus-color); outline-offset: 2px; }
+
+/* Movimento */
+@media (prefers-reduced-motion: no-preference) {
+  .ev2-next__card, .ev2-card { animation: ev2-in var(--dur-base) var(--ease-out) both; }
+  @keyframes ev2-in { from { opacity: 0; transform: translateY(var(--move-sm)); } to { opacity: 1; transform: none; } }
+}
