@@ -38,6 +38,8 @@
     entradaV2: ['entrada-v2.js'],
     // Início v3: tela nova e navegação responsiva, só com a flag home_v2_enabled ligada (app.js).
     inicio3: ['home-v3.js'],
+    // Aprender v2: tela nova do hub, só com a flag learn_v2_enabled ligada (learning.js). O CSS é injetado pelo script.
+    aprender2: ['learn-v2.js'],
     // Novidades (ENG-07): aviso uma vez por versão no login e "Ver novidades" no Perfil. O estilo do diálogo
     // (laift-dialog.css) vem no index.html; aqui só o script.
     novidades: ['modulos/shared/laift-dialog.js', 'whats-new.js'],
