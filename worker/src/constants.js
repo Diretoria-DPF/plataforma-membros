@@ -731,3 +731,16 @@ export const CLIENT_ERRORS = Object.freeze({
   RETENTION_DAYS: 30,
   RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 20, WINDOW_SECONDS: 3600 }),
 });
+
+// Destaques da Liga (highlightsService.js; sql/048; docs/destaques.md): bloco "Na Liga" da tela Início.
+export const HIGHLIGHTS = Object.freeze({
+  FLAG: 'highlights_enabled',
+  KINDS: Object.freeze(['aviso', 'evento', 'edital', 'blog', 'link']),
+  VISIBLE_MAX: 8,       // teto de itens visíveis ao mesmo tempo
+  TOTAL_MAX: 100,       // teto de linhas na tabela (ativas, ocultas e vencidas)
+  TITLE_MAX: 120,
+  SUBTITLE_MAX: 160,
+  LINK_MAX: 200,
+  FAR_FUTURE_YEARS: 5,  // data de saída além disto é recusada
+  WRITE_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 }),
+});

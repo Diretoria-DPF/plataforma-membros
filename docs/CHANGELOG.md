@@ -6,6 +6,9 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
+### Adicionado (Destaques da Liga, atrás da flag `highlights_enabled`, desligada)
+- **Bloco "Na Liga" na Início**, gerenciado por admin ou cargo gestor (capacidade nova `home.curate`): adicionar, ocultar, ordenar, remover e data de saída automática; teto de 8 itens visíveis; próximos eventos e blog recente entram como "Automático", sem gravação. Migração `048` (`home_highlights` + flag) **pendente de aplicação**; sem ela o Worker devolve lista vazia, sem erro. Seis ações novas (`apiListHighlights`, `apiAdminListHighlights`, `apiAdminSaveHighlight`, `apiAdminSetHighlightActive`, `apiAdminReorderHighlights`, `apiAdminDeleteHighlight`), pacote sob demanda `destaques`, cache do shell v29. Ver `docs/destaques.md`.
+
 ### Alterado (nome do assistente: Lia passa a se chamar Guia)
 - O assistente da plataforma agora se chama **Guia** ("a Guia", "Guia da plataforma") em telas, respostas, blog, documentação viva, Política de Privacidade, dossiê jurídico e registros históricos. Motivo: nome mais amplo, que cobre a plataforma inteira, no feminino para combinar com a representação visual. Por isso, entradas antigas deste arquivo agora também dizem Guia.
 - Identificadores internos **não mudaram** (`window.Lia`, classes `lia-*`, nomes de arquivo, flag `lia_visitor_ai_enabled`, ações `apiAssistant*`, slug do post `lia-a-guia`). A intenção da base "por onde começar" deixou de usar a palavra-chave `guia` sozinha, para não colidir com o nome. O documento-fonte passou de "Guia da plataforma" a "Manual da plataforma". A versão da Política de Privacidade não foi alterada (só o nome do assistente).

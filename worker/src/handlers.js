@@ -76,6 +76,8 @@ import * as RolesService from './services/rolesService.js';
 // Analytics de produto mínimo (DAT-01; sql/040)
 import * as UsageStatsService from './services/usageStatsService.js';
 import * as ClientErrorService from './services/clientErrorService.js';
+// Destaques da Liga (bloco "Na Liga" da Início; sql/048; flag highlights_enabled)
+import * as HighlightsService from './services/highlightsService.js';
 import { recordActivity } from './analytics/usage.js';
 import { statusForError, tagStatus } from './httpStatus.js';
 
@@ -212,6 +214,13 @@ export const API_REGISTRY = {
     const identity = sessionToken ? await S.resolveSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken) : null;
     return EventService.listEvents(sql, env, identity);
   }),
+  // Destaques da Liga: leitura exige sessão (a Início é do membro); a gestão exige a capacidade home.curate (admin ou gestor).
+  apiListHighlights: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => HighlightsService.listHighlights(sql, identity)),
+  apiAdminListHighlights: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => HighlightsService.adminList(sql, identity)),
+  apiAdminSaveHighlight: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => HighlightsService.save(sql, identity, asInput(input), cid)),
+  apiAdminSetHighlightActive: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => HighlightsService.setActive(sql, identity, asInput(input), cid)),
+  apiAdminReorderHighlights: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => HighlightsService.reorder(sql, identity, asInput(input), cid)),
+  apiAdminDeleteHighlight: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => HighlightsService.remove(sql, identity, asInput(input), cid)),
   apiRegisterForEvent: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.registerForEvent(sql, env, identity, eventId, cid)),
   apiCancelEventRegistration: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.cancelEventRegistration(sql, env, identity, eventId, cid)),
   apiListRecentCompletedEvents: (sql) => run(sql, () => EventService.listRecentCompletedEvents(sql)),

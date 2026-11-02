@@ -1,0 +1,114 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Destaques da Liga: bloco "Na Liga" da Início e tela de gestão. Mobile-first; alvos de toque de 44 px.
+   Carregado sob demanda por highlights.js (nada disto entra no peso do shell). */
+
+/* ---------- Bloco "Na Liga" (Início) ---------- */
+.home-highlights { margin: 0 0 var(--gap); }
+.home-highlights .hl-heading { margin: 0; }
+
+.hl-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr;
+}
+
+.hl-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-alt);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.hl-card--static { cursor: default; }
+.hl-card:not(.hl-card--static):hover { border-color: var(--primary); }
+.hl-card:focus-visible,
+.hl-switch:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+.hl-kind {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary-strong);
+}
+
+.hl-title { font-size: 15px; line-height: 1.3; overflow-wrap: anywhere; }
+.hl-sub { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+
+@media (min-width: 640px) {
+  .hl-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1000px) {
+  .hl-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ---------- Tela de gestão ---------- */
+.hl-form {
+  display: grid;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.hl-form label { display: grid; gap: 6px; font-weight: 600; }
+.hl-form .actions-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.hl-form .actions-row button { width: auto; }
+
+.hl-manage-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.hl-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.hl-row--off { border-style: dashed; }
+.hl-row--auto { background: var(--surface-alt); }
+
+.hl-row__text {
+  display: flex;
+  flex: 1 1 220px;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.hl-row__meta { color: var(--muted); font-size: 13px; }
+
+.hl-row__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.hl-row__actions button { width: auto; min-width: 44px; min-height: 44px; }
+.hl-switch[aria-checked="true"] { background: var(--primary-soft); border-color: var(--primary); }
+.hl-row__actions button:disabled { cursor: not-allowed; }

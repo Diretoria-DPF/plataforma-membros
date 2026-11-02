@@ -8,7 +8,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 161 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 167 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -97,6 +97,8 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiAdminLearnLibraryListStaff',
       'apiAdminLearnLibrarySetStaff'
     );
+    // Destaques da Liga (highlightsService.js; sql/048)
+    expected.push('apiListHighlights', 'apiAdminListHighlights', 'apiAdminSaveHighlight', 'apiAdminSetHighlightActive', 'apiAdminReorderHighlights', 'apiAdminDeleteHighlight');
     // Agentes de IA (ADR 0007; alfa)
     expected.push('apiAgentsList', 'apiAgentsInvoke');
     // Memória de estudo (ADR 0007; alfa) e painéis administrativos dos agentes

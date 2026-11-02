@@ -19,7 +19,7 @@ Quem altera:
 
 ## Quais flags vão ao navegador
 
-`PUBLIC_FLAGS` em `featureFlagService.js`: `ux_v2_enabled`, `chatbot_enabled`, `feedback_enabled`, as da Biblioteca e `lia_visitor_ai_enabled` (ver as tabelas abaixo). As demais só aparecem para admin (`apiAdminListFeatureFlags`).
+`PUBLIC_FLAGS` em `featureFlagService.js`: `ux_v2_enabled`, `chatbot_enabled`, `feedback_enabled`, as da Biblioteca, `lia_visitor_ai_enabled` e `highlights_enabled` (Destaques da Liga, `docs/destaques.md`) (ver as tabelas abaixo). As demais só aparecem para admin (`apiAdminListFeatureFlags`).
 
 ## Flags da renovação (UX v2, Guia, RAG, feedback e moderação)
 

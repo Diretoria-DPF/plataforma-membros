@@ -176,6 +176,7 @@
       resetAgentCards();
       resetAdminDashboardChart();
       if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
+      if (window.LaiftHighlights) window.LaiftHighlights.reset(document); // esconde o bloco Na Liga
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
       showPublicScreen('screen-welcome');
@@ -641,7 +642,10 @@
     if (!window.LaiftUx || uiFlagsKey === key) return;
     uiFlagsKey = key;
     callApi('apiGetFeatureFlags', key).then(function (res) {
-      if (res && res.success === true) window.LaiftUx.applyAndRememberFlags(document.documentElement, res.flags, window.localStorage);
+      if (res && res.success === true) {
+        window.LaiftUx.applyAndRememberFlags(document.documentElement, res.flags, window.localStorage);
+        if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
+      }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
     });
   }
@@ -1112,6 +1116,7 @@
     resetAgentCards();
     resetAdminDashboardChart();
     if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
+    if (window.LaiftHighlights) window.LaiftHighlights.reset(document); // esconde o bloco Na Liga
     clearSessionCache();
     document.getElementById('app-root').classList.add('hidden');
     document.getElementById('public-shell').classList.remove('hidden');
@@ -1322,9 +1327,21 @@
     window.LaiftLazy.load(name).then(fn, fn);
   }
 
+  // Destaques da Liga: o bloco "Na Liga" da Início só baixa o pacote com a flag highlights_enabled ligada (atributo no <html>).
+  function mountHighlights() {
+    if (!document.documentElement.hasAttribute('data-flag-highlights-enabled')) {
+      if (window.LaiftHighlights) window.LaiftHighlights.reset(document);
+      return;
+    }
+    withBundle('destaques', function () { if (window.LaiftHighlights) window.LaiftHighlights.mount(window.App, document); });
+  }
+
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
-    'panel-home': function () { if (window.LaiftHome) window.LaiftHome.load(window.App, document); },
+    'panel-home': function () {
+      if (window.LaiftHome) window.LaiftHome.load(window.App, document);
+      mountHighlights();
+    },
     'panel-events': loadEvents,
     'panel-proposals': loadProposalsAndVoting,
     'panel-tasks': loadTasks,
@@ -1365,6 +1382,8 @@
     'panel-admin-library': function () { withBundle('admin', function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); }); },
     // Cargos funcionais (ADR 0010): só o admin concede e retira (frontend/admin-roles.js).
     'panel-admin-roles': function () { withBundle('admin', function () { if (window.LaiftAdminRoles) window.LaiftAdminRoles.load(window.App); }); },
+    // Destaques da Liga (capacidade home.curate; frontend/highlights-manage.js, pacote sob demanda).
+    'panel-admin-highlights': function () { withBundle('destaques', function () { if (window.LaiftHighlightsManage) window.LaiftHighlightsManage.load(window.App); }); },
     // Cargo na liga para o gestor (capacidade orgchart.edit; frontend/orgchart-edit.js).
     'panel-gestao-orgchart': function () { if (window.LaiftOrgChartEdit) window.LaiftOrgChartEdit.load(window.App); },
   };

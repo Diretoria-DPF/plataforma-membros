@@ -13,7 +13,7 @@ import {
 } from '../src/roles/capabilities.js';
 
 const EXPECTED = {
-  gestor: ['events.manage', 'tasks.manage', 'attendance.manage', 'proposals.review', 'orgchart.edit'],
+  gestor: ['events.manage', 'tasks.manage', 'attendance.manage', 'proposals.review', 'orgchart.edit', 'home.curate'],
   revisor_conteudo: ['content.review', 'sim.review'],
   moderador: ['reports.moderate', 'assistant.feedback.moderate'],
   curador: ['library.curate'],
@@ -119,5 +119,24 @@ describe('capabilityCheck (ROL-03)', () => {
     const expected = PRIVILEGED_ROLES.flatMap((r) => EXPECTED[r]);
     expect([...PRIVILEGED_CAPABILITIES].sort()).toEqual([...new Set(expected)].sort());
     expect(PRIVILEGED_CAPABILITIES).not.toContain('mentoring.offer');
+  });
+});
+
+describe('home.curate (Destaques da Liga)', () => {
+  test('só o gestor (e o admin) a recebem; os outros cargos e o membro sem cargo, não', () => {
+    expect(capabilitiesFor({ baseRole: 'member', functionalRoles: ['gestor'] })).toContain('home.curate');
+    expect(capabilitiesFor({ baseRole: 'admin', functionalRoles: [] })).toContain('home.curate');
+    ['revisor_conteudo', 'moderador', 'curador', 'mentor'].forEach((role) => {
+      expect(capabilitiesFor({ baseRole: 'member', functionalRoles: [role] })).not.toContain('home.curate');
+    });
+    expect(capabilitiesFor({ baseRole: 'member', functionalRoles: [] })).not.toContain('home.curate');
+    expect(capabilitiesFor({ baseRole: 'visitor', functionalRoles: ['gestor'] })).not.toContain('home.curate');
+  });
+
+  test('é capacidade de cargo privilegiado: o gestor sem MFA recebe mfa, com MFA recebe ok', () => {
+    expect(PRIVILEGED_CAPABILITIES).toContain('home.curate');
+    const gestor = { role: 'member', capabilities: ['home.curate'] };
+    expect(capabilityCheck(gestor, 'home.curate')).toBe('mfa');
+    expect(capabilityCheck({ ...gestor, mfaConfirmed: true }, 'home.curate')).toBe('ok');
   });
 });

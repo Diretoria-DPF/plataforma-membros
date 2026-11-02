@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-app-version="v28">
+<html lang="pt-BR" data-app-version="v29">
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
@@ -373,6 +373,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1.2-3.3 3.7-5 6.5-5s5.3 1.7 6.5 5"/><path d="M17 8l1.5 1.5L22 6"/></svg>
             <span>Cargos</span>
           </button>
+          <!-- Destaques da Liga: bloco "Na Liga" da Início (frontend/highlights-manage.js). -->
+          <button type="button" data-panel="panel-admin-highlights">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg>
+            <span>Destaques</span>
+          </button>
         </div>
       </nav>
 
@@ -485,6 +490,12 @@
               </button>
             </li>
             <li>
+              <button type="button" class="app-menu__item hidden" data-panel="panel-admin-highlights" data-cap="home.curate" data-cap-cargo>
+                <svg class="app-menu__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg>
+                <span class="app-menu__texto"><span class="app-menu__titulo">Destaques da Liga</span><span class="app-menu__info">Bloco Na Liga da Início</span></span>
+              </button>
+            </li>
+            <li>
               <button type="button" class="app-menu__item hidden" data-panel="panel-admin-reports" data-cap="reports.moderate" data-cap-cargo>
                 <svg class="app-menu__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a1.5 1.5 0 001.3 2.25h17.76a1.5 1.5 0 001.3-2.25L13.7 3.86a1.5 1.5 0 00-2.6 0z"/></svg>
                 <span class="app-menu__texto"><span class="app-menu__titulo">Denúncias</span><span class="app-menu__info">Analisar e resolver</span></span>
@@ -519,6 +530,8 @@
             <p class="muted">QR de presença para registrar a sua entrada nos eventos.</p>
             <button type="button" class="secondary" id="btn-home-credential" data-open-credential>Abrir crachá virtual</button>
           </div>
+          <!-- Destaques da Liga (highlights.js, sob demanda; flag highlights_enabled). Fica de fora de #home-dashboard, que o home.js refaz. -->
+          <section id="home-highlights" class="card home-highlights hidden"></section>
           <div id="home-dashboard" class="home-grid"></div>
         </section>
 
@@ -967,6 +980,54 @@
             <p class="muted">Define o cargo de liderança e a diretoria de cada membro. Aparece no organograma da Equipe.</p>
             <div id="msg-gestao-orgchart" class="status-msg" role="status" aria-live="polite"></div>
             <div id="gestao-orgchart-list"></div>
+          </div>
+        </section>
+
+        <!-- Destaques da Liga (highlights-manage.js; capacidade home.curate): admin pela barra, gestor pelo menu Gestão. -->
+        <section id="panel-admin-highlights" class="hidden">
+          <h1 class="sr-only">Gestão: destaques da Liga</h1>
+          <div class="card">
+            <h2>Destaques da Liga</h2>
+            <p class="muted">Itens do bloco "Na Liga" da tela Início. Aparecem no máximo 8 de uma vez. Os próximos eventos e a publicação recente do blog entram sozinhos nas vagas livres.</p>
+            <p id="highlights-flag-note" class="gestao-aviso hidden">O bloco "Na Liga" está desligado para as pessoas. Quem administra a plataforma o liga em Admin &gt; Flags (highlights_enabled).</p>
+            <p id="highlights-missing" class="gestao-aviso hidden">Os destaques ainda não estão disponíveis: falta aplicar a atualização do banco de dados.</p>
+            <div id="msg-highlights" class="status-msg" role="status" aria-live="polite"></div>
+            <p id="highlights-cap" class="muted"></p>
+            <button type="button" id="btn-highlight-add" class="admin-btn" aria-expanded="false" aria-controls="highlight-form">Adicionar destaque</button>
+            <form id="highlight-form" class="hl-form hidden" novalidate>
+              <label for="hl-title">Título
+                <input id="hl-title" type="text" maxlength="120" required autocomplete="off">
+              </label>
+              <label for="hl-kind">Tipo
+                <select id="hl-kind">
+                  <option value="aviso">Aviso</option>
+                  <option value="evento">Evento</option>
+                  <option value="edital">Edital</option>
+                  <option value="blog">Blog</option>
+                  <option value="link">Link</option>
+                </select>
+              </label>
+              <label for="hl-sub">Texto de apoio (opcional)
+                <input id="hl-sub" type="text" maxlength="160" autocomplete="off">
+              </label>
+              <label for="hl-link">Link (opcional)
+                <input id="hl-link" type="text" maxlength="200" inputmode="url" autocomplete="off" placeholder="/blog/ ou https://exemplo.org">
+              </label>
+              <label for="hl-end">Data de saída (opcional)
+                <input id="hl-end" type="date">
+              </label>
+              <div class="actions-row">
+                <button type="submit" class="admin-btn" id="btn-highlight-save">Publicar destaque</button>
+                <button type="button" class="secondary" id="btn-highlight-cancel">Cancelar</button>
+              </div>
+            </form>
+            <p id="highlights-empty" class="muted hidden">Nenhum destaque manual ainda.</p>
+            <ul id="highlights-list" class="hl-manage-list" aria-label="Destaques manuais"></ul>
+            <div id="highlights-auto-block" class="hidden">
+              <h3>Automáticos</h3>
+              <p class="muted">Vêm dos próximos eventos e do blog; não são gravados e não dá para editar aqui.</p>
+              <ul id="highlights-auto-list" class="hl-manage-list" aria-label="Destaques automáticos"></ul>
+            </div>
           </div>
         </section>
 

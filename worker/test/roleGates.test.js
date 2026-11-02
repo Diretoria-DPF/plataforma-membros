@@ -38,6 +38,7 @@ const BY_ROLE = {
     'apiAdminAttendanceListEvents', 'apiAdminAttendanceCheckIn', 'apiAdminAttendanceSearch',
     'apiAdminAttendanceExportCsv', 'apiAdminAttendanceBadges',
     'apiAdminListProposalsForReview', 'apiAdminTransitionProposal', 'apiAdminSetLeaguePosition',
+    'apiAdminListHighlights', 'apiAdminSaveHighlight', 'apiAdminSetHighlightActive', 'apiAdminReorderHighlights', 'apiAdminDeleteHighlight',
   ],
   moderador: [
     'apiAdminListReports', 'apiAdminResolveReport', 'apiAdminAssistantModeration',

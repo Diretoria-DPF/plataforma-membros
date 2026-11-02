@@ -48,6 +48,7 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminCreateEvent"
                 - "$ref": "#/components/schemas/apiAdminCreateTask"
                 - "$ref": "#/components/schemas/apiAdminDashboard"
+                - "$ref": "#/components/schemas/apiAdminDeleteHighlight"
                 - "$ref": "#/components/schemas/apiAdminGrantRole"
                 - "$ref": "#/components/schemas/apiAdminLearnAtlasTelemetry"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryChangeStatus"
@@ -81,6 +82,7 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminListErrorLogs"
                 - "$ref": "#/components/schemas/apiAdminListFeatureFlags"
                 - "$ref": "#/components/schemas/apiAdminListFeedback"
+                - "$ref": "#/components/schemas/apiAdminListHighlights"
                 - "$ref": "#/components/schemas/apiAdminListProposalsForReview"
                 - "$ref": "#/components/schemas/apiAdminListReports"
                 - "$ref": "#/components/schemas/apiAdminListRoles"
@@ -88,10 +90,13 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminMemoryStats"
                 - "$ref": "#/components/schemas/apiAdminPurgeMemberMemory"
                 - "$ref": "#/components/schemas/apiAdminReindexKb"
+                - "$ref": "#/components/schemas/apiAdminReorderHighlights"
                 - "$ref": "#/components/schemas/apiAdminResetUserMfa"
                 - "$ref": "#/components/schemas/apiAdminResolveReport"
                 - "$ref": "#/components/schemas/apiAdminRevokeRole"
+                - "$ref": "#/components/schemas/apiAdminSaveHighlight"
                 - "$ref": "#/components/schemas/apiAdminSetFeatureFlag"
+                - "$ref": "#/components/schemas/apiAdminSetHighlightActive"
                 - "$ref": "#/components/schemas/apiAdminSetLeaguePosition"
                 - "$ref": "#/components/schemas/apiAdminTransitionProposal"
                 - "$ref": "#/components/schemas/apiAdminUnbanUser"
@@ -152,6 +157,7 @@ paths:
                 - "$ref": "#/components/schemas/apiLearnSubmitQuizAttempt"
                 - "$ref": "#/components/schemas/apiListConversations"
                 - "$ref": "#/components/schemas/apiListEvents"
+                - "$ref": "#/components/schemas/apiListHighlights"
                 - "$ref": "#/components/schemas/apiListIncomingConnectionRequests"
                 - "$ref": "#/components/schemas/apiListMessages"
                 - "$ref": "#/components/schemas/apiListMyBlocks"
@@ -513,6 +519,22 @@ components:
             - description: "sessionToken"
           minItems: 0
           maxItems: 1
+    apiAdminDeleteHighlight:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminDeleteHighlight"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminGrantRole:
       type: "object"
       required:
@@ -1035,6 +1057,21 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 2
+    apiAdminListHighlights:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListHighlights"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
     apiAdminListProposalsForReview:
       type: "object"
       required:
@@ -1144,6 +1181,22 @@ components:
             - description: "sessionToken"
           minItems: 0
           maxItems: 1
+    apiAdminReorderHighlights:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminReorderHighlights"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminResetUserMfa:
       type: "object"
       required:
@@ -1194,6 +1247,22 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 2
+    apiAdminSaveHighlight:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminSaveHighlight"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminSetFeatureFlag:
       type: "object"
       required:
@@ -1211,6 +1280,22 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 3
+    apiAdminSetHighlightActive:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminSetHighlightActive"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminSetLeaguePosition:
       type: "object"
       required:
@@ -2156,6 +2241,21 @@ components:
       properties:
         action:
           const: "apiListEvents"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiListHighlights:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListHighlights"
         args:
           type: "array"
           prefixItems:
