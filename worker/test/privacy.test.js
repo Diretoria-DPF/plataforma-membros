@@ -62,6 +62,14 @@ describe('exportMyData', () => {
     for (const banned of ['HASH-SECRETO', 'password', 'TRIAGEM-IA', 'NOTA-INTERNA', '_signals', 'saude', 'OUTRO-CURSO-BIA', 'Bia Costa']) expect(text).not.toContain(banned);
   });
 
+  test('inclui as mentorias da pessoa, com o papel dela e sem dados do outro além do usuário', async () => {
+    await db.query("UPDATE profiles SET status = 'active', email_confirmed_at = now() WHERE id = ANY($1::uuid[])", [[ANA, BIA]]);
+    await db.query("INSERT INTO mentorships (mentor_id, mentee_id, status, requested_by, share_progress) VALUES ($1, $2, 'active', $2, true)", [ANA, BIA]);
+    const out = await Privacy.exportMyData(sql, ana);
+    expect(out.data.mentorships).toEqual([expect.objectContaining({ with: 'priv4', myRole: 'mentor', status: 'active', requestedByMe: false, shareProgress: true })]);
+    expect(JSON.stringify(out.data.mentorships)).not.toContain('Bia Costa');
+  });
+
   test('inclui conexões, bloqueios, feedback, Guia, aprendizagem, presença e favoritos (B-08)', async () => {
     await db.query("INSERT INTO feedback (profile_id, message) VALUES ($1, 'Meu feedback livre')", [ANA]);
     await db.query("UPDATE profiles SET status = 'active', email_confirmed_at = now() WHERE id = ANY($1::uuid[])", [[ANA, BIA]]);
