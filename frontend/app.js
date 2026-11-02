@@ -662,9 +662,14 @@
         mountEntradaV2(); // a flag chega depois do primeiro desenho da tela pública
         if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
         if (res.flags && res.flags.home_v2_enabled === true) enableHomeV2(); // Início v3 e navegação responsiva
+        if (res.flags && res.flags.library_v2_enabled === true && currentPanelId === 'panel-library') mountLibraryV2(); // a flag chega depois da abertura da Biblioteca
+        if (res.flags && res.flags.learn_v2_enabled === true && currentPanelId === 'panel-learn' && window.LaiftLearning) window.LaiftLearning.loadPanel(); // Aprender v2: a flag chega depois do primeiro desenho do hub
+        if (res.flags && res.flags.events_v2_enabled === true && currentPanelId === 'panel-events') loadEvents(); // a flag chega depois do primeiro desenho de Eventos
         if (res.flags && res.flags.profile_v2_enabled === true && currentPanelId === 'panel-profile') mountProfileV2(); // a flag chega depois da abertura do Perfil
         if (res.flags && res.flags.messages_v2_enabled === true && currentPanelId === 'panel-messages') mountMessagesV2(); // idem, Mensagens
         if (res.flags && res.flags.team_v2_enabled === true && currentPanelId === 'panel-orgchart') mountTeamV2(); // idem, Equipe
+        if (res.flags && res.flags.proposals_v2_enabled === true && currentPanelId === 'panel-proposals') mountProposalsV2(); // idem, Propostas
+        if (res.flags && res.flags.tasks_v2_enabled === true && currentPanelId === 'panel-tasks') mountTasksV2(); // idem, Tarefas
       }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
     }).catch(function () { /* sem rede: segue sem flags novas */ });
@@ -1417,6 +1422,25 @@
     withBundle('equipe2', function () { if (window.LaiftTeamV2) window.LaiftTeamV2.mount(window.App, document); });
   }
 
+  // Propostas v2 e Tarefas v2 (flags proposals_v2_enabled e tasks_v2_enabled, desligadas por padrão; docs/propostas-v2.md e
+  // docs/tarefas-v2.md): pacotes propostas2 e tarefas2 só reposicionam e dão novo visual aos elementos de sempre. Sem a flag
+  // (ou se o pacote falhar) a tela fica como era.
+  function proposalsV2On() { return document.documentElement.hasAttribute('data-flag-proposals-v2-enabled'); }
+  function mountProposalsV2() {
+    withBundle('propostas2', function () { if (window.LaiftProposalsV2) window.LaiftProposalsV2.mount(window.App, document); });
+  }
+  function tasksV2On() { return document.documentElement.hasAttribute('data-flag-tasks-v2-enabled'); }
+  function mountTasksV2() {
+    withBundle('tarefas2', function () { if (window.LaiftTasksV2) window.LaiftTasksV2.mount(window.App, document); });
+  }
+
+  // Biblioteca v2 (flag library_v2_enabled, desligada por padrão; docs/biblioteca-v2.md): o pacote biblioteca2 só dá o visual novo
+  // à Biblioteca de sempre (library.js segue montando e buscando). Sem a flag (ou se o pacote falhar) a tela fica como era.
+  function libraryV2On() { return document.documentElement.hasAttribute('data-flag-library-v2-enabled'); }
+  function mountLibraryV2() {
+    withBundle('biblioteca2', function () { if (window.LaiftLibraryV2) window.LaiftLibraryV2.mount(window.App, document); });
+  }
+
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
     'panel-home': function () {
@@ -1428,12 +1452,20 @@
       mountHighlights();
     },
     'panel-events': loadEvents,
-    'panel-proposals': loadProposalsAndVoting,
-    'panel-tasks': loadTasks,
     'panel-orgchart': function () {
       loadOrgChartPanel();
       if (teamV2On()) mountTeamV2();
       else if (window.LaiftTeamV2) window.LaiftTeamV2.reset(document);
+    },
+    'panel-proposals': function () {
+      loadProposalsAndVoting();
+      if (proposalsV2On()) mountProposalsV2();
+      else if (window.LaiftProposalsV2) window.LaiftProposalsV2.reset(document);
+    },
+    'panel-tasks': function () {
+      loadTasks();
+      if (tasksV2On()) mountTasksV2();
+      else if (window.LaiftTasksV2) window.LaiftTasksV2.reset(document);
     },
     // Mentoria (ROL-04; frontend/mentoring.js, pacote sob demanda; o item do menu só aparece com a flag mentoring_enabled).
     'panel-mentoring': function () { withBundle('mentoria', function () { if (window.LaiftMentoring) window.LaiftMentoring.load(window.App); }); },
@@ -1472,7 +1504,11 @@
       });
     },
     // Biblioteca LAIFT (CONTRATO-B2 §7). Fora de MEMBER_PANEL_ORDER de propósito (§1: gate por flag só no CSS).
-    'panel-library': function () { if (window.LaiftLibrary) window.LaiftLibrary.loadPanel(); },
+    'panel-library': function () {
+      if (libraryV2On()) mountLibraryV2();
+      else if (window.LaiftLibraryV2) window.LaiftLibraryV2.reset();
+      if (window.LaiftLibrary) window.LaiftLibrary.loadPanel();
+    },
     // Processo seletivo (selection.js): jornada do candidato; só aparece no menu de quem ainda não é membro.
     'panel-selection': function () { if (window.LaiftSelection) window.LaiftSelection.load(window.App, document); },
     'panel-admin-selection': function () { withBundle('admin', function () { if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.load(window.App, document); }); },
@@ -1599,16 +1635,40 @@
   // ===========================================================================
   // Eventos
   // ===========================================================================
+  // Eventos v2 (flag events_v2_enabled; docs/eventos-v2.md): o pacote eventos2 só desenha; os dados e as ações são estes mesmos.
+  // Flag desligada, ou pacote que falhou: a tela de sempre.
+  function eventsV2On() { return document.documentElement.hasAttribute('data-flag-events-v2-enabled'); }
+  function eventsV2Ready() {
+    if (!eventsV2On()) return Promise.resolve(false);
+    return new Promise(function (resolve) { withBundle('eventos2', function () { resolve(!!window.LaiftEventsV2); }); });
+  }
+  function eventsV2Context() {
+    return {
+      doc: document, loggedIn: !!state.sessionToken, formatDate: formatDate, canCancel: function (item) { return canCancelRegistration(item, Date.now()); },
+      onRegister: registerForEvent, onCancel: confirmCancelRegistration, imageButton: eventImageButton,
+    };
+  }
+
   function loadEvents() {
+    var v2 = eventsV2Ready();
+    v2.then(function (on) { if (on) window.LaiftEventsV2.renderLoading(document); });
     setStatus('events-status', 'Carregando eventos...', 'info');
     showSkeleton('events-list', 3);
-    var loaded = callApi('apiListEvents', state.sessionToken || '').then(function (res) {
+    var loaded = Promise.all([v2, callApi('apiListEvents', state.sessionToken || '')]).then(function (all) {
+      var useV2 = all[0], res = all[1];
+      if (useV2) {
+        if (!res.success) { setStatus('events-status', '', null); window.LaiftEventsV2.renderEventsError(document, res, loadEvents); return; }
+        setStatus('events-status', '', null);
+        window.LaiftEventsV2.renderEvents(eventsV2Context(), res.events);
+        return;
+      }
+      if (window.LaiftEventsV2) window.LaiftEventsV2.reset(document);
       if (!res.success) { clearSkeleton('events-list'); setStatus('events-status', res.message, 'error'); return; }
       setStatus('events-status', '', null);
       renderList('events-list', res.events, renderEventItem, 'Não há eventos publicados no momento.');
       renderEventsOccupancy(ensureEventsOccupancyContainer(), res.events);
     });
-    loadEventsHistory();
+    loadEventsHistory(v2);
     return loaded;
   }
 
@@ -1642,10 +1702,17 @@
     });
   }
 
-  function loadEventsHistory() {
+  function loadEventsHistory(v2) {
+    var ready = v2 || eventsV2Ready();
     resetListForLoading('events-history-list');
     showSkeleton('events-history-list', 3);
-    callApi('apiListRecentCompletedEvents').then(function (res) {
+    ready.then(function (on) { if (on && window.LaiftEventsV2) window.LaiftEventsV2.renderHistoryLoading(document); });
+    Promise.all([ready, callApi('apiListRecentCompletedEvents')]).then(function (all) {
+      var res = all[1];
+      if (all[0] && window.LaiftEventsV2) {
+        window.LaiftEventsV2.renderHistory(document, res, formatDate, function () { loadEventsHistory(); });
+        return;
+      }
       renderAsyncList('events-history-list', res, res && res.events, renderEventHistoryItem,
         'Ainda não há eventos concluídos no histórico.', loadEventsHistory);
     });
@@ -1768,7 +1835,7 @@
     showSkeleton('my-proposals-list', 2);
     callApi('apiListMyProposals', state.sessionToken).then(function (res) {
       renderAsyncList('my-proposals-list', res, res && res.proposals, function (p) {
-        return h('article', { className: 'list-item' }, [
+        return h('article', { className: 'list-item', 'data-status': p.status }, [
           text('h4', p.title),
           text('p', p.description),
           h('div', { className: 'meta-row' }, [
@@ -1823,7 +1890,7 @@
           }, ['Comentar']),
         ]);
 
-    return h('article', { className: 'list-item' }, [
+    return h('article', { className: 'list-item', 'data-voted': item.alreadyVoted ? 'true' : 'false' }, [
       text('h4', item.title),
       text('p', item.description),
       h('div', { className: 'meta-row' }, [text('span', 'Encerra em: ' + formatDate(item.votingClosesAt))]),
@@ -1875,7 +1942,7 @@
     }, ['Comentários']);
     actions.push(commentsToggle);
 
-    return h('article', { className: 'list-item' }, [
+    return h('article', { className: 'list-item', 'data-task-state': item.alreadySignedUp ? (item.completed ? 'done' : 'mine') : 'open' }, [
       text('h4', item.title),
       text('p', item.description),
       h('div', { className: 'meta-row' }, [
