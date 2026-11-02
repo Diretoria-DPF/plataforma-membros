@@ -1481,7 +1481,7 @@
   var swipeStart = null;
 
   function isSwipeExcluded(target) {
-    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .modal-overlay, canvas, .learn-viewer'));
+    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .modal-overlay, canvas, .learn-viewer, .v3-strip, .hl-list'));
   }
 
   // Ordem do deslizar no modo membro: a mesma de antes do menu (os itens do menu entram no lugar certo).
