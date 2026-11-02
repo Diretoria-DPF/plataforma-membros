@@ -14,6 +14,8 @@
 //  - entradaV2: carregado quando a flag entrada_v2_enabled está ligada e a pessoa não está logada (app.js);
 //  - inicio3: carregado quando a flag home_v2_enabled está ligada (Início v3 e Meu desempenho no Perfil; app.js);
 //  - perfil2: carregado quando a flag profile_v2_enabled está ligada e o Perfil abre (app.js);
+//  - mensagens2: carregado quando a flag messages_v2_enabled está ligada e Mensagens abre (app.js);
+//  - equipe2: carregado quando a flag team_v2_enabled está ligada e Equipe abre (app.js);
 //  - novidades: carregado após o login (uma vez por versão) ou ao abrir "Ver novidades" no Perfil;
 //  - lia: carregado logo após o login e, para quem só visita, quando o navegador
 //    fica ocioso depois do evento load (fora do caminho crítico).
@@ -41,6 +43,10 @@
     inicio3: ['home-v3.js'],
     // Perfil v2: reorganiza o Perfil de sempre (cabeçalho, colunas e seções recolhíveis), só com a flag profile_v2_enabled ligada (app.js).
     perfil2: ['profile-v2.js'],
+    // Mensagens v2: reapresenta Mensagens (cifragem e fluxo de sempre), só com a flag messages_v2_enabled ligada (app.js).
+    mensagens2: ['messages-v2.js'],
+    // Equipe v2: reapresenta a Equipe (organograma, pedidos e adicionados de sempre), só com a flag team_v2_enabled ligada (app.js).
+    equipe2: ['team-v2.js'],
     // Novidades (ENG-07): aviso uma vez por versão no login e "Ver novidades" no Perfil. O estilo do diálogo
     // (laift-dialog.css) vem no index.html; aqui só o script.
     novidades: ['modulos/shared/laift-dialog.js', 'whats-new.js'],
