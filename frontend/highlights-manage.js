@@ -13,6 +13,8 @@
 
   var MSG_ID = 'msg-highlights';
   var VISIBLE_MAX = 8;
+  // Espelho de C.HIGHLIGHTS.LINK_HOSTS (worker/src/constants.js). O Worker é quem decide; esta cópia só dá erro cedo.
+  var LINK_HOSTS = ['laift.com.br', 'www.laift.com.br', 'www.instagram.com', 'instagram.com', 'doi.org', 'www.gov.br', 'www.planalto.gov.br', 'pubmed.ncbi.nlm.nih.gov'];
   var KIND_ORDER = ['aviso', 'evento', 'edital', 'blog', 'link'];
   var items = [];
   var visibleMax = VISIBLE_MAX;
@@ -64,13 +66,25 @@
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
 
+  /** Hostname exato (minúsculo) na lista, porta padrão. Só chamado para https já aceito por linkTarget. */
+  function linkHostAllowed(link) {
+    try {
+      var url = new URL(link);
+      return !url.port && LINK_HOSTS.indexOf(url.hostname) !== -1;
+    } catch (e) { return false; }
+  }
+
   /** Entrada do formulário -> corpo de apiAdminSaveHighlight, ou { error }. A Worker valida de novo. */
   function formInput(values) {
     var title = String(values.title || '').trim();
     if (!title) return { error: 'Informe o título do destaque.' };
     if (title.length > 120) return { error: 'O título pode ter no máximo 120 caracteres.' };
     var link = String(values.link || '').trim();
-    if (link && !H().linkTarget(link)) return { error: 'O link precisa começar com / (página da plataforma) ou https://.' };
+    if (link) {
+      var target = H().linkTarget(link);
+      if (!target) return { error: 'O link precisa começar com / (página da plataforma) ou https://.' };
+      if (target.external && !linkHostAllowed(link)) return { error: 'Este endereço não é aceito. Use uma página da plataforma (começa com /) ou um site da lista: ' + LINK_HOSTS.join(', ') + '.' };
+    }
     var endsAt = '';
     if (values.end) {
       endsAt = H().endOfDayIso(values.end);

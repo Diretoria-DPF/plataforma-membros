@@ -207,7 +207,65 @@ async function testarNoNavegador() {
   }
 }
 
+// ---------------------------------------------------------------------------
+// 3. Microinteração de acerto/erro (ENG-05): animação curta + vibração, com as duas travas
+// ---------------------------------------------------------------------------
+async function testarMicrointeracao() {
+  const app = await startApp({ role: 'member' });
+  try {
+    await app.login();
+    const frame = await app.openModule('farmaco');
+    await frame.click('.topic-btn[data-topic="Coagulação"]');
+    await frame.click('#startQuiz');
+    await frame.waitForSelector('#quizContainer:not([hidden]) .option');
+    await frame.evaluate(() => {
+      window.__vib = [];
+      navigator.vibrate = (ms) => { window.__vib.push(ms); return true; };
+    });
+    const vibracoes = () => frame.evaluate(() => window.__vib.slice());
+    const animacao = () => frame.evaluate(() => {
+      const marcada = document.querySelector('.option.feedback-pop');
+      return marcada ? getComputedStyle(marcada).animationName : null;
+    });
+    const responde = async () => {
+      await frame.click('.option >> nth=0');
+      await frame.waitForSelector('#explanation.show');
+    };
+
+    await responde();
+    const nome = await animacao();
+    check(!!nome && /^quiz-pop-(correct|incorrect)$/.test(nome), `microinteração: a alternativa respondida anima (${nome})`);
+    check(JSON.stringify(await vibracoes()) === '[10]', 'microinteração: vibra 10 ms ao responder');
+
+    await frame.click('#nextBtn');
+    await frame.click('#prevBtn');
+    check(JSON.stringify(await vibracoes()) === '[10]', 'microinteração: voltar a questão já respondida não anima nem vibra de novo');
+    await frame.waitForTimeout(500);
+    check((await animacao()) === null, 'microinteração: a classe de animação sai sozinha');
+
+    await frame.click('#nextBtn');
+    await frame.evaluate(() => localStorage.setItem('laift_vibration', '0'));
+    await responde();
+    check(JSON.stringify(await vibracoes()) === '[10]', 'preferência "Vibração" desligada: não vibra');
+    check(!!(await animacao()), 'preferência "Vibração" desligada: a animação visual continua');
+
+    await frame.evaluate(() => localStorage.removeItem('laift_vibration'));
+    await app.page.emulateMedia({ reducedMotion: 'reduce' });
+    await frame.click('#nextBtn');
+    await responde();
+    check(JSON.stringify(await vibracoes()) === '[10]', 'movimento reduzido: não vibra');
+    check((await animacao()) === null, 'movimento reduzido: não anima');
+
+    check(await frame.evaluate(() => !document.querySelector('audio') && typeof window.Audio === 'function'), 'sem som: nenhum <audio> no quiz');
+    const realErrors = app.errors.filter((e) => !IGNORABLE.test(e));
+    check(realErrors.length === 0, 'microinteração: sem erros de JavaScript não tratados' + (realErrors.length ? ': ' + realErrors.join(' | ') : ''));
+  } finally {
+    await app.close();
+  }
+}
+
 module.exports = async function quizFarmaco() {
   testarDeteccaoPura();
   await testarNoNavegador();
+  await testarMicrointeracao();
 };

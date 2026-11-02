@@ -27,12 +27,16 @@
  *   - alternativas são <button> (teclado/leitor de tela) e avisos usam
  *     role="status" em vez de alert().
  *
+ * ENG-04/05: quickStart() abre o primeiro simulado curto já na questão 1; a resposta nova anima e vibra
+ * (quiz-feedback.js, opcional; respeita movimento reduzido e a preferência "Vibração").
+ *
  * Depende de ../shared/safe-dom.js (LaiftDom). Uso: ver quiz/app.js.
  */
 (function (global) {
   'use strict';
 
   var SECONDS_PER_EXAM_QUESTION = 90;
+  var QUICK_START_COUNT = 5; // "Fazer o primeiro quiz" (ENG-04): questões do primeiro simulado
   var URGENT_SECONDS = 300;
   var API_MODE = { study: 'estudo', exam: 'prova' };
   var QUEUED_MESSAGE = 'Salvo neste aparelho, será enviado quando houver internet.';
@@ -311,6 +315,31 @@
       begin(questions, answers, 0);
     }
 
+    /**
+     * Primeiro quiz em um toque (ENG-04): estudo, `count` questões de tópicos variados (a primeira de cada
+     * tópico, em rodízio), já na primeira questão. Não interrompe um simulado em andamento.
+     */
+    function quickStart(count) {
+      if (state.active || !state.bank.length) return false;
+      var want = count > 0 ? count : QUICK_START_COUNT;
+      var perTopic = allTopics().map(function (topic) {
+        return state.bank.filter(function (q) { return q.topic === topic; });
+      });
+      var picked = [];
+      for (var round = 0; picked.length < want && round < state.bank.length; round++) {
+        for (var t = 0; t < perTopic.length && picked.length < want; t++) {
+          if (perTopic[t][round]) picked.push(perTopic[t][round]);
+        }
+      }
+      if (!picked.length) return false;
+      setMode('study');
+      state.selected = new Set(allTopics());
+      refreshSidebar();
+      setStatus('');
+      begin(picked, new Array(picked.length).fill(null), 0);
+      return true;
+    }
+
     function continueQuiz() {
       var saved = savedAnswers();
       var questions = state.bank.slice();
@@ -401,7 +430,9 @@
       state.answers[state.index] = index;
       saveProgress();
       updateStats();
+      state.freshAnswer = true; // só uma resposta nova anima/vibra; navegar entre questões já respondidas, não
       loadQuestion();
+      state.freshAnswer = false;
       // O re-render troca os botões: devolve o foco à alternativa escolhida
       // para quem navega por teclado/leitor de tela não "cair" no topo.
       var chosen = el.options.querySelector('.option[data-index="' + index + '"]');
@@ -416,6 +447,9 @@
         if (i === q.correct) opt.classList.add('correct');
         else if (i === userAnswer && userAnswer !== q.correct) opt.classList.add('incorrect');
       });
+      if (state.freshAnswer && global.LaiftQuizFeedback) {
+        global.LaiftQuizFeedback.respond(global, el.options.querySelector('.option[data-index="' + userAnswer + '"]'));
+      }
       el.explanationText.textContent = q.explanation || '';
       el.explanation.classList.add('show');
       if (typeof cfg.onExplanation === 'function') {
@@ -655,6 +689,7 @@
     return {
       state: state,
       startQuiz: startQuiz,
+      quickStart: quickStart,
       selectOption: selectOption,
       finishQuiz: finishQuiz,
       setMode: setMode,

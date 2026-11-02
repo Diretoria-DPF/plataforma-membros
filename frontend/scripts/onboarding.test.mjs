@@ -398,3 +398,51 @@ test('onboarding.js: sem innerHTML, eval ou handler inline; usa showModal e alvo
   assert.match(SOURCE, /44px/);
   assert.doesNotMatch(SOURCE, /client_events/);
 });
+
+// ---------- ENG-04: primeiro quiz em um toque a partir do último passo ----------
+function quizEnv() {
+  const calls = [];
+  const win = {
+    LaiftLearning: { openFirstQuiz() { calls.push('quiz'); } },
+    App: { showPanel(id) { calls.push('panel:' + id); } },
+  };
+  const doc = fakeDocument();
+  const api = Onboarding.createOnboarding(doc, win, Onboarding.createSeenStore(memoryStorage()));
+  return { doc, api, calls };
+}
+
+test('último passo oferece "Fazer o primeiro quiz" (primário); antes dele, o botão não aparece', () => {
+  const { doc, api } = quizEnv();
+  api.maybeShow({ role: 'member', profileId: 'p1' });
+  const dialog = dialogOf(doc);
+  const quiz = buttonNamed(dialog, 'Fazer o primeiro quiz');
+  assert.ok(quiz.classes.has('hidden'), 'oculto no passo 1');
+  buttonNamed(dialog, 'Próximo').click();
+  buttonNamed(dialog, 'Próximo').click();
+  assert.ok(!quiz.classes.has('hidden'), 'visível no último passo');
+  assert.ok(!quiz.classes.has('secondary'), 'primário');
+  assert.ok(buttonNamed(dialog, 'Concluir').classes.has('secondary'), '"Concluir" vira secundário');
+  buttonNamed(dialog, 'Voltar').click();
+  assert.ok(quiz.classes.has('hidden'), 'oculto ao voltar');
+});
+
+test('"Fazer o primeiro quiz": 1 toque fecha, grava "visto" e abre o quiz de Farmacologia na Aprender', () => {
+  const { doc, api, calls } = quizEnv();
+  api.maybeShow({ role: 'visitor', profileId: 'p1' });
+  const dialog = dialogOf(doc);
+  buttonNamed(dialog, 'Próximo').click();
+  buttonNamed(dialog, 'Próximo').click();
+  buttonNamed(dialog, 'Fazer o primeiro quiz').click();
+  assert.equal(dialog.open, false);
+  assert.deepEqual(calls, ['panel:panel-learn', 'quiz']);
+});
+
+test('sem LaiftLearning.openFirstQuiz o botão nunca aparece, e Tab o inclui só quando visível', () => {
+  const { api, doc } = setup();
+  api.maybeShow({ role: 'member', profileId: 'p1' });
+  const dialog = dialogOf(doc);
+  buttonNamed(dialog, 'Próximo').click();
+  buttonNamed(dialog, 'Próximo').click();
+  assert.ok(buttonNamed(dialog, 'Fazer o primeiro quiz').classes.has('hidden'));
+  assert.ok(!buttonNamed(dialog, 'Concluir').classes.has('secondary'));
+});

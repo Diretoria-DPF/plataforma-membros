@@ -28,6 +28,8 @@ const CAPABILITY = 'home.curate';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // Controles C0/C1, marcas de direção, separadores de linha/parágrafo e BOM viram espaço.
 const UNSAFE_CHARS_RE = new RegExp('[\u0000-\u001f\u007f-\u009f​-‏ -‮⁦-⁩﻿]', 'g');
+/** Domínios https aceitos no link (hostname exato). Reexporta C.HIGHLIGHTS.LINK_HOSTS. */
+export const HIGHLIGHT_LINK_HOSTS = H.LINK_HOSTS;
 const INTERNAL_PATH_RE = /^\/(?!\/)[A-Za-z0-9._~\-/?#=&%+@:,;!$'()*]*$/;
 const UNAVAILABLE_MESSAGE = 'Os destaques ainda não estão disponíveis. A atualização do banco está pendente.';
 const MIN_DATE_MS = Date.UTC(2020, 0, 1);
@@ -44,7 +46,8 @@ export function cleanText(raw) {
 }
 
 /**
- * Link do destaque: vazio vira null; aceita só caminho interno ("/blog/") ou https sem usuário/senha.
+ * Link do destaque: vazio vira null; aceita só caminho interno ("/blog/") ou https de um domínio da lista
+ * HIGHLIGHT_LINK_HOSTS (hostname exato, porta padrão, sem usuário/senha; punycode só passa se estiver na lista).
  * Devolve { ok: true, value } ou { ok: false }.
  */
 export function parseLink(raw) {
@@ -57,7 +60,8 @@ export function parseLink(raw) {
   if (!/^https:\/\//i.test(link)) return { ok: false };
   let url;
   try { url = new URL(link); } catch (e) { return { ok: false }; }
-  if (url.protocol !== 'https:' || url.username || url.password || !url.hostname) return { ok: false };
+  if (url.protocol !== 'https:' || url.username || url.password || url.port || !url.hostname) return { ok: false };
+  if (!HIGHLIGHT_LINK_HOSTS.includes(url.hostname)) return { ok: false };
   return { ok: true, value: link };
 }
 
@@ -81,7 +85,7 @@ export function normalizeSaveInput(input, now = Date.now()) {
     throw E.ValidationError('O texto de apoio pode ter no máximo ' + H.SUBTITLE_MAX + ' caracteres.');
   }
   const link = parseLink(input.linkPath);
-  if (!link.ok) throw E.ValidationError('O link precisa ser um caminho interno (começa com /) ou um endereço https.');
+  if (!link.ok) throw E.ValidationError('O link precisa ser um caminho interno (começa com /) ou um endereço https de um site aceito: ' + HIGHLIGHT_LINK_HOSTS.join(', ') + '.');
   const startsAt = input.startsAt === undefined || input.startsAt === null || input.startsAt === '' ? null : parseDate(input.startsAt, 'Data de início');
   let endsAt = null;
   if (input.endsAt !== undefined && input.endsAt !== null && input.endsAt !== '') {

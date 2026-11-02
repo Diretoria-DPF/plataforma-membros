@@ -11,7 +11,7 @@
 import { API_REGISTRY } from '../src/handlers.js';
 import * as S from '../src/security.js';
 import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
-import { parseLink, cleanText, normalizeSaveInput } from '../src/services/highlightsService.js';
+import { HIGHLIGHT_LINK_HOSTS, parseLink, cleanText, normalizeSaveInput } from '../src/services/highlightsService.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
 import { makeEnv } from './helpers/mockEnv.js';
 
@@ -84,9 +84,28 @@ describe('validação pura', () => {
     expect(parseLink('')).toEqual({ ok: true, value: null });
     expect(parseLink(null)).toEqual({ ok: true, value: null });
     expect(parseLink(' /blog/post ')).toEqual({ ok: true, value: '/blog/post' });
-    expect(parseLink('https://exemplo.org/a?b=1')).toEqual({ ok: true, value: 'https://exemplo.org/a?b=1' });
-    ['javascript:alert(1)', 'data:text/html,x', 'http://exemplo.org', '//evil.example', '/\\evil', 'blog/x', 'https://u:p@x.org/', 'https://', '/a b', 42, 'https://x.org/' + 'a'.repeat(200)]
+    expect(parseLink('https://doi.org/10.1000/xyz?b=1')).toEqual({ ok: true, value: 'https://doi.org/10.1000/xyz?b=1' });
+    ['javascript:alert(1)', 'data:text/html,x', 'http://doi.org', '//evil.example', '/\\evil', 'blog/x', 'https://u:p@doi.org/', 'https://', '/a b', 42, 'https://doi.org/' + 'a'.repeat(200)]
       .forEach((bad) => expect(parseLink(bad).ok).toBe(false));
+  });
+
+  test('parseLink: https só para domínios da lista (hostname exato)', () => {
+    expect(HIGHLIGHT_LINK_HOSTS).toEqual(['laift.com.br', 'www.laift.com.br', 'www.instagram.com', 'instagram.com', 'doi.org', 'www.gov.br', 'www.planalto.gov.br', 'pubmed.ncbi.nlm.nih.gov']);
+    HIGHLIGHT_LINK_HOSTS.forEach((h) => expect(parseLink('https://' + h + '/x?y=1').ok).toBe(true));
+    expect(parseLink('HTTPS://LAIFT.COM.BR/Edital').ok).toBe(true);
+    expect(parseLink('https://laift.com.br:443/x').ok).toBe(true); // porta padrão some na normalização
+    [
+      'https://evil-laift.com.br/', 'https://laift.com.br.evil.com/', 'https://sub.laift.com.br/', 'https://xlaift.com.br/',
+      'https://evil.com/laift.com.br', 'https://laift.com.br@evil.com/', 'https://evil.com@laift.com.br/', 'https://laift.com.br:8443/',
+      'https://laift.com.br:80/', 'https://laift.com.br./', 'https://xn--laift-9ua.com.br/', 'https://laíft.com.br/',
+      'https://exemplo.org/a', 'http://laift.com.br/', 'https://127.0.0.1/', '//laift.com.br/x', '//evil.com',
+    ].forEach((bad) => expect(parseLink(bad).ok).toBe(false));
+  });
+
+  test('normalizeSaveInput: erro do link lista os domínios aceitos e não repete o link', () => {
+    const run = () => normalizeSaveInput({ kind: 'link', title: 'x', linkPath: 'https://segredo-evil.example/token123' });
+    expect(run).toThrow('doi.org');
+    try { run(); } catch (e) { expect(e.message).not.toContain('segredo-evil'); }
   });
 
   test('cleanText tira controles e colapsa espaços', () => {

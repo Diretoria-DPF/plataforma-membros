@@ -211,3 +211,50 @@ test('servidor e dados: migração 047 com reversão, handlers registrados', () 
   assert.match(handlers, /apiLearnGetEngagement/);
   assert.match(handlers, /apiLearnSetDailyGoal/);
 });
+
+// ---------- ENG-04: primeiro quiz na Início de quem nunca fez quiz ----------
+const NEVER = { ...ENG, last: null, streak: { current: 0, best: 0, activeToday: false }, goal: { target: 10, todayQuestions: 0, reached: false, persisted: false } };
+
+test('Início de quem nunca fez quiz: "Fazer o primeiro quiz" é o único botão primário e chama o handler', () => {
+  let first = 0;
+  const section = Eng.buildSection(fakeDoc(), Eng.assemble(NEVER), { onOpenModule() {}, onGoal() {}, onDaily() {}, onFirstQuiz: () => { first += 1; } }, NOW);
+  const buttons = flat(section).filter((n) => n.tag === 'button');
+  const primary = buttons.filter((b) => /eng-btn-primary/.test(b.className));
+  assert.deepEqual(primary.map((b) => b.textContent), ['Fazer o primeiro quiz']);
+  primary[0].listeners.click();
+  assert.equal(first, 1);
+  assert.ok(buttons.find((b) => b.textContent === 'Fazer o quiz do dia'), 'o quiz do dia continua, como secundário');
+});
+
+test('Início de quem já tem histórico não muda: sem o botão do primeiro quiz e com o do dia primário', () => {
+  const handlers = { onOpenModule() {}, onGoal() {}, onDaily() {}, onFirstQuiz() {} };
+  const withLast = flat(Eng.buildSection(fakeDoc(), Eng.assemble(ENG), handlers, NOW));
+  assert.ok(!withLast.some((n) => n.textContent === 'Fazer o primeiro quiz'));
+  const daily = withLast.find((n) => n.textContent === 'Fazer o quiz do dia');
+  assert.match(daily.className, /eng-btn-primary/);
+  // Só recorde de sequência (sem último módulo) também conta como histórico.
+  const best = Eng.assemble({ ...NEVER, streak: { current: 0, best: 3, activeToday: false } });
+  assert.equal(Eng.isFirstQuizCandidate(best), false);
+  assert.equal(Eng.isFirstQuizCandidate(Eng.assemble({ ...NEVER, goal: { ...NEVER.goal, todayQuestions: 2 } })), false);
+  assert.equal(Eng.isFirstQuizCandidate(Eng.assemble(NEVER)), true);
+  assert.equal(Eng.isFirstQuizCandidate(Eng.assemble(null)), false);
+});
+
+test('primeiro quiz: vai ao Aprender e pede o quiz já na primeira questão (LaiftLearning.openFirstQuiz)', () => {
+  const calls = [];
+  globalThis.LaiftLearning = { openFirstQuiz() { calls.push('quiz'); } };
+  try {
+    Eng.openFirstQuiz({ showPanel: (id) => calls.push(id) });
+  } finally {
+    delete globalThis.LaiftLearning;
+  }
+  assert.deepEqual(calls, ['panel-learn', 'quiz']);
+});
+
+test('learning.js e quiz: openFirstQuiz abre o iframe com #primeiro-quiz e o módulo chama quickStart', () => {
+  const learning = read('frontend/learning.js');
+  assert.match(learning, /mod\.path \+ '#primeiro-quiz'/);
+  assert.match(learning, /openFirstQuiz: openFirstQuiz/);
+  assert.match(read('frontend/modulos/quiz/app.js'), /location\.hash === '#primeiro-quiz'[\s\S]*quickStart/);
+  assert.match(read('frontend/modulos/shared/quiz-engine.js'), /quickStart: quickStart/);
+});
