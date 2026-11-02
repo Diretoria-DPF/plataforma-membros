@@ -666,6 +666,8 @@
         if (res.flags && res.flags.learn_v2_enabled === true && currentPanelId === 'panel-learn' && window.LaiftLearning) window.LaiftLearning.loadPanel(); // Aprender v2: a flag chega depois do primeiro desenho do hub
         if (res.flags && res.flags.events_v2_enabled === true && currentPanelId === 'panel-events') loadEvents(); // a flag chega depois do primeiro desenho de Eventos
         if (res.flags && res.flags.profile_v2_enabled === true && currentPanelId === 'panel-profile') mountProfileV2(); // a flag chega depois da abertura do Perfil
+        if (res.flags && res.flags.messages_v2_enabled === true && currentPanelId === 'panel-messages') mountMessagesV2(); // idem, Mensagens
+        if (res.flags && res.flags.team_v2_enabled === true && currentPanelId === 'panel-orgchart') mountTeamV2(); // idem, Equipe
         if (res.flags && res.flags.proposals_v2_enabled === true && currentPanelId === 'panel-proposals') mountProposalsV2(); // idem, Propostas
         if (res.flags && res.flags.tasks_v2_enabled === true && currentPanelId === 'panel-tasks') mountTasksV2(); // idem, Tarefas
       }
@@ -1409,6 +1411,17 @@
     withBundle('perfil2', function () { if (window.LaiftProfileV2) window.LaiftProfileV2.mount(window.App, document); });
   }
 
+  // Mensagens v2 e Equipe v2 (flags messages_v2_enabled e team_v2_enabled; docs/mensagens-v2.md, docs/equipe-v2.md): os
+  // pacotes só reapresentam as telas de sempre. Sem a flag (ou se o pacote falhar) a tela fica como era.
+  function messagesV2On() { return document.documentElement.hasAttribute('data-flag-messages-v2-enabled'); }
+  function mountMessagesV2() {
+    withBundle('mensagens2', function () { if (window.LaiftMessagesV2) window.LaiftMessagesV2.mount(window.App, document); });
+  }
+  function teamV2On() { return document.documentElement.hasAttribute('data-flag-team-v2-enabled'); }
+  function mountTeamV2() {
+    withBundle('equipe2', function () { if (window.LaiftTeamV2) window.LaiftTeamV2.mount(window.App, document); });
+  }
+
   // Propostas v2 e Tarefas v2 (flags proposals_v2_enabled e tasks_v2_enabled, desligadas por padrão; docs/propostas-v2.md e
   // docs/tarefas-v2.md): pacotes propostas2 e tarefas2 só reposicionam e dão novo visual aos elementos de sempre. Sem a flag
   // (ou se o pacote falhar) a tela fica como era.
@@ -1439,6 +1452,11 @@
       mountHighlights();
     },
     'panel-events': loadEvents,
+    'panel-orgchart': function () {
+      loadOrgChartPanel();
+      if (teamV2On()) mountTeamV2();
+      else if (window.LaiftTeamV2) window.LaiftTeamV2.reset(document);
+    },
     'panel-proposals': function () {
       loadProposalsAndVoting();
       if (proposalsV2On()) mountProposalsV2();
@@ -1449,7 +1467,6 @@
       if (tasksV2On()) mountTasksV2();
       else if (window.LaiftTasksV2) window.LaiftTasksV2.reset(document);
     },
-    'panel-orgchart': loadOrgChartPanel,
     // Mentoria (ROL-04; frontend/mentoring.js, pacote sob demanda; o item do menu só aparece com a flag mentoring_enabled).
     'panel-mentoring': function () { withBundle('mentoria', function () { if (window.LaiftMentoring) window.LaiftMentoring.load(window.App); }); },
     'panel-profile': function () {
@@ -1471,7 +1488,11 @@
     'panel-admin-feedback': function () { loadAdminFeedback(1); },
     'panel-admin-audit': function () { loadAdminAudit(1); },
     'panel-admin-reports': function () { loadAdminReports(1); },
-    'panel-messages': function () { if (window.LaiftMessaging) window.LaiftMessaging.loadMessagingPanel(); },
+    'panel-messages': function () {
+      if (window.LaiftMessaging) window.LaiftMessaging.loadMessagingPanel();
+      if (messagesV2On()) mountMessagesV2();
+      else if (window.LaiftMessagesV2) window.LaiftMessagesV2.reset(document);
+    },
     'panel-learn': function () { if (window.LaiftLearning) window.LaiftLearning.loadPanel(); },
     'panel-admin-fiscal': function () { if (window.LaiftLearning) window.LaiftLearning.loadFiscalPanel(); },
     // Fase 3 — painel admin de IA (frontend/admin-ai.js)

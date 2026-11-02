@@ -15,6 +15,8 @@
 //  - inicio3: carregado quando a flag home_v2_enabled está ligada (Início v3 e Meu desempenho no Perfil; app.js);
 //  - eventos2: carregado quando a flag events_v2_enabled está ligada e a tela Eventos abre (app.js);
 //  - perfil2: carregado quando a flag profile_v2_enabled está ligada e o Perfil abre (app.js);
+//  - mensagens2: carregado quando a flag messages_v2_enabled está ligada e Mensagens abre (app.js);
+//  - equipe2: carregado quando a flag team_v2_enabled está ligada e Equipe abre (app.js);
 //  - propostas2: carregado quando a flag proposals_v2_enabled está ligada e Propostas abre (app.js);
 //  - tarefas2: carregado quando a flag tasks_v2_enabled está ligada e Tarefas abre (app.js);
 //  - biblioteca2: carregado quando a flag library_v2_enabled está ligada e a Biblioteca abre (app.js);
@@ -49,6 +51,10 @@
     eventos2: ['events-v2.js'],
     // Perfil v2: reorganiza o Perfil de sempre (cabeçalho, colunas e seções recolhíveis), só com a flag profile_v2_enabled ligada (app.js).
     perfil2: ['profile-v2.js'],
+    // Mensagens v2: reapresenta Mensagens (cifragem e fluxo de sempre), só com a flag messages_v2_enabled ligada (app.js).
+    mensagens2: ['messages-v2.js'],
+    // Equipe v2: reapresenta a Equipe (organograma, pedidos e adicionados de sempre), só com a flag team_v2_enabled ligada (app.js).
+    equipe2: ['team-v2.js'],
     // Propostas v2 e Tarefas v2: reposicionam as telas de sempre, só com a flag própria ligada (app.js).
     propostas2: ['proposals-v2.js'],
     tarefas2: ['tasks-v2.js'],
