@@ -426,7 +426,7 @@
     host.appendChild(kpis.node);
     host.appendChild(main.node);
     host.appendChild(metrics.node);
-    var agora = buildAgora(ctx, navigate);
+    var agora = ctx.embedded ? null : buildAgora(ctx, navigate); // embutido no Perfil ("Meu desempenho"): só números e gráficos
     if (agora) host.appendChild(agora);
     return { kpis: kpis.items, main: main, metrics: metrics };
   }
@@ -601,16 +601,16 @@
   }
 
   /** `isCurrent()` diz se esta entrada ainda é a tela; respostas que chegam depois de trocada são descartadas. */
-  function renderEditorial(app, doc, host, summary, now, token, isCurrent) {
+  function renderEditorial(app, doc, host, summary, now, token, isCurrent, embedded) {
     var ctx = {
       doc: doc, summary: summary, now: now, view: ADAPTER.summaryView(summary),
-      loader: createLoader(app, token), isCurrent: isCurrent
+      loader: createLoader(app, token), isCurrent: isCurrent, embedded: !!embedded
     };
     var layout = buildLayout(ctx, host, function (panel) { app.showPanel(panel); });
     ctx.repaint = function (force) { return paintAll(ctx, layout, force); };
     bindRange(ctx, layout.main);
     renderBadges(ctx, layout.metrics.badges);
-    mountReturn(app, doc, host, summary, token, isCurrent);
+    if (!embedded) mountReturn(app, doc, host, summary, token, isCurrent);
     return ctx.repaint(false).then(function () {
       if (isCurrent()) host.setAttribute('aria-busy', 'false');
     });
@@ -620,9 +620,12 @@
    * Carrega e desenha o Início. `app` é window.App (callApi, getState, showPanel).
    * Cada chamada abre uma geração: a entrada anterior é solta antes da nova, e a
    * resposta de uma chamada já trocada não toca na tela.
+   * `opts` (Início v3, flag home_v2_enabled): { hostId, embedded }. Embutido no Perfil ("Meu desempenho"), o bloco
+   * traz só números e gráficos: sem saudação, sem "Continuar" e sem a faixa "Agora".
    */
-  function load(app, doc) {
-    var host = doc.getElementById('home-dashboard');
+  function load(app, doc, opts) {
+    var embedded = !!(opts && opts.embedded);
+    var host = doc.getElementById((opts && opts.hostId) || 'home-dashboard');
     if (!host) return Promise.resolve();
     var isCurrent = openView();
     var states = root.LaiftStates;
@@ -630,7 +633,7 @@
     var now = new Date();
     var token = state.sessionToken || '';
 
-    var greetingEl = doc.getElementById('home-greeting');
+    var greetingEl = embedded ? null : doc.getElementById('home-greeting');
     if (greetingEl) greetingEl.textContent = greeting(state.profile && state.profile.fullName, now);
 
     host.className = 'home-editorial';
@@ -647,12 +650,12 @@
           host.appendChild(states.createStateNode(doc, 'error', {
             message: res.message,
             actionLabel: 'Tentar de novo',
-            onAction: function () { load(app, doc); },
+            onAction: function () { load(app, doc, opts); },
           }));
         }
         return undefined;
       }
-      return renderEditorial(app, doc, host, res.summary || {}, now, token, isCurrent);
+      return renderEditorial(app, doc, host, res.summary || {}, now, token, isCurrent, embedded);
     });
   }
 
@@ -664,6 +667,7 @@
   var api = {
     greeting: greeting,
     relativeDay: relativeDay,
+    formatWhen: formatWhen,
     buildCards: buildCards,
     renderCards: renderCards,
     sparkTotalText: sparkTotalText,

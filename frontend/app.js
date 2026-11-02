@@ -177,6 +177,7 @@
       resetAdminDashboardChart();
       if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
       if (window.LaiftHighlights) window.LaiftHighlights.reset(document); // esconde o bloco Na Liga
+      resetHomeV2(); // solta a Início v3
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
       showPublicScreen('screen-welcome');
@@ -646,6 +647,7 @@
       if (res && res.success === true) {
         window.LaiftUx.applyAndRememberFlags(document.documentElement, res.flags, window.localStorage);
         if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
+        if (res.flags && res.flags.home_v2_enabled === true) enableHomeV2(); // Início v3 e navegação responsiva
       }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
     }).catch(function () { /* sem rede: segue sem flags novas */ });
@@ -1118,6 +1120,7 @@
     resetAdminDashboardChart();
     if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
     if (window.LaiftHighlights) window.LaiftHighlights.reset(document); // esconde o bloco Na Liga
+    resetHomeV2(); // solta a Início v3
     clearSessionCache();
     document.getElementById('app-root').classList.add('hidden');
     document.getElementById('public-shell').classList.remove('hidden');
@@ -1356,10 +1359,36 @@
     withBundle('destaques', function () { if (window.LaiftHighlights) window.LaiftHighlights.mount(window.App, document); });
   }
 
+  // Início v3 (flag home_v2_enabled, desligada por padrão; docs/inicio-v3.md): o pacote inicio3 traz a tela nova, o CSS
+  // e o "Meu desempenho" do Perfil. Sem a flag, vale a Início de sempre (home.js). Se o pacote falhar, cai nela também.
+  var homeV2Requested = false;
+  function homeV2On() { return document.documentElement.hasAttribute('data-flag-home-v2-enabled'); }
+  function mountHomeV2() {
+    homeV2Requested = true;
+    withBundle('inicio3', function () {
+      if (window.LaiftHomeV3) window.LaiftHomeV3.load(window.App, document);
+      else if (window.LaiftHome) window.LaiftHome.load(window.App, document);
+    });
+  }
+  // A flag chega (ou volta do cache) depois do login: baixa o pacote (CSS da navegação responsiva) e monta a Início se ela está aberta.
+  function enableHomeV2() {
+    if (homeV2Requested) return;
+    if (currentPanelId === 'panel-home') { mountHomeV2(); return; }
+    withBundle('inicio3', function () { if (window.LaiftHomeV3) window.LaiftHomeV3.ensureStyles(document); });
+  }
+  function resetHomeV2() {
+    homeV2Requested = false;
+    if (window.LaiftHomeV3) window.LaiftHomeV3.reset(document);
+  }
+
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
     'panel-home': function () {
-      if (window.LaiftHome) window.LaiftHome.load(window.App, document);
+      if (homeV2On()) mountHomeV2();
+      else {
+        resetHomeV2();
+        if (window.LaiftHome) window.LaiftHome.load(window.App, document);
+      }
       mountHighlights();
     },
     'panel-events': loadEvents,
@@ -1370,6 +1399,7 @@
       loadProfileAndPreferences();
       if (window.LaiftMfa) window.LaiftMfa.load(window.App);
       if (window.LaiftPrivacy) window.LaiftPrivacy.load(window.App, document); // direitos do titular (LGPD)
+      if (homeV2On()) withBundle('inicio3', function () { if (window.LaiftHomeV3) window.LaiftHomeV3.mountProfile(window.App, document); }); // Meu desempenho
     },
     'panel-admin-dashboard': function () {
       loadAdminDashboard();
@@ -1471,7 +1501,7 @@
   var swipeStart = null;
 
   function isSwipeExcluded(target) {
-    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .modal-overlay, canvas, .learn-viewer'));
+    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .modal-overlay, canvas, .learn-viewer, .v3-strip, .hl-list'));
   }
 
   // Ordem do deslizar no modo membro: a mesma de antes do menu (os itens do menu entram no lugar certo).
