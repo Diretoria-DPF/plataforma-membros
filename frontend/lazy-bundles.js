@@ -51,6 +51,10 @@
     eventos2: ['events-v2.js'],
     // Perfil v2: reorganiza o Perfil de sempre (cabeçalho, colunas e seções recolhíveis), só com a flag profile_v2_enabled ligada (app.js).
     perfil2: ['profile-v2.js'],
+    // Mentoria v2: reposiciona a Mentoria de sempre (cabeçalho, resumo e duas colunas), só com a flag mentoring_v2_enabled ligada (app.js).
+    mentoria2: ['mentoring-v2.js'],
+    // Processo seletivo v2: desenha a jornada de sempre com progresso, etapas e avisos, só com a flag selection_v2_enabled ligada (app.js).
+    seletivo2: ['selection-v2.js'],
     // Mensagens v2: reapresenta Mensagens (cifragem e fluxo de sempre), só com a flag messages_v2_enabled ligada (app.js).
     mensagens2: ['messages-v2.js'],
     // Equipe v2: reapresenta a Equipe (organograma, pedidos e adicionados de sempre), só com a flag team_v2_enabled ligada (app.js).

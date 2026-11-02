@@ -260,6 +260,13 @@
     if (found && typeof found.focus === 'function') found.focus();
   }
 
+  /** Avisa a Mentoria v2 (mentoring-v2.js, só com a flag) de que a tela foi desenhada; sem ouvinte, não faz nada. */
+  function notifyRendered() {
+    try {
+      if (root.document && typeof root.CustomEvent === 'function') root.document.dispatchEvent(new root.CustomEvent('laift:mentoring-render'));
+    } catch (e) { /* só enfeite: a tela de sempre não depende disso */ }
+  }
+
   function renderAll() {
     var data = current;
     if (!data) return;
@@ -268,7 +275,7 @@
     el('mentoring-off').classList.toggle('hidden', !off);
     el('mentoring-missing').classList.toggle('hidden', data.overview.tableMissing !== true);
     el('mentoring-body').classList.toggle('hidden', off || data.overview.tableMissing === true);
-    if (off) return;
+    if (off) { notifyRendered(); return; }
     var available = data.overview.available === true;
     var sw = el('btn-mentoring-available');
     sw.setAttribute('aria-checked', available ? 'true' : 'false');
@@ -281,6 +288,7 @@
     fill('mentoring-mentors', 'mentoring-mentors-empty', data.mentors || [], function (m) {
       return mentorRow(doc, m, function () { return el('mentoring-request-share').getAttribute('aria-checked') === 'true'; });
     });
+    notifyRendered();
     restoreFocus();
   }
 
@@ -338,7 +346,10 @@
     focusAfter = null;
   }
 
-  var api = { statusText: statusText, summaryLines: summaryLines, rowFor: rowFor, mentorRow: mentorRow, load: load, reset: reset };
+  /** Os últimos dados desenhados ({ overview, mentors }), para a Mentoria v2 ler sem nova chamada à API. */
+  function snapshot() { return current; }
+
+  var api = { statusText: statusText, summaryLines: summaryLines, rowFor: rowFor, mentorRow: mentorRow, load: load, reset: reset, snapshot: snapshot };
   if (typeof module !== 'undefined' && module.exports) { module.exports = api; return; }
   root.LaiftMentoring = api;
 })(typeof self !== 'undefined' ? self : this);
