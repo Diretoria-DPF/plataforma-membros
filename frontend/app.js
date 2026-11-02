@@ -666,6 +666,8 @@
         if (res.flags && res.flags.learn_v2_enabled === true && currentPanelId === 'panel-learn' && window.LaiftLearning) window.LaiftLearning.loadPanel(); // Aprender v2: a flag chega depois do primeiro desenho do hub
         if (res.flags && res.flags.events_v2_enabled === true && currentPanelId === 'panel-events') loadEvents(); // a flag chega depois do primeiro desenho de Eventos
         if (res.flags && res.flags.profile_v2_enabled === true && currentPanelId === 'panel-profile') mountProfileV2(); // a flag chega depois da abertura do Perfil
+        if (res.flags && res.flags.proposals_v2_enabled === true && currentPanelId === 'panel-proposals') mountProposalsV2(); // idem, Propostas
+        if (res.flags && res.flags.tasks_v2_enabled === true && currentPanelId === 'panel-tasks') mountTasksV2(); // idem, Tarefas
       }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
     }).catch(function () { /* sem rede: segue sem flags novas */ });
@@ -1407,6 +1409,18 @@
     withBundle('perfil2', function () { if (window.LaiftProfileV2) window.LaiftProfileV2.mount(window.App, document); });
   }
 
+  // Propostas v2 e Tarefas v2 (flags proposals_v2_enabled e tasks_v2_enabled, desligadas por padrão; docs/propostas-v2.md e
+  // docs/tarefas-v2.md): pacotes propostas2 e tarefas2 só reposicionam e dão novo visual aos elementos de sempre. Sem a flag
+  // (ou se o pacote falhar) a tela fica como era.
+  function proposalsV2On() { return document.documentElement.hasAttribute('data-flag-proposals-v2-enabled'); }
+  function mountProposalsV2() {
+    withBundle('propostas2', function () { if (window.LaiftProposalsV2) window.LaiftProposalsV2.mount(window.App, document); });
+  }
+  function tasksV2On() { return document.documentElement.hasAttribute('data-flag-tasks-v2-enabled'); }
+  function mountTasksV2() {
+    withBundle('tarefas2', function () { if (window.LaiftTasksV2) window.LaiftTasksV2.mount(window.App, document); });
+  }
+
   // Biblioteca v2 (flag library_v2_enabled, desligada por padrão; docs/biblioteca-v2.md): o pacote biblioteca2 só dá o visual novo
   // à Biblioteca de sempre (library.js segue montando e buscando). Sem a flag (ou se o pacote falhar) a tela fica como era.
   function libraryV2On() { return document.documentElement.hasAttribute('data-flag-library-v2-enabled'); }
@@ -1425,8 +1439,16 @@
       mountHighlights();
     },
     'panel-events': loadEvents,
-    'panel-proposals': loadProposalsAndVoting,
-    'panel-tasks': loadTasks,
+    'panel-proposals': function () {
+      loadProposalsAndVoting();
+      if (proposalsV2On()) mountProposalsV2();
+      else if (window.LaiftProposalsV2) window.LaiftProposalsV2.reset(document);
+    },
+    'panel-tasks': function () {
+      loadTasks();
+      if (tasksV2On()) mountTasksV2();
+      else if (window.LaiftTasksV2) window.LaiftTasksV2.reset(document);
+    },
     'panel-orgchart': loadOrgChartPanel,
     // Mentoria (ROL-04; frontend/mentoring.js, pacote sob demanda; o item do menu só aparece com a flag mentoring_enabled).
     'panel-mentoring': function () { withBundle('mentoria', function () { if (window.LaiftMentoring) window.LaiftMentoring.load(window.App); }); },
@@ -1792,7 +1814,7 @@
     showSkeleton('my-proposals-list', 2);
     callApi('apiListMyProposals', state.sessionToken).then(function (res) {
       renderAsyncList('my-proposals-list', res, res && res.proposals, function (p) {
-        return h('article', { className: 'list-item' }, [
+        return h('article', { className: 'list-item', 'data-status': p.status }, [
           text('h4', p.title),
           text('p', p.description),
           h('div', { className: 'meta-row' }, [
@@ -1847,7 +1869,7 @@
           }, ['Comentar']),
         ]);
 
-    return h('article', { className: 'list-item' }, [
+    return h('article', { className: 'list-item', 'data-voted': item.alreadyVoted ? 'true' : 'false' }, [
       text('h4', item.title),
       text('p', item.description),
       h('div', { className: 'meta-row' }, [text('span', 'Encerra em: ' + formatDate(item.votingClosesAt))]),
@@ -1899,7 +1921,7 @@
     }, ['Comentários']);
     actions.push(commentsToggle);
 
-    return h('article', { className: 'list-item' }, [
+    return h('article', { className: 'list-item', 'data-task-state': item.alreadySignedUp ? (item.completed ? 'done' : 'mine') : 'open' }, [
       text('h4', item.title),
       text('p', item.description),
       h('div', { className: 'meta-row' }, [
