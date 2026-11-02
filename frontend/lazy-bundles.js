@@ -11,6 +11,7 @@
 //
 //  - admin: carregado quando um painel administrativo abre (app.js);
 //  - destaques: carregado quando a flag highlights_enabled está ligada (Início) ou a tela de gestão abre (app.js);
+//  - inicio3: carregado quando a flag home_v2_enabled está ligada (Início v3 e Meu desempenho no Perfil; app.js);
 //  - novidades: carregado após o login (uma vez por versão) ou ao abrir "Ver novidades" no Perfil;
 //  - lia: carregado logo após o login e, para quem só visita, quando o navegador
 //    fica ocioso depois do evento load (fora do caminho crítico).
@@ -32,6 +33,8 @@
     destaques: ['highlights.js', 'highlights-manage.js'],
     // Mentoria (ROL-04): tela Mentoria do menu Participação (flag mentoring_enabled); baixa só ao abrir a tela.
     mentoria: ['mentoring.js'],
+    // Início v3: tela nova e navegação responsiva, só com a flag home_v2_enabled ligada (app.js).
+    inicio3: ['home-v3.js'],
     // Novidades (ENG-07): aviso uma vez por versão no login e "Ver novidades" no Perfil. O estilo do diálogo
     // (laift-dialog.css) vem no index.html; aqui só o script.
     novidades: ['modulos/shared/laift-dialog.js', 'whats-new.js'],
