@@ -1526,7 +1526,7 @@
       if (window.LaiftLibrary) window.LaiftLibrary.loadPanel();
     },
     // Processo seletivo (selection.js): jornada do candidato; só aparece no menu de quem ainda não é membro.
-    'panel-selection': function () { selectionV2Ready().then(function () { if (window.LaiftSelection) window.LaiftSelection.load(window.App, document); }); },
+    'panel-selection': function () { if (window.LaiftSelection) selectionV2Ready().then(function () { window.LaiftSelection.load(window.App, document); }); },
     'panel-admin-selection': function () { withBundle('admin', function () { if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.load(window.App, document); }); },
     'panel-admin-privacy': function () { withBundle('admin', function () { if (window.LaiftPrivacyAdmin) window.LaiftPrivacyAdmin.load(window.App, document); }); },
     'panel-admin-library': function () { withBundle('admin', function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); }); },

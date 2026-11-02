@@ -76,7 +76,7 @@ test('fiação: pacote seletivo2 sob demanda; app.js espera o pacote só com a f
   assert.ok(!ler('index.html').includes('selection-v2.css'));
   assert.match(APP, /data-flag-selection-v2-enabled/);
   assert.match(APP, /withBundle\('seletivo2'/);
-  assert.match(APP, /'panel-selection': function \(\) \{ selectionV2Ready\(\)\.then/);
+  assert.match(APP, /'panel-selection': function \(\) \{ if \(window\.LaiftSelection\) selectionV2Ready\(\)\.then/);
   assert.match(ler('selection.js'), /laift:selection-render/);
 });
 
