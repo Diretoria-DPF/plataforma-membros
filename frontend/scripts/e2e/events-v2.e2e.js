@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * events-v2.e2e.js — Eventos v2 (frontend/events-v2.js, events-v2.css) atrás da flag events_v2_enabled:
  *  - flag ligada em 375x812, 768x1024 e 1280x800: destaque do próximo evento, filtros, cartões, histórico,
