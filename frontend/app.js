@@ -665,6 +665,7 @@
         if (res.flags && res.flags.learn_v2_enabled === true && currentPanelId === 'panel-learn' && window.LaiftLearning) window.LaiftLearning.loadPanel(); // Aprender v2: a flag chega depois do primeiro desenho do hub
         if (res.flags && res.flags.events_v2_enabled === true && currentPanelId === 'panel-events') loadEvents(); // a flag chega depois do primeiro desenho de Eventos
         if (res.flags && res.flags.profile_v2_enabled === true && currentPanelId === 'panel-profile') mountProfileV2(); // a flag chega depois da abertura do Perfil
+        if (res.flags && res.flags.admin_v2_enabled === true) syncAdminV2(currentPanelId); // a flag chega depois da abertura de um painel administrativo
       }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
     }).catch(function () { /* sem rede: segue sem flags novas */ });
@@ -1406,6 +1407,23 @@
     withBundle('perfil2', function () { if (window.LaiftProfileV2) window.LaiftProfileV2.mount(window.App, document); });
   }
 
+  // Administração v2 (flag admin_v2_enabled; docs/admin-v2.md): o pacote admin2 só acrescenta a barra de seções, a faixa de
+  // pendências e a seção Flags ao modo administrador. Sem a flag (ou se o pacote falhar) o modo admin fica como era.
+  var adminIndicators; // últimos indicadores do Painel (null = falhou), para a faixa de pendências
+  function adminV2On() { return document.documentElement.hasAttribute('data-flag-admin-v2-enabled'); }
+  function mountAdminV2() {
+    withBundle('admin2', function () {
+      if (!window.LaiftAdminV2) return;
+      window.LaiftAdminV2.mount(window.App, document);
+      if (adminIndicators !== undefined) window.LaiftAdminV2.setIndicators(adminIndicators); // o Painel pode ter respondido antes do pacote
+    });
+  }
+  function syncAdminV2(panelId) {
+    if (String(panelId).indexOf('panel-admin-') !== 0) return;
+    if (adminV2On()) mountAdminV2();
+    else if (window.LaiftAdminV2) window.LaiftAdminV2.reset();
+  }
+
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
     'panel-home': function () {
@@ -1434,6 +1452,7 @@
       loadAdminDashboard();
       withBundle('admin', function () { if (window.LaiftAdminUsage) window.LaiftAdminUsage.load(window.App); }); // uso da plataforma (DAT-01)
     },
+    'panel-admin-flags': function () { withBundle('admin2', function () { if (window.LaiftAdminV2) window.LaiftAdminV2.loadFlags(window.App, document); }); },
     'panel-admin-users': function () { loadAdminUsers(1); },
     'panel-admin-events': loadAdminEvents,
     'panel-admin-proposals': loadAdminProposals,
@@ -1498,6 +1517,7 @@
     showPanelSection(panelId);
     // Botão Voltar do Android (MOB-01): cada troca entra no histórico; o popstate reabre sem empilhar de novo.
     if (!(opts && opts.fromHistory === true) && window.LaiftPanelHistory) window.LaiftPanelHistory.push(panelId);
+    syncAdminV2(panelId);
     if (PANEL_LOADERS[panelId]) PANEL_LOADERS[panelId]();
     // Reavalia os indicadores ("!" de votação aberta, contagem de tarefas)
     // a cada navegação — não só no login — porque um admin pode ter
@@ -1530,7 +1550,7 @@
   var swipeStart = null;
 
   function isSwipeExcluded(target) {
-    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .modal-overlay, canvas, .learn-viewer, .v3-strip, .hl-list'));
+    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .adm2-bar, .modal-overlay, canvas, .learn-viewer, .v3-strip, .hl-list'));
   }
 
   // Ordem do deslizar no modo membro: a mesma de antes do menu (os itens do menu entram no lugar certo).
@@ -2436,6 +2456,8 @@
 
   function loadAdminDashboard() {
     callApi('apiAdminDashboard', state.sessionToken).then(function (res) {
+      adminIndicators = res.success ? res.indicators : null;
+      if (window.LaiftAdminV2) window.LaiftAdminV2.setIndicators(adminIndicators); // faixa de pendências da Administração v2
       if (!res.success) return;
       var labels = {
         active_members: 'Membros ativos', active_admins: 'Administradores',
