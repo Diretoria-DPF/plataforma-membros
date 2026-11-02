@@ -391,15 +391,70 @@ describe('resumo de progresso (apiMentoringGetMenteeProgress)', () => {
 });
 
 describe('conversa pelo chat cifrado', () => {
-  test('connected indica conexão aceita entre as partes; o serviço não cria conexão', async () => {
+  const pair = async () => (await db.query('SELECT requester_id, addressee_id, status, requested_via FROM connections')).rows;
+  const limpar = async () => { await db.query('DELETE FROM connections'); await db.query('DELETE FROM mentorships'); };
+
+  test('aceitar cria a conexão aceita (mentorado -> mentor) e libera "connected"', async () => {
+    await limpar();
     const id = await vinculo('ana', 'bia');
-    expect((await call('apiMentoringOverview', 'ana')).asMentee[0].connected).toBe(false);
-    await db.query("INSERT INTO connections (requester_id, addressee_id, status, requested_via) VALUES ($1, $2, 'accepted', 'username')", [PEOPLE.bia.id, PEOPLE.ana.id]);
-    const ana = await call('apiMentoringOverview', 'ana');
-    expect(ana.asMentee[0]).toMatchObject({ id, connected: true });
+    expect(await pair()).toEqual([{ requester_id: PEOPLE.ana.id, addressee_id: PEOPLE.bia.id, status: 'accepted', requested_via: 'username' }]);
+    expect((await call('apiMentoringOverview', 'ana')).asMentee[0]).toMatchObject({ id, connected: true });
     expect((await call('apiMentoringOverview', 'bia')).asMentor[0].connected).toBe(true);
-    expect((await db.query('SELECT count(*)::int AS n FROM connections')).rows[0].n).toBe(1);
+  });
+
+  test('pedido pendente não cria conexão; recusar também não', async () => {
+    await limpar();
+    const id = await vinculo('ana', 'bia', { aceitar: false });
+    expect(await pair()).toEqual([]);
+    await call('apiMentoringRespond', 'bia', { id, accept: false });
+    expect(await pair()).toEqual([]);
+  });
+
+  test('bloqueio em qualquer direção impede a criação, mas o aceite segue', async () => {
+    for (const [blocker, blocked] of [['ana', 'bia'], ['bia', 'ana']]) {
+      await limpar();
+      const res = await pedir('ana', 'bia');
+      await db.query('INSERT INTO profile_blocks (blocker_id, blocked_id) VALUES ($1, $2)', [PEOPLE[blocker].id, PEOPLE[blocked].id]);
+      expect((await call('apiMentoringRespond', 'bia', { id: res.id, accept: true })).success).toBe(true);
+      expect(await pair()).toEqual([]);
+      await db.query('DELETE FROM profile_blocks');
+    }
+  });
+
+  test('conexão pendente (em qualquer direção) vira aceita, sem duplicar', async () => {
+    await limpar();
+    await db.query("INSERT INTO connections (requester_id, addressee_id, status, requested_via) VALUES ($1, $2, 'pending', 'phone')", [PEOPLE.bia.id, PEOPLE.ana.id]);
+    await vinculo('ana', 'bia');
+    expect(await pair()).toEqual([{ requester_id: PEOPLE.bia.id, addressee_id: PEOPLE.ana.id, status: 'accepted', requested_via: 'phone' }]);
+  });
+
+  test('conexão recusada: só reabre com o prazo vencido', async () => {
+    await limpar();
+    await db.query("INSERT INTO connections (requester_id, addressee_id, status, requested_via, declined_until) VALUES ($1, $2, 'declined', 'username', now() + interval '3 days')", [PEOPLE.bia.id, PEOPLE.ana.id]);
+    await vinculo('ana', 'bia');
+    expect((await pair())[0].status).toBe('declined');
+    await db.query('DELETE FROM mentorships');
     await db.query('DELETE FROM connections');
+    await db.query("INSERT INTO connections (requester_id, addressee_id, status, requested_via, declined_until) VALUES ($1, $2, 'declined', 'username', now() - interval '1 day')", [PEOPLE.bia.id, PEOPLE.ana.id]);
+    await vinculo('ana', 'bia');
+    expect((await pair())[0].status).toBe('accepted');
+  });
+
+  test('encerrar a mentoria não apaga a conexão', async () => {
+    await limpar();
+    const id = await vinculo('ana', 'bia');
+    expect((await call('apiMentoringEnd', 'ana', { id })).success).toBe(true);
+    expect(await pair()).toHaveLength(1);
+    expect((await pair())[0].status).toBe('accepted');
+  });
+
+  test('idempotência: aceitar duas vezes (ou em novo vínculo) mantém uma só conexão', async () => {
+    await limpar();
+    const id = await vinculo('ana', 'bia');
+    expect((await call('apiMentoringRespond', 'bia', { id, accept: true })).success).toBe(false);
+    await call('apiMentoringEnd', 'ana', { id });
+    await vinculo('ana', 'bia');
+    expect(await pair()).toHaveLength(1);
   });
 });
 
