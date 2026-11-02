@@ -118,6 +118,9 @@ function exportQueries(sql, id) {
     connections: () => sql`SELECT o.username, c.status, c.requested_via, c.created_at, c.responded_at, (c.requester_id = ${id}::uuid) AS sent
       FROM connections c JOIN profiles o ON o.id = CASE WHEN c.requester_id = ${id}::uuid THEN c.addressee_id ELSE c.requester_id END
       WHERE c.requester_id = ${id}::uuid OR c.addressee_id = ${id}::uuid ORDER BY c.created_at DESC LIMIT ${EXPORT_LIMIT}`,
+    mentorships: () => sql`SELECT o.username, (m.mentor_id = ${id}::uuid) AS i_am_mentor, m.status, (m.requested_by = ${id}::uuid) AS requested_by_me, m.share_progress, m.created_at, m.updated_at
+      FROM mentorships m JOIN profiles o ON o.id = CASE WHEN m.mentor_id = ${id}::uuid THEN m.mentee_id ELSE m.mentor_id END
+      WHERE m.mentor_id = ${id}::uuid OR m.mentee_id = ${id}::uuid ORDER BY m.created_at DESC LIMIT ${EXPORT_LIMIT}`,
     blocks: () => sql`SELECT o.username, b.created_at FROM profile_blocks b JOIN profiles o ON o.id = b.blocked_id
       WHERE b.blocker_id = ${id}::uuid ORDER BY b.created_at DESC LIMIT ${EXPORT_LIMIT}`,
     feedback: () => sql`SELECT message, created_at FROM feedback WHERE profile_id = ${id}::uuid ORDER BY created_at DESC LIMIT ${EXPORT_LIMIT}`,
@@ -142,6 +145,7 @@ const dateOnly = (value) => (value ? new Date(value).toISOString().slice(0, 10) 
 function activityOut(r) {
   return {
     connections: r.connections.map((c) => ({ with: c.username || null, status: c.status, sent: !!c.sent, via: c.requested_via, createdAt: iso(c.created_at), respondedAt: iso(c.responded_at) })),
+    mentorships: r.mentorships.map((m) => ({ with: m.username || null, myRole: m.i_am_mentor ? 'mentor' : 'mentee', status: m.status, requestedByMe: !!m.requested_by_me, shareProgress: !!m.share_progress, createdAt: iso(m.created_at), updatedAt: iso(m.updated_at) })),
     blocks: r.blocks.map((b) => ({ blocked: b.username || null, createdAt: iso(b.created_at) })),
     feedback: r.feedback.map((f) => ({ message: f.message, createdAt: iso(f.created_at) })),
     assistantMessages: r.assistantMessages.map((m) => ({ topic: m.topic || null, source: m.source, answer: m.answer, createdAt: iso(m.created_at) })),

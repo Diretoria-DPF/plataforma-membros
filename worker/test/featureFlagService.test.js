@@ -121,6 +121,7 @@ describe('leitura com cache', () => {
     expect(PUBLIC_FLAGS).toContain('highlights_enabled'); // o front só monta o bloco "Na Liga" com ela ligada
     expect(PUBLIC_FLAGS).toContain('home_v2_enabled'); // o front só monta a Início v3 com ela ligada
     expect(PUBLIC_FLAGS).toContain('entrada_v2_enabled'); // idem para a Entrada v2
+    expect(PUBLIC_FLAGS).toContain('mentoring_enabled'); // o front só mostra a Mentoria no menu com ela ligada
     expect(PUBLIC_FLAGS).not.toContain('lia_hibrida_enabled');
     expect(PUBLIC_FLAGS).not.toContain('library_ai_summary');
     expect(PUBLIC_FLAGS).not.toContain('lia_library_enabled');

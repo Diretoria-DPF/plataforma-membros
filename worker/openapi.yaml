@@ -179,6 +179,14 @@ paths:
                 - "$ref": "#/components/schemas/apiMemoryGet"
                 - "$ref": "#/components/schemas/apiMemorySetConsent"
                 - "$ref": "#/components/schemas/apiMemorySetPreference"
+                - "$ref": "#/components/schemas/apiMentoringEnd"
+                - "$ref": "#/components/schemas/apiMentoringGetMenteeProgress"
+                - "$ref": "#/components/schemas/apiMentoringListMentors"
+                - "$ref": "#/components/schemas/apiMentoringOverview"
+                - "$ref": "#/components/schemas/apiMentoringRequest"
+                - "$ref": "#/components/schemas/apiMentoringRespond"
+                - "$ref": "#/components/schemas/apiMentoringSetAvailability"
+                - "$ref": "#/components/schemas/apiMentoringSetShare"
                 - "$ref": "#/components/schemas/apiMessagingSync"
                 - "$ref": "#/components/schemas/apiMfaBeginEnrollment"
                 - "$ref": "#/components/schemas/apiMfaConfirmEnrollment"
@@ -2580,6 +2588,132 @@ components:
       properties:
         action:
           const: "apiMemorySetPreference"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiMentoringEnd:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMentoringEnd"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiMentoringGetMenteeProgress:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMentoringGetMenteeProgress"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiMentoringListMentors:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMentoringListMentors"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiMentoringOverview:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMentoringOverview"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiMentoringRequest:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMentoringRequest"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiMentoringRespond:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMentoringRespond"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiMentoringSetAvailability:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMentoringSetAvailability"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiMentoringSetShare:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMentoringSetShare"
         args:
           type: "array"
           prefixItems:

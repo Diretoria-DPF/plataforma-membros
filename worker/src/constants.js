@@ -750,3 +750,16 @@ export const HIGHLIGHTS = Object.freeze({
   FAR_FUTURE_YEARS: 5,  // data de saída além disto é recusada
   WRITE_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 }),
 });
+
+// Mentoria entre membros (mentoringService.js; sql/039; docs/mentoria.md): vínculo mentor-mentorado atrás da flag mentoring_enabled.
+export const MENTORING = Object.freeze({
+  FLAG: 'mentoring_enabled',
+  LIST_MAX: 50,                 // mentores disponíveis por consulta
+  OPEN_REQUESTS_MAX: 5,         // pedidos pendentes que a mesma pessoa mentorada mantém ao mesmo tempo
+  ACTIVE_MENTORS_MAX: 3,        // mentores ativos por pessoa mentorada
+  ACTIVE_MENTEES_MAX: 10,       // mentorados ativos por mentor
+  PENDING_INBOX_MAX: 20,        // pedidos pendentes recebidos por mentor, para não virar fila de spam
+  DECLINE_COOLDOWN_DAYS: 14,    // depois de recusa, o mesmo par só pode pedir de novo após este prazo
+  WRITE_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 }),
+  READ_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 }),
+});

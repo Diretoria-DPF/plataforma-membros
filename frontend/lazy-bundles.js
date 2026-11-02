@@ -32,6 +32,8 @@
     ],
     // Destaques da Liga: bloco "Na Liga" da Início (flag highlights_enabled) e a tela de gestão (home.curate).
     destaques: ['highlights.js', 'highlights-manage.js'],
+    // Mentoria (ROL-04): tela Mentoria do menu Participação (flag mentoring_enabled); baixa só ao abrir a tela.
+    mentoria: ['mentoring.js'],
     // Entrada v2 (flag entrada_v2_enabled): tela de abertura de quem não está logado; o CSS é injetado pelo próprio script.
     entradaV2: ['entrada-v2.js'],
     // Início v3: tela nova e navegação responsiva, só com a flag home_v2_enabled ligada (app.js).
