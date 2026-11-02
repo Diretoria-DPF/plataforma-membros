@@ -1,0 +1,78 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Tarefas v2 (tasks-v2.js). Carregado sob demanda e só vale com a flag tasks_v2_enabled (atributo
+   data-flag-tasks-v2-enabled no <html>); sem a flag nada daqui se aplica. Só tokens de modulos/shared/laift-tokens.css,
+   exceto o gradiente do cabeçalho (identidade, igual ao da Início v3). */
+
+:root[data-flag-tasks-v2-enabled] { --t2-a: #0f6f62; --t2-b: #0a4f6b; }
+:root[data-flag-tasks-v2-enabled][data-theme="dark"] { --t2-a: #0c3f3a; --t2-b: #0b2b45; }
+
+/* ===== Estrutura ===== */
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] { display: grid; gap: var(--density-gap, 16px); min-width: 0; align-content: start; }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] > * { min-width: 0; }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] [hidden] { display: none !important; }
+
+/* ===== Cabeçalho ===== */
+:root[data-flag-tasks-v2-enabled] .t2-hero {
+  display: grid; gap: 4px; padding: 22px 18px 72px; color: #fff; border-radius: var(--laift-radius-xl, 28px);
+  background:
+    radial-gradient(120% 90% at 85% -10%, rgba(255, 255, 255, .22), transparent 55%),
+    linear-gradient(160deg, var(--t2-a), var(--t2-b));
+  box-shadow: var(--elev-2, 0 8px 24px rgba(8, 40, 36, .22));
+}
+:root[data-flag-tasks-v2-enabled] .t2-hero__kicker { margin: 0; font-size: 14px; color: rgba(255, 255, 255, .88); }
+:root[data-flag-tasks-v2-enabled] .t2-hero__title { margin: 0; font-size: 28px; line-height: 1.15; color: #fff; }
+
+/* ===== Resumo em destaque, sobreposto ao cabeçalho ===== */
+:root[data-flag-tasks-v2-enabled] .t2-foco {
+  position: relative; margin: -56px 12px 0; padding: 20px; border-radius: var(--laift-radius-xl, 28px);
+  background: var(--layer-1); color: var(--laift-text); box-shadow: 0 14px 34px rgba(8, 40, 36, .22), 0 2px 6px rgba(8, 40, 36, .1);
+  display: grid; gap: 6px; overflow: hidden;
+}
+:root[data-flag-tasks-v2-enabled] .t2-foco__label { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--laift-primary); }
+:root[data-flag-tasks-v2-enabled] .t2-foco__title { margin: 0; font-size: 24px; line-height: 1.15; }
+:root[data-flag-tasks-v2-enabled] .t2-foco__sub { margin: 0; font-size: 15px; color: var(--laift-muted); }
+:root[data-flag-tasks-v2-enabled][data-theme="dark"] .t2-foco { box-shadow: 0 14px 34px rgba(0, 0, 0, .5); }
+@media (min-width: 900px) {
+  :root[data-flag-tasks-v2-enabled] .t2-foco { margin-inline: 24px; }
+}
+
+/* ===== Botões e foco ===== */
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] .list-item .actions-row button { min-height: 44px; padding: 0 18px; border-radius: var(--laift-radius-md, 14px); font-weight: 700; }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] button:focus-visible { outline: 3px solid var(--laift-focus-color); outline-offset: 2px; }
+
+/* ===== Filtros ===== */
+:root[data-flag-tasks-v2-enabled] .t2-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 2px 10px; }
+:root[data-flag-tasks-v2-enabled] .t2-chips::-webkit-scrollbar { display: none; }
+:root[data-flag-tasks-v2-enabled] .t2-chip {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; width: auto; min-height: 44px; padding: 0 16px; border-radius: var(--laift-radius-pill, 999px);
+  border: 1px solid color-mix(in srgb, var(--laift-text) 22%, transparent); background: transparent; color: var(--laift-text); font-size: 14px; font-weight: 600; box-shadow: none;
+}
+:root[data-flag-tasks-v2-enabled] .t2-chip[aria-pressed="true"] { background: var(--laift-primary); color: #fff; border-color: transparent; }
+:root[data-flag-tasks-v2-enabled] .t2-chip__n { font-size: 12px; opacity: .85; }
+
+/* ===== Itens ===== */
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] .list-item { border-radius: var(--laift-radius-lg, 20px); padding: 16px; border: 1px solid var(--hairline); }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] .list-item h4 { font-size: 17px; line-height: 1.25; margin: 0 0 4px; }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] .list-item .meta-row { font-size: 13px; }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] .badge { font-size: 12px; }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] .state { border-radius: var(--laift-radius-lg, 20px); }
+
+:root[data-flag-tasks-v2-enabled] .t2-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+:root[data-flag-tasks-v2-enabled] .t2-stat { padding: 10px; border-radius: 16px; background: color-mix(in srgb, var(--laift-primary) 10%, transparent); min-width: 0; }
+:root[data-flag-tasks-v2-enabled] .t2-stat b { display: block; font-size: 22px; line-height: 1.1; }
+:root[data-flag-tasks-v2-enabled] .t2-stat span { font-size: 12px; color: var(--laift-muted); }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] .t2-card { padding: 0; background: transparent; border: 0; box-shadow: none; }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] .t2-card > h2 { display: none; }
+:root[data-flag-tasks-v2-enabled] .t2-empty { text-align: center; padding: 26px 16px; border-radius: var(--laift-radius-lg, 20px); border: 1.5px dashed color-mix(in srgb, currentColor 22%, transparent); }
+:root[data-flag-tasks-v2-enabled] .t2-empty strong { display: block; font-size: 16px; margin-bottom: 4px; }
+:root[data-flag-tasks-v2-enabled] .t2-empty span { font-size: 14px; color: var(--laift-muted); }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] #tasks-list { display: grid; gap: 12px; }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] #tasks-list .list-item { margin: 0; background: var(--layer-1); box-shadow: var(--elev-1, none); }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] .task-comment-form button { min-height: 44px; }
+@media (min-width: 900px) {
+  :root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] #tasks-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+}

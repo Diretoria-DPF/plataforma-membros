@@ -1,0 +1,99 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Propostas v2 (proposals-v2.js). Carregado sob demanda e só vale com a flag proposals_v2_enabled (atributo
+   data-flag-proposals-v2-enabled no <html>); sem a flag nada daqui se aplica. Só tokens de modulos/shared/laift-tokens.css,
+   exceto o gradiente do cabeçalho (identidade, igual ao da Início v3). */
+
+:root[data-flag-proposals-v2-enabled] { --pr2-a: #0f6f62; --pr2-b: #0a4f6b; }
+:root[data-flag-proposals-v2-enabled][data-theme="dark"] { --pr2-a: #0c3f3a; --pr2-b: #0b2b45; }
+
+/* ===== Estrutura ===== */
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] { display: grid; gap: var(--density-gap, 16px); min-width: 0; align-content: start; }
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] > * { min-width: 0; }
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] [hidden] { display: none !important; }
+
+/* ===== Cabeçalho ===== */
+:root[data-flag-proposals-v2-enabled] .pr2-hero {
+  display: grid; gap: 4px; padding: 22px 18px 72px; color: #fff; border-radius: var(--laift-radius-xl, 28px);
+  background:
+    radial-gradient(120% 90% at 85% -10%, rgba(255, 255, 255, .22), transparent 55%),
+    linear-gradient(160deg, var(--pr2-a), var(--pr2-b));
+  box-shadow: var(--elev-2, 0 8px 24px rgba(8, 40, 36, .22));
+}
+:root[data-flag-proposals-v2-enabled] .pr2-hero__kicker { margin: 0; font-size: 14px; color: rgba(255, 255, 255, .88); }
+:root[data-flag-proposals-v2-enabled] .pr2-hero__title { margin: 0; font-size: 28px; line-height: 1.15; color: #fff; }
+
+/* ===== Resumo em destaque, sobreposto ao cabeçalho ===== */
+:root[data-flag-proposals-v2-enabled] .pr2-foco {
+  position: relative; margin: -56px 12px 0; padding: 20px; border-radius: var(--laift-radius-xl, 28px);
+  background: var(--layer-1); color: var(--laift-text); box-shadow: 0 14px 34px rgba(8, 40, 36, .22), 0 2px 6px rgba(8, 40, 36, .1);
+  display: grid; gap: 6px; overflow: hidden;
+}
+:root[data-flag-proposals-v2-enabled] .pr2-foco__label { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--laift-primary); }
+:root[data-flag-proposals-v2-enabled] .pr2-foco__title { margin: 0; font-size: 24px; line-height: 1.15; }
+:root[data-flag-proposals-v2-enabled] .pr2-foco__sub { margin: 0; font-size: 15px; color: var(--laift-muted); }
+:root[data-flag-proposals-v2-enabled][data-theme="dark"] .pr2-foco { box-shadow: 0 14px 34px rgba(0, 0, 0, .5); }
+@media (min-width: 900px) {
+  :root[data-flag-proposals-v2-enabled] .pr2-foco { margin-inline: 24px; }
+}
+
+/* ===== Botões e foco ===== */
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] .list-item .actions-row button { min-height: 44px; padding: 0 18px; border-radius: var(--laift-radius-md, 14px); font-weight: 700; }
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] button:focus-visible { outline: 3px solid var(--laift-focus-color); outline-offset: 2px; }
+
+/* ===== Filtros ===== */
+:root[data-flag-proposals-v2-enabled] .pr2-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 2px 10px; }
+:root[data-flag-proposals-v2-enabled] .pr2-chips::-webkit-scrollbar { display: none; }
+:root[data-flag-proposals-v2-enabled] .pr2-chip {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; width: auto; min-height: 44px; padding: 0 16px; border-radius: var(--laift-radius-pill, 999px);
+  border: 1px solid color-mix(in srgb, var(--laift-text) 22%, transparent); background: transparent; color: var(--laift-text); font-size: 14px; font-weight: 600; box-shadow: none;
+}
+:root[data-flag-proposals-v2-enabled] .pr2-chip[aria-pressed="true"] { background: var(--laift-primary); color: #fff; border-color: transparent; }
+:root[data-flag-proposals-v2-enabled] .pr2-chip__n { font-size: 12px; opacity: .85; }
+
+/* ===== Itens ===== */
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] .list-item { border-radius: var(--laift-radius-lg, 20px); padding: 16px; border: 1px solid var(--hairline); }
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] .list-item h4 { font-size: 17px; line-height: 1.25; margin: 0 0 4px; }
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] .list-item .meta-row { font-size: 13px; }
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] .badge { font-size: 12px; }
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] .state { border-radius: var(--laift-radius-lg, 20px); }
+
+:root[data-flag-proposals-v2-enabled] .pr2-hero__send {
+  justify-self: start; display: inline-flex; align-items: center; gap: 8px; width: auto; min-height: 44px; margin-top: 14px; padding: 0 18px;
+  border-radius: var(--laift-radius-md, 14px); border: 1px solid #fff; background: #fff; color: #0a4f6b; font-weight: 700; box-shadow: none;
+}
+:root[data-flag-proposals-v2-enabled] .pr2-hero button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+:root[data-flag-proposals-v2-enabled] .pr2-ico { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+:root[data-flag-proposals-v2-enabled] .pr2-foco__bar { width: 100%; height: 8px; margin-top: 6px; border: 0; border-radius: 99px; overflow: hidden; background: color-mix(in srgb, var(--laift-primary) 20%, transparent); accent-color: var(--laift-primary); }
+:root[data-flag-proposals-v2-enabled] .pr2-foco__bar::-webkit-progress-bar { background: color-mix(in srgb, var(--laift-primary) 20%, transparent); }
+:root[data-flag-proposals-v2-enabled] .pr2-foco__bar::-webkit-progress-value { background: var(--laift-primary); border-radius: 99px; }
+:root[data-flag-proposals-v2-enabled] .pr2-foco__bar::-moz-progress-bar { background: var(--laift-primary); border-radius: 99px; }
+:root[data-flag-proposals-v2-enabled] .pr2-foco__go { justify-self: start; display: inline-flex; align-items: center; gap: 8px; width: auto; min-height: 52px; margin-top: 10px; padding: 0 24px; font-size: 17px; font-weight: 700; border-radius: var(--laift-radius-md, 14px); }
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] .pr2-card { border-radius: var(--laift-radius-lg, 20px); }
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] .pr2-card h3 { font-size: 18px; margin: 0 0 8px; }
+:root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] .grid-2 { grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 900px) {
+  :root[data-flag-proposals-v2-enabled] #panel-proposals[data-pr2] .grid-2 { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+}
+
+/* Formulário numa seção recolhível */
+:root[data-flag-proposals-v2-enabled] .pr2-sec { padding: 0 !important; overflow: hidden; }
+:root[data-flag-proposals-v2-enabled] .pr2-sec > h2 { margin: 0; font-size: 18px; }
+:root[data-flag-proposals-v2-enabled] .pr2-sec__toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 56px; padding: 0 var(--density-pad, 20px);
+  border: 0; border-radius: 0; box-shadow: none; text-align: left; background: transparent; color: var(--laift-text); font-size: 18px; font-weight: 700;
+}
+:root[data-flag-proposals-v2-enabled] .pr2-sec__toggle:focus-visible { outline: 3px solid var(--laift-focus-color); outline-offset: -3px; }
+:root[data-flag-proposals-v2-enabled] .pr2-sec__chevron { width: 24px; height: 24px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--dur-base, .2s) var(--ease-out, ease-out); }
+:root[data-flag-proposals-v2-enabled] .pr2-sec.is-open .pr2-sec__chevron { transform: rotate(180deg); }
+:root[data-flag-proposals-v2-enabled] .pr2-sec__body { padding: 0 var(--density-pad, 20px) var(--density-pad, 20px); min-width: 0; }
+:root[data-flag-proposals-v2-enabled] .pr2-sec__body input,
+:root[data-flag-proposals-v2-enabled] .pr2-sec__body textarea { min-height: 44px; font-size: 16px; }
+:root[data-flag-proposals-v2-enabled] .pr2-sec__body button[type="submit"] { min-height: 44px; border-radius: var(--laift-radius-md, 14px); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-flag-proposals-v2-enabled] .pr2-sec__chevron { transition: none; }
+}
