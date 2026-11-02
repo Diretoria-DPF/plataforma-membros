@@ -183,6 +183,10 @@ test('gestão: movedIds, formInput, aviso do teto e descrição', () => {
   assert.match(manage.formInput({ title: ' ', kind: 'aviso' }).error, /título/);
   assert.match(manage.formInput({ title: 'x'.repeat(121), kind: 'aviso' }).error, /120/);
   assert.match(manage.formInput({ title: 'x', kind: 'aviso', link: 'javascript:alert(1)' }).error, /link/);
+  assert.match(manage.formInput({ title: 'x', kind: 'link', link: 'https://evil-laift.com.br/a' }).error, /não é aceito.*doi\.org/);
+  assert.match(manage.formInput({ title: 'x', kind: 'link', link: 'https://laift.com.br.evil.com/' }).error, /não é aceito/);
+  assert.match(manage.formInput({ title: 'x', kind: 'link', link: 'https://laift.com.br:8443/' }).error, /não é aceito/);
+  assert.equal(manage.formInput({ title: 'x', kind: 'link', link: 'https://DOI.org/10.1/x' }).input.linkPath, 'https://DOI.org/10.1/x');
   assert.match(manage.formInput({ title: 'x', kind: 'aviso', end: '2020-01-01' }).error, /futura/);
   const ok = manage.formInput({ title: ' Edital ', kind: 'edital', subtitle: ' até dia 30 ', link: '/edital.html', end: '2099-12-31' });
   assert.equal(ok.input.title, 'Edital');
@@ -232,6 +236,8 @@ test('index.html: bloco da Início fora de #home-dashboard, escondido; painel e 
   assert.match(HTML, /<button type="button" data-panel="panel-admin-highlights">/);
   const painel = /<section id="panel-admin-highlights"[\s\S]*?<\/section>/.exec(HTML)[0];
   for (const id of ['hl-title', 'hl-kind', 'hl-sub', 'hl-link', 'hl-end']) assert.match(painel, new RegExp(`<label for="${id}">[\\s\\S]*?id="${id}"`));
+  assert.match(painel, /id="hl-link"[^>]*aria-describedby="hl-link-help"/);
+  assert.match(painel, /id="hl-link-help"[^>]*>[^<]*doi\.org/);
   assert.match(painel, /id="msg-highlights" class="status-msg" role="status" aria-live="polite"/);
   assert.match(painel, /id="btn-highlight-add"[^>]*aria-expanded="false" aria-controls="highlight-form"/);
 });
