@@ -78,6 +78,8 @@ import * as UsageStatsService from './services/usageStatsService.js';
 import * as ClientErrorService from './services/clientErrorService.js';
 // Destaques da Liga (bloco "Na Liga" da Início; sql/048; flag highlights_enabled)
 import * as HighlightsService from './services/highlightsService.js';
+// Mentoria entre membros (ROL-04; sql/039; flag mentoring_enabled)
+import * as MentoringService from './services/mentoringService.js';
 import { recordActivity } from './analytics/usage.js';
 import { statusForError, tagStatus } from './httpStatus.js';
 
@@ -221,6 +223,15 @@ export const API_REGISTRY = {
   apiAdminSetHighlightActive: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => HighlightsService.setActive(sql, identity, asInput(input), cid)),
   apiAdminReorderHighlights: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => HighlightsService.reorder(sql, identity, asInput(input), cid)),
   apiAdminDeleteHighlight: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => HighlightsService.remove(sql, identity, asInput(input), cid)),
+  // Mentoria (ROL-04): sessão de membro ou admin; cada ação confere o vínculo no banco (mentoringService.js).
+  apiMentoringOverview: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MentoringService.overview(sql, identity)),
+  apiMentoringListMentors: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MentoringService.listMentors(sql, identity)),
+  apiMentoringSetAvailability: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MentoringService.setAvailability(sql, identity, asInput(input), cid)),
+  apiMentoringRequest: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MentoringService.request(sql, identity, asInput(input), cid)),
+  apiMentoringRespond: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MentoringService.respond(sql, identity, asInput(input), cid)),
+  apiMentoringEnd: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MentoringService.end(sql, identity, asInput(input), cid)),
+  apiMentoringSetShare: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MentoringService.setShareProgress(sql, identity, asInput(input), cid)),
+  apiMentoringGetMenteeProgress: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => MentoringService.getMenteeProgress(sql, identity, asInput(input))),
   apiRegisterForEvent: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.registerForEvent(sql, env, identity, eventId, cid)),
   apiCancelEventRegistration: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.cancelEventRegistration(sql, env, identity, eventId, cid)),
   apiListRecentCompletedEvents: (sql) => run(sql, () => EventService.listRecentCompletedEvents(sql)),

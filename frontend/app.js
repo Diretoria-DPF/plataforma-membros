@@ -177,6 +177,7 @@
       resetAdminDashboardChart();
       if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
       if (window.LaiftHighlights) window.LaiftHighlights.reset(document); // esconde o bloco Na Liga
+      if (window.LaiftMentoring) window.LaiftMentoring.reset(); // solta o resumo de progresso na tela
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
       showPublicScreen('screen-welcome');
@@ -1117,6 +1118,7 @@
     resetAdminDashboardChart();
     if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
     if (window.LaiftHighlights) window.LaiftHighlights.reset(document); // esconde o bloco Na Liga
+    if (window.LaiftMentoring) window.LaiftMentoring.reset(); // solta o resumo de progresso na tela
     clearSessionCache();
     document.getElementById('app-root').classList.add('hidden');
     document.getElementById('public-shell').classList.remove('hidden');
@@ -1346,6 +1348,8 @@
     'panel-proposals': loadProposalsAndVoting,
     'panel-tasks': loadTasks,
     'panel-orgchart': loadOrgChartPanel,
+    // Mentoria (ROL-04; frontend/mentoring.js, pacote sob demanda; o item do menu só aparece com a flag mentoring_enabled).
+    'panel-mentoring': function () { withBundle('mentoria', function () { if (window.LaiftMentoring) window.LaiftMentoring.load(window.App); }); },
     'panel-profile': function () {
       loadProfileAndPreferences();
       if (window.LaiftMfa) window.LaiftMfa.load(window.App);

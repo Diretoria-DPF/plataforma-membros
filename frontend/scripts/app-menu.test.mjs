@@ -148,7 +148,7 @@ test('index.html: Propostas, Tarefas, Mensagens, Equipe, Biblioteca e Processo s
   assert.ok(fimMembro > 0, 'grupo Gestão ausente do menu');
   const membro = bloco.slice(0, fimMembro);
   const paineis = [...membro.matchAll(/data-panel="([^"]+)"/g)].map((m) => m[1]);
-  assert.deepEqual(paineis, ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart', 'panel-library', 'panel-selection']);
+  assert.deepEqual(paineis, ['panel-proposals', 'panel-tasks', 'panel-mentoring', 'panel-messages', 'panel-orgchart', 'panel-library', 'panel-selection']);
   for (const id of Object.values(menu.BADGE_IDS)) {
     assert.ok(bloco.includes(`id="${id}"`), `contador ${id} fora do menu`);
     assert.ok(bloco.includes(`id="${id}-sr"`), `texto oculto ${id}-sr fora do menu`);

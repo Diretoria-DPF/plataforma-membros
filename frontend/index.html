@@ -407,6 +407,13 @@
                 <span id="nav-badge-tasks-sr" class="visually-hidden"></span>
               </button>
             </li>
+            <!-- Mentoria (docs/mentoria.md): o item só aparece com a flag mentoring_enabled (app-menu.css). -->
+            <li class="app-menu__flag-mentoring">
+              <button type="button" class="app-menu__item" data-panel="panel-mentoring" data-scope="member">
+                <svg class="app-menu__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0111 0"/><path d="M16 11.5l2 2 3.5-4"/></svg>
+                <span class="app-menu__texto"><span class="app-menu__titulo">Mentoria</span><span class="app-menu__info">Aprender com quem já foi</span></span>
+              </button>
+            </li>
           </ul>
         </section>
         <section class="app-menu__grupo" data-grupo="comunicacao" aria-labelledby="app-menu-g2">
@@ -1027,6 +1034,42 @@
               <h3>Automáticos</h3>
               <p class="muted">Vêm dos próximos eventos e do blog; não são gravados e não dá para editar aqui.</p>
               <ul id="highlights-auto-list" class="hl-manage-list" aria-label="Destaques automáticos"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mentoria (mentoring.js, sob demanda; flag mentoring_enabled): escolher mentor, acompanhar pedidos, mentorados e resumo compartilhado. -->
+        <section id="panel-mentoring" class="hidden">
+          <h1 class="sr-only">Mentoria</h1>
+          <div class="card">
+            <h2 id="mentoring-title" tabindex="-1">Mentoria</h2>
+            <p class="muted">Peça orientação a um membro mais experiente. Você decide se ele vê um resumo do seu progresso (sem respostas individuais) e pode encerrar quando quiser.</p>
+            <div id="msg-mentoring" class="status-msg" role="status" aria-live="polite"></div>
+            <p id="mentoring-off" class="gestao-aviso hidden">A mentoria ainda não está disponível para você.</p>
+            <p id="mentoring-missing" class="gestao-aviso hidden">A mentoria ainda não está disponível: falta aplicar a atualização do banco de dados.</p>
+          </div>
+          <div id="mentoring-body" class="hidden">
+            <div class="card">
+              <h2>Minha disponibilidade</h2>
+              <p class="muted">Ao ligar, você aparece na lista de mentores e pode receber pedidos. Pedidos já aceitos não mudam.</p>
+              <button type="button" id="btn-mentoring-available" class="secondary mt-btn mt-switch" role="switch" aria-checked="false">Não estou disponível como mentor</button>
+            </div>
+            <div class="card">
+              <h2>Meus mentores</h2>
+              <p id="mentoring-as-mentee-empty" class="muted">Você ainda não pediu mentoria.</p>
+              <ul id="mentoring-as-mentee" class="mt-list" aria-label="Meus mentores e pedidos"></ul>
+            </div>
+            <div class="card">
+              <h2>Escolher um mentor</h2>
+              <p class="muted">Ao pedir, você pode já compartilhar o seu progresso; dá para mudar depois, em cada mentoria.</p>
+              <button type="button" id="mentoring-request-share" class="secondary mt-btn mt-switch" role="switch" aria-checked="false">Compartilhar meu progresso ao pedir</button>
+              <p id="mentoring-mentors-empty" class="muted">Nenhum mentor disponível agora.</p>
+              <ul id="mentoring-mentors" class="mt-list" aria-label="Mentores disponíveis"></ul>
+            </div>
+            <div id="mentoring-mentor-card" class="card hidden">
+              <h2>Meus mentorados</h2>
+              <p id="mentoring-as-mentor-empty" class="muted">Nenhum pedido ou mentorado por enquanto.</p>
+              <ul id="mentoring-as-mentor" class="mt-list" aria-label="Pedidos recebidos e mentorados"></ul>
             </div>
           </div>
         </section>

@@ -29,6 +29,8 @@
     ],
     // Destaques da Liga: bloco "Na Liga" da Início (flag highlights_enabled) e a tela de gestão (home.curate).
     destaques: ['highlights.js', 'highlights-manage.js'],
+    // Mentoria (ROL-04): tela Mentoria do menu Participação (flag mentoring_enabled); baixa só ao abrir a tela.
+    mentoria: ['mentoring.js'],
     lia: [
       'modulos/shared/lia/lia-art.js', 'modulos/shared/lia/lia-states.js', 'modulos/shared/lia/lia-mood.js',
       'assistant-mood-glue.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia-props.js',

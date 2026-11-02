@@ -1,0 +1,96 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Mentoria (frontend/mentoring.js; docs/mentoria.md). Carregado sob demanda junto com o pacote "mentoria". */
+
+.mt-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.mt-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.mt-row--off { border-style: dashed; }
+
+.mt-row__text {
+  display: flex;
+  flex: 1 1 220px;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mt-row__meta { color: var(--muted); font-size: 13px; }
+
+.mt-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.mt-btn,
+.mt-switch {
+  width: auto;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.mt-switch[aria-checked="true"] {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+}
+
+.mt-btn:focus-visible,
+.mt-switch:focus-visible,
+#mentoring-title:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.mt-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.mt-summary {
+  flex: 1 1 100%;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: var(--surface-alt);
+}
+
+.mt-summary__list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.mt-note { margin: 8px 0 0; font-size: 13px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mt-btn,
+  .mt-switch { transition: none; }
+}
