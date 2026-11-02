@@ -17,6 +17,7 @@
 //  - perfil2: carregado quando a flag profile_v2_enabled está ligada e o Perfil abre (app.js);
 //  - propostas2: carregado quando a flag proposals_v2_enabled está ligada e Propostas abre (app.js);
 //  - tarefas2: carregado quando a flag tasks_v2_enabled está ligada e Tarefas abre (app.js);
+//  - biblioteca2: carregado quando a flag library_v2_enabled está ligada e a Biblioteca abre (app.js);
 //  - novidades: carregado após o login (uma vez por versão) ou ao abrir "Ver novidades" no Perfil;
 //  - lia: carregado logo após o login e, para quem só visita, quando o navegador
 //    fica ocioso depois do evento load (fora do caminho crítico).
@@ -42,6 +43,8 @@
     entradaV2: ['entrada-v2.js'],
     // Início v3: tela nova e navegação responsiva, só com a flag home_v2_enabled ligada (app.js).
     inicio3: ['home-v3.js'],
+    // Aprender v2: tela nova do hub, só com a flag learn_v2_enabled ligada (learning.js). O CSS é injetado pelo script.
+    aprender2: ['learn-v2.js'],
     // Eventos v2: tela Eventos nova, só com a flag events_v2_enabled ligada (app.js; docs/eventos-v2.md).
     eventos2: ['events-v2.js'],
     // Perfil v2: reorganiza o Perfil de sempre (cabeçalho, colunas e seções recolhíveis), só com a flag profile_v2_enabled ligada (app.js).
@@ -49,6 +52,8 @@
     // Propostas v2 e Tarefas v2: reposicionam as telas de sempre, só com a flag própria ligada (app.js).
     propostas2: ['proposals-v2.js'],
     tarefas2: ['tasks-v2.js'],
+    // Biblioteca v2: novo visual da Biblioteca de sempre (selo de revisão e CSS), só com a flag library_v2_enabled ligada (app.js).
+    biblioteca2: ['library-v2.js'],
     // Novidades (ENG-07): aviso uma vez por versão no login e "Ver novidades" no Perfil. O estilo do diálogo
     // (laift-dialog.css) vem no index.html; aqui só o script.
     novidades: ['modulos/shared/laift-dialog.js', 'whats-new.js'],
