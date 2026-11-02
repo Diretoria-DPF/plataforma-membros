@@ -21,7 +21,7 @@ Cada ação confere o vínculo no próprio SQL (`mentor_id`/`mentee_id` + estado
 
 ## Conversa
 
-Reaproveita o chat cifrado (`connections`/`conversations`). Se já existe conexão aceita entre as duas pessoas, o vínculo mostra **Enviar mensagem** (`LaiftMessaging.openConversationWithPeer`). Caso contrário, mostra a orientação para se conectar em Mensagens. **O serviço não cria conexão automaticamente**: `connections` tem gatilho de cooldown, bloqueio e descoberta por nome de usuário, e contorná-lo seria arriscado. Evolução possível: criar a conexão no aceite por um caminho dedicado e revisado.
+Reaproveita o chat cifrado (`connections`/`conversations`). **Aceitar a mentoria cria a conexão** entre mentor e mentorado (`ensureConnection`), liberando **Enviar mensagem** (`LaiftMessaging.openConversationWithPeer`). Regras: (1) nunca cria se há bloqueio (`profile_blocks`) em qualquer direção (o aceite segue, sem conexão); (2) conexão existente é reaproveitada: `accepted` fica como está, `pending` vira `accepted`, `declined` só reabre se o prazo `declined_until` já venceu (o gatilho `guard_connection_write` proíbe recusada -> aceita direto e o prazo protege quem recusou); se ainda no prazo, não há conexão e a tela mostra a orientação para conectar em Mensagens; (3) encerrar ou recusar a mentoria **não** apaga a conexão; (4) conexão nova: `requester` = mentorado, `addressee` = mentor, `requested_via = 'username'` (o CHECK só aceita `username` ou `phone`; sem migração nova). É de melhor esforço: falha na conexão é registrada e nunca derruba o aceite; o gatilho segue como autoridade (contas ativas, papéis, bloqueio).
 
 ## Operação
 

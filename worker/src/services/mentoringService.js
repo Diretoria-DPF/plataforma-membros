@@ -17,7 +17,8 @@
  * individuais, textos ou dados pessoais.
  *
  * Conversa: reaproveita o chat cifrado. Cada vínculo informa se já existe conexão aceita (connections) entre as
- * pessoas; o cliente só oferece "Enviar mensagem" nesse caso. O serviço NÃO cria conexão (ver docs/mentoria.md).
+ * pessoas; o cliente só oferece "Enviar mensagem" nesse caso. Ao ACEITAR, o serviço garante essa conexão
+ * (ensureConnection: nunca com bloqueio, reaproveitando a existente; encerrar não a apaga; ver docs/mentoria.md).
  *
  * Degrada com segurança: sem a migração 039 (ou com a flag desligada) a leitura devolve lista vazia, sem 500, e a
  * escrita recusa com mensagem clara. Toda escrita tem limite por pessoa e entra em audit_logs. Mensagens nunca
@@ -330,9 +331,56 @@ export async function respond(sql, identity, input, correlationId) {
       WHERE id = ${id}::uuid AND mentor_id = ${me}::uuid AND requested_by <> ${me}::uuid AND status = 'pending'
       RETURNING id`;
     if (!rows.length) throw E.NotFoundError('Pedido não encontrado ou já respondido.');
+    if (accept) await ensureConnection(sql, correlationId, id);
     await Logging.logAudit(sql, correlationId, me, accept ? 'MENTORING_ACCEPT' : 'MENTORING_DECLINE', 'mentorship', id, 'success', null);
     return { success: true, message: accept ? 'Mentoria aceita.' : 'Pedido recusado.' };
   });
+}
+
+/**
+ * Garante a conexão aceita entre mentor e mentorado (libera "Enviar mensagem"). Melhor esforço: nunca derruba o aceite.
+ * Bloqueio em qualquer direção: não cria. Já aceita: nada. Pendente: marca aceita. Recusada: só reabre se o prazo de
+ * recusa (declined_until) venceu, pois o gatilho guard_connection_write proíbe recusada -> aceita direto e o prazo é
+ * garantia da outra pessoa. O gatilho segue como autoridade final (contas ativas, papéis, bloqueio).
+ * requested_via: o CHECK só aceita 'username' ou 'phone'; usamos 'username' (o mais próximo; não há migração nova).
+ */
+async function ensureConnection(sql, correlationId, mentorshipId) {
+  const link = await sql`SELECT mentor_id, mentee_id FROM mentorships WHERE id = ${mentorshipId}::uuid`;
+  if (!link.length) return;
+  const { mentor_id: mentorId, mentee_id: menteeId } = link[0];
+  const blocked = await sql`
+    SELECT 1 FROM profile_blocks
+    WHERE (blocker_id = ${mentorId}::uuid AND blocked_id = ${menteeId}::uuid)
+       OR (blocker_id = ${menteeId}::uuid AND blocked_id = ${mentorId}::uuid) LIMIT 1`;
+  if (blocked.length) return;
+  try {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const found = await sql`
+        SELECT id, status, declined_until FROM connections
+        WHERE LEAST(requester_id, addressee_id) = LEAST(${mentorId}::uuid, ${menteeId}::uuid)
+          AND GREATEST(requester_id, addressee_id) = GREATEST(${mentorId}::uuid, ${menteeId}::uuid)`;
+      if (found.length) return await acceptExisting(sql, found[0]);
+      try {
+        await sql`
+          INSERT INTO connections (requester_id, addressee_id, status, requested_via, responded_at)
+          VALUES (${menteeId}::uuid, ${mentorId}::uuid, 'accepted'::connection_status, 'username', now())`;
+        return;
+      } catch (err) {
+        if (!err || err.code !== UNIQUE_VIOLATION) throw err; // corrida: alguém criou o par; relê e reaproveita
+      }
+    }
+  } catch (err) {
+    await Logging.logError(sql, correlationId, 'MENTORING_CONNECTION', err && err.message, { mentorshipId }).catch(() => {});
+  }
+}
+
+async function acceptExisting(sql, conn) {
+  if (conn.status === 'accepted') return;
+  if (conn.status === 'declined') {
+    if (conn.declined_until && new Date(conn.declined_until).getTime() > Date.now()) return;
+    await sql`UPDATE connections SET status = 'pending'::connection_status, declined_until = NULL, responded_at = NULL WHERE id = ${conn.id}::uuid`;
+  }
+  await sql`UPDATE connections SET status = 'accepted'::connection_status, responded_at = now(), declined_until = NULL WHERE id = ${conn.id}::uuid AND status = 'pending'::connection_status`;
 }
 
 /** Aceitar exige ser mentor elegível (cargo ou disponibilidade) e vaga na conta das duas partes. */
