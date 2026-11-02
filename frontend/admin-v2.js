@@ -496,7 +496,8 @@
 
   function buildStrip(state) {
     var doc = state.doc;
-    var strip = el(doc, 'section', 'adm2-strip');
+    var strip = el(doc, 'div', 'adm2-strip'); // não pode ser <section>: o app esconde toda <section> de .app-main que não é o painel aberto
+    strip.setAttribute('role', 'region');
     strip.setAttribute('aria-labelledby', 'adm2-strip-title');
     strip.appendChild(el(doc, 'p', 'adm2-strip__eyebrow', 'Para resolver hoje'));
     var title = el(doc, 'h2', 'adm2-strip__title', 'Pendências da gestão');

@@ -71,6 +71,7 @@ async function flagOnScenario(vp) {
     await page.waitForFunction(() => document.querySelector('[data-chip="selection"] .adm2-chip__n').textContent === '3', null, { timeout: 8000 });
     const chips = await page.$$eval('.adm2-chip', (n) => n.map((b) => [b.getAttribute('data-chip'), b.querySelector('.adm2-chip__n').textContent]));
     check(JSON.stringify(chips) === JSON.stringify([['selection', '3'], ['deletions', '1'], ['proposals', '5'], ['flags', '0']]), 'faixa de pendências com os números da API: ' + JSON.stringify(chips));
+    await page.waitForFunction(() => getComputedStyle(document.getElementById('app-nav')).display === 'none', null, { timeout: 8000 }).catch(() => {});
     check(await page.locator('#app-nav').isHidden(), 'a barra de baixo do modo admin fica escondida');
     check(await page.locator('#adm2-back').isVisible(), 'Voltar visível');
 
@@ -89,8 +90,8 @@ async function flagOnScenario(vp) {
     await page.waitForSelector('#panel-admin-roles:not(.hidden)');
     check(await page.locator('#form-roles-search').count() === 1, 'a seção Cargos de sempre abre com a busca');
 
-    await page.click('.adm2-chip', { force: true }).catch(() => {});
     await page.click('.adm2-tab[data-panel="panel-admin-dashboard"]');
+    await page.waitForSelector('.adm2-strip:not([hidden])');
     await page.click('[data-chip="deletions"]');
     await page.waitForSelector('#panel-admin-privacy:not(.hidden)');
     check(true, 'tocar num número abre a seção correspondente');
@@ -102,7 +103,7 @@ async function flagOnScenario(vp) {
     await page.fill('#adm2-flag-filter', 'eventos');
     check((await page.locator('.adm2-flag').count()) === 1, 'busca filtra as flags');
     await page.fill('#adm2-flag-filter', 'zzz');
-    check(/não combina/.test(await page.locator('.adm2-empty').innerText()), 'estado vazio da busca');
+    check(/combina com a busca/.test(await page.locator('.adm2-empty').innerText()), 'estado vazio da busca');
     await page.fill('#adm2-flag-filter', '');
     await page.click('[data-flag="events_v2_enabled"]');
     check((await page.getAttribute('[data-flag="events_v2_enabled"]', 'aria-checked')) === 'true', 'interruptor alterado (aria-checked)');
