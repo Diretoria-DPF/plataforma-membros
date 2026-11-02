@@ -1,0 +1,141 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Entrada v2 (flag entrada_v2_enabled; entrada-v2.js). Carregado sob demanda junto com o script.
+   Cores vêm dos tokens (claro e escuro). Texto branco só sobre fundos escuros (gradientes do herói e dos cartões,
+   todos com contraste AA para branco). Alvos de toque >= 44 px. Sem estilo inline (CSP). */
+
+/* ---------- Casca: a página ocupa a largura toda, sem o cartão centralizado ---------- */
+#public-shell.ev2-ativo:has(> #screen-welcome:not(.hidden)) { display: block; padding: 0; min-height: 100vh; }
+#public-shell #screen-welcome.ev2-ativo { display: block; width: 100%; margin: 0; padding: 0; }
+#public-shell #screen-welcome.ev2-ativo > :not(.ev2) { display: none !important; }
+#public-shell.ev2-ativo:has(> #screen-welcome:not(.hidden)) .site-credito--entrada {
+  position: static; margin: 0; padding: 0 16px 104px; text-align: center;
+}
+html.ev2-travado { overflow: hidden; }
+
+.ev2 { position: relative; z-index: 1; color: var(--text); }
+.ev2 :focus-visible { outline: 3px solid #ffb020; outline-offset: 2px; }
+.ev2-wrap { box-sizing: border-box; max-width: 1120px; margin: 0 auto; padding: 0 18px; }
+
+/* ---------- Aviso (mensagens do login quando a folha está fechada) ---------- */
+.ev2-aviso { margin: 0; padding: 12px 18px; background: var(--surface-alt); color: var(--text); border-bottom: 1px solid var(--border); text-align: center; }
+
+/* ---------- Herói ---------- */
+.ev2-heroi {
+  color: #fff; padding: calc(14px + env(safe-area-inset-top)) 0 112px;
+  background: radial-gradient(110% 80% at 90% -10%, rgba(255, 255, 255, 0.14), transparent 55%), linear-gradient(135deg, #0f6f62, #0a4f6b);
+}
+html[data-theme="dark"] .ev2-heroi { background: radial-gradient(110% 80% at 90% -10%, rgba(255, 255, 255, 0.08), transparent 55%), linear-gradient(135deg, #0c3f3a, #0b2b45); }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]):not([data-theme="dark"]) .ev2-heroi { background: radial-gradient(110% 80% at 90% -10%, rgba(255, 255, 255, 0.08), transparent 55%), linear-gradient(135deg, #0c3f3a, #0b2b45); }
+}
+.ev2-barra { display: flex; align-items: center; justify-content: space-between; }
+.ev2-logo { font-weight: 800; letter-spacing: 0.6px; font-size: 20px; }
+.ev2-btn-fantasma {
+  min-height: 44px; padding: 0 18px; border-radius: 99px; background: rgba(0, 0, 0, 0.25); color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.7); font-weight: 700;
+}
+.ev2-heroi h1 { margin: 34px 0 10px; font-size: clamp(30px, 7vw, 54px); line-height: 1.05; letter-spacing: -0.8px; max-width: 16ch; }
+.ev2-sub { margin: 0 0 22px; font-size: clamp(16px, 2.6vw, 20px); max-width: 36ch; }
+.ev2-ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+.ev2-btn { min-height: 52px; padding: 0 22px; border-radius: 16px; border: 0; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.ev2-btn--pri { background: #fff; color: #0a4f6b; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22); }
+.ev2-btn--sec { background: rgba(0, 0, 0, 0.25); color: #fff; border: 1px solid rgba(255, 255, 255, 0.7); }
+.ev2-micro { margin: 12px 0 0; font-size: 13px; color: #fff; }
+
+@media (min-width: 900px) { .ev2-heroi h1 { max-width: 22ch; } }
+
+/* ---------- Vitrine com cadeado ---------- */
+.ev2-vitrine { margin-top: -84px; position: relative; }
+.ev2-vitrine h2 { color: #fff; margin: 0 0 10px; font-size: 14px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
+.ev2-trilho { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 18px 18px; margin: 0 -18px; scroll-padding: 0 18px; scrollbar-width: none; }
+.ev2-trilho::-webkit-scrollbar { display: none; }
+.ev2-cartao {
+  flex: 0 0 min(78%, 270px); scroll-snap-align: start; border-radius: 22px; padding: 16px; min-height: 176px; color: #fff;
+  position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; text-align: left;
+  box-shadow: 0 10px 26px rgba(10, 40, 50, 0.28); border: 0;
+}
+.ev2-cartao:nth-child(1) { background: linear-gradient(150deg, #0b7a6b, #0a5c6e); }
+.ev2-cartao:nth-child(2) { background: linear-gradient(150deg, #6a3fb0, #3b3a9a); }
+.ev2-cartao:nth-child(3) { background: linear-gradient(150deg, #a85a14, #8f3a22); }
+.ev2-cartao:nth-child(4) { background: linear-gradient(150deg, #2468c4, #1d4a9a); }
+.ev2-cartao:nth-child(5) { background: linear-gradient(150deg, #2f7d3f, #1d6a5a); }
+.ev2-etiqueta { display: inline-block; font-size: 12px; padding: 4px 10px; border-radius: 99px; background: rgba(0, 0, 0, 0.3); }
+.ev2-cartao strong { font-size: 19px; display: block; margin-top: 8px; }
+.ev2-desc { font-size: 13px; }
+.ev2-cadeado { position: absolute; top: 14px; right: 14px; width: 18px; height: 18px; }
+.ev2-previa { position: absolute; right: -14px; top: 44px; width: 112px; height: 82px; border-radius: 14px; background: rgba(255, 255, 255, 0.16); filter: blur(1.6px); transform: rotate(6deg); }
+.ev2-previa i { display: block; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.45); margin: 10px 10px 0; }
+.ev2-previa i:nth-child(2) { width: 60%; }
+.ev2-previa i:nth-child(3) { width: 80%; }
+@media (min-width: 900px) {
+  .ev2-trilho { display: grid; grid-template-columns: repeat(5, 1fr); overflow: visible; margin: 0; padding: 4px 0 18px; }
+}
+
+/* ---------- Seções ---------- */
+.ev2-secao { padding-top: 22px; padding-bottom: 6px; }
+.ev2-secao h2 { margin: 0 0 12px; font-size: 20px; }
+.ev2-vitrine h2 { font-size: 14px; }
+.ev2-passos { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 0; padding: 0; list-style: none; }
+@media (min-width: 700px) { .ev2-passos { grid-template-columns: repeat(3, 1fr); } }
+.ev2-passo { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 16px; }
+.ev2-passo b { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 99px; background: var(--primary); color: var(--on-primary); margin-bottom: 8px; }
+.ev2-passo h3 { margin: 0 0 4px; font-size: 16px; }
+.ev2-passo p { margin: 0; font-size: 14px; color: var(--muted); }
+.ev2-lista { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; grid-template-columns: 1fr; }
+@media (min-width: 700px) { .ev2-lista { grid-template-columns: repeat(3, 1fr); } }
+.ev2-item { display: grid; gap: 2px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; }
+.ev2-item-data, .ev2-item-local { font-size: 13px; color: var(--muted); }
+.ev2-item a { display: flex; align-items: center; min-height: 44px; color: var(--text); font-weight: 700; }
+.ev2-rodape { padding-top: 22px; padding-bottom: 24px; font-size: 14px; }
+.ev2-rodape nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 6px; }
+.ev2-rodape a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; color: var(--text); }
+
+/* ---------- Barra de convite (só no celular) ---------- */
+.ev2-convite {
+  position: fixed; left: 12px; right: 76px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 29;
+  display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 20px;
+  background: #0a2b2e; color: #fff; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32);
+}
+.ev2-convite span { flex: 1; font-size: 14px; }
+.ev2-btn--convite { min-height: 44px; background: #3fcfb6; color: #04201b; padding: 0 16px; border-radius: 14px; }
+@media (min-width: 900px) { .ev2-convite { display: none; } #public-shell.ev2-ativo .site-credito--entrada { padding-bottom: 32px; } }
+
+/* ---------- Folha (celular) e modal (>= 768 px) ---------- */
+.ev2-veu { position: fixed; inset: 0; z-index: 90; background: rgba(5, 15, 18, 0.6); opacity: 0; transition: opacity 0.2s; }
+.ev2-veu[hidden], .ev2-folha[hidden] { display: none; }
+.ev2-veu.ev2-on { opacity: 1; }
+.ev2-folha {
+  position: fixed; z-index: 91; left: 0; right: 0; bottom: 0; box-sizing: border-box; max-height: 92vh; max-height: 92dvh; overflow-y: auto; overscroll-behavior: contain;
+  border-radius: 26px 26px 0 0; padding: 12px 18px calc(22px + env(safe-area-inset-bottom)); background: var(--surface); color: var(--text);
+  box-shadow: var(--shadow); transform: translateY(105%); transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.ev2-folha.ev2-on { transform: none; }
+.ev2-folha:focus { outline: none; }
+.ev2-alca { width: 44px; height: 5px; border-radius: 9px; background: var(--border); margin: 0 auto 8px; }
+.ev2-folha-cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.ev2-folha-cab h2 { margin: 0; font-size: 20px; }
+.ev2-fechar { min-width: 44px; min-height: 44px; padding: 0; border-radius: 99px; background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); font-size: 22px; line-height: 1; }
+.ev2-apoio { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+.ev2-abas { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 14px; background: var(--surface-alt); border: 1px solid var(--border); margin-bottom: 8px; }
+.ev2-abas button { min-height: 44px; border-radius: 11px; background: transparent; color: var(--muted); font-weight: 700; }
+.ev2-abas button[aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 6px rgba(0, 0, 0, 0.18); }
+.ev2-painel[hidden] { display: none; }
+.ev2-painel form { margin-top: 8px; }
+.ev2-painel form button[type="submit"] { min-height: 48px; }
+.ev2-painel .link-btn { min-height: 44px; }
+.ev2-agora-nao { display: block; margin: 12px auto 0; min-height: 44px; background: transparent; color: var(--muted); text-decoration: underline; font-weight: 600; }
+@media (min-width: 768px) {
+  .ev2-folha {
+    left: 50%; right: auto; bottom: auto; top: 50%; width: 440px; max-height: 90vh; max-height: 90dvh; border-radius: 26px; padding-bottom: 22px;
+    transform: translate(-50%, -46%); opacity: 0; transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s;
+  }
+  .ev2-folha.ev2-on { transform: translate(-50%, -50%); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ev2-veu, .ev2-folha { transition: none; }
+  .ev2-trilho { scroll-behavior: auto; }
+}

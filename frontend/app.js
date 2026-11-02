@@ -632,7 +632,19 @@
       if (el) el.classList.toggle('hidden', screenId !== id);
     });
     refreshUiFlags();
+    mountEntradaV2();
     signalReady();
+  }
+
+  // Entrada v2 (flag entrada_v2_enabled; entrada-v2.js, sob demanda): só para quem não está logado.
+  // Com a flag desligada (ou depois do login) o script, se já carregado, devolve os formulários ao lugar original.
+  function mountEntradaV2() {
+    var on = document.documentElement.hasAttribute('data-flag-entrada-v2-enabled') && !state.sessionToken;
+    if (!on) {
+      if (window.LaiftEntradaV2) window.LaiftEntradaV2.reset();
+      return;
+    }
+    withBundle('entradaV2', function () { if (window.LaiftEntradaV2 && !state.sessionToken) window.LaiftEntradaV2.mount(window.App, document); });
   }
 
   // Flags públicas -> atributos data-flag-* no <html> (ux-v2.js; docs/FEATURE_FLAGS.md).
@@ -647,6 +659,7 @@
     uiFlagsPending = callApi('apiGetFeatureFlags', key).then(function (res) {
       if (res && res.success === true) {
         window.LaiftUx.applyAndRememberFlags(document.documentElement, res.flags, window.localStorage);
+        mountEntradaV2(); // a flag chega depois do primeiro desenho da tela pública
         if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
         if (res.flags && res.flags.home_v2_enabled === true) enableHomeV2(); // Início v3 e navegação responsiva
       }
@@ -3129,6 +3142,7 @@
   function openPublicScreenFromHash() {
     var hash = window.location.hash || '';
     var screenId = PUBLIC_HASH_SCREENS[hash] || 'screen-welcome';
+    window.APP_PUBLIC_HASH = hash; // a Entrada v2 (entrada-v2.js) abre a folha certa para #entrar, #inscricao e #cadastro
     if (hash === '#inscricao') saveGotoIntent('panel-selection');
     if (PUBLIC_HASH_SCREENS[hash]) {
       try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* ignora */ }
