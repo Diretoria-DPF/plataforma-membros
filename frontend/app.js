@@ -663,6 +663,7 @@
         if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
         if (res.flags && res.flags.home_v2_enabled === true) enableHomeV2(); // Início v3 e navegação responsiva
         if (res.flags && res.flags.events_v2_enabled === true && currentPanelId === 'panel-events') loadEvents(); // a flag chega depois do primeiro desenho de Eventos
+        if (res.flags && res.flags.profile_v2_enabled === true && currentPanelId === 'panel-profile') mountProfileV2(); // a flag chega depois da abertura do Perfil
       }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
     }).catch(function () { /* sem rede: segue sem flags novas */ });
@@ -1397,6 +1398,13 @@
     if (window.LaiftHomeV3) window.LaiftHomeV3.reset(document);
   }
 
+  // Perfil v2 (flag profile_v2_enabled, desligada por padrão; docs/perfil-v2.md): o pacote perfil2 só reposiciona os
+  // elementos do Perfil de sempre. Sem a flag (ou se o pacote falhar) o Perfil fica como era.
+  function profileV2On() { return document.documentElement.hasAttribute('data-flag-profile-v2-enabled'); }
+  function mountProfileV2() {
+    withBundle('perfil2', function () { if (window.LaiftProfileV2) window.LaiftProfileV2.mount(window.App, document); });
+  }
+
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
     'panel-home': function () {
@@ -1418,6 +1426,8 @@
       if (window.LaiftMfa) window.LaiftMfa.load(window.App);
       if (window.LaiftPrivacy) window.LaiftPrivacy.load(window.App, document); // direitos do titular (LGPD)
       if (homeV2On()) withBundle('inicio3', function () { if (window.LaiftHomeV3) window.LaiftHomeV3.mountProfile(window.App, document); }); // Meu desempenho
+      if (profileV2On()) mountProfileV2();
+      else if (window.LaiftProfileV2) window.LaiftProfileV2.reset(document);
     },
     'panel-admin-dashboard': function () {
       loadAdminDashboard();
