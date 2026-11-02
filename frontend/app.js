@@ -662,6 +662,7 @@
         mountEntradaV2(); // a flag chega depois do primeiro desenho da tela pública
         if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
         if (res.flags && res.flags.home_v2_enabled === true) enableHomeV2(); // Início v3 e navegação responsiva
+        if (res.flags && res.flags.library_v2_enabled === true && currentPanelId === 'panel-library') mountLibraryV2(); // a flag chega depois da abertura da Biblioteca
         if (res.flags && res.flags.profile_v2_enabled === true && currentPanelId === 'panel-profile') mountProfileV2(); // a flag chega depois da abertura do Perfil
       }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
@@ -1404,6 +1405,13 @@
     withBundle('perfil2', function () { if (window.LaiftProfileV2) window.LaiftProfileV2.mount(window.App, document); });
   }
 
+  // Biblioteca v2 (flag library_v2_enabled, desligada por padrão; docs/biblioteca-v2.md): o pacote biblioteca2 só dá o visual novo
+  // à Biblioteca de sempre (library.js segue montando e buscando). Sem a flag (ou se o pacote falhar) a tela fica como era.
+  function libraryV2On() { return document.documentElement.hasAttribute('data-flag-library-v2-enabled'); }
+  function mountLibraryV2() {
+    withBundle('biblioteca2', function () { if (window.LaiftLibraryV2) window.LaiftLibraryV2.mount(window.App, document); });
+  }
+
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
     'panel-home': function () {
@@ -1451,7 +1459,11 @@
       });
     },
     // Biblioteca LAIFT (CONTRATO-B2 §7). Fora de MEMBER_PANEL_ORDER de propósito (§1: gate por flag só no CSS).
-    'panel-library': function () { if (window.LaiftLibrary) window.LaiftLibrary.loadPanel(); },
+    'panel-library': function () {
+      if (libraryV2On()) mountLibraryV2();
+      else if (window.LaiftLibraryV2) window.LaiftLibraryV2.reset();
+      if (window.LaiftLibrary) window.LaiftLibrary.loadPanel();
+    },
     // Processo seletivo (selection.js): jornada do candidato; só aparece no menu de quem ainda não é membro.
     'panel-selection': function () { if (window.LaiftSelection) window.LaiftSelection.load(window.App, document); },
     'panel-admin-selection': function () { withBundle('admin', function () { if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.load(window.App, document); }); },
