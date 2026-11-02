@@ -337,6 +337,8 @@
     effectiveGoal: effectiveGoal, resolveLast: resolveLast, rememberModule: rememberModule,
     buildSection: buildSection, isFirstQuizCandidate: isFirstQuizCandidate, openFirstQuiz: openFirstQuiz, buildStrip: buildStrip,
     fetchEngagement: fetchEngagement, assemble: assemble, mountHome: mountHome, refreshHub: refreshHub,
+    // Início v3 (home-v3.js) reaproveita estes pedaços para montar o cartão de foco e o resumo do dia.
+    openModule: openModule, saveGoal: saveGoal, MODULE_LABELS: MODULE_LABELS, ACTIVITY_LABELS: ACTIVITY_LABELS,
     GOALS: GOALS,
   };
 

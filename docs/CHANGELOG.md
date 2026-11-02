@@ -6,6 +6,9 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
+### Adicionado (Início v3, atrás da flag `home_v2_enabled`, desligada)
+- **Nova tela Início**: topo com saudação e atalhos (Guia, crachá, avisos), um único cartão de foco "Continuar de onde parou", resumo do dia (anel da meta, sete pontos da semana, sequência), lista "Para hoje", faixa "Seus assuntos" e o bloco "Na Liga". Navegação responsiva só por CSS (barra embaixo, coluna de 88 px a partir de 768 px, menu com rótulos a partir de 1100 px). O bloco de gráficos antigo vira "Meu desempenho" no Perfil. Migração `049` (flags `home_v2_enabled` e `entrada_v2_enabled`, ambas desligadas) **pendente de aplicação**; pacote sob demanda `inicio3`. Com a flag desligada nada muda. Ver `docs/inicio-v3.md`.
+
 ### Adicionado (Destaques da Liga, atrás da flag `highlights_enabled`, desligada)
 - **Bloco "Na Liga" na Início**, gerenciado por admin ou cargo gestor (capacidade nova `home.curate`): adicionar, ocultar, ordenar, remover e data de saída automática; teto de 8 itens visíveis; próximos eventos e blog recente entram como "Automático", sem gravação. Migração `048` (`home_highlights` + flag) **pendente de aplicação**; sem ela o Worker devolve lista vazia, sem erro. Seis ações novas (`apiListHighlights`, `apiAdminListHighlights`, `apiAdminSaveHighlight`, `apiAdminSetHighlightActive`, `apiAdminReorderHighlights`, `apiAdminDeleteHighlight`), pacote sob demanda `destaques`, cache do shell v29. Ver `docs/destaques.md`.
 

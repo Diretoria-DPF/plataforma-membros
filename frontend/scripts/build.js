@@ -58,7 +58,7 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 });
 
 // Cargos funcionais (ADR 0010, ROL-03): menu Gestão, data-cap e o painel Cargos.
-['session-view.js', 'orgchart-edit.js', 'roles-ui.js', 'admin-roles.js', 'roles.css', 'highlights.js', 'highlights-manage.js', 'highlights.css', 'whats-new.js', 'entrada-v2.js', 'entrada-v2.css'].forEach((name) => {
+['session-view.js', 'orgchart-edit.js', 'roles-ui.js', 'admin-roles.js', 'roles.css', 'highlights.js', 'highlights-manage.js', 'highlights.css', 'whats-new.js', 'entrada-v2.js', 'entrada-v2.css', 'home-v3.js', 'home-v3.css'].forEach((name) => {
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 
