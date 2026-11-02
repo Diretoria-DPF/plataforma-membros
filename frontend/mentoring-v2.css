@@ -1,0 +1,84 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Mentoria v2 (mentoring-v2.js). Carregado sob demanda e só vale com a flag mentoring_v2_enabled (atributo
+   data-flag-mentoring-v2-enabled no <html>); sem a flag nada daqui se aplica. Tokens de modulos/shared/laift-tokens.css,
+   exceto o gradiente do cabeçalho (identidade, igual ao da Início v3). */
+
+:root[data-flag-mentoring-v2-enabled] { --m2-hero-a: #0f6f62; --m2-hero-b: #0a4f6b; }
+:root[data-flag-mentoring-v2-enabled][data-theme="dark"] { --m2-hero-a: #0c3f3a; --m2-hero-b: #0b2b45; }
+
+/* ===== Estrutura: cabeçalho em cima, duas colunas a partir de 900 px ===== */
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] { display: grid; gap: var(--density-gap, 16px); min-width: 0; }
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] #mentoring-body:not(.hidden) {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--density-gap, 16px); align-items: start; min-width: 0;
+}
+@media (min-width: 900px) {
+  :root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] #mentoring-body:not(.hidden) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+:root[data-flag-mentoring-v2-enabled] .m2-col { display: grid; gap: var(--density-gap, 16px); min-width: 0; align-content: start; }
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] .card { margin: 0; border-radius: var(--laift-radius-lg, 20px); min-width: 0; }
+
+/* ===== Cabeçalho ===== */
+:root[data-flag-mentoring-v2-enabled] .m2-hero {
+  position: relative; display: grid; gap: 12px; padding: 22px 18px; color: #fff; border: 0;
+  border-radius: var(--laift-radius-xl, 28px); min-width: 0;
+  background:
+    radial-gradient(120% 90% at 85% -10%, rgba(255, 255, 255, .22), transparent 55%),
+    linear-gradient(160deg, var(--m2-hero-a), var(--m2-hero-b));
+  box-shadow: var(--elev-2, 0 8px 24px rgba(8, 40, 36, .22));
+}
+:root[data-flag-mentoring-v2-enabled] .m2-hero h2 { margin: 0; font-size: 24px; line-height: 1.2; color: #fff; }
+:root[data-flag-mentoring-v2-enabled] .m2-hero h2:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+:root[data-flag-mentoring-v2-enabled] .m2-hero p { margin: 0; color: rgba(255, 255, 255, .92); font-size: 14px; }
+:root[data-flag-mentoring-v2-enabled] .m2-hero .status-msg:empty { display: none; }
+:root[data-flag-mentoring-v2-enabled] .m2-hero .status-msg:not(:empty),
+:root[data-flag-mentoring-v2-enabled] .m2-hero .gestao-aviso:not(.hidden) {
+  padding: 10px 12px; border-radius: var(--laift-radius-md, 14px); background: var(--layer-1); color: var(--laift-text); font-size: 14px;
+}
+
+/* Resumo com números reais */
+:root[data-flag-mentoring-v2-enabled] .m2-stats { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+:root[data-flag-mentoring-v2-enabled] .m2-stats[hidden] { display: none; }
+:root[data-flag-mentoring-v2-enabled] .m2-stat {
+  display: flex; align-items: baseline; gap: 8px; min-height: 44px; padding: 8px 14px;
+  border-radius: var(--laift-radius-md, 14px); background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .32);
+}
+:root[data-flag-mentoring-v2-enabled] .m2-stat__value { font-size: 22px; line-height: 1; color: #fff; }
+:root[data-flag-mentoring-v2-enabled] .m2-stat__label { font-size: 14px; color: rgba(255, 255, 255, .95); }
+
+/* ===== Linhas: avatar, etiqueta de situação, estado vazio ===== */
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] .mt-row {
+  gap: 12px; padding: 14px; flex-wrap: wrap; background: var(--layer-1); border-radius: var(--laift-radius-md, 14px);
+}
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] .mt-row[data-m2-status="active"] { border-color: var(--laift-primary); border-left-width: 4px; }
+:root[data-flag-mentoring-v2-enabled] .m2-av {
+  display: inline-grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(160deg, var(--m2-hero-a), var(--m2-hero-b)); color: #fff; font-size: 18px; font-weight: 700;
+}
+:root[data-flag-mentoring-v2-enabled] .m2-pill {
+  align-self: flex-start; padding: 2px 10px; border-radius: var(--laift-radius-pill, 999px); font-size: 12px; font-weight: 700;
+  border: 1px solid var(--laift-border-strong, var(--laift-border)); color: var(--laift-muted);
+}
+:root[data-flag-mentoring-v2-enabled] .m2-pill--ok { background: var(--laift-success-soft); color: var(--laift-success); border-color: var(--laift-success); }
+:root[data-flag-mentoring-v2-enabled] .m2-pill--wait { background: var(--laift-warning-soft); color: var(--laift-warning); border-color: var(--laift-warning); }
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] .mt-row__meta { font-size: 13px; }
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] #mentoring-body p.muted:not(.hidden):not(.mt-note) { font-size: 14px; }
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] #mentoring-as-mentee-empty:not(.hidden),
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] #mentoring-as-mentor-empty:not(.hidden),
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] #mentoring-mentors-empty:not(.hidden) {
+  padding: 14px; border: 1px dashed var(--laift-border-strong, var(--laift-border)); border-radius: var(--laift-radius-md, 14px); text-align: center;
+}
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] .mt-btn,
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] .mt-switch { border-radius: var(--laift-radius-md, 14px); min-height: 44px; }
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] .mt-badge { font-size: 14px; }
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] #btn-mentoring-available,
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] #mentoring-request-share { width: 100%; justify-content: flex-start; text-align: left; }
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] .mt-btn:focus-visible,
+:root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] .mt-switch:focus-visible { outline: 3px solid var(--laift-focus-color, var(--laift-primary)); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-flag-mentoring-v2-enabled] #panel-mentoring[data-m2] * { transition: none !important; animation: none !important; }
+}

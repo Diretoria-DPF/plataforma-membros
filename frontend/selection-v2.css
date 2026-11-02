@@ -1,0 +1,120 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Processo seletivo v2 (selection-v2.js). Carregado sob demanda e só vale com a flag selection_v2_enabled (atributo
+   data-flag-selection-v2-enabled no <html>); sem a flag nada daqui se aplica. Tokens de modulos/shared/laift-tokens.css,
+   exceto o gradiente do cabeçalho (identidade, igual ao da Início v3). */
+
+:root[data-flag-selection-v2-enabled] { --s2-hero-a: #0f6f62; --s2-hero-b: #0a4f6b; }
+:root[data-flag-selection-v2-enabled][data-theme="dark"] { --s2-hero-a: #0c3f3a; --s2-hero-b: #0b2b45; }
+
+/* ===== Cartão da jornada (todas as telas, inclusive carregando e erro) ===== */
+:root[data-flag-selection-v2-enabled] #selection-root .sel-card {
+  max-width: 880px; padding: 0 0 20px; gap: 16px; overflow: hidden; min-width: 0;
+  background: var(--layer-1); color: var(--laift-text); border-radius: var(--laift-radius-xl, 28px); border: 1px solid var(--hairline, var(--laift-border));
+  box-shadow: var(--elev-1, none);
+}
+:root[data-flag-selection-v2-enabled] #selection-root .sel-card > *:not(.s2-hero) { margin-left: 18px; margin-right: 18px; min-width: 0; }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-card[data-sel-load] { padding: 22px 0; }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-card[data-sel-load] > * { margin-left: 18px; margin-right: 18px; }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-card:not([data-s2]) .sel-title { font-size: 1.5rem; }
+@media (min-width: 720px) {
+  :root[data-flag-selection-v2-enabled] #selection-root .sel-card > *:not(.s2-hero) { margin-left: 28px; margin-right: 28px; }
+}
+
+/* ===== Cabeçalho ===== */
+:root[data-flag-selection-v2-enabled] .s2-hero {
+  display: grid; gap: 10px; padding: 24px 18px 22px; color: #fff; min-width: 0;
+  background:
+    radial-gradient(120% 90% at 85% -10%, rgba(255, 255, 255, .22), transparent 55%),
+    linear-gradient(160deg, var(--s2-hero-a), var(--s2-hero-b));
+}
+@media (min-width: 720px) { :root[data-flag-selection-v2-enabled] .s2-hero { padding: 28px; } }
+:root[data-flag-selection-v2-enabled] .s2-hero .sel-title { margin: 0; font-size: 1.5rem; line-height: 1.2; color: #fff; }
+:root[data-flag-selection-v2-enabled] .s2-hero .sel-title:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+:root[data-flag-selection-v2-enabled] .s2-hero .sel-intro { margin: 0; color: rgba(255, 255, 255, .92); font-size: 14px; }
+:root[data-flag-selection-v2-enabled] .s2-hero .sel-deadline { margin: 0; color: #fff; font-size: 14px; font-weight: 700; }
+:root[data-flag-selection-v2-enabled] .s2-hero .sel-receipt { margin: 0; background: rgba(255, 255, 255, .18); color: #fff; }
+:root[data-flag-selection-v2-enabled] .s2-hero__kicker { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255, 255, 255, .88); }
+
+/* Progresso */
+:root[data-flag-selection-v2-enabled] .s2-progress { display: grid; gap: 6px; }
+:root[data-flag-selection-v2-enabled] .s2-bar { height: 10px; border-radius: 999px; background: rgba(255, 255, 255, .28); overflow: hidden; }
+:root[data-flag-selection-v2-enabled] .s2-bar > i { display: block; height: 100%; width: var(--p, 0%); border-radius: inherit; background: #fff; }
+:root[data-flag-selection-v2-enabled] .s2-progress__text { margin: 0; font-size: 13px; color: rgba(255, 255, 255, .95); }
+
+/* Ações dentro do cabeçalho: botão claro sobre o gradiente */
+:root[data-flag-selection-v2-enabled] .s2-hero .sel-actions { margin-top: 4px; }
+:root[data-flag-selection-v2-enabled] .s2-hero .sel-actions .sel-primary { background: #fff; color: #0a4f6b; border: 1px solid #fff; border-radius: var(--laift-radius-md, 14px); padding: 0 22px; }
+:root[data-flag-selection-v2-enabled] .s2-hero .sel-actions .sel-link { color: #fff; }
+:root[data-flag-selection-v2-enabled] .s2-hero a:focus-visible,
+:root[data-flag-selection-v2-enabled] .s2-hero button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* ===== Aviso sobre dados de saúde ===== */
+:root[data-flag-selection-v2-enabled] .s2-notice {
+  display: block; padding: 12px 14px; border-radius: var(--laift-radius-md, 14px); font-size: 14px;
+  background: var(--laift-warning-soft); color: var(--laift-text); border: 1px solid var(--laift-warning); border-left-width: 5px;
+}
+
+/* ===== Lista de etapas (rascunho) ===== */
+:root[data-flag-selection-v2-enabled] .s2-steps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+:root[data-flag-selection-v2-enabled] .s2-steps__item {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 10px 14px; text-align: left;
+  border: 1px solid var(--laift-border); border-radius: var(--laift-radius-md, 14px); background: var(--layer-1); color: var(--laift-text);
+}
+:root[data-flag-selection-v2-enabled] button.s2-steps__item { cursor: pointer; }
+:root[data-flag-selection-v2-enabled] button.s2-steps__item:hover { border-color: var(--laift-primary); }
+:root[data-flag-selection-v2-enabled] button.s2-steps__item:focus-visible { outline: 3px solid var(--laift-focus-color, var(--laift-primary)); outline-offset: 2px; }
+:root[data-flag-selection-v2-enabled] .s2-steps__item.is-todo { opacity: .75; border-style: dashed; }
+:root[data-flag-selection-v2-enabled] .s2-steps__item.is-current { border-color: var(--laift-primary); background: var(--laift-primary-soft); }
+:root[data-flag-selection-v2-enabled] .s2-steps__n {
+  display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--laift-border); color: var(--laift-text); font-size: 14px; font-weight: 700;
+}
+:root[data-flag-selection-v2-enabled] .is-done .s2-steps__n { background: var(--laift-success-soft); color: var(--laift-success); }
+:root[data-flag-selection-v2-enabled] .is-current .s2-steps__n { background: var(--laift-primary); color: var(--laift-on-primary); }
+:root[data-flag-selection-v2-enabled] .s2-steps__t { display: grid; gap: 2px; min-width: 0; }
+:root[data-flag-selection-v2-enabled] .s2-steps__t small { font-size: 13px; color: var(--laift-muted); }
+
+/* ===== Como funciona ===== */
+:root[data-flag-selection-v2-enabled] .s2-how { display: grid; gap: 8px; padding: 14px 16px; border-radius: var(--laift-radius-md, 14px); background: var(--laift-primary-soft); border: 1px solid var(--laift-border); }
+:root[data-flag-selection-v2-enabled] .s2-how__t { margin: 0; font-size: 1rem; }
+:root[data-flag-selection-v2-enabled] .s2-how__l { display: grid; gap: 6px; margin: 0; padding-left: 20px; font-size: 14px; }
+:root[data-flag-selection-v2-enabled] .s2-how__links { margin: 0; font-size: 14px; }
+:root[data-flag-selection-v2-enabled] .s2-how__links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--laift-primary-strong); font-weight: 600; }
+
+/* ===== Passo a passo, linhas, campos e resumo (mesmos nós de sempre, novo visual) ===== */
+:root[data-flag-selection-v2-enabled] #selection-root .sel-steps { margin-top: 0; }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-step { font-size: 13px; }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-how { border-radius: var(--laift-radius-md, 14px); }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-points li,
+:root[data-flag-selection-v2-enabled] #selection-root .sel-sum,
+:root[data-flag-selection-v2-enabled] #selection-root .sel-fieldset,
+:root[data-flag-selection-v2-enabled] #selection-root .sel-choice { background: var(--layer-1); border-radius: var(--laift-radius-md, 14px); }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-choice:has(input:checked) { background: var(--laift-primary-soft); }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-hint,
+:root[data-flag-selection-v2-enabled] #selection-root .sel-counter,
+:root[data-flag-selection-v2-enabled] #selection-root .sel-points span { font-size: 13px; }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-timeline li { font-size: 13px; }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-actions button { border-radius: var(--laift-radius-md, 14px); }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-primary { background: var(--laift-primary); color: var(--laift-on-primary); border: 1px solid var(--laift-primary); }
+:root[data-flag-selection-v2-enabled] #selection-root .s2-hero .sel-primary { background: #fff; color: #0a4f6b; border-color: #fff; }
+:root[data-flag-selection-v2-enabled] #selection-root input:not([type="checkbox"]):not([type="radio"]),
+:root[data-flag-selection-v2-enabled] #selection-root select,
+:root[data-flag-selection-v2-enabled] #selection-root textarea { min-height: 44px; border-radius: var(--laift-radius-md, 14px); font-size: 16px; }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-live:empty { min-height: 0; }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-live.error { padding: 10px 12px; border-radius: var(--laift-radius-md, 14px); background: var(--laift-danger-soft); color: var(--laift-danger); }
+:root[data-flag-selection-v2-enabled] #selection-root .sel-card[data-s2] .sel-steps ol { padding-bottom: 2px; }
+
+@media (min-width: 900px) {
+  :root[data-flag-selection-v2-enabled] #selection-root .sel-card[data-s2="welcome"] { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; }
+  :root[data-flag-selection-v2-enabled] #selection-root .sel-card[data-s2="welcome"] > .s2-hero,
+  :root[data-flag-selection-v2-enabled] #selection-root .sel-card[data-s2="welcome"] > .s2-notice,
+  :root[data-flag-selection-v2-enabled] #selection-root .sel-card[data-s2="welcome"] > .sel-live { grid-column: 1 / -1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-flag-selection-v2-enabled] #selection-root * { transition: none !important; animation: none !important; }
+}

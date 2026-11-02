@@ -423,6 +423,13 @@
 
   var VIEWS = { welcome: renderWelcome, intro: renderIntro, profile: renderProfile, scenario: renderScenario, thinking: renderThinking, conduct: renderConduct, review: renderReview, status: renderStatus };
 
+  /** Avisa o Processo seletivo v2 (selection-v2.js, só com a flag) de que a tela foi desenhada; sem ouvinte, não faz nada. */
+  function notifyRendered(view) {
+    try {
+      if (ui.doc && typeof root.CustomEvent === 'function') ui.doc.dispatchEvent(new root.CustomEvent('laift:selection-render', { detail: { view: view } }));
+    } catch (e) { /* só enfeite: a jornada de sempre não depende disso */ }
+  }
+
   function go(view, notice) {
     var app = ui.state.application;
     var target = VIEWS[view] ? view : 'welcome';
@@ -430,6 +437,7 @@
     ui.state.view = target;
     clear(ui.root);
     ui.root.appendChild(VIEWS[target]());
+    notifyRendered(target); // antes do foco: a Seletivo v2 pode reposicionar nós
     var title = ui.root.querySelector('#sel-title');
     if (title && title.focus) title.focus();
     if (notice) say(notice, 'info');
@@ -485,7 +493,13 @@
     return reload();
   }
 
+  /** Estado da jornada ({ overview, application, content, view }) para a v2 desenhar sem nova chamada à API. */
+  function snapshot() { return ui ? ui.state : null; }
+  /** Abre uma etapa pelo mesmo caminho do passo a passo (go respeita as regras de acesso). */
+  function openView(view) { if (ui) go(view); }
+
   var api = {
+    snapshot: snapshot, openView: openView,
     STEPS: STEPS, STATUS_TEXT: STATUS_TEXT, stepIndex: stepIndex, daysLeft: daysLeft, deadlineText: deadlineText, charInfo: charInfo,
     timeline: timeline, initialView: initialView, canVisit: canVisit, formatReviewDate: formatReviewDate, loadOutcome: loadOutcome, load: loadPanel,
   };

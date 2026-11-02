@@ -1406,6 +1406,22 @@
     withBundle('perfil2', function () { if (window.LaiftProfileV2) window.LaiftProfileV2.mount(window.App, document); });
   }
 
+  // Mentoria v2 (flag mentoring_v2_enabled; docs/mentoria-v2.md): o pacote mentoria2 só reposiciona e enfeita os nós da tela de
+  // sempre (mentoring.js continua dono dos dados e das ações). Flag desligada, ou pacote que falhou: a tela de sempre.
+  function mentoringV2On() { return document.documentElement.hasAttribute('data-flag-mentoring-v2-enabled'); }
+  function mountMentoringV2() {
+    if (!mentoringV2On()) { if (window.LaiftMentoringV2) window.LaiftMentoringV2.reset(); return; }
+    withBundle('mentoria2', function () { if (window.LaiftMentoringV2) window.LaiftMentoringV2.mount(window.App, document); });
+  }
+
+  // Processo seletivo v2 (flag selection_v2_enabled; docs/seletivo-v2.md): o pacote seletivo2 só desenha por cima da jornada de
+  // sempre (selection.js). Com a flag ligada, espera o pacote antes de abrir a jornada; se falhar, abre a de sempre.
+  function selectionV2On() { return document.documentElement.hasAttribute('data-flag-selection-v2-enabled'); }
+  function selectionV2Ready() {
+    if (!selectionV2On()) return Promise.resolve(false);
+    return new Promise(function (resolve) { withBundle('seletivo2', function () { resolve(!!window.LaiftSelectionV2); }); });
+  }
+
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
     'panel-home': function () {
@@ -1421,7 +1437,7 @@
     'panel-tasks': loadTasks,
     'panel-orgchart': loadOrgChartPanel,
     // Mentoria (ROL-04; frontend/mentoring.js, pacote sob demanda; o item do menu só aparece com a flag mentoring_enabled).
-    'panel-mentoring': function () { withBundle('mentoria', function () { if (window.LaiftMentoring) window.LaiftMentoring.load(window.App); }); },
+    'panel-mentoring': function () { withBundle('mentoria', function () { if (window.LaiftMentoring) window.LaiftMentoring.load(window.App); mountMentoringV2(); }); },
     'panel-profile': function () {
       loadProfileAndPreferences();
       if (window.LaiftMfa) window.LaiftMfa.load(window.App);
@@ -1455,7 +1471,7 @@
     // Biblioteca LAIFT (CONTRATO-B2 §7). Fora de MEMBER_PANEL_ORDER de propósito (§1: gate por flag só no CSS).
     'panel-library': function () { if (window.LaiftLibrary) window.LaiftLibrary.loadPanel(); },
     // Processo seletivo (selection.js): jornada do candidato; só aparece no menu de quem ainda não é membro.
-    'panel-selection': function () { if (window.LaiftSelection) window.LaiftSelection.load(window.App, document); },
+    'panel-selection': function () { selectionV2Ready().then(function () { if (window.LaiftSelection) window.LaiftSelection.load(window.App, document); }); },
     'panel-admin-selection': function () { withBundle('admin', function () { if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.load(window.App, document); }); },
     'panel-admin-privacy': function () { withBundle('admin', function () { if (window.LaiftPrivacyAdmin) window.LaiftPrivacyAdmin.load(window.App, document); }); },
     'panel-admin-library': function () { withBundle('admin', function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); }); },
