@@ -11,6 +11,7 @@
 //
 //  - admin: carregado quando um painel administrativo abre (app.js);
 //  - destaques: carregado quando a flag highlights_enabled está ligada (Início) ou a tela de gestão abre (app.js);
+//  - novidades: carregado após o login (uma vez por versão) ou ao abrir "Ver novidades" no Perfil;
 //  - lia: carregado logo após o login e, para quem só visita, quando o navegador
 //    fica ocioso depois do evento load (fora do caminho crítico).
 // Cada pacote é carregado uma única vez; se falhar (sem rede e sem cache), a
@@ -29,6 +30,9 @@
     ],
     // Destaques da Liga: bloco "Na Liga" da Início (flag highlights_enabled) e a tela de gestão (home.curate).
     destaques: ['highlights.js', 'highlights-manage.js'],
+    // Novidades (ENG-07): aviso uma vez por versão no login e "Ver novidades" no Perfil. O estilo do diálogo
+    // (laift-dialog.css) vem no index.html; aqui só o script.
+    novidades: ['modulos/shared/laift-dialog.js', 'whats-new.js'],
     lia: [
       'modulos/shared/lia/lia-art.js', 'modulos/shared/lia/lia-states.js', 'modulos/shared/lia/lia-mood.js',
       'assistant-mood-glue.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia-props.js',

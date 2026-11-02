@@ -31,6 +31,7 @@ const fs = require('fs');
 const path = require('path');
 const { gzipSync } = require('zlib');
 
+const WHATS_NEW = require('../../whats-new.js');
 const DIST = path.join(__dirname, '..', '..', 'dist');
 // Id do perfil simulado. O cliente só sabe qual chave de "onboarding visto" usar com este id
 // (frontend/onboarding.js: laift_onboarding_seen_<profileId>).
@@ -181,6 +182,8 @@ function defaultWorkerReply(action, args, ctx) {
  * @param {object} [opts.atlasFlags] chaves do Atlas (js/core/flags.js); padrão desliga apresentação e dicas
  * @param {string[]} [opts.launchArgs]  flags extras do Chromium (ex.: câmera falsa para o leitor de QR)
  * @param {string[]} [opts.permissions]  permissões concedidas ao contexto (ex.: ['camera'])
+ * @param {boolean} [opts.whatsNew]  true = as Novidades (frontend/whats-new.js) ainda não foram vistas e o aviso aparece.
+ *   Padrão false: a versão atual já vem marcada como vista, para o diálogo não bloquear os outros cenários.
  * @param {boolean} [opts.firstLogin]  true = primeira entrada da pessoa: o onboarding por papel aparece.
  *   Padrão false: o onboarding já vem marcado como visto (laift_onboarding_seen_<id>), para não bloquear a UI.
  */
@@ -218,6 +221,12 @@ async function startApp(opts = {}) {
     await context.addInitScript((key) => {
       try { window.localStorage.setItem(key, '1'); } catch (err) { /* storage bloqueado: o diálogo aparece */ }
     }, ONBOARDING_SEEN_PREFIX + ctx.profile.id);
+  }
+
+  if (!opts.whatsNew) {
+    await context.addInitScript(([key, version]) => {
+      try { window.localStorage.setItem(key, version); } catch (err) { /* storage bloqueado: o aviso aparece */ }
+    }, [WHATS_NEW.STORAGE_KEY, WHATS_NEW.VERSION]);
   }
 
   await context.route('**/*', async (route) => {

@@ -343,6 +343,21 @@ header .subtitle {
 .option.selected { border-color: var(--laift-info); background: var(--laift-info-soft); font-weight: 700; }
 .option.correct { border-color: var(--laift-success); background: var(--laift-success-soft); color: var(--laift-success); }
 .option.incorrect { border-color: var(--laift-danger); background: var(--laift-danger-soft); color: var(--laift-danger); }
+/* Microinteração de acerto/erro (ENG-05): escala curta; só sem preferência de movimento reduzido. */
+@media (prefers-reduced-motion: no-preference) {
+  .option.feedback-pop.correct { animation: quiz-pop-correct 280ms ease-out; }
+  .option.feedback-pop.incorrect { animation: quiz-pop-incorrect 280ms ease-out; }
+}
+@keyframes quiz-pop-correct {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 var(--laift-success-soft); }
+  45% { transform: scale(1.03); box-shadow: 0 0 0 6px var(--laift-success-soft); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 transparent; }
+}
+@keyframes quiz-pop-incorrect {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 var(--laift-danger-soft); }
+  45% { transform: scale(0.97); box-shadow: 0 0 0 6px var(--laift-danger-soft); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 transparent; }
+}
 .option-text { min-width: 0; overflow-wrap: anywhere; }
 
 .option-letter {

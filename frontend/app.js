@@ -637,17 +637,18 @@
   // O CSS do visual v2 se condiciona a data-flag-ux-v2-enabled; sem a flag vale a UI anterior.
   // Memoizado por token: o login/logout pede de novo, a navegação entre telas não.
   var uiFlagsKey = null;
+  var uiFlagsPending = null; // promessa da última leitura das flags (as Novidades esperam por ela)
   function refreshUiFlags() {
     var key = state.sessionToken || '';
     if (!window.LaiftUx || uiFlagsKey === key) return;
     uiFlagsKey = key;
-    callApi('apiGetFeatureFlags', key).then(function (res) {
+    uiFlagsPending = callApi('apiGetFeatureFlags', key).then(function (res) {
       if (res && res.success === true) {
         window.LaiftUx.applyAndRememberFlags(document.documentElement, res.flags, window.localStorage);
         if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
       }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
-    });
+    }).catch(function () { /* sem rede: segue sem flags novas */ });
   }
 
   // Avisa a splash (splash.js) e quem mais precisar de que a primeira tela está pronta.
@@ -1177,7 +1178,26 @@
       if (!state.profile) return; // saiu da conta enquanto o pacote chegava
       if (liaJaCarregada && window.LaiftAssistant) window.LaiftAssistant.refresh();
       // Primeira entrada da pessoa: apresentação curta por papel (a Guia e o crachá); depois da Guia, que ela cita.
-      if (window.LaiftOnboarding) window.LaiftOnboarding.maybeShow({ role: perfilEntrada.role, profileId: perfilEntrada.id });
+      var onboardingOpened = window.LaiftOnboarding
+        ? window.LaiftOnboarding.maybeShow({ role: perfilEntrada.role, profileId: perfilEntrada.id })
+        : false;
+      showWhatsNew(onboardingOpened);
+    });
+  }
+
+  // Novidades (ENG-07): aviso curto, uma vez por versão. Quem acabou de ver o onboarding é pessoa nova na
+  // plataforma: as novidades ficam como vistas, sem segundo diálogo na mesma entrada.
+  // Espera (até 2 s) as flags públicas chegarem, para a entrada dos destaques da Liga refletir a flag.
+  var WHATS_NEW_FLAGS_WAIT_MS = 2000;
+  function showWhatsNew(skipForNewcomer) {
+    withBundle('novidades', function () {
+      var flagsReady = uiFlagsPending || Promise.resolve();
+      var timeout = new Promise(function (resolve) { setTimeout(resolve, WHATS_NEW_FLAGS_WAIT_MS); });
+      Promise.race([flagsReady, timeout]).then(function () {
+        if (!state.profile || !window.LaiftWhatsNew) return;
+        if (skipForNewcomer) window.LaiftWhatsNew.markSeen();
+        else window.LaiftWhatsNew.maybeShow();
+      });
     });
   }
 
@@ -2168,6 +2188,7 @@
 
       document.getElementById('pref-theme').value = res.preferences.theme;
       document.getElementById('pref-email-notif').checked = !!res.preferences.emailNotifications;
+      document.getElementById('pref-vibration').checked = isVibrationOn();
 
       applyPreferences(res.preferences);
     });
@@ -2281,8 +2302,24 @@
     });
   });
 
+  // Vibração do quiz (ENG-05): preferência só deste aparelho (localStorage, padrão ligada); o motor do quiz
+  // lê a mesma chave em modulos/shared/quiz-feedback.js. Storage bloqueado nunca lança.
+  var VIBRATION_KEY = 'laift_vibration';
+  function isVibrationOn() {
+    try { return window.localStorage.getItem(VIBRATION_KEY) !== '0'; } catch (e) { return true; }
+  }
+  function setVibration(on) {
+    try { window.localStorage.setItem(VIBRATION_KEY, on ? '1' : '0'); } catch (e) { /* storage bloqueado: vale o padrão */ }
+  }
+  document.getElementById('pref-vibration').checked = isVibrationOn();
+
+  document.getElementById('btn-whats-new').addEventListener('click', function () {
+    withBundle('novidades', function () { if (window.LaiftWhatsNew) window.LaiftWhatsNew.show(); });
+  });
+
   document.getElementById('form-preferences').addEventListener('submit', function (evt) {
     evt.preventDefault();
+    setVibration(document.getElementById('pref-vibration').checked);
     var payload = {
       theme: document.getElementById('pref-theme').value,
       emailNotifications: document.getElementById('pref-email-notif').checked,
