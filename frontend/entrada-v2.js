@@ -39,6 +39,13 @@
     { titulo: 'Responda o quiz do dia', texto: 'Entre e comece a estudar pela questão de hoje.' },
     { titulo: 'Volte amanhã', texto: 'Sequência e meta diária só para você, sem ranking público.' },
   ];
+  // Atalhos em destaque (corpo da página, não só no rodapé). Ícones do sprite blog/icones.svg.
+  var EXPLORAR = [
+    { titulo: 'Conheça a LAIFT', texto: 'Quem somos, o que fazemos e como participar.', href: 'liga.html', icone: 'liga' },
+    { titulo: 'Blog', texto: 'Novidades, campanhas e conteúdo da Liga.', href: 'blog.html', icone: 'novidades' },
+    { titulo: 'Biblioteca', texto: 'Artigos de farmacologia e toxicologia para consultar.', href: '/biblioteca', icone: 'aprender' },
+    { titulo: 'Processo seletivo', texto: 'Inscrições abertas para entrar na Liga.', href: 'processo-seletivo.html', icone: 'bemvindo' },
+  ];
   var LINKS = [
     ['Termos', 'termos.html'], ['Privacidade', 'privacidade.html'], ['Blog', 'blog.html'],
     ['Processo seletivo', 'processo-seletivo.html'], ['Biblioteca', '/biblioteca'], ['Conheça a LAIFT', 'liga.html'],
@@ -189,8 +196,8 @@
     wrap.appendChild(no(doc, 'p', 'ev2-sub', 'Quiz do dia, Atlas 3D, a Guia e a comunidade da Liga. Tudo no seu celular, no seu ritmo.'));
     var ctas = no(doc, 'div', 'ev2-ctas');
     ctas.appendChild(botao(doc, 'ev2-btn ev2-btn--pri', 'Criar conta', 'criar'));
-    var conhecer = botao(doc, 'ev2-btn ev2-btn--sec', 'Conhecer a plataforma');
-    conhecer.setAttribute('data-ev2-conhecer', '1');
+    var conhecer = no(doc, 'a', 'ev2-btn ev2-btn--sec', 'Conheça a LAIFT');
+    conhecer.href = 'liga.html';
     ctas.appendChild(conhecer);
     wrap.appendChild(ctas);
     wrap.appendChild(no(doc, 'p', 'ev2-micro', 'Confirmação por e-mail.'));
@@ -204,6 +211,35 @@
     var trilho = no(doc, 'div', 'ev2-trilho');
     VITRINE.forEach(function (item) { trilho.appendChild(cartaoVitrine(doc, item)); });
     s.appendChild(trilho);
+    return s;
+  }
+
+  function iconeExplorar(doc, id) {
+    var svg = doc.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'ev2-explorar__icone');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    var uso = doc.createElementNS(SVG_NS, 'use');
+    uso.setAttribute('href', 'blog/icones.svg#' + id);
+    svg.appendChild(uso);
+    return svg;
+  }
+
+  function construirExplorar(doc) {
+    var s = secao(doc, 'ev2-explorar', 'ev2-explorar-t', 'Explore a LAIFT');
+    var nav = no(doc, 'nav', 'ev2-explorar__lista');
+    nav.setAttribute('aria-label', 'Conheça a LAIFT, o blog, a Biblioteca e o processo seletivo');
+    EXPLORAR.forEach(function (item) {
+      var a = no(doc, 'a', 'ev2-explorar__item');
+      a.href = item.href;
+      a.appendChild(iconeExplorar(doc, item.icone));
+      var texto = no(doc, 'span', 'ev2-explorar__texto');
+      texto.appendChild(no(doc, 'strong', null, item.titulo));
+      texto.appendChild(no(doc, 'span', null, item.texto));
+      a.appendChild(texto);
+      nav.appendChild(a);
+    });
+    s.appendChild(nav);
     return s;
   }
 
@@ -260,6 +296,7 @@
     pagina.appendChild(construirHeroi(doc));
     var main = no(doc, 'div', 'ev2-corpo');
     main.appendChild(construirVitrine(doc));
+    main.appendChild(construirExplorar(doc));
     main.appendChild(construirPassos(doc));
     main.appendChild(construirSecaoVazia(doc, 'ev2-liga', 'ev2-liga', 'Acontecendo na Liga'));
     main.appendChild(construirSecaoVazia(doc, 'ev2-blog', 'ev2-blog', 'Novidades do blog'));
@@ -509,11 +546,6 @@
     function aoClicarPagina(ev) {
       var gatilhoAbrir = ev.target.closest('[data-ev2-abrir]');
       if (gatilhoAbrir) { abrir(gatilhoAbrir.getAttribute('data-ev2-abrir'), gatilhoAbrir); return; }
-      if (!ev.target.closest('[data-ev2-conhecer]')) return;
-      var alvo = doc.getElementById('ev2-vitrine');
-      alvo.scrollIntoView({ behavior: reduzMovimento(win) ? 'auto' : 'smooth', block: 'start' });
-      alvo.querySelector('h2').tabIndex = -1;
-      alvo.querySelector('h2').focus({ preventScroll: true });
     }
 
     function observar(alvo, opcoes, fn) {
@@ -624,7 +656,7 @@
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
       FLAG_ATTR: FLAG_ATTR, escolherEventos: escolherEventos, rotuloData: rotuloData, escolherPosts: escolherPosts, rotuloDataPost: rotuloDataPost,
-      abaPorTecla: abaPorTecla, armadilha: armadilha, abaDaHash: abaDaHash, VITRINE: VITRINE, PASSOS: PASSOS, LINKS: LINKS,
+      abaPorTecla: abaPorTecla, armadilha: armadilha, abaDaHash: abaDaHash, VITRINE: VITRINE, PASSOS: PASSOS, LINKS: LINKS, EXPLORAR: EXPLORAR,
     };
     return;
   }
