@@ -1576,11 +1576,6 @@
     if (!eventsV2On()) return Promise.resolve(false);
     return new Promise(function (resolve) { withBundle('eventos2', function () { resolve(!!window.LaiftEventsV2); }); });
   }
-  // A mensagem vai à região de aviso da tela de sempre e à da v2 (leitor de tela); a que não existe é ignorada.
-  function setEventsStatus(message, kind) {
-    setStatus('events-status', message, kind);
-    setStatus('events-v2-status', message, kind);
-  }
   function eventsV2Context() {
     return {
       doc: document, loggedIn: !!state.sessionToken, formatDate: formatDate, canCancel: function (item) { return canCancelRegistration(item, Date.now()); },
@@ -1591,19 +1586,19 @@
   function loadEvents() {
     var v2 = eventsV2Ready();
     v2.then(function (on) { if (on) window.LaiftEventsV2.renderLoading(document); });
-    setEventsStatus('Carregando eventos...', 'info');
+    setStatus('events-status', 'Carregando eventos...', 'info');
     showSkeleton('events-list', 3);
     var loaded = Promise.all([v2, callApi('apiListEvents', state.sessionToken || '')]).then(function (all) {
       var useV2 = all[0], res = all[1];
       if (useV2) {
-        if (!res.success) { setEventsStatus('', null); window.LaiftEventsV2.renderEventsError(document, res, loadEvents); return; }
-        setEventsStatus('', null);
+        if (!res.success) { setStatus('events-status', '', null); window.LaiftEventsV2.renderEventsError(document, res, loadEvents); return; }
+        setStatus('events-status', '', null);
         window.LaiftEventsV2.renderEvents(eventsV2Context(), res.events);
         return;
       }
       if (window.LaiftEventsV2) window.LaiftEventsV2.reset(document);
-      if (!res.success) { clearSkeleton('events-list'); setEventsStatus(res.message, 'error'); return; }
-      setEventsStatus('', null);
+      if (!res.success) { clearSkeleton('events-list'); setStatus('events-status', res.message, 'error'); return; }
+      setStatus('events-status', '', null);
       renderList('events-list', res.events, renderEventItem, 'Não há eventos publicados no momento.');
       renderEventsOccupancy(ensureEventsOccupancyContainer(), res.events);
     });
@@ -1713,7 +1708,7 @@
   function registerForEvent(eventId) {
     callApi('apiRegisterForEvent', state.sessionToken, eventId).then(function (res) {
       loadEvents().then(function () {
-        setEventsStatus(res.message, res.success ? 'success' : 'error');
+        setStatus('events-status', res.message, res.success ? 'success' : 'error');
       });
     });
   }
@@ -1732,7 +1727,7 @@
     openConfirm('Cancelar sua inscrição neste evento?', function () {
       callApi('apiCancelEventRegistration', state.sessionToken, eventId).then(function (res) {
         loadEvents().then(function () {
-          setEventsStatus(res.message, res.success ? 'success' : 'error');
+          setStatus('events-status', res.message, res.success ? 'success' : 'error');
         });
       });
     });

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /* Eventos v2 (events-v2.js). Carregado sob demanda e só vale com a flag events_v2_enabled
    (atributo data-flag-events-v2-enabled no <html>); sem a flag nada daqui se aplica. Só tokens de
    modulos/shared/laift-tokens.css, exceto o gradiente do topo e o azul do destaque (identidade da tela). */
@@ -58,7 +63,7 @@
 .ev2-next__meta { position: relative; margin: 0; color: var(--laift-muted); }
 .ev2-next__card .ev2-tags { position: relative; margin-top: 10px; }
 .ev2-next__card .ev2-btn { position: relative; margin-top: 14px; min-height: 52px; font-size: 17px; }
-.ev2-next__card .ev2-btn:not(.ev2-btn--sec) { background: var(--ev2-accent); }
+.ev2-next__card .ev2-btn:not(.ev2-btn--sec) { background: #2455a6; color: #fff; }
 .ev2-btn--wide { width: 100%; }
 @media (min-width: 640px) { .ev2-btn--wide { width: auto; padding: 0 28px; } }
 
@@ -80,7 +85,7 @@
 }
 .ev2-chip[aria-pressed="true"] { background: var(--laift-primary); border-color: transparent; color: var(--laift-on-primary); }
 
-.ev2-status { margin: 0; min-height: 20px; font-size: 14px; color: var(--laift-muted); }
+.ev2-status { margin: 0; min-height: 0; font-size: 14px; color: var(--laift-muted); }
 .ev2-status[data-kind="error"] { color: var(--danger, #b3261e); }
 .ev2-status[data-kind="success"] { color: var(--laift-primary-strong); }
 

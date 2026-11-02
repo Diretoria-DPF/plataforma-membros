@@ -1,15 +1,20 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 // Eventos v2 (flag events_v2_enabled; docs/eventos-v2.md): próximo evento em destaque, filtros (Todos, Minhas inscrições,
 // Com vagas), cartões com Inscrever-se / Cancelar inscrição e o histórico de concluídos. Os dados e as ações são os de
 // sempre: o app.js continua chamando apiListEvents, apiRegisterForEvent, apiCancelEventRegistration e
 // apiListRecentCompletedEvents e entrega o resultado a este módulo, que só desenha. Carregado SOB DEMANDA (pacote
-// "eventos2" de lazy-bundles.js). Só DOM seguro: createElement, createElementNS e textContent (nada de innerHTML).
+// "eventos2" de lazy-bundles.js). Só DOM seguro: createElement, createElementNS e textContent (HTML montado só por nós).
 // Expõe window.LaiftEventsV2; em Node (testes) exporta as funções puras.
 (function (root) {
   'use strict';
 
   var HOST_ID = 'events-v2';
   var PANEL_ID = 'panel-events';
-  var STATUS_ID = 'events-v2-status';
+  var OLD_STATUS_ID = 'events-status';
   var STYLE_HREF = 'events-v2.css';
   var SVG_NS = 'http://www.w3.org/2000/svg';
   var MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
@@ -22,6 +27,7 @@
   function plural(n, one, many) { return n === 1 ? one : many; }
 
   function toDate(iso) {
+    if (iso === null || iso === undefined || iso === '') return null;
     var d = new Date(iso);
     return isNaN(d.getTime()) ? null : d;
   }
@@ -253,14 +259,18 @@
     var slots = {
       next: el(doc, 'section', 'ev2-next'),
       filters: el(doc, 'div', 'ev2-filters'),
-      status: el(doc, 'p', 'ev2-status'),
+      status: doc.getElementById(OLD_STATUS_ID) || el(doc, 'p', ''),
       list: el(doc, 'section', 'ev2-section'),
       hist: el(doc, 'section', 'ev2-section'),
     };
     slots.next.setAttribute('aria-label', 'Próximo evento');
     slots.filters.setAttribute('role', 'group');
     slots.filters.setAttribute('aria-label', 'Filtrar eventos');
-    slots.status.id = STATUS_ID;
+    // O aviso é o mesmo da tela de sempre (#events-status, role=status): o app.js escreve nele com setStatus e este módulo
+    // só o muda de lugar (volta para o cartão antigo em reset()).
+    slots.statusHome = slots.status.parentNode ? { parent: slots.status.parentNode, before: slots.status.nextSibling } : null;
+    slots.status.classList.add('ev2-status');
+    if (!slots.status.id) slots.status.id = OLD_STATUS_ID;
     slots.status.setAttribute('role', 'status');
     slots.status.setAttribute('aria-live', 'polite');
     slots.list.setAttribute('aria-labelledby', 'ev2-h-list');
@@ -422,6 +432,8 @@
   function reset(doc) {
     var host = doc && doc.getElementById(HOST_ID);
     var panel = doc && doc.getElementById(PANEL_ID);
+    var home = view && view.slots.statusHome;
+    if (home && home.parent) home.parent.insertBefore(view.slots.status, home.before || null);
     if (host && host.parentNode) host.parentNode.removeChild(host);
     if (panel) panel.removeAttribute('data-v2');
     view = null;

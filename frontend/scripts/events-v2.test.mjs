@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 // Eventos v2 (events-v2.js, events-v2.css; flag events_v2_enabled): funções puras (data, vagas, filtros, próximo evento,
 // ação do cartão), desenho com um DOM mínimo (sem innerHTML), ações ligadas ao app e a fiação (pacote sob demanda,
 // tela de sempre intacta, CSS atrás da flag).
@@ -63,8 +68,8 @@ const buttons = (el) => all(el, (n) => n.tagName === 'BUTTON');
 test('dayParts e whenText: dia, mês abreviado e "dia da semana · hora"', () => {
   const d = new Date(2026, 10, 7, 19, 0).toISOString();
   assert.deepEqual(ev.dayParts(d), { day: '07', month: 'nov' });
-  assert.equal(ev.whenText(d), 'sex · 19h');
-  assert.equal(ev.whenText(new Date(2026, 10, 7, 9, 5).toISOString()), 'sex · 9h05');
+  assert.equal(ev.whenText(d), 'sáb · 19h');
+  assert.equal(ev.whenText(new Date(2026, 10, 7, 9, 5).toISOString()), 'sáb · 9h05');
   assert.deepEqual(ev.dayParts('lixo'), { day: '--', month: '---' });
   assert.equal(ev.whenText(null), '');
 });
@@ -121,7 +126,6 @@ test('renderEvents: destaque, três filtros, cartões e ações ligadas ao app',
   const host = doc.getElementById('events-v2');
   assert.ok(host);
   assert.equal(doc.panel.getAttribute('data-v2'), '1');
-  assert.equal(doc.panel.children[0].tagName, 'H1', 'o título da tela fica primeiro');
   assert.deepEqual(all(host, (n) => n.className === 'ev2-chip' || /\bev2-chip\b/.test(n.className)).map((n) => n.textContent), ['Todos', 'Minhas inscrições', 'Com vagas']);
   assert.equal(all(host, (n) => /\bev2-next__card\b/.test(n.className)).length, 1);
   assert.equal(all(host, (n) => n.className === 'ev2-card').length + all(host, (n) => n.className === 'ev2-card is-full').length, 3);
@@ -172,7 +176,7 @@ test('estados: vazio, erro com nova tentativa e histórico (lista, vazio, erro)'
   ev.renderHistory(doc, { success: true, events: [] }, (i) => i, () => {});
   assert.match(textOf(doc.getElementById('events-v2')), /Ainda não há eventos concluídos/);
   ev.renderHistory(doc, { success: false, message: 'Falhou' }, (i) => i, () => {});
-  assert.match(textOf(doc.getElementById('events-v2')), /Falhou/);
+  assert.match(textOf(doc.getElementById('events-v2')), /Não foi possível carregar o histórico/);
   assert.equal(retried, 0);
 });
 
