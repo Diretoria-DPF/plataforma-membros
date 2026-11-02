@@ -11,6 +11,7 @@
 //
 //  - admin: carregado quando um painel administrativo abre (app.js);
 //  - destaques: carregado quando a flag highlights_enabled está ligada (Início) ou a tela de gestão abre (app.js);
+//  - inicio3: carregado quando a flag home_v2_enabled está ligada (Início v3 e Meu desempenho no Perfil; app.js);
 //  - lia: carregado logo após o login e, para quem só visita, quando o navegador
 //    fica ocioso depois do evento load (fora do caminho crítico).
 // Cada pacote é carregado uma única vez; se falhar (sem rede e sem cache), a
@@ -29,6 +30,8 @@
     ],
     // Destaques da Liga: bloco "Na Liga" da Início (flag highlights_enabled) e a tela de gestão (home.curate).
     destaques: ['highlights.js', 'highlights-manage.js'],
+    // Início v3: tela nova e navegação responsiva, só com a flag home_v2_enabled ligada (app.js).
+    inicio3: ['home-v3.js'],
     lia: [
       'modulos/shared/lia/lia-art.js', 'modulos/shared/lia/lia-states.js', 'modulos/shared/lia/lia-mood.js',
       'assistant-mood-glue.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia-props.js',
