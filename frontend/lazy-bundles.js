@@ -13,6 +13,7 @@
 //  - destaques: carregado quando a flag highlights_enabled está ligada (Início) ou a tela de gestão abre (app.js);
 //  - entradaV2: carregado quando a flag entrada_v2_enabled está ligada e a pessoa não está logada (app.js);
 //  - inicio3: carregado quando a flag home_v2_enabled está ligada (Início v3 e Meu desempenho no Perfil; app.js);
+//  - eventos2: carregado quando a flag events_v2_enabled está ligada e a tela Eventos abre (app.js);
 //  - perfil2: carregado quando a flag profile_v2_enabled está ligada e o Perfil abre (app.js);
 //  - propostas2: carregado quando a flag proposals_v2_enabled está ligada e Propostas abre (app.js);
 //  - tarefas2: carregado quando a flag tasks_v2_enabled está ligada e Tarefas abre (app.js);
@@ -41,6 +42,8 @@
     entradaV2: ['entrada-v2.js'],
     // Início v3: tela nova e navegação responsiva, só com a flag home_v2_enabled ligada (app.js).
     inicio3: ['home-v3.js'],
+    // Eventos v2: tela Eventos nova, só com a flag events_v2_enabled ligada (app.js; docs/eventos-v2.md).
+    eventos2: ['events-v2.js'],
     // Perfil v2: reorganiza o Perfil de sempre (cabeçalho, colunas e seções recolhíveis), só com a flag profile_v2_enabled ligada (app.js).
     perfil2: ['profile-v2.js'],
     // Propostas v2 e Tarefas v2: reposicionam as telas de sempre, só com a flag própria ligada (app.js).
