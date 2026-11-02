@@ -663,6 +663,7 @@
         if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
         if (res.flags && res.flags.home_v2_enabled === true) enableHomeV2(); // Início v3 e navegação responsiva
         if (res.flags && res.flags.learn_v2_enabled === true && currentPanelId === 'panel-learn' && window.LaiftLearning) window.LaiftLearning.loadPanel(); // Aprender v2: a flag chega depois do primeiro desenho do hub
+        if (res.flags && res.flags.events_v2_enabled === true && currentPanelId === 'panel-events') loadEvents(); // a flag chega depois do primeiro desenho de Eventos
         if (res.flags && res.flags.profile_v2_enabled === true && currentPanelId === 'panel-profile') mountProfileV2(); // a flag chega depois da abertura do Perfil
       }
       else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
@@ -1579,16 +1580,40 @@
   // ===========================================================================
   // Eventos
   // ===========================================================================
+  // Eventos v2 (flag events_v2_enabled; docs/eventos-v2.md): o pacote eventos2 só desenha; os dados e as ações são estes mesmos.
+  // Flag desligada, ou pacote que falhou: a tela de sempre.
+  function eventsV2On() { return document.documentElement.hasAttribute('data-flag-events-v2-enabled'); }
+  function eventsV2Ready() {
+    if (!eventsV2On()) return Promise.resolve(false);
+    return new Promise(function (resolve) { withBundle('eventos2', function () { resolve(!!window.LaiftEventsV2); }); });
+  }
+  function eventsV2Context() {
+    return {
+      doc: document, loggedIn: !!state.sessionToken, formatDate: formatDate, canCancel: function (item) { return canCancelRegistration(item, Date.now()); },
+      onRegister: registerForEvent, onCancel: confirmCancelRegistration, imageButton: eventImageButton,
+    };
+  }
+
   function loadEvents() {
+    var v2 = eventsV2Ready();
+    v2.then(function (on) { if (on) window.LaiftEventsV2.renderLoading(document); });
     setStatus('events-status', 'Carregando eventos...', 'info');
     showSkeleton('events-list', 3);
-    var loaded = callApi('apiListEvents', state.sessionToken || '').then(function (res) {
+    var loaded = Promise.all([v2, callApi('apiListEvents', state.sessionToken || '')]).then(function (all) {
+      var useV2 = all[0], res = all[1];
+      if (useV2) {
+        if (!res.success) { setStatus('events-status', '', null); window.LaiftEventsV2.renderEventsError(document, res, loadEvents); return; }
+        setStatus('events-status', '', null);
+        window.LaiftEventsV2.renderEvents(eventsV2Context(), res.events);
+        return;
+      }
+      if (window.LaiftEventsV2) window.LaiftEventsV2.reset(document);
       if (!res.success) { clearSkeleton('events-list'); setStatus('events-status', res.message, 'error'); return; }
       setStatus('events-status', '', null);
       renderList('events-list', res.events, renderEventItem, 'Não há eventos publicados no momento.');
       renderEventsOccupancy(ensureEventsOccupancyContainer(), res.events);
     });
-    loadEventsHistory();
+    loadEventsHistory(v2);
     return loaded;
   }
 
@@ -1622,10 +1647,17 @@
     });
   }
 
-  function loadEventsHistory() {
+  function loadEventsHistory(v2) {
+    var ready = v2 || eventsV2Ready();
     resetListForLoading('events-history-list');
     showSkeleton('events-history-list', 3);
-    callApi('apiListRecentCompletedEvents').then(function (res) {
+    ready.then(function (on) { if (on && window.LaiftEventsV2) window.LaiftEventsV2.renderHistoryLoading(document); });
+    Promise.all([ready, callApi('apiListRecentCompletedEvents')]).then(function (all) {
+      var res = all[1];
+      if (all[0] && window.LaiftEventsV2) {
+        window.LaiftEventsV2.renderHistory(document, res, formatDate, function () { loadEventsHistory(); });
+        return;
+      }
       renderAsyncList('events-history-list', res, res && res.events, renderEventHistoryItem,
         'Ainda não há eventos concluídos no histórico.', loadEventsHistory);
     });
