@@ -11,6 +11,7 @@
 //
 //  - admin: carregado quando um painel administrativo abre (app.js);
 //  - destaques: carregado quando a flag highlights_enabled está ligada (Início) ou a tela de gestão abre (app.js);
+//  - entradaV2: carregado quando a flag entrada_v2_enabled está ligada e a pessoa não está logada (app.js);
 //  - inicio3: carregado quando a flag home_v2_enabled está ligada (Início v3 e Meu desempenho no Perfil; app.js);
 //  - novidades: carregado após o login (uma vez por versão) ou ao abrir "Ver novidades" no Perfil;
 //  - lia: carregado logo após o login e, para quem só visita, quando o navegador
@@ -31,6 +32,8 @@
     ],
     // Destaques da Liga: bloco "Na Liga" da Início (flag highlights_enabled) e a tela de gestão (home.curate).
     destaques: ['highlights.js', 'highlights-manage.js'],
+    // Entrada v2 (flag entrada_v2_enabled): tela de abertura de quem não está logado; o CSS é injetado pelo próprio script.
+    entradaV2: ['entrada-v2.js'],
     // Início v3: tela nova e navegação responsiva, só com a flag home_v2_enabled ligada (app.js).
     inicio3: ['home-v3.js'],
     // Novidades (ENG-07): aviso uma vez por versão no login e "Ver novidades" no Perfil. O estilo do diálogo
