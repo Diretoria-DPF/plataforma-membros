@@ -4,7 +4,8 @@ Tela de abertura para quem ainda não entrou, atrás da flag `entrada_v2_enabled
 
 ## O que é
 
-- Herói com a promessa, "Criar conta grátis" e "Conhecer a plataforma".
+- Herói com a promessa, "Criar conta" e o link "Conheça a LAIFT" (leva a `liga.html`).
+- Seção "Explore a LAIFT" logo abaixo da vitrine: Conheça a LAIFT, Blog, Biblioteca e Processo seletivo, em botões grandes (o rodapé continua com os links legais e os mesmos atalhos).
 - Vitrine "O que a plataforma oferece": cinco cartões deslizantes com cadeado (quiz do dia, Atlas 3D, a Guia, casos clínicos, Liga) que levam ao cadastro.
 - "Como funciona" em três passos.
 - "Acontecendo na Liga" e "Novidades do blog": só aparecem com dado real. Eventos vêm de `apiListEvents` sem sessão (apenas os públicos, futuros ou em andamento); o blog vem de `blog/index.json`. Sem dado, a seção fica escondida. Nada é inventado.

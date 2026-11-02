@@ -139,3 +139,16 @@ html[data-theme="dark"] .ev2-heroi { background: radial-gradient(110% 80% at 90%
   .ev2-veu, .ev2-folha { transition: none; }
   .ev2-trilho { scroll-behavior: auto; }
 }
+
+/* ---------- Explore a LAIFT: atalhos grandes no corpo da página ---------- */
+.ev2-explorar__lista { display: grid; gap: 10px; grid-template-columns: 1fr; }
+@media (min-width: 700px) { .ev2-explorar__lista { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .ev2-explorar__lista { grid-template-columns: repeat(4, 1fr); } }
+.ev2-explorar__item {
+  display: flex; align-items: center; gap: 14px; min-height: 76px; padding: 14px 16px; border-radius: 18px;
+  background: var(--surface-alt); border: 1px solid var(--border); color: var(--text); text-decoration: none;
+}
+.ev2-explorar__item:hover { border-color: var(--primary, #0f6f62); }
+.ev2-explorar__icone { flex: none; width: 36px; height: 36px; color: var(--primary, #0f6f62); fill: none; stroke: currentColor; }
+.ev2-explorar__texto { display: grid; gap: 2px; font-size: 14px; }
+.ev2-explorar__texto strong { font-size: 16px; }
