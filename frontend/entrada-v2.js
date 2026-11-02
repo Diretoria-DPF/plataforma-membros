@@ -25,7 +25,7 @@
   var ABAS = ['entrar', 'criar'];
   var TEXTOS_ABA = {
     entrar: { titulo: 'Entrar', apoio: '' },
-    criar: { titulo: 'Criar conta grátis', apoio: 'Sua conta começa como visitante. Confirme o e-mail para entrar.' },
+    criar: { titulo: 'Criar conta', apoio: 'Sua conta começa como visitante. Confirme o e-mail para entrar.' },
   };
   var VITRINE = [
     { tag: 'Quiz do dia', titulo: 'Uma questão nova todo dia', texto: 'Acerte, mantenha a sequência e acompanhe seu ritmo.' },
@@ -163,7 +163,7 @@
     topo.appendChild(no(doc, 'strong', null, item.titulo));
     b.appendChild(topo);
     b.appendChild(no(doc, 'span', 'ev2-desc', item.texto));
-    b.appendChild(no(doc, 'span', 'visually-hidden', 'Disponível depois de criar a conta grátis.'));
+    b.appendChild(no(doc, 'span', 'visually-hidden', 'Disponível depois de criar a conta.'));
     return b;
   }
 
@@ -188,12 +188,12 @@
     wrap.appendChild(h1);
     wrap.appendChild(no(doc, 'p', 'ev2-sub', 'Quiz do dia, Atlas 3D, a Guia e a comunidade da Liga. Tudo no seu celular, no seu ritmo.'));
     var ctas = no(doc, 'div', 'ev2-ctas');
-    ctas.appendChild(botao(doc, 'ev2-btn ev2-btn--pri', 'Criar conta grátis', 'criar'));
+    ctas.appendChild(botao(doc, 'ev2-btn ev2-btn--pri', 'Criar conta', 'criar'));
     var conhecer = botao(doc, 'ev2-btn ev2-btn--sec', 'Conhecer a plataforma');
     conhecer.setAttribute('data-ev2-conhecer', '1');
     ctas.appendChild(conhecer);
     wrap.appendChild(ctas);
-    wrap.appendChild(no(doc, 'p', 'ev2-micro', 'Gratuito. Confirmação por e-mail.'));
+    wrap.appendChild(no(doc, 'p', 'ev2-micro', 'Confirmação por e-mail.'));
     heroi.appendChild(wrap);
     return heroi;
   }

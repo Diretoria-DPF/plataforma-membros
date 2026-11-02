@@ -73,7 +73,7 @@ async function verificarPagina(app, rotulo) {
     rotulos: Array.from(document.querySelectorAll('.ev2-btn--pri, .ev2-btn--sec')).map((b) => b.textContent.trim()),
   }));
   check(s.h1.length === 1 && /farmacologia/i.test(s.h1[0]), `${rotulo}: um único h1 visível com a promessa (${JSON.stringify(s.h1)})`);
-  check(s.rotulos.includes('Criar conta grátis') && s.rotulos.includes('Conhecer a plataforma'), `${rotulo}: botões "Criar conta grátis" e "Conhecer a plataforma"`);
+  check(s.rotulos.includes('Criar conta') && s.rotulos.includes('Conhecer a plataforma'), `${rotulo}: botões "Criar conta" e "Conhecer a plataforma"`);
   check(s.cartoes === 5, `${rotulo}: vitrine com 5 cartões com cadeado (${s.cartoes})`);
   check(s.passos === 3, `${rotulo}: "Como funciona" em 3 passos (${s.passos})`);
   check(s.legado === 0, `${rotulo}: cartões antigos de login e atalhos escondidos (${s.legado})`);
@@ -99,7 +99,7 @@ async function verificarDados(app, rotulo) {
 async function verificarFolha(app, rotulo, celular) {
   const { page } = app;
   await page.click('.ev2-heroi .ev2-btn--pri');
-  check(await folhaAberta(page), `${rotulo}: "Criar conta grátis" abre a folha`);
+  check(await folhaAberta(page), `${rotulo}: "Criar conta" abre a folha`);
   await page.waitForTimeout(450); // fim da animação de entrada
   const d = await page.evaluate(() => {
     const f = document.getElementById('ev2-folha');
@@ -124,7 +124,7 @@ async function verificarFolha(app, rotulo, celular) {
   await page.keyboard.press('Escape');
   await aguardarFolhaFechada(page);
   const foco = await page.evaluate(() => document.activeElement.textContent.trim());
-  check(foco === 'Criar conta grátis', `${rotulo}: Esc fecha e devolve o foco ao botão que abriu (${foco})`);
+  check(foco === 'Criar conta', `${rotulo}: Esc fecha e devolve o foco ao botão que abriu (${foco})`);
 
   await page.click('.ev2-btn-fantasma');
   check(await folhaAberta(page), `${rotulo}: "Entrar" da barra abre a folha`);
