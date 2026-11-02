@@ -334,8 +334,8 @@
     var state = { panel: panel, journal: journal, formCard: formCard, mineCard: mineCard, voteCard: voteCard, filter: 'all', form: null, hero: null, foco: null, chips: null };
     buildHero(state, ctx);
     state.hero = panel.firstChild;
-    state.foco = buildFoco(state, ctx);
     journal.move(voteCard, panel, grid);
+    state.foco = buildFoco(state, ctx);
     journal.move(mineCard, grid, formCard);
     buildFormSection(state, ctx);
     [voteCard, mineCard, formCard].forEach(function (card) {

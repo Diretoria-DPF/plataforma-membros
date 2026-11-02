@@ -13,6 +13,7 @@
 /* ===== Estrutura ===== */
 :root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] { display: grid; gap: var(--density-gap, 16px); min-width: 0; align-content: start; }
 :root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] > * { min-width: 0; }
+:root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] > .app-voltar { order: -1; }
 :root[data-flag-tasks-v2-enabled] #panel-tasks[data-t2] [hidden] { display: none !important; }
 
 /* ===== Cabeçalho ===== */
