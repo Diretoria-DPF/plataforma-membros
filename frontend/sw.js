@@ -29,7 +29,7 @@
     'home-editorial.css', 'engagement.css', 'engagement.js', 'daily-quiz.js', 'dashboardAdapter.js', 'modulos/shared/lia/lia.css', 'manifest.webmanifest', 'icons/icon-192.png',
     'app.js', 'shared-states.js', 'pwa.js', 'lazy-bundles.js', 'domain-notice.js', 'learning.js', 'msg-crypto.js', 'messaging.js',
     'home.js', 'mfa.js', 'credential.js', 'assistant-feedback.css', 'assistant-hints.css', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-sources.js',
-    'modulos/shared/safe-dom.js', 'ux-v2.js', 'splash.js', 'splash.css', 'modulos/shared/laift-tokens.css', 'blog-novidade.js', 'blog-novidade.css', 'voltar-app.js',
+    'modulos/shared/safe-dom.js', 'ux-v2.js', 'splash.js', 'splash.css', 'modulos/shared/laift-tokens.css', 'modulos/shared/laift-dialog.css', 'blog-novidade.js', 'blog-novidade.css', 'voltar-app.js',
     'voltar-app.css', 'entrada.js', 'resend-confirmation.js', 'app-menu.js', 'app-menu.css', 'panel-history.js', 'app-update.js', 'library-cite.js',
     'library-detail.js', 'library.js', 'library.css', 'selection.js', 'selection.css', 'selection-admin.css', 'privacy.js', 'privacy.css',
     'agents-tutor.js', 'agents-tutor.css', 'memory-core.js', 'memory.js', 'memory.css', 'session-view.js', 'modulos/cracha/laift-marca-80.png', 'orgchart-edit.js',
