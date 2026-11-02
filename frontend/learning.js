@@ -250,12 +250,36 @@
     });
   }
 
+  /** Hub de sempre: números, desempenho por módulo, conquistas e a faixa de sequência e meta. */
+  function loadLegacyHub() {
+    loadStats();
+    if (window.LaiftEngagement) window.LaiftEngagement.refreshHub(app(), document);
+  }
+
+  /**
+   * Aprender v2 (flag learn_v2_enabled; docs/aprender-v2.md): com a flag ligada o pacote sob demanda "aprender2" monta a
+   * tela nova no hub. Sem a flag, ou se o pacote falhar, vale o hub de sempre, idêntico.
+   */
+  function learnV2On() {
+    return document.documentElement.hasAttribute('data-flag-learn-v2-enabled') && !!window.LaiftLazy;
+  }
+
+  function loadHub() {
+    if (!learnV2On()) { loadLegacyHub(); return; }
+    window.LaiftLazy.load('aprender2').then(function () {
+      if (window.LaiftLearnV2) return window.LaiftLearnV2.load(app(), document);
+      return false;
+    }).then(function (mounted) {
+      if (mounted === false) loadLegacyHub();
+    }, function () {
+      if (window.LaiftLearnV2) window.LaiftLearnV2.reset(document);
+      loadLegacyHub();
+    });
+  }
+
   function loadPanel() {
     renderHub();
-    if (!activeModuleId) {
-      loadStats();
-      if (window.LaiftEngagement) window.LaiftEngagement.refreshHub(app(), document);
-    }
+    if (!activeModuleId) loadHub();
   }
 
   // ===========================================================================
@@ -299,7 +323,7 @@
     if (!mod) return;
     var previousModuleId = activeModuleId;
     activeModuleId = id;
-    openerCard = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.learn-card') : null;
+    openerCard = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.learn-card, [data-l2-opener]') : null;
     if (!frames[id]) frames[id] = createFrame($('learn-frames'), mod.path, mod.title);
     Object.keys(frames).forEach(function (key) {
       frames[key].classList.toggle('hidden', key !== id);
@@ -353,8 +377,7 @@
     app().showPanelSection('panel-learn');
     if (openerCard && document.contains(openerCard)) openerCard.focus({ preventScroll: true });
     openerCard = null;
-    loadStats();
-    if (window.LaiftEngagement) window.LaiftEngagement.refreshHub(app(), document);
+    loadHub();
     if (wasOpen) emitModuleChange('');
   }
 
@@ -408,7 +431,7 @@
   // ===========================================================================
   /** Chamado pelo app.js quando o perfil completo chega (recarrega se o hub estiver à vista). */
   function onProfileReady() {
-    if (!activeModuleId && !$('panel-learn').classList.contains('hidden')) loadStats();
+    if (!activeModuleId && !$('panel-learn').classList.contains('hidden')) { if (learnV2On()) loadHub(); else loadStats(); }
   }
 
   /** Logout: descarta todos os iframes (e o estado/identidade que carregam). */
@@ -422,6 +445,7 @@
     // A busca em voo (se houver) será descartada: não pode deixar aria-busy preso.
     setStatsBusy(document.querySelector('#learn-hub .learn-stats'), false);
     app().setStatus('learn-status', '', null); // tira o skeleton de uma busca cancelada
+    if (window.LaiftLearnV2) window.LaiftLearnV2.reset(document);
     if ($('learn-viewer')) {
       $('learn-viewer').classList.remove('learn-viewer-immersive');
       $('learn-viewer').classList.add('hidden');
