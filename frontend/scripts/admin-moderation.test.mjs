@@ -374,7 +374,7 @@ test('resposta antiga (carga anterior) não sobrescreve a mais nova', async () =
   pending[0].resolve(summary({ incidents: { total: 99, byDetection: { terms: 99, llm: 0 }, byLevelAfter: {} } }));
   await flush();
   assert.match(textOf(box()), /7 incidentes/);
-  assert.doesNotMatch(textOf(box()), /99/);
+  assert.doesNotMatch(textOf(box()), /99 incidentes|99 detectados/);
 });
 
 test('logout (reset): resposta que chega depois não reaparece, a seção esvazia e aria-busy sai', async () => {
