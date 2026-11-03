@@ -150,6 +150,36 @@ test('buildToday e buildModules: ações das linhas e dos cartões', () => {
   assert.deepEqual(calls[2], ['sheet', 'lab']);
 });
 
+test('weakItems (ENG-06): módulo real, texto com a nota e o número de questões; entrada inválida some', () => {
+  const res = { success: true, topics: [
+    { module: 'toxicologia', topic: 'Antídotos', correct: 2, total: 6, pct: 33 },
+    { module: 'farmacologia', topic: 'Receptores', correct: 1, total: 5, pct: 20 },
+    { module: 'inexistente', topic: 'X', correct: 0, total: 5, pct: 0 },
+    { module: 'toxicologia', topic: '', correct: 0, total: 5, pct: 0 },
+    null,
+  ] };
+  assert.deepEqual(v2.weakItems(res), [
+    { id: 'toxico', title: 'Antídotos', sub: 'Toxicologia · 33% de acerto em 6 questões' },
+    { id: 'farmaco', title: 'Receptores', sub: 'Farmacologia · 20% de acerto em 5 questões' },
+  ]);
+  assert.deepEqual(v2.weakItems(null), []);
+  assert.deepEqual(v2.weakItems({ success: false }), []);
+  assert.equal(v2.weakItems({ success: true, topics: new Array(6).fill({ module: 'toxicologia', topic: 'T', correct: 0, total: 5, pct: 0 }) }).length, 3);
+});
+
+test('buildWeak (ENG-06): cada tópico abre o módulo dele; sem tópico fraco, a seção não aparece', () => {
+  const { ctx, calls } = ctxFor({ weak: [{ id: 'toxico', title: 'Antídotos', sub: 'Toxicologia · 33% de acerto em 6 questões' }] });
+  const section = v2.buildWeak(ctx);
+  assert.match(textOf(section), /Para reforçar/);
+  assert.match(textOf(section), /Antídotos/);
+  const btns = all(section, (n) => n.tag === 'button');
+  assert.equal(btns.length, 1);
+  btns[0].listeners.click();
+  assert.deepEqual(calls, [['open', 'toxico']]);
+  assert.equal(v2.buildWeak(ctxFor({ weak: [] }).ctx), null);
+  assert.equal(v2.buildWeak(ctxFor({}).ctx), null);
+});
+
 test('buildPerformance e buildBadges: barras com rótulo acessível; sem conquistas, nada', () => {
   const { ctx } = ctxFor({ byModule: { farmacologia: { attempts: 5, accuracyPct: 72 } }, stats: { badges: [{ id: 'b', label: 'Explorador', description: 'x', unlocked: false }] } });
   const perf = v2.buildPerformance(ctx);

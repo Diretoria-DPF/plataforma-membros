@@ -319,6 +319,7 @@ export const API_REGISTRY = {
   // aceita os prefixos apiLearn*/apiAdminAttendance*; entrada = UM objeto.
   // input que não seja objeto vira {} (o service então recusa com mensagem clara).
   apiLearnGetMyStats: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LearningService.getMyStats(sql, identity)),
+  apiLearnGetWeakTopics: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LearningService.getWeakTopics(sql, identity)),
   // Resultado do simulado também alimenta a memória de estudo (sinal determinístico, em segundo plano; sem banco de memória, nada).
   apiLearnSubmitQuizAttempt: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity, cid) => {
     const result = await LearningService.submitQuizAttempt(sql, identity, asInput(input), cid);

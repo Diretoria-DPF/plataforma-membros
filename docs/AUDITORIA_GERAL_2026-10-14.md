@@ -94,7 +94,7 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 | ENG-03 | Quiz diário determinístico | MÉDIO | — | aberto | A | M | — | — |
 | ENG-04 | Onboarding que leva ao 1º quiz em ≤ 2 toques (e texto da barra inferior defasado) | MÉDIO | `frontend/onboarding.js:34` | aberto | A | M | — | — |
 | ENG-05 | Microinterações e feedback visual/háptico | BAIXO | — | aberto | A | M | — | — |
-| ENG-06 | Revisão por tópico fraco (repetição espaçada por questão exige tabela nova; só com dados de DAT-02) | BAIXO | — | aberto | A | G | — | — |
+| ENG-06 | Revisão por tópico fraco (repetição espaçada por questão exige tabela nova; só com dados de DAT-02) | BAIXO | `apiLearnGetWeakTopics` + cartão "Para reforçar" (`docs/aprender-v2.md`); falta abrir o simulado já filtrado em 5 questões | parcial (cartão e dados; revisão guiada pendente) | A | G | esta | — |
 | ENG-07 | "Novidades" in-app (`frontend/whats-new.js`), 1× por versão | BAIXO | — | aberto | A | P | — | — |
 
 ### Conteúdo (CON) e jurídico (LGPD)

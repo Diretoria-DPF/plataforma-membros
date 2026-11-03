@@ -143,6 +143,7 @@ paths:
                 - "$ref": "#/components/schemas/apiLearnGetMyAiQuota"
                 - "$ref": "#/components/schemas/apiLearnGetMyAttendanceQr"
                 - "$ref": "#/components/schemas/apiLearnGetMyStats"
+                - "$ref": "#/components/schemas/apiLearnGetWeakTopics"
                 - "$ref": "#/components/schemas/apiLearnLabPreceptor"
                 - "$ref": "#/components/schemas/apiLearnLibraryGetArticle"
                 - "$ref": "#/components/schemas/apiLearnLibraryGetCollection"
@@ -2030,6 +2031,21 @@ components:
       properties:
         action:
           const: "apiLearnGetMyStats"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiLearnGetWeakTopics:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnGetWeakTopics"
         args:
           type: "array"
           prefixItems:

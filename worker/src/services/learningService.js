@@ -100,6 +100,33 @@ function assertDetailsSize(details) {
   if (bytes > C.LIMITS.LEARN_DETAILS_MAX_BYTES) throw E.ValidationError('Detalhes da atividade grandes demais.');
 }
 
+/**
+ * Acertos por tópico de um simulado (ENG-06). Opcional: cliente antigo não envia.
+ * Cada item {topic, correct, total}; tópicos repetidos (sem diferenciar caixa) somam.
+ * A soma por tópico não pode passar do total/acertos do simulado.
+ */
+function validateTopicStats(value, correct, total) {
+  if (value === undefined || value === null) return null;
+  if (!Array.isArray(value) || value.length > C.LIMITS.LEARN_LIST_MAX_ITEMS) throw E.ValidationError('Desempenho por tópico inválido.');
+  const byKey = new Map();
+  value.forEach((item) => {
+    if (!item || typeof item !== 'object' || typeof item.topic !== 'string') throw E.ValidationError('Desempenho por tópico inválido.');
+    const topic = cleanText(item.topic);
+    if (!topic || topic.length > C.LIMITS.LEARN_LIST_ITEM_MAX) throw E.ValidationError('Desempenho por tópico inválido.');
+    if (!isInt(item.total) || item.total < 1 || item.total > total || !isInt(item.correct) || item.correct < 0 || item.correct > item.total) {
+      throw E.ValidationError('Desempenho por tópico inválido.');
+    }
+    const key = topic.toLowerCase();
+    const prev = byKey.get(key) || { topic, correct: 0, total: 0 };
+    byKey.set(key, { topic: prev.topic, correct: prev.correct + item.correct, total: prev.total + item.total });
+  });
+  const stats = Array.from(byKey.values());
+  const sumTotal = stats.reduce((n, t) => n + t.total, 0);
+  const sumCorrect = stats.reduce((n, t) => n + t.correct, 0);
+  if (sumTotal > total || sumCorrect > correct) throw E.ValidationError('Desempenho por tópico inválido.');
+  return stats;
+}
+
 const IDEMPOTENCY_KEY_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function insertAttempt(sql, identity, row) {
@@ -157,6 +184,8 @@ export async function submitQuizAttempt(sql, identity, input, correlationId) {
   const durationSeconds = validateDuration(input.durationSeconds);
   const topics = validateTextList(input.topics, 'Tópicos');
   const details = { topics };
+  const topicStats = validateTopicStats(input.topicStats, correct, total);
+  if (topicStats) details.topicStats = topicStats;
   let idempotencyKey = null;
   if (input.idempotencyKey !== undefined && input.idempotencyKey !== null) {
     if (typeof input.idempotencyKey !== 'string' || !IDEMPOTENCY_KEY_RE.test(input.idempotencyKey)) {
@@ -275,6 +304,36 @@ const BADGES = [
     test: (a) => a.totalActivities >= 10,
   },
 ];
+
+/** ENG-06: um tópico é "fraco" com menos de 60% de acerto em pelo menos 5 questões nos últimos 30 dias. */
+export const WEAK_TOPIC_RULES = Object.freeze({ windowDays: 30, minQuestions: 5, thresholdPct: 60, maxTopics: 3, reviewQuestions: 5 });
+
+/** apiLearnGetWeakTopics — até 3 tópicos fracos DA PRÓPRIA sessão (só leitura). */
+export async function getWeakTopics(sql, identity) {
+  const R = WEAK_TOPIC_RULES;
+  const rows = await sql`
+    SELECT a.module AS module, t->>'topic' AS topic,
+           sum((t->>'correct')::int)::int AS correct, sum((t->>'total')::int)::int AS total
+    FROM learning_attempts a
+    CROSS JOIN LATERAL jsonb_array_elements(
+      CASE WHEN jsonb_typeof(a.details->'topicStats') = 'array' THEN a.details->'topicStats' ELSE '[]'::jsonb END
+    ) AS t
+    WHERE a.profile_id = ${identity.profileId}::uuid
+      AND a.activity IN ('quiz_estudo', 'quiz_prova')
+      AND a.created_at >= now() - make_interval(days => ${R.windowDays})
+    GROUP BY a.module, t->>'topic'
+    HAVING sum((t->>'total')::int) >= ${R.minQuestions}
+       AND sum((t->>'correct')::int) * 100.0 / sum((t->>'total')::int) < ${R.thresholdPct}
+    ORDER BY sum((t->>'correct')::int) * 1.0 / sum((t->>'total')::int) ASC, sum((t->>'total')::int) DESC
+    LIMIT ${R.maxTopics}
+  `;
+  const topics = rows.map((r) => {
+    const correct = Number(r.correct) || 0;
+    const total = Number(r.total) || 0;
+    return { module: r.module, topic: r.topic, correct, total, pct: total ? Math.round((correct * 100) / total) : 0 };
+  });
+  return { success: true, topics, rules: R };
+}
 
 /** apiLearnGetMyStats — agregado das tentativas DA PRÓPRIA sessão. */
 export async function getMyStats(sql, identity) {

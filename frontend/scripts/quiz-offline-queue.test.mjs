@@ -116,6 +116,19 @@ test('guarda só os campos permitidos: sem PII e sem campos extras', async () =>
   assert.equal(JSON.stringify(item).includes('a@b.c'), false);
 });
 
+test('guarda o desempenho por tópico (ENG-06) e descarta itens malformados', async () => {
+  responses.push(OFFLINE);
+  const topicStats = [
+    { topic: 'Antídotos', correct: 2, total: 4, extra: 'x' },
+    { topic: 7, correct: 1, total: 1 },
+    { topic: 'Cinética', correct: 5, total: 4 },
+    { topic: 'Receptores', correct: 1, total: 2 },
+  ];
+  await makeQueue().submit(Object.assign({}, PAYLOAD, { topicStats }));
+  const [item] = await stored();
+  assert.deepEqual(item.payload.topicStats, [{ topic: 'Antídotos', correct: 2, total: 4 }, { topic: 'Receptores', correct: 1, total: 2 }]);
+});
+
 test('idade máxima: item vencido é descartado sem enviar', async () => {
   const q = makeQueue();
   responses.push(OFFLINE);
