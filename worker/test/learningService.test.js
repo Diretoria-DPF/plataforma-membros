@@ -271,3 +271,88 @@ describe('LearningService.cleanText', () => {
     expect(LearningService.cleanText(null)).toBe('');
   });
 });
+
+describe('ENG-06 — desempenho por tópico', () => {
+  test('grava topicStats junto com os tópicos (somando repetidos sem diferenciar caixa)', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(RATE_OK).mockResolvedValueOnce([{ id: 'att-9' }]).mockResolvedValueOnce(undefined);
+    await LearningService.submitQuizAttempt(sql, MEMBER, validQuiz({
+      correct: 6, total: 10, topics: ['Antídotos', 'Cinética'],
+      topicStats: [{ topic: 'Antídotos', correct: 2, total: 4 }, { topic: 'antídotos', correct: 1, total: 1 }, { topic: 'Cinética', correct: 3, total: 4 }],
+    }), 'cid');
+    const details = JSON.parse(boundValues(sql, 1)[6]);
+    expect(details.topicStats).toEqual([{ topic: 'Antídotos', correct: 3, total: 5 }, { topic: 'Cinética', correct: 3, total: 4 }]);
+  });
+
+  const invalidStats = [
+    ['não é lista', 'x'],
+    ['item sem tópico', [{ correct: 1, total: 2 }]],
+    ['acertos acima do total do tópico', [{ topic: 'A', correct: 3, total: 2 }]],
+    ['soma acima do total do simulado', [{ topic: 'A', correct: 1, total: 8 }, { topic: 'B', correct: 1, total: 8 }]],
+    ['acertos por tópico acima dos acertos do simulado', [{ topic: 'A', correct: 9, total: 9 }]],
+    ['tópico gigante', [{ topic: 'x'.repeat(81), correct: 1, total: 2 }]],
+  ];
+  test.each(invalidStats)('recusa topicStats inválido: %s', async (_nome, topicStats) => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(RATE_OK);
+    await expect(LearningService.submitQuizAttempt(sql, MEMBER, validQuiz({ correct: 6, total: 10, topicStats }), 'cid'))
+      .rejects.toMatchObject({ name: 'ValidationError', message: 'Desempenho por tópico inválido.' });
+  });
+});
+
+describe('ENG-06 — LearningService.getWeakTopics (SQL real)', () => {
+  let db;
+  let realSql;
+  const ME = '11111111-1111-4111-8111-111111111111';
+  const OTHER = '22222222-2222-4222-8222-222222222222';
+
+  beforeAll(async () => {
+    const { createMigratedDb, toSql } = await import('./helpers/pgliteSql.js');
+    db = await createMigratedDb();
+    realSql = toSql(db);
+    for (const [id, email] of [[ME, 'a@x.com'], [OTHER, 'b@x.com']]) {
+      await db.query(`INSERT INTO profiles (id, full_name, email, password_hash, phone, role, status, email_confirmed_at, username)
+         VALUES ($1, 'Membro Teste', $2, 'h', '71999999999', 'member', 'active', now(), $3)`, [id, email, email.split('@')[0] + '_user']);
+    }
+  }, 60000);
+  afterAll(async () => { await db.close(); });
+  beforeEach(async () => { await db.exec('DELETE FROM learning_attempts'); });
+
+  async function attempt(profile, module, stats, daysAgo, activity) {
+    const correct = stats.reduce((n, s) => n + s.correct, 0);
+    const total = stats.reduce((n, s) => n + s.total, 0);
+    await db.query(
+      `INSERT INTO learning_attempts (profile_id, module, activity, score, max_score, details, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6::jsonb, now() - make_interval(days => $7))`,
+      [profile, module, activity || 'quiz_estudo', correct, total, JSON.stringify({ topics: stats.map((s) => s.topic), topicStats: stats }), daysAgo || 0]
+    );
+  }
+
+  test('lista só tópicos com <60% em ≥5 questões, somando tentativas, do pior para o melhor', async () => {
+    await attempt(ME, 'toxicologia', [{ topic: 'Antídotos', correct: 1, total: 3 }, { topic: 'Cinética', correct: 4, total: 4 }]);
+    await attempt(ME, 'toxicologia', [{ topic: 'Antídotos', correct: 1, total: 3 }], 5);
+    await attempt(ME, 'farmacologia', [{ topic: 'Receptores', correct: 2, total: 5 }]);
+    const out = await LearningService.getWeakTopics(realSql, { profileId: ME });
+    expect(out.success).toBe(true);
+    expect(out.topics).toEqual([
+      { module: 'toxicologia', topic: 'Antídotos', correct: 2, total: 6, pct: 33 },
+      { module: 'farmacologia', topic: 'Receptores', correct: 2, total: 5, pct: 40 },
+    ]);
+  });
+
+  test('ignora poucas questões (<5), 60% ou mais, tentativas com mais de 30 dias e dados de outra pessoa', async () => {
+    await attempt(ME, 'toxicologia', [{ topic: 'Poucas', correct: 0, total: 4 }]);
+    await attempt(ME, 'toxicologia', [{ topic: 'Limite', correct: 3, total: 5 }]);
+    await attempt(ME, 'toxicologia', [{ topic: 'Velha', correct: 0, total: 8 }], 31);
+    await attempt(OTHER, 'toxicologia', [{ topic: 'Alheia', correct: 0, total: 8 }]);
+    const out = await LearningService.getWeakTopics(realSql, { profileId: ME });
+    expect(out.topics).toEqual([]);
+  });
+
+  test('devolve no máximo 3 tópicos e tolera tentativas antigas sem topicStats', async () => {
+    await db.query(`INSERT INTO learning_attempts (profile_id, module, activity, score, max_score, details) VALUES ($1, 'toxicologia', 'quiz_estudo', 1, 10, '{"topics":["Velho"]}'::jsonb)`, [ME]);
+    await attempt(ME, 'toxicologia', ['A', 'B', 'C', 'D'].map((topic, i) => ({ topic, correct: i, total: 6 })));
+    const out = await LearningService.getWeakTopics(realSql, { profileId: ME });
+    expect(out.topics.map((t) => t.topic)).toEqual(['A', 'B', 'C']);
+  });
+});

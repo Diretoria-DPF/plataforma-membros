@@ -71,6 +71,18 @@
       }
     }
     out.topics = topics;
+    // Desempenho por tópico (ENG-06): item malformado é descartado, nunca derruba o registro inteiro.
+    var stats = [];
+    if (Array.isArray(p.topicStats)) {
+      for (var j = 0; j < p.topicStats.length && stats.length < 20; j++) {
+        var t = p.topicStats[j];
+        if (t && typeof t.topic === 'string' && t.topic.length > 0 && t.topic.length <= 80
+            && isInt(t.total) && t.total >= 1 && t.total <= p.total && isInt(t.correct) && t.correct >= 0 && t.correct <= t.total) {
+          stats.push({ topic: t.topic, correct: t.correct, total: t.total });
+        }
+      }
+    }
+    if (stats.length) out.topicStats = stats;
     return out;
   }
 

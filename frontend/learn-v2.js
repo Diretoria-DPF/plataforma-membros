@@ -91,6 +91,20 @@
   }
 
   /** "Para hoje": quiz do dia (só com dados do servidor), simulado e caso clínico (abrem os módulos de sempre). */
+  /** ENG-06: tópicos fracos da API viram linhas "abrir o módulo" (até 3; módulo desconhecido ou tópico vazio some). */
+  function weakItems(res) {
+    var list = res && res.success && Array.isArray(res.topics) ? res.topics : [];
+    var out = [];
+    list.forEach(function (t) {
+      if (out.length >= 3 || !t || typeof t.topic !== 'string' || !t.topic) return;
+      var mod = MODULES.filter(function (m) { return m.stat === t.module; })[0];
+      var total = Number(t.total) || 0;
+      if (!mod || total < 1) return;
+      out.push({ id: mod.id, title: t.topic, sub: mod.name + ' · ' + clampPct(t.pct) + '% de acerto em ' + total + ' ' + plural(total, 'questão', 'questões') });
+    });
+    return out;
+  }
+
   function todayItems(eng) {
     var items = [];
     if (eng) {
@@ -347,6 +361,34 @@
     return section;
   }
 
+  function buildWeak(ctx) {
+    if (!ctx.weak || !ctx.weak.length) return null;
+    var doc = ctx.doc;
+    var section = el(doc, 'section', 'l2-section');
+    section.setAttribute('aria-labelledby', 'l2-weak-title');
+    var head = el(doc, 'h2', 'l2-section__title', 'Para reforçar');
+    head.id = 'l2-weak-title';
+    section.appendChild(head);
+    var list = el(doc, 'ul', 'l2-today');
+    ctx.weak.forEach(function (item) {
+      var li = el(doc, 'li');
+      var row = button(doc, 'l2-row l2-row--simulado', '', function () { ctx.openModule(item.id); });
+      row.setAttribute('data-l2-opener', '');
+      var badge = el(doc, 'span', 'l2-row__ico');
+      badge.appendChild(icon(doc, 'star'));
+      var text = el(doc, 'span', 'l2-row__text');
+      text.appendChild(el(doc, 'strong', '', item.title));
+      text.appendChild(el(doc, 'small', '', item.sub));
+      row.appendChild(badge);
+      row.appendChild(text);
+      row.appendChild(icon(doc, 'chevron', 'l2-row__go'));
+      li.appendChild(row);
+      list.appendChild(li);
+    });
+    section.appendChild(list);
+    return section;
+  }
+
   function moduleCard(ctx, card) {
     var doc = ctx.doc;
     var node = button(doc, 'l2-module l2-mod--' + card.id, '', function () { ctx.openSheet(card, node); });
@@ -526,6 +568,11 @@
     }, function () { return null; });
   }
 
+  function fetchWeak(app) {
+    if (!app || typeof app.callLearningApi !== 'function') return Promise.resolve([]);
+    return Promise.resolve(app.callLearningApi('apiLearnGetWeakTopics')).then(weakItems, function () { return []; });
+  }
+
   function openGuia() {
     var open = function () { if (root.LaiftAssistant && root.LaiftAssistant.open) root.LaiftAssistant.open(); };
     if (root.LaiftAssistant) { open(); return; }
@@ -538,7 +585,7 @@
     if (node) slot.appendChild(node);
   }
 
-  var SLOTS = ['focus', 'day', 'today', 'modules', 'overall', 'perf', 'badges'];
+  var SLOTS = ['focus', 'day', 'today', 'weak', 'modules', 'overall', 'perf', 'badges'];
 
   function layout(doc) {
     var body = el(doc, 'div', 'l2-body');
@@ -561,6 +608,7 @@
     setSlot(slots.focus, buildFocus(ctx));
     setSlot(slots.day, buildDay(ctx));
     setSlot(slots.today, buildToday(ctx));
+    setSlot(slots.weak, buildWeak(ctx));
     setSlot(slots.modules, buildModules(ctx));
     setSlot(slots.overall, ctx.stats ? buildOverall(ctx) : null);
     setSlot(slots.perf, ctx.stats ? buildPerformance(ctx) : statsFailure(ctx));
@@ -635,11 +683,12 @@
     }
     hub.setAttribute('data-l2', '1');
 
-    return Promise.all([fetchStats(app), lib.fetchEngagement(app, ctx.token)]).then(function (res) {
+    return Promise.all([fetchStats(app), lib.fetchEngagement(app, ctx.token), fetchWeak(app)]).then(function (res) {
       if (mine !== generation) return false;
       ctx.stats = res[0];
       ctx.byModule = res[0] ? res[0].byModule || null : null;
       ctx.data = lib.assemble(res[1]);
+      ctx.weak = res[2];
       clear(host);
       host.appendChild(buildTop(ctx));
       host.appendChild(parts.body);
@@ -675,7 +724,7 @@
 
   var api = {
     MODULES: MODULES, weekDots: weekDots, ringPercent: ringPercent, ringLabel: ringLabel, ringHint: ringHint,
-    streakLabel: streakLabel, focusModel: focusModel, todayItems: todayItems, moduleCards: moduleCards,
+    streakLabel: streakLabel, focusModel: focusModel, todayItems: todayItems, weakItems: weakItems, buildWeak: buildWeak, moduleCards: moduleCards,
     overallChips: overallChips, badgeItems: badgeItems, sheetSummary: sheetSummary, ensureStyles: ensureStyles,
     buildTop: buildTop, buildFocus: buildFocus, buildDay: buildDay, buildToday: buildToday, buildModules: buildModules,
     buildOverall: buildOverall, buildPerformance: buildPerformance, buildBadges: buildBadges,

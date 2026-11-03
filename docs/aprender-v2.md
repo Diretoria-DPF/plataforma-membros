@@ -14,7 +14,7 @@ Nova tela Aprender, atrás da flag `learn_v2_enabled` (desligada por padrão; mi
 
 ## Mesmas ações
 
-Abrir módulo, voltar, tela cheia, primeiro quiz e quiz do dia usam `LaiftLearning` e `LaiftEngagement` como antes; nenhuma API nova. Ao voltar de um módulo, `learning.js` recarrega a tela. O visualizador de módulos (iframe) não mudou.
+Abrir módulo, voltar, tela cheia, primeiro quiz e quiz do dia usam `LaiftLearning` e `LaiftEngagement` como antes; nenhuma API nova além da leitura do cartão "Para reforçar" (abaixo). Ao voltar de um módulo, `learning.js` recarrega a tela. O visualizador de módulos (iframe) não mudou.
 
 ## Carregamento
 
@@ -27,3 +27,13 @@ Alvos de pelo menos 44 px, fontes de pelo menos 12 px, foco visível, `aria-labe
 ## Testes
 
 `frontend/scripts/learn-v2.test.mjs` (unidade e fiação) e `frontend/scripts/e2e/learn-v2.e2e.js` (375x812, 768x1024 e 1280x800, claro e escuro, movimento reduzido, erro, vazio, flag desligada e pacote com falha). `LEARN_V2_SHOTS=<pasta>` grava capturas.
+
+## Para reforçar (ENG-06)
+
+Cartão que aponta até 3 tópicos em que a pessoa acerta pouco, para ela voltar ao módulo certo.
+
+- **Regra** (`WEAK_TOPIC_RULES` em `worker/src/services/learningService.js`): tópico com **menos de 60%** de acerto em **pelo menos 5 questões** nos **últimos 30 dias**, somando as tentativas; mostra os 3 piores.
+- **Dados:** o quiz (`modulos/shared/quiz-engine.js`) passa a enviar `topicStats` (`[{topic, correct, total}]`) junto com `apiLearnSubmitQuizAttempt`; fica em `learning_attempts.details`, sem tabela nova e sem migração. Tentativas antigas (sem `topicStats`) não entram na conta, então o cartão só aparece depois de a pessoa fazer alguns simulados novos.
+- **Leitura:** `apiLearnGetWeakTopics` (só a própria sessão, só leitura). Falha da API = o cartão simplesmente não aparece.
+- **Tela:** vale só com `learn_v2_enabled`; cada linha abre o módulo do tópico. A revisão guiada de 5 questões por tópico (abrir o simulado já filtrado) fica para a próxima etapa.
+

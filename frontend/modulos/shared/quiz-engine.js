@@ -484,11 +484,12 @@
       });
       var duration = Math.max(1, Math.round((Date.now() - state.startedAt) / 1000));
       var statusEl = showResults(score, topicScores, topicCounts);
-      submitAttempt(score, state.questions.length, duration, Object.keys(topicCounts), statusEl);
+      var topicStats = Object.keys(topicCounts).map(function (t) { return { topic: t, correct: topicScores[t], total: topicCounts[t] }; });
+      submitAttempt(score, state.questions.length, duration, Object.keys(topicCounts), statusEl, topicStats);
     }
 
     /** Envia o resultado à plataforma (Contrato 3: ponte LaiftApi). */
-    function submitAttempt(correct, total, durationSeconds, topics, statusEl) {
+    function submitAttempt(correct, total, durationSeconds, topics, statusEl, topicStats) {
       var payload = {
         module: cfg.module,
         mode: API_MODE[state.mode] || 'estudo',
@@ -496,6 +497,7 @@
         total: total,
         durationSeconds: durationSeconds,
         topics: topics.slice(0, 20),
+        topicStats: (topicStats || []).slice(0, 20),
       };
       function report(text, kind) {
         if (!statusEl) return;

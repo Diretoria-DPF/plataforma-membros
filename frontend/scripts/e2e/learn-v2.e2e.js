@@ -50,6 +50,7 @@ function handlers(flagOn, extra) {
     apiGetFeatureFlags: async () => ({ success: true, flags: { learn_v2_enabled: flagOn } }),
     apiLearnGetEngagement: ENGAGEMENT,
     apiLearnGetMyStats: STATS,
+    apiLearnGetWeakTopics: async () => ({ success: true, topics: [{ module: 'toxicologia', topic: 'Antídotos', correct: 2, total: 6, pct: 33 }] }),
   }, extra || {});
 }
 
@@ -85,6 +86,7 @@ async function checkContent(page) {
   check((await page.locator('.l2-week__dot').count()) === 7 && (await page.locator('.l2-week__dot.is-on').count()) === 4, 'sete pontos, quatro acesos pela sequência real');
   check((await page.locator('.l2-today li').count()) === 3, 'Para hoje: quiz do dia, simulado e caso clínico');
   check((await page.locator('.l2-module').count()) === 5, 'cinco módulos');
+  check(((await page.textContent('#l2-weak-title')) || '') === 'Para reforçar' && ((await page.textContent('.l2-slot--weak')) || '').includes('Antídotos'), 'Para reforçar traz o tópico fraco real (ENG-06)');
   check(((await page.textContent('.l2-module')) || '').includes('72% de acerto'), 'o aproveitamento do módulo vem das estatísticas reais');
   check(((await page.textContent('[data-l2-stat="accuracy"]')) || '').startsWith('72%'), 'aproveitamento geral real');
   check((await page.locator('[data-l2-perf]').count()) === 5, 'desempenho por módulo: cinco linhas');
