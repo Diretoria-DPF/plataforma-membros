@@ -491,7 +491,7 @@ export async function badges(sql, env, identity, input, correlationId) {
   if (!ids.length) throw E.ValidationError('Selecione ao menos um participante.');
 
   const rows = await sql`
-    SELECT id, full_name, role, league_position
+    SELECT id, full_name, role, league_position, avatar_url
     FROM profiles
     WHERE id = ANY(${ids}::uuid[]) AND status = 'active'
   `;
@@ -507,6 +507,7 @@ export async function badges(sql, env, identity, input, correlationId) {
       fullName: r.full_name,
       role: r.role,
       leaguePosition: r.league_position || null,
+      avatarUrl: /^https:\/\//i.test(r.avatar_url || '') ? r.avatar_url : null,
       qrPayload: await signAttendanceQr(env, id),
     });
   }

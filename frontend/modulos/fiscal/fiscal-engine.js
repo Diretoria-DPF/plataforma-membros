@@ -39,6 +39,7 @@
     searchTimer: null,
     searchSeq: 0,
     recent: [], // últimas entradas desta sessão do terminal
+    previewPerson: null, // pessoa do crachá em prévia
     refreshTimer: null,
   };
 
@@ -378,7 +379,7 @@
         type: 'button', className: 'btn btn-outline btn-sm', 'data-action': 'badge',
         'aria-label': 'Abrir crachá de ' + p.fullName,
       }, ['Crachá']);
-      badgeBtn.addEventListener('click', () => openBadge(p));
+      badgeBtn.addEventListener('click', () => showBadgePreview(p));
 
       list.appendChild(el('li', {
         className: 'fiscal-item' + (p.checkedInAt ? ' is-present' : ''), 'data-profile-id': p.profileId,
@@ -517,6 +518,15 @@
     return qr.createDataURL(4, 2);
   }
 
+  /** Foto do perfil quando existir (https) e iniciais quando não existir ou falhar ao carregar. */
+  function badgeAvatar(b, initial) {
+    const fallback = el('div', { className: 'badge-avatar', text: initial, 'aria-hidden': 'true' });
+    if (!b.avatarUrl || !/^https:\/\//i.test(b.avatarUrl)) return fallback;
+    const img = el('img', { className: 'badge-photo', src: b.avatarUrl, alt: '' });
+    img.addEventListener('error', () => { if (img.parentNode) img.parentNode.replaceChild(fallback, img); });
+    return img;
+  }
+
   function buildBadgeCard(b) {
     const initial = (b.fullName || '?').trim().charAt(0).toUpperCase();
     const role = badgeRole(b);
@@ -527,7 +537,7 @@
       ]),
       el('div', { className: 'badge-body' }, [
         el('div', { className: 'badge-visual' }, [
-          el('div', { className: 'badge-avatar', text: initial, 'aria-hidden': 'true' }),
+          badgeAvatar(b, initial),
           el('img', { className: 'badge-qr', src: qrDataUrl(b.qrPayload), alt: 'QR Code de presença' }),
         ]),
         el('div', { className: 'badge-data' }, [
@@ -551,10 +561,15 @@
 
     const area = $('printArea');
     clearEl(area);
-    const sheet = el('div', { className: 'badge-sheet' }, badges.map(buildBadgeCard));
-    area.appendChild(sheet);
+    area.appendChild(el('div', { className: 'badge-sheet' }, badges.map(buildBadgeCard)));
+    printArea(badges.length + ' crachá(s) prontos — ' + Math.ceil(badges.length / 8) + ' folha(s) A4. Escolha “Salvar como PDF”.');
+  }
+
+  /** Abre a impressão do que está em #printArea e limpa tudo quando ela fecha. */
+  function printArea(message) {
+    const area = $('printArea');
     document.body.classList.add('is-printing');
-    setStatus(badges.length + ' crachá(s) prontos — ' + Math.ceil(badges.length / 8) + ' folha(s) A4.', 'success');
+    setStatus(message, 'success');
     const cleanup = () => {
       document.body.classList.remove('is-printing');
       clearEl(area);
@@ -562,6 +577,72 @@
     };
     window.addEventListener('afterprint', cleanup);
     window.print();
+  }
+
+  // =========================================================
+  // 7b. ABAS, CRACHÁ INDIVIDUAL (PDF) E LOTE SOB PEDIDO
+  // =========================================================
+
+  function selectTab(name) {
+    const attendance = name !== 'people';
+    $('paneAttendance').classList.toggle('hidden', !attendance);
+    $('panePeople').classList.toggle('hidden', attendance);
+    [['tabPresenca', attendance], ['tabPessoas', !attendance]].forEach((pair) => {
+      const tab = $(pair[0]);
+      tab.classList.toggle('is-active', pair[1]);
+      tab.setAttribute('aria-selected', pair[1] ? 'true' : 'false');
+      tab.setAttribute('tabindex', pair[1] ? '0' : '-1');
+    });
+    if (!attendance) stopScanner(); // a câmera só fica ligada na aba Presença
+  }
+
+  function onTabKey(evt) {
+    if (evt.key !== 'ArrowRight' && evt.key !== 'ArrowLeft') return;
+    const goPeople = $('tabPresenca').classList.contains('is-active');
+    selectTab(goPeople ? 'people' : 'attendance');
+    $(goPeople ? 'tabPessoas' : 'tabPresenca').focus();
+  }
+
+  /** Mostra o crachá da pessoa na tela, com Exportar PDF ao lado: o caminho normal é um crachá de cada vez. */
+  async function showBadgePreview(participant) {
+    if (typeof window.qrcode !== 'function') { setStatus('Gerador de QR indisponível. Recarregue o terminal.', 'error'); return; }
+    setStatus('Gerando crachá...', 'loading');
+    const badges = await fetchBadges([participant.profileId]);
+    if (!badges) return;
+    if (!badges.length) { setStatus('Conta indisponível para crachá.', 'error'); return; }
+    state.previewPerson = participant;
+    const holder = $('badgePreview');
+    clearEl(holder);
+    holder.appendChild(buildBadgeCard(badges[0]));
+    $('badgePreviewCard').classList.remove('hidden');
+    $('badgePreviewCard').scrollIntoView({ block: 'nearest' });
+    setStatus('', null);
+  }
+
+  function closeBadgePreview() {
+    state.previewPerson = null;
+    clearEl($('badgePreview'));
+    $('badgePreviewCard').classList.add('hidden');
+  }
+
+  /** Imprime só o crachá em prévia: na janela do navegador, o destino "Salvar como PDF" gera o arquivo. */
+  function exportPreviewPdf() {
+    const card = $('badgePreview').firstElementChild;
+    if (!card) return;
+    const area = $('printArea');
+    clearEl(area);
+    area.appendChild(el('div', { className: 'badge-sheet is-single' }, [card.cloneNode(true)]));
+    printArea('Na janela de impressão, escolha “Salvar como PDF”.');
+  }
+
+  /** Seleciona todos os inscritos ou só os presentes para o PDF em lote. */
+  async function selectForBatch(onlyPresent) {
+    await search('');
+    const chosen = state.participants.filter((p) => (onlyPresent ? !!p.checkedInAt : true));
+    state.selected.clear();
+    chosen.forEach((p) => state.selected.set(p.profileId, p.fullName));
+    renderList();
+    setStatus(chosen.length ? chosen.length + ' pessoa(s) selecionada(s) para o PDF.' : 'Ninguém para incluir ainda.', chosen.length ? 'success' : 'warning');
   }
 
   // =========================================================
@@ -588,6 +669,15 @@
     $('selectAll').addEventListener('change', onSelectAll);
     $('exportCsv').addEventListener('click', exportCsv);
     $('printBadges').addEventListener('click', printSelectedBadges);
+    $('tabPresenca').addEventListener('click', () => selectTab('attendance'));
+    $('tabPessoas').addEventListener('click', () => selectTab('people'));
+    $('tabPresenca').addEventListener('keydown', onTabKey);
+    $('tabPessoas').addEventListener('keydown', onTabKey);
+    $('exportBadgePdf').addEventListener('click', exportPreviewPdf);
+    $('closeBadgePreview').addEventListener('click', closeBadgePreview);
+    $('openStudio').addEventListener('click', () => { if (state.previewPerson) openBadge(state.previewPerson); });
+    $('batchRegistered').addEventListener('click', () => selectForBatch(false));
+    $('batchPresent').addEventListener('click', () => selectForBatch(true));
     window.addEventListener('pagehide', () => { stopScanner(); clearInterval(state.refreshTimer); }); // libera a câmera ao sair
     renderList('Busque participantes ou veja os inscritos deste evento.');
     renderRecent();

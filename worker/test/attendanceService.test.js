@@ -390,8 +390,8 @@ describe('AttendanceService.badges', () => {
     const missing = '99999999-9999-4999-8999-999999999999';
     sql
       .mockResolvedValueOnce([
-        { id: VISITOR.profileId, full_name: 'Beto', role: 'visitor', league_position: null },
-        { id: MEMBER.profileId, full_name: 'Ana', role: 'member', league_position: 'diretor' },
+        { id: VISITOR.profileId, full_name: 'Beto', role: 'visitor', league_position: null, avatar_url: 'javascript:alert(1)' },
+        { id: MEMBER.profileId, full_name: 'Ana', role: 'member', league_position: 'diretor', avatar_url: 'https://media.laift.com.br/avatars/ana.png' },
       ])
       .mockResolvedValueOnce(undefined);
     const res = await AttendanceService.badges(sql, env, ADMIN, { profileIds: [MEMBER.profileId, VISITOR.profileId.toUpperCase(), MEMBER.profileId, missing] }, 'cid');
@@ -400,6 +400,7 @@ describe('AttendanceService.badges', () => {
       [MEMBER.profileId, 'Ana', 'member', 'diretor'],
       [VISITOR.profileId, 'Beto', 'visitor', null],
     ]);
+    expect(res.badges.map((b) => b.avatarUrl)).toEqual(['https://media.laift.com.br/avatars/ana.png', null]);
     for (const b of res.badges) {
       expect(await AttendanceService.verifyAttendanceQr(env, b.qrPayload)).toBe(b.profileId);
     }

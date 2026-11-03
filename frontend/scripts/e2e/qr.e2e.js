@@ -102,7 +102,11 @@ function report(violations, label) {
 
 async function tap(frame, selector) {
   // A Portaria recolhe "Presença por e-mail" e "Relatórios" em <details>: abre o que contém o alvo.
-  await frame.locator(selector).evaluate((el) => { const d = el.closest('details'); if (d) d.open = true; });
+  await frame.locator(selector).evaluate((el) => {
+    const pane = el.closest('.fiscal-pane');
+    if (pane && pane.classList.contains('hidden')) document.querySelector('[aria-controls="' + pane.id + '"]').click();
+    const d = el.closest('details'); if (d) d.open = true;
+  });
   await frame.locator(selector).evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await frame.click(selector);
 }
@@ -201,9 +205,12 @@ async function singleBadgeScenario() {
     await tap(frame, '#listRegistered');
     await frame.waitForFunction(() => document.querySelectorAll('#memberList .fiscal-item').length === 2, null, { timeout: 5000 }).catch(() => {});
 
+    await tap(frame, '[data-profile-id="22222222-2222-4222-8222-222222222222"] [data-action="badge"]');
+    await frame.waitForFunction(() => document.querySelectorAll('#badgePreview .badge-card').length === 1, null, { timeout: 5000 }).catch(() => {});
+    check(await frame.evaluate(() => document.querySelectorAll('#badgePreview .badge-card').length === 1), 'o botão Crachá mostra o crachá da pessoa na tela (um só)');
     const [popup] = await Promise.all([
       app.context.waitForEvent('page'),
-      tap(frame, '[data-profile-id="22222222-2222-4222-8222-222222222222"] [data-action="badge"]'),
+      tap(frame, '#openStudio'),
     ]);
     await popup.waitForLoadState('load');
     // Espera pelo ATRIBUTO `src` (não a propriedade `.src`, que o browser

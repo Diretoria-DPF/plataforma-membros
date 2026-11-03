@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
   <!-- Identidade, tema e ponte com a Plataforma de Membros (redireciona ao login se aberto fora dela) -->
   <script src="../shared/laift-identity.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,6 +45,12 @@
         <p id="fiscalEventInfo" class="fiscal-note" aria-live="polite"></p>
       </section>
 
+      <div class="fiscal-tabs" role="tablist" aria-label="Áreas da portaria">
+        <button id="tabPresenca" class="fiscal-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="paneAttendance">Presença</button>
+        <button id="tabPessoas" class="fiscal-tab" type="button" role="tab" aria-selected="false" aria-controls="panePeople" tabindex="-1">Pessoas e crachás</button>
+      </div>
+
+      <div id="paneAttendance" class="fiscal-pane" role="tabpanel" aria-labelledby="tabPresenca">
       <section class="fiscal-card" aria-labelledby="fiscalQrTitle">
         <h2 id="fiscalQrTitle">Ler credencial</h2>
         <div id="reader" class="fiscal-reader hidden"></div>
@@ -64,8 +70,28 @@
         <ul id="recentList" class="fiscal-recent"></ul>
       </section>
 
+      <details class="fiscal-card fiscal-more">
+        <summary>Presença por e-mail</summary>
+        <form id="manualForm" class="fiscal-row" novalidate>
+          <label for="manualEmail" class="visually-hidden">E-mail da conta do participante</label>
+          <input id="manualEmail" class="fiscal-grow" type="email" placeholder="E-mail da conta na plataforma" autocomplete="off" maxlength="255">
+          <button id="manualSubmit" class="btn btn-secondary" type="submit">Registrar presença</button>
+        </form>
+        <p class="fiscal-note">Quem não se inscreveu antes também pode entrar: a inscrição é criada no check-in, se houver vaga.</p>
+      </details>
+
+      <details class="fiscal-card fiscal-more">
+        <summary>Relatório de presença</summary>
+        <div class="fiscal-row">
+          <button id="exportCsv" class="btn btn-outline fiscal-grow" type="button">📥 Exportar CSV</button>
+        </div>
+        <p class="fiscal-note">CSV pronto para o Excel, com as presenças do evento escolhido.</p>
+      </details>
+      </div>
+
+      <div id="panePeople" class="fiscal-pane hidden" role="tabpanel" aria-labelledby="tabPessoas">
       <section class="fiscal-card" aria-labelledby="fiscalListTitle">
-        <h2 id="fiscalListTitle">Buscar pessoa</h2>
+        <h2 id="fiscalListTitle">Pessoas do evento</h2>
         <form id="searchForm" class="fiscal-row" role="search" novalidate>
           <label for="memberSearch" class="visually-hidden">Buscar participante por nome, e-mail ou usuário</label>
           <input id="memberSearch" class="fiscal-grow" type="search" placeholder="Nome, e-mail ou usuário (mín. 2 letras)" autocomplete="off" maxlength="100">
@@ -78,24 +104,27 @@
         <ul id="memberList" class="fiscal-list"></ul>
       </section>
 
-      <details class="fiscal-card fiscal-more">
-        <summary>Presença por e-mail</summary>
-        <form id="manualForm" class="fiscal-row" novalidate>
-          <label for="manualEmail" class="visually-hidden">E-mail da conta do participante</label>
-          <input id="manualEmail" class="fiscal-grow" type="email" placeholder="E-mail da conta na plataforma" autocomplete="off" maxlength="255">
-          <button id="manualSubmit" class="btn btn-secondary" type="submit">Registrar presença</button>
-        </form>
-        <p class="fiscal-note">Quem não se inscreveu antes também pode entrar: a inscrição é criada no check-in, se houver vaga.</p>
-      </details>
+        <section id="badgePreviewCard" class="fiscal-card hidden" aria-labelledby="badgePreviewTitle">
+          <h2 id="badgePreviewTitle">Crachá</h2>
+          <div id="badgePreview" class="badge-preview"></div>
+          <div class="fiscal-row">
+            <button id="exportBadgePdf" class="btn btn-primary fiscal-grow" type="button">📄 Exportar PDF</button>
+            <button id="openStudio" class="btn btn-outline fiscal-grow" type="button">Personalizar no estúdio</button>
+            <button id="closeBadgePreview" class="btn btn-outline btn-sm" type="button">Fechar</button>
+          </div>
+          <p class="fiscal-note">Na janela que abrir, escolha “Salvar como PDF” como destino da impressão.</p>
+        </section>
 
-      <details class="fiscal-card fiscal-more">
-        <summary>Relatórios e crachás</summary>
-        <div class="fiscal-row">
-          <button id="exportCsv" class="btn btn-outline fiscal-grow" type="button">📥 Exportar CSV</button>
-          <button id="printBadges" class="btn btn-secondary fiscal-grow" type="button">🖨️ Imprimir crachás selecionados</button>
-        </div>
-        <p class="fiscal-note">CSV pronto para o Excel. Crachás em folha A4 (8 por folha, padrão CR-80), cada um com o QR assinado da pessoa. Marque as pessoas em “Buscar pessoa”.</p>
-      </details>
+        <details class="fiscal-card fiscal-more">
+          <summary>Criar vários crachás</summary>
+          <p class="fiscal-note">Para muita gente de uma vez: escolha quem entra no arquivo e gere um único PDF (8 crachás por folha A4).</p>
+          <div class="fiscal-row">
+            <button id="batchRegistered" class="btn btn-outline fiscal-grow" type="button">Todos os inscritos</button>
+            <button id="batchPresent" class="btn btn-outline fiscal-grow" type="button">Só os presentes</button>
+          </div>
+          <button id="printBadges" class="btn btn-secondary fiscal-batch-go" type="button">📄 Gerar PDF dos selecionados</button>
+        </details>
+      </div>
     </div>
   </main>
 

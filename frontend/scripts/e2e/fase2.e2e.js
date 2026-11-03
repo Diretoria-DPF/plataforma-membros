@@ -56,7 +56,11 @@ const STATS = {
  */
 async function tap(frame, selector) {
   // A Portaria recolhe "Presença por e-mail" e "Relatórios" em <details>: abre o que contém o alvo.
-  await frame.locator(selector).evaluate((el) => { const d = el.closest('details'); if (d) d.open = true; });
+  await frame.locator(selector).evaluate((el) => {
+    const pane = el.closest('.fiscal-pane');
+    if (pane && pane.classList.contains('hidden')) document.querySelector('[aria-controls="' + pane.id + '"]').click();
+    const d = el.closest('details'); if (d) d.open = true;
+  });
   await frame.locator(selector).evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await frame.click(selector);
 }

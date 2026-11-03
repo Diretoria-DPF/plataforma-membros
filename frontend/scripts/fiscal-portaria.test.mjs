@@ -38,7 +38,7 @@ test('Portaria: ids que o fluxo e os e2e usam continuam, e o secundário fica re
   for (const id of ['scannerStart', 'scannerStop', 'manualEmail', 'manualSubmit', 'exportCsv', 'printBadges', 'listRegistered', 'fiscalEvent', 'status']) {
     assert.ok(HTML.includes('id="' + id + '"'), 'falta #' + id);
   }
-  assert.equal((HTML.match(/<details class="fiscal-card fiscal-more">/g) || []).length, 2);
+  assert.equal((HTML.match(/<details class="fiscal-card fiscal-more">/g) || []).length, 3);
   assert.match(CSS, /\.fiscal-result\.is-success/);
   assert.match(CSS, /\.fiscal-result\.is-error/);
 });
@@ -49,4 +49,29 @@ test('Estúdio de crachá: essencial à vista, personalização recolhida, ids d
     assert.ok(BADGE.includes('id="' + id + '"'), 'falta #' + id);
   }
   assert.ok(!/Matricula \/ token/.test(BADGE), 'rótulo confuso do QR foi trocado');
+});
+
+test('Portaria: duas abas, crachá individual com PDF e lote só sob pedido', () => {
+  for (const id of ['tabPresenca', 'tabPessoas', 'paneAttendance', 'panePeople', 'badgePreviewCard', 'badgePreview', 'exportBadgePdf', 'openStudio', 'batchRegistered', 'batchPresent', 'printBadges']) {
+    assert.ok(HTML.includes('id="' + id + '"'), 'falta #' + id);
+  }
+  assert.ok(/role="tablist"/.test(HTML) && /aria-controls="panePeople"/.test(HTML), 'abas acessíveis');
+  assert.ok(/<summary>Criar vários crachás<\/summary>/.test(HTML), 'o lote fica recolhido');
+  assert.match(JS, /badgeBtn\.addEventListener\('click', \(\) => showBadgePreview\(p\)\)/, 'o botão Crachá mostra um crachá, não abre o lote');
+  assert.match(JS, /function exportPreviewPdf\(\)/);
+  assert.match(JS, /Salvar como PDF/);
+  assert.match(JS, /function selectForBatch\(onlyPresent\)/);
+  assert.match(CSS, /\.badge-sheet\.is-single/);
+});
+
+test('Portaria: foto do perfil só por https, com iniciais de reserva, e o CSP libera só o R2 público', () => {
+  assert.match(JS, /function badgeAvatar\(b, initial\)/);
+  assert.match(JS, /\^https:/);
+  assert.match(HTML, /img-src 'self' data: blob: https:\/\/pub-f449f2cc117b4cc3a34c374218ac2e99\.r2\.dev;/);
+});
+
+test('menu: o item vira Portaria', () => {
+  const index = read('index.html');
+  assert.ok(index.includes('<span>Portaria</span>'));
+  assert.ok(index.includes('<span class="app-menu__titulo">Portaria</span>'));
 });
