@@ -84,3 +84,10 @@ test('cache: CACHE_NAME e data-app-version iguais', () => {
   const v = /CACHE_PREFIX \+ '(v\d+)'/.exec(read('sw.js'))?.[1];
   assert.equal(/data-app-version="(v\d+)"/.exec(read('index.html'))?.[1], v);
 });
+
+test('entrada v2 (flag ligada em produção): a marca por extenso continua visível e os links são canônicos', () => {
+  const v2 = read('entrada-v2.js').split(String.fromCharCode(13)).join('');
+  assert.match(v2, /'h1', null, 'LAIFT · /, 'o H1 do herói começa pela marca');
+  assert.match(v2, /'ev2-sobre', 'A LAIFT é a Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia da UNINASSAU Salvador/);
+  assert.ok(!/\.html'/.test(v2), 'sem .html nos links públicos da entrada v2');
+});
