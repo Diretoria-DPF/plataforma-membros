@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-app-version="v32">
+<html lang="pt-BR" data-app-version="v33">
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
@@ -35,27 +35,48 @@
         "@type": "Organization",
         "@id": "https://laift.com.br/#organization",
         "name": "LAIFT",
-        "alternateName": "Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia",
+        "alternateName": [
+          "Liga Acadêmica LAIFT",
+          "Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia"
+        ],
         "url": "https://laift.com.br/",
         "logo": "https://laift.com.br/modulos/cracha/laift-marca.png",
-        "description": "Liga acadêmica de Farmacologia e Toxicologia para estudantes de Farmácia do ensino superior.",
-        "sameAs": ["https://www.instagram.com/laift.liga/"]
+        "description": "LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia (UNINASSAU Salvador), para estudantes da área da saúde.",
+        "email": "laiftligauninassau@gmail.com",
+        "sameAs": [
+          "https://www.instagram.com/laift.liga"
+        ],
+        "location": {
+          "@type": "Place",
+          "name": "UNINASSAU - Salvador",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Rua dos Maçons, 364",
+            "addressLocality": "Salvador",
+            "addressRegion": "BA",
+            "postalCode": "41810-205",
+            "addressCountry": "BR"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -12.995296,
+            "longitude": -38.452023
+          }
+        }
       },
       {
         "@type": "WebSite",
         "@id": "https://laift.com.br/#website",
         "url": "https://laift.com.br/",
         "name": "LAIFT",
+        "alternateName": [
+          "Liga Acadêmica LAIFT",
+          "Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia"
+        ],
         "inLanguage": "pt-BR",
-        "publisher": { "@id": "https://laift.com.br/#organization" }
-      },
-      {
-        "@type": "WebPage",
-        "@id": "https://laift.com.br/liga#webpage",
-        "url": "https://laift.com.br/liga",
-        "name": "A Liga · LAIFT",
-        "isPartOf": { "@id": "https://laift.com.br/#website" },
-        "about": { "@id": "https://laift.com.br/#organization" }
+        "publisher": {
+          "@id": "https://laift.com.br/#organization"
+        }
       }
     ]
   }
@@ -97,8 +118,8 @@
       <section id="screen-welcome" class="auth-pilha" aria-labelledby="welcome-title">
         <div class="auth-card">
           <span class="brand-pill">Plataforma de Membros</span>
-          <h1 id="welcome-title">Entrar</h1>
-          <p class="muted">LAIFT — Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia.</p>
+          <h1 id="marca-title" class="marca-titulo"><span class="marca-titulo__sigla">LAIFT</span> · <span class="marca-titulo__nome">Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</span></h1>
+          <h2 id="welcome-title" class="marca-entrar">Entrar</h2>
 
           <div id="login-inscricao-aviso" class="login-aviso" role="status" hidden></div>
 
@@ -132,11 +153,18 @@
           </div>
         </div>
         <nav class="auth-card welcome-liga" aria-label="Conheça a LAIFT, o blog e a Biblioteca">
-          <a class="welcome-liga__botao welcome-liga__link" href="liga.html"><svg class="welcome-liga__icone" aria-hidden="true" focusable="false"><use href="blog/icones.svg#liga"></use></svg><span>Conheça a LAIFT</span></a>
-          <a class="welcome-liga__botao welcome-liga__blog" href="blog.html"><svg class="welcome-liga__icone" aria-hidden="true" focusable="false"><use href="blog/icones.svg#novidades"></use></svg><span>Acessar blog</span></a>
+          <a class="welcome-liga__botao welcome-liga__link" href="/liga"><svg class="welcome-liga__icone" aria-hidden="true" focusable="false"><use href="blog/icones.svg#liga"></use></svg><span>Conheça a LAIFT</span></a>
+          <a class="welcome-liga__botao welcome-liga__blog" href="/blog"><svg class="welcome-liga__icone" aria-hidden="true" focusable="false"><use href="blog/icones.svg#novidades"></use></svg><span>Acessar blog</span></a>
           <a class="welcome-liga__botao welcome-liga__biblioteca" href="/biblioteca"><svg class="welcome-liga__icone" aria-hidden="true" focusable="false"><use href="blog/icones.svg#aprender"></use></svg><span>Biblioteca</span></a>
         </nav>
         <div class="blog-novidade blog-novidade--faixa" data-blog-novidade="1" hidden></div>
+        <article class="auth-card marca-sobre" aria-labelledby="marca-sobre-t">
+          <h2 id="marca-sobre-t">O que é a LAIFT</h2>
+          <p>A LAIFT, sigla de Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia, é uma liga acadêmica que reúne estudantes da área da saúde para aprender, pesquisar e levar a ciência adiante. Atua na UNINASSAU, o Centro Universitário Maurício de Nassau, em Salvador, Bahia.</p>
+          <p>As atividades de ensino, pesquisa e extensão buscam o desenvolvimento técnico-científico das ciências farmacológicas. Entre as áreas de interesse estão a farmacologia e a toxicologia, a atenção farmacêutica e a automedicação, a interação medicamentosa e a farmacovigilância, a farmacologia clínica e terapêutica, a toxicologia ambiental e ocupacional e a escrita e publicação científica.</p>
+          <p>A Liga é interdisciplinar: Farmácia, Biomedicina, Medicina, Nutrição, Enfermagem e outros cursos da saúde aprendem juntos, com compromisso ético e análise baseada em evidências. Quem participa estuda por meio da plataforma de membros, com quiz, casos clínicos, laboratório virtual e atlas 3D.</p>
+          <p>Para conhecer a Liga, o processo seletivo e o edital, acesse a <a href="/liga">página da LAIFT</a>, o <a href="/processo-seletivo">processo seletivo</a> ou o <a href="/blog">blog</a>.</p>
+        </article>
       </section>
 
       <section id="screen-register" class="auth-card hidden" aria-labelledby="register-title">
@@ -204,11 +232,11 @@
                sempre que os documentos mudarem de forma material. -->
           <label class="checkbox-row" for="reg-terms">
             <input type="checkbox" id="reg-terms" required>
-            <span>Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos de Uso e o Código de Conduta</a> (versão 2026-09-25).</span>
+            <span>Li e aceito os <a href="/termos" target="_blank" rel="noopener">Termos de Uso e o Código de Conduta</a> (versão 2026-09-25).</span>
           </label>
           <label class="checkbox-row" for="reg-privacy">
             <input type="checkbox" id="reg-privacy" required>
-            <span>Li e aceito a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> (versão 2026-10-08).</span>
+            <span>Li e aceito a <a href="/privacidade" target="_blank" rel="noopener">Política de Privacidade</a> (versão 2026-10-08).</span>
           </label>
 
           <button type="submit">Criar conta</button>

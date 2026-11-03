@@ -10,6 +10,8 @@
   <meta name="description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia: quem somos, áreas de interesse, como funciona, processo seletivo, edital, contato e a nossa instituição, a UNINASSAU, em Salvador.">
   <link rel="canonical" href="https://laift.com.br/liga">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LAIFT">
+  <meta property="og:locale" content="pt_BR">
   <meta property="og:title" content="Conheça a LAIFT · Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia">
   <meta property="og:description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia: quem somos, áreas de interesse, como funciona, processo seletivo, edital, contato e a nossa instituição, a UNINASSAU, em Salvador.">
   <meta property="og:url" content="https://laift.com.br/liga">
@@ -24,29 +26,21 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "LAIFT",
-    "alternateName": "Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia",
-    "url": "https://laift.com.br/liga",
-    "email": "laiftligauninassau@gmail.com",
-    "sameAs": ["https://www.instagram.com/laift.liga"],
-    "location": {
-      "@type": "Place",
-      "name": "UNINASSAU - Salvador",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Rua dos Maçons, 364",
-        "addressLocality": "Salvador",
-        "addressRegion": "BA",
-        "postalCode": "41810-205",
-        "addressCountry": "BR"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": -12.995296,
-        "longitude": -38.452023
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://laift.com.br/liga#webpage",
+        "url": "https://laift.com.br/liga",
+        "name": "Conheça a LAIFT",
+        "inLanguage": "pt-BR",
+        "isPartOf": {
+          "@id": "https://laift.com.br/#website"
+        },
+        "about": {
+          "@id": "https://laift.com.br/#organization"
+        }
       }
-    }
+    ]
   }
   </script>
 </head>
@@ -59,11 +53,11 @@
         <svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg>
         <span class="pub-voltar__rotulo">Voltar</span>
       </a>
-      <a class="pub-barra__marca" href="liga.html"><img src="modulos/cracha/laift-marca-80.png" alt="" width="40" height="40"><span>LAIFT</span></a>
+      <a class="pub-barra__marca" href="/liga"><img src="modulos/cracha/laift-marca-80.png" alt="" width="40" height="40"><span>LAIFT</span></a>
     </div>
     <nav class="pub-barra__nav" aria-label="Plataforma">
       <a class="pub-barra__link" href="./"><svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg><span>Início</span></a>
-      <a class="pub-barra__link" href="blog.html"><span>Blog</span></a>
+      <a class="pub-barra__link" href="/blog"><span>Blog</span></a>
       <a class="pub-barra__link" href="/biblioteca"><span>Biblioteca</span></a>
       <a class="pub-barra__link" href="./#entrar"><span>Entrar</span></a>
       <a class="pub-barra__link pub-barra__link--destaque" href="./#cadastro"><span>Cadastrar</span></a>
@@ -91,8 +85,8 @@
         <p class="lp-hero__oferta"><span class="lp-emoji" aria-hidden="true">🧬</span> conteúdo científico • projetos • capacitações</p>
         <p id="liga-status" class="pub-status lp-hero__status" data-estado="fechado" aria-live="polite">Inscrições fechadas no momento. Acompanhe @laift.liga.</p>
         <div class="lp-hero__acoes">
-          <a id="liga-cta-processo" class="pub-botao pub-botao--primario" href="processo-seletivo.html" data-se-aberto hidden>Processo seletivo</a>
-          <a class="pub-botao pub-botao--secundario" href="processo-seletivo.html" data-se-fechado>Conheça o processo seletivo</a>
+          <a id="liga-cta-processo" class="pub-botao pub-botao--primario" href="/processo-seletivo" data-se-aberto hidden>Processo seletivo</a>
+          <a class="pub-botao pub-botao--secundario" href="/processo-seletivo" data-se-fechado>Conheça o processo seletivo</a>
           <a class="lp-hero__local" href="#instituicao"><span class="lp-emoji" aria-hidden="true">📍</span> UNINASSAU · Salvador, Bahia</a>
         </div>
       </div>
@@ -170,7 +164,7 @@
           <li>Análise de perfil</li>
           <li>Divulgação dos selecionados</li>
         </ol>
-        <a class="pub-botao pub-botao--primario" href="processo-seletivo.html">Ver as instruções</a>
+        <a class="pub-botao pub-botao--primario" href="/processo-seletivo">Ver as instruções</a>
       </div>
       <img class="lp-processo__lia" src="modulos/shared/lia/lia-estatica.svg" alt="" width="120" height="180">
     </section>
@@ -178,7 +172,7 @@
     <section id="edital" class="pub-sec lp-edital" aria-labelledby="edital-t">
       <h2 id="edital-t">Edital 2026</h2>
       <p class="lp-lead">Regras, etapas, avaliação, compromissos e privacidade em um só documento.</p>
-      <a class="pub-botao pub-botao--secundario" href="edital.html">Abrir o edital</a>
+      <a class="pub-botao pub-botao--secundario" href="/edital">Abrir o edital</a>
     </section>
 
     <section id="contato" class="pub-sec lp-contato" aria-labelledby="contato-t">
@@ -225,14 +219,14 @@
       <h2 id="blog-t">Do blog</h2>
       <p class="lp-lead">Notícias da Liga, guias dos módulos e publicações.</p>
       <div class="blog-novidade blog-novidade--cartoes" data-blog-novidade="3" hidden></div>
-      <a class="pub-botao pub-botao--secundario" href="blog.html">Ir para o blog</a>
+      <a class="pub-botao pub-botao--secundario" href="/blog">Ir para o blog</a>
     </section>
   </main>
 
   <footer class="pub-rodape">
     <p class="pub-rodape__marca">LAIFT · Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</p>
     <p class="pub-rodape__local">UNINASSAU – Centro Universitário Maurício de Nassau · Salvador, Bahia</p>
-    <ul class="pub-rodape__links"><li><a href="liga.html">Conheça a LAIFT</a></li><li><a href="processo-seletivo.html">Processo seletivo</a></li><li><a href="edital.html">Edital</a></li><li><a href="blog.html">Blog</a></li><li><a href="termos.html">Termos de Uso</a></li><li><a href="privacidade.html">Privacidade</a></li></ul>
+    <ul class="pub-rodape__links"><li><a href="/liga">Conheça a LAIFT</a></li><li><a href="/processo-seletivo">Processo seletivo</a></li><li><a href="/edital">Edital</a></li><li><a href="/blog">Blog</a></li><li><a href="/termos">Termos de Uso</a></li><li><a href="/privacidade">Privacidade</a></li></ul>
     <p class="pub-rodape__copy">© 2026 LAIFT · desenvolvido por: <a class="pub-rodape__credito" href="https://dpflabs.com" target="_blank" rel="noopener noreferrer">dpflabs.com</a></p>
   </footer>
 

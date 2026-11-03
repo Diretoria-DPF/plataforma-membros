@@ -269,7 +269,7 @@ async function cenarioDesligado() {
       login: document.getElementById('form-login').getClientRects().length > 0,
       pai: document.getElementById('form-login').closest('.auth-card') !== null,
     }));
-    check(s.v2 === 0 && s.h1 === 'Entrar' && s.login && s.pai, 'desligada: tela de login de sempre, sem nada da Entrada v2');
+    check(s.v2 === 0 && s.h1 && /^LAIFT/.test(s.h1) && s.login && s.pai, 'desligada: tela de login de sempre, sem nada da Entrada v2');
     check(!pedidos.some((u) => /entrada-v2\.(js|css)/.test(u)), 'desligada: entrada-v2.js e entrada-v2.css nem são baixados');
     await app.login();
     check((await app.page.locator('#app-root:not(.hidden)').count()) === 1, 'desligada: o login de sempre continua entrando no app');
