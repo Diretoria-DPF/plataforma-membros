@@ -662,3 +662,8 @@ button {
     font-size: 7pt;
   }
 }
+
+/* Personalização recolhida: o essencial (nome, cargo, foto) fica à vista. */
+.group.advanced > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 700; }
+.group.advanced[open] > summary { margin-bottom: 10px; }
+.group .hint { margin: 6px 0 0; font-size: 0.85rem; opacity: 0.75; }

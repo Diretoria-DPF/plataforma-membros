@@ -172,3 +172,26 @@ body.fiscal-page { min-height: 0; }
   .badge-code { font-size: 6.5pt; font-family: monospace; color: #64748b; }
   .badge-footer { border-top: 1px solid #e2e8f0; font-size: 5.5pt; color: #64748b; text-align: center; padding-top: 1mm; }
 }
+
+/* ---- Portaria: contador ao vivo, faixa de resultado e últimas entradas ---- */
+.fiscal-live { display: flex; align-items: baseline; gap: 10px; margin-top: 10px; }
+.fiscal-live-count { font-size: 2.2rem; line-height: 1; font-variant-numeric: tabular-nums; color: var(--text-main); }
+.fiscal-live-label { font-size: 0.9rem; color: var(--text-muted); }
+.fiscal-progress { height: 8px; margin-top: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.fiscal-progress > i { display: block; height: 100%; width: 0; background: var(--success, #1e8e5a); transition: width 0.3s ease; }
+.fiscal-page .btn-lg { min-height: 56px; font-size: 1.05rem; }
+
+.fiscal-result { display: grid; gap: 2px; margin-top: 12px; padding: 16px; border-radius: var(--radius-md); border: 2px solid var(--border); text-align: center; }
+.fiscal-result-title { font-size: 1.4rem; }
+.fiscal-result-detail { font-size: 1.05rem; overflow-wrap: anywhere; }
+.fiscal-result.is-success { background: var(--success-bg); border-color: var(--success, #1e8e5a); color: var(--text-main); }
+.fiscal-result.is-warning { background: var(--fiscal-warning-bg); border-color: var(--fiscal-warning-fg); color: var(--fiscal-warning-fg); }
+.fiscal-result.is-error { background: var(--error-bg, #fde8e8); border-color: var(--error, #c0392b); color: var(--text-main); }
+
+.fiscal-recent { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.fiscal-recent-item { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--surface-alt); border-left: 4px solid var(--success, #1e8e5a); }
+.fiscal-recent-item.is-warning { border-left-color: var(--fiscal-warning-fg); }
+
+.fiscal-more > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; }
+.fiscal-more[open] > summary { margin-bottom: 10px; }
+@media (prefers-reduced-motion: reduce) { .fiscal-progress > i { transition: none; } }

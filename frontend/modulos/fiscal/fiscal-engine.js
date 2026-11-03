@@ -24,6 +24,9 @@
   };
   const SEARCH_DEBOUNCE_MS = 350;
   const SAME_QR_COOLDOWN_MS = 4000; // a câmera lê o mesmo QR várias vezes por segundo
+  const REFRESH_COUNTS_MS = 20000; // outros terminais também registram: o contador acompanha
+  const RECENT_MAX = 8;
+  const RESULT_VIBRATION = { success: [80], warning: [60, 60, 60], error: [200, 80, 200] };
 
   const state = {
     events: [],
@@ -35,6 +38,8 @@
     lastScan: { text: '', at: 0 },
     searchTimer: null,
     searchSeq: 0,
+    recent: [], // últimas entradas desta sessão do terminal
+    refreshTimer: null,
   };
 
   const $ = (id) => document.getElementById(id);
@@ -83,6 +88,67 @@
   }
 
   // =========================================================
+  // 0. FEEDBACK DA PORTARIA (faixa grande, vibração, últimas entradas)
+  // =========================================================
+
+  /** Faixa grande verde/amarela/vermelha, legível de longe, com vibração curta no celular. */
+  function showResult(kind, title, detail) {
+    const box = $('scanResult');
+    if (!box) return;
+    box.className = 'fiscal-result is-' + kind;
+    $('scanResultTitle').textContent = title || '';
+    $('scanResultDetail').textContent = detail || '';
+    if (navigator.vibrate) { try { navigator.vibrate(RESULT_VIBRATION[kind] || [80]); } catch (err) { /* sem vibração */ } }
+  }
+
+  function renderRecent() {
+    const list = $('recentList');
+    if (!list) return;
+    clearEl(list);
+    if (!state.recent.length) {
+      list.appendChild(el('li', { className: 'fiscal-empty', text: 'Nenhuma entrada registrada neste terminal ainda.' }));
+      return;
+    }
+    state.recent.forEach((item) => {
+      list.appendChild(el('li', { className: 'fiscal-recent-item is-' + item.kind }, [
+        el('strong', { text: item.name }),
+        el('span', { className: 'fiscal-item-meta', text: item.time + (item.walkIn ? ' · na porta' : '') + (item.repeat ? ' · já estava presente' : '') }),
+      ]));
+    });
+  }
+
+  function pushRecent(participant, repeat) {
+    state.recent = [{
+      name: participant.fullName || 'Participante', time: formatTime(new Date().toISOString()),
+      walkIn: !!participant.walkIn, repeat: !!repeat, kind: repeat ? 'warning' : 'success',
+    }].concat(state.recent).slice(0, RECENT_MAX);
+    renderRecent();
+  }
+
+  function updateLive(ev) {
+    const count = ev ? Number(ev.checkedInCount) || 0 : 0;
+    const total = ev ? Number(ev.registeredCount) || 0 : 0;
+    const label = $('liveCount');
+    if (label) label.textContent = count + ' / ' + total;
+    const bar = $('liveBar');
+    if (bar) bar.style.width = (total ? Math.min(100, Math.round((count / total) * 100)) : 0) + '%';
+  }
+
+  /** Atualiza só os números (sem redesenhar o seletor), para acompanhar outros terminais. */
+  async function refreshCounts() {
+    if (document.hidden || !state.eventId) return;
+    const res = await api('apiAdminAttendanceListEvents');
+    if (!res || !res.success || !Array.isArray(res.events)) return;
+    const fresh = res.events.find((e) => e.id === state.eventId);
+    const ev = currentEvent();
+    if (!fresh || !ev) return;
+    ev.checkedInCount = fresh.checkedInCount;
+    ev.registeredCount = fresh.registeredCount;
+    ev.checkInOpen = fresh.checkInOpen;
+    updateEventInfo();
+  }
+
+  // =========================================================
   // 1. EVENTOS
   // =========================================================
 
@@ -113,6 +179,7 @@
     ['scannerStart', 'manualSubmit'].forEach((id) => { $(id).disabled = !open; });
     $('exportCsv').disabled = !ev;
     $('listRegistered').disabled = !ev;
+    updateLive(ev);
     if (!ev) { info.textContent = ''; return; }
     let text = ev.checkedInCount + ' presente(s) de ' + ev.registeredCount + ' inscrito(s)';
     if (ev.capacity) text += ' · capacidade ' + ev.capacity;
@@ -160,10 +227,15 @@
     const res = await api('apiAdminAttendanceCheckIn', Object.assign({ eventId: ev.id }, input));
     if (!res.success) {
       setStatus(res.message || 'Não foi possível registrar a presença.', 'error');
+      showResult('error', 'Não registrado', res.message || 'Não foi possível registrar a presença.');
       return res;
     }
     const p = res.participant || {};
     setStatus(res.message || 'Presença registrada.', p.alreadyCheckedIn ? 'warning' : 'success');
+    showResult(p.alreadyCheckedIn ? 'warning' : 'success',
+      p.alreadyCheckedIn ? 'Já estava presente' : 'Presença registrada',
+      p.fullName || res.message || '');
+    pushRecent(p, !!p.alreadyCheckedIn);
     if (!p.alreadyCheckedIn) {
       ev.checkedInCount += 1;
       if (p.walkIn) ev.registeredCount += 1;
@@ -516,10 +588,12 @@
     $('selectAll').addEventListener('change', onSelectAll);
     $('exportCsv').addEventListener('click', exportCsv);
     $('printBadges').addEventListener('click', printSelectedBadges);
-    window.addEventListener('pagehide', stopScanner); // libera a câmera ao sair
+    window.addEventListener('pagehide', () => { stopScanner(); clearInterval(state.refreshTimer); }); // libera a câmera ao sair
     renderList('Busque participantes ou veja os inscritos deste evento.');
+    renderRecent();
     updateEventInfo();
     loadEvents();
+    state.refreshTimer = setInterval(refreshCounts, REFRESH_COUNTS_MS);
   }
 
   window.FiscalEngine = { init: init };

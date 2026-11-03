@@ -55,6 +55,8 @@ const STATS = {
  * pessoa faria rolando, e só então clica.
  */
 async function tap(frame, selector) {
+  // A Portaria recolhe "Presença por e-mail" e "Relatórios" em <details>: abre o que contém o alvo.
+  await frame.locator(selector).evaluate((el) => { const d = el.closest('details'); if (d) d.open = true; });
   await frame.locator(selector).evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await frame.click(selector);
 }
