@@ -17,13 +17,13 @@
  * de CI (core.test.mjs, make-fixtures, etc.).
  */
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const sheetDir = path.resolve(here, '../../modulos/anatomia-3d/js/ui');
 
-const { pickSnap, computeSnapHeights } = await import(path.join(sheetDir, 'sheet.js'));
+const { pickSnap, computeSnapHeights } = await import(pathToFileURL(path.join(sheetDir, 'sheet.js')).href);
 
 let failures = 0;
 

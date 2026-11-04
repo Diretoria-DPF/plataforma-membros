@@ -711,13 +711,13 @@ async function boot() {
       getStatus: (sids) => reviewStatus.groupStatus(sids),
     });
   }
-  // M4: chip "Novo: N fichas revisadas" → navegador filtrado em "Revisadas".
+  // M4: chip "Novo: N fichas completas" → navegador filtrado em "Fichas completas".
   reviewStatusReady.then(() => mountNewReviewedChip({
     host: document.getElementById('atlas-toolbar'),
     count: reviewStatus.counts.r,
     onOpen: () => {
       if (window.AtlasShell && window.AtlasShell.toggleNavigator) window.AtlasShell.toggleNavigator();
-      if (navigatorApi && navigatorApi.setFilter) navigatorApi.setFilter('r');
+      if (navigatorApi && navigatorApi.setFilter) navigatorApi.setFilter('c');
     },
   }));
 

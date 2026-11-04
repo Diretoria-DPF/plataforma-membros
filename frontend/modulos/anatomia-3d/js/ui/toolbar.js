@@ -73,7 +73,7 @@
         bus.emit(EVENTS.XRAY_SET, { enabled: localState.xray });
         updateXrayBtnState();
       },
-    }, '☠');
+    }, '⧉');
     toolbarEl.appendChild(xrayBtn);
 
     // Botão Corte — cicla entre planos: null → sagital → coronal → transversal → null

@@ -17,7 +17,7 @@
  * `node:assert/strict` e contador de falhas que decide o `process.exitCode`.
  */
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -29,7 +29,7 @@ const {
   pixelRatioFor,
   createFrameMonitor,
   nextLowerTier,
-} = await import(path.join(engineDir, 'quality.js'));
+} = await import(pathToFileURL(path.join(engineDir, 'quality.js')).href);
 
 let failures = 0;
 

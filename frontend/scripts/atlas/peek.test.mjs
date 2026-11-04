@@ -5,15 +5,20 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * peek.test.mjs — selo de revisão da ficha (js/ui/infocard.js getStatusLabel).
+ * peek.test.mjs — a ficha pública (js/ui/infocard.js) não mostra revisão.
+ * Regra do dono: o público só vê as informações e interage; selo ⓘ, selo de
+ * status e textos de revisão/rascunho/legado ficam fora da vista. Os campos
+ * de revisão permanecem no JSON (telas de gestão e ferramenta de revisão).
  * Uso: node scripts/atlas/peek.test.mjs
  */
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const { getStatusLabel } = await import(path.resolve(here, '../../modulos/anatomia-3d/js/ui/infocard.js'));
+const infocardPath = path.resolve(here, '../../modulos/anatomia-3d/js/ui/infocard.js');
+const mod = await import(pathToFileURL(infocardPath).href);
 
 let failures = 0;
 function test(name, fn) {
@@ -21,31 +26,38 @@ function test(name, fn) {
     failures += 1; console.error(`  FALHOU — ${name}\n    ${err && err.message ? err.message : err}`);
   }
 }
-const NOW = Date.parse('2026-10-02T12:00:00Z');
 
-console.log('infocard.getStatusLabel');
-test('sem conteúdo ou status desconhecido: sem selo', () => {
-  assert.equal(getStatusLabel(undefined), null);
-  assert.equal(getStatusLabel({}), null);
-  assert.equal(getStatusLabel({ status: 'xyz' }), null);
+console.log('infocard (vista pública)');
+
+test('o resumo padrão de rascunho automático nunca é mostrado', () => {
+  assert.equal(mod.publicSummary('Resumo ainda não redigido — aguardando revisão humana.'), '');
+  assert.equal(mod.publicSummary('  resumo ainda nao redigido '), '');
+  assert.equal(mod.publicSummary(undefined), '');
+  assert.equal(mod.publicSummary('   '), '');
 });
-test('4 estados distintos, nenhum diz "Rascunho"', () => {
-  const kinds = ['editorial', 'legacy-unverified', 'auto-draft', 'reviewed'].map((status) => getStatusLabel({ status, review_requested_at: '2026-09-30', by: 'Dra. Ana', date: '2026-10-01' }, NOW));
-  assert.deepEqual(kinds.map((k) => k.kind), ['editorial', 'legacy', 'auto', 'reviewed']);
-  assert.equal(kinds[0].label, 'Em revisão editorial');
-  assert.equal(kinds[1].label, 'Conteúdo antigo · sem revisão');
-  assert.equal(kinds[2].label, 'Gerado automaticamente · não revisado');
-  assert.equal(kinds[3].label, 'Revisado por Dra. Ana em 01/10/2026');
-  assert.ok(kinds.every((k) => !/rascunho/i.test(k.label) && k.tooltip));
+
+test('um resumo real é mantido', () => {
+  assert.equal(mod.publicSummary(' O fígado é a maior glândula do corpo. '), 'O fígado é a maior glândula do corpo.');
 });
-test('editorial há 30+ dias vira aviso amarelo com os dias', () => {
-  const late = getStatusLabel({ status: 'editorial', review_requested_at: '2026-08-20' }, NOW);
-  assert.equal(late.kind, 'editorial-late');
-  assert.equal(late.label, 'Aguardando revisão há 43 dias');
-  assert.equal(getStatusLabel({ status: 'editorial', review_requested_at: '2026-09-10' }, NOW).kind, 'editorial');
+
+test('estrutura sem ficha: nome em inglês, sistema, localização e lado (sem aviso de ausência)', () => {
+  const facts = mod.plainFacts(
+    { names: { pt: 'Fêmur', en: 'Femur' } },
+    { systemLabel: 'Esquelético', layerLabel: 'Esqueleto', sideLabel: 'Direito' },
+  );
+  assert.deepEqual(facts.map((f) => f.label), ['Sistema', 'Localização', 'Lado', 'Nome em inglês']);
+  assert.ok(facts.every((f) => !/sem descri|rascunho|revis/i.test(`${f.label} ${f.value}`)));
 });
-test('approved sem revisor/data ainda mostra "Revisado"', () => {
-  assert.equal(getStatusLabel({ status: 'approved' }, NOW).label, 'Revisado');
+
+test('o módulo não exporta mais o selo de status e o código não usa o selo ⓘ', () => {
+  assert.equal(mod.getStatusLabel, undefined);
+  const src = fs.readFileSync(infocardPath, 'utf8');
+  assert.ok(!/LaiftReviewSeal|atlas-card-status|Status de Revisão|Sem descrição ainda|Tradução assistida/.test(src));
+});
+
+test('index.html do Atlas não carrega o selo de revisão', () => {
+  const html = fs.readFileSync(path.resolve(here, '../../modulos/anatomia-3d/index.html'), 'utf8');
+  assert.ok(!/laift-review-seal/.test(html));
 });
 
 console.log('');

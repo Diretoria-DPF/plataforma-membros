@@ -10,10 +10,10 @@
  */
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const S = await import(path.resolve(here, '../../modulos/anatomia-3d/js/ui/session.js'));
+const S = await import(pathToFileURL(path.resolve(here, '../../modulos/anatomia-3d/js/ui/session.js')).href);
 
 let failures = 0;
 function test(name, fn) {

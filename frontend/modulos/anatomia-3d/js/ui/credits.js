@@ -199,10 +199,6 @@ function createCredits({ manifest, contentSources = [] }) {
   shareAlikeNote.textContent = 'Modelos derivados do Z-Anatomy são distribuídos sob CC BY-SA 4.0: podem ser reutilizados com atribuição e sob a mesma licença.';
   notesSection.appendChild(shareAlikeNote);
 
-  const draftNote = h('p', { className: 'credits-note' });
-  draftNote.textContent = 'Fichas com o selo "Em revisão editorial" estão publicadas e aguardam a revisão do conselho editorial da LAIFT; os demais selos indicam a origem do texto (conteúdo antigo ou gerado automaticamente). Encontrou um erro? Avise o conselho.';
-  notesSection.appendChild(draftNote);
-
   const libNote = h('p', { className: 'credits-note' });
   libNote.textContent = 'Biblioteca 3D: three.js (MIT).';
   notesSection.appendChild(libNote);
