@@ -171,7 +171,10 @@ test('integração: quiz, toxicologia e Atlas carregam folha e script; motores u
     if (before) assert.ok(html.indexOf('laift-review-seal.js') < html.search(new RegExp(`<script src="[^"]*${before}\\.js`)), `${page}: selo antes do motor`);
   }
   const engine = fs.readFileSync(path.join(frontend, 'modulos/shared/quiz-engine.js'), 'utf8');
-  assert.match(engine, /LaiftReviewSeal/);
+  // Regra do dono: o público não vê selo nem aviso de revisão nos quizzes; sobra só "Reportar erro".
+  assert.doesNotMatch(engine, /LaiftReviewSeal\.create|whenMissing|laift-review-seal-row/);
+  assert.match(engine, /LaiftReviewSeal\.report/);
+  assert.doesNotMatch(SRC.slice(SRC.indexOf('function report'), SRC.indexOf('function create')), /revisad|\bIA\b|rascunho/);
   const card = fs.readFileSync(path.join(frontend, 'modulos/anatomia-3d/js/ui/infocard.js'), 'utf8');
   assert.match(card, /LaiftReviewSeal/);
 });

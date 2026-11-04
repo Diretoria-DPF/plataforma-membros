@@ -377,6 +377,17 @@ header .subtitle {
 .option.correct .option-letter { background: var(--laift-success); color: var(--laift-surface); border-color: transparent; }
 .option.incorrect .option-letter { background: var(--laift-danger); color: var(--laift-surface); border-color: transparent; }
 
+.option[aria-disabled="true"] { cursor: default; }
+
+/* Aviso de erro discreto no rodapé da explicação; alvo de toque >= 44px. */
+.quiz-report-row { display: flex; justify-content: flex-end; margin-top: 8px; }
+.quiz-report-btn {
+  min-height: 44px; padding: 0 12px; border: 0; background: transparent; color: var(--laift-muted, #5b6577);
+  font: inherit; font-size: 0.9rem; text-decoration: underline; cursor: pointer;
+}
+.quiz-report-btn:hover { color: var(--laift-info, #1d5fb8); }
+.quiz-report-btn:focus-visible { outline: 3px solid var(--laift-info, #1d5fb8); outline-offset: 2px; }
+
 /* Explicação: display controlado só pela classe .show */
 .explanation {
   display: none;
