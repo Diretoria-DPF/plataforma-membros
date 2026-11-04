@@ -21,7 +21,10 @@
 
   /** Módulo da Worker (learning_attempts.module) -> id do cartão em learning.js. */
   var MODULE_IDS = { farmacologia: 'farmaco', toxicologia: 'toxico', clinica: 'clinica', laboratorio: 'lab', anatomia: 'anatomia' };
-  var MODULE_LABELS = { farmaco: 'Farmacologia', toxico: 'Toxicologia', clinica: 'Clínica virtual', lab: 'Laboratório virtual', anatomia: 'Anatomia e farmacocinética' };
+  // Nomes do catálogo único (modulos/catalogo.js); no Node (testes) vem do próprio arquivo.
+  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/catalogo.js') : root.LaiftModules;
+  var MODULE_LABELS = {};
+  CATALOG.MODULES.forEach(function (m) { MODULE_LABELS[m.id] = m.name; });
   var ACTIVITY_LABELS = { quiz_estudo: 'simulado', quiz_prova: 'prova', caso_clinico: 'caso clínico', formulacao: 'formulação', simulacao_pk: 'simulação' };
 
   var dayFormat = typeof Intl !== 'undefined'

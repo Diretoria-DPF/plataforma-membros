@@ -20,17 +20,27 @@
 
   // ---------- Funções puras ----------
 
-  function stateFor(panelId) { return { laift: STATE_MARK, panel: panelId }; }
+  var MODULE_RE = /^[a-z0-9]{1,30}$/;
+
+  /** Estado do histórico: só o nome do painel e, no Aprender, o módulo aberto (TRA-03). */
+  function stateFor(panelId, moduleId) {
+    var state = { laift: STATE_MARK, panel: panelId };
+    if (typeof moduleId === 'string' && MODULE_RE.test(moduleId)) state.module = moduleId;
+    return state;
+  }
 
   function isPanelState(state) {
     return !!state && typeof state === 'object' && state.laift === STATE_MARK
-      && typeof state.panel === 'string' && PANEL_RE.test(state.panel);
+      && typeof state.panel === 'string' && PANEL_RE.test(state.panel)
+      && (state.module === undefined || (typeof state.module === 'string' && MODULE_RE.test(state.module)));
   }
 
+  function moduleOf(state) { return isPanelState(state) && state.module ? state.module : ''; }
+
   /** O que fazer ao trocar de painel: 'none' (já é o do histórico), 'replace' (primeira tela) ou 'push'. */
-  function pushOp(currentState, panelId, isFirst) {
+  function pushOp(currentState, panelId, isFirst, moduleId) {
     if (!PANEL_RE.test(String(panelId))) return 'none';
-    if (isPanelState(currentState) && currentState.panel === panelId) return 'none';
+    if (isPanelState(currentState) && currentState.panel === panelId && moduleOf(currentState) === (moduleId || '')) return 'none';
     return isFirst ? 'replace' : 'push';
   }
 
@@ -41,7 +51,9 @@
   function popDecision(state, ctx) {
     if (!ctx || !ctx.loggedIn) return { type: 'ignore' };
     if (isPanelState(state) && ctx.canOpen(state.panel)) {
-      return state.panel === ctx.current ? { type: 'ignore' } : { type: 'show', panel: state.panel };
+      var mod = moduleOf(state);
+      if (state.panel === ctx.current && mod === (ctx.currentModule || '')) return { type: 'ignore' };
+      return { type: 'show', panel: state.panel, module: mod };
     }
     if (ctx.current === HOME || !ctx.canOpen(HOME)) return { type: 'ignore' };
     return { type: 'show', panel: HOME };
@@ -51,14 +63,14 @@
 
   var started = false; // a primeira troca do app (a Início depois do login) só marca o estado, não empilha
 
-  function push(panelId) {
+  function push(panelId, moduleId) {
     if (typeof history === 'undefined') return;
-    var op = pushOp(history.state, panelId, !started);
+    var op = pushOp(history.state, panelId, !started, moduleId);
     started = true;
     try {
       // A primeira tela só marca o estado e MANTÉM o hash (#atlas=... e #cadastro são lidos pelo app logo depois).
-      if (op === 'push') history.pushState(stateFor(panelId), '', window.location.pathname + window.location.search);
-      else if (op === 'replace') history.replaceState(stateFor(panelId), '', window.location.pathname + window.location.search + window.location.hash);
+      if (op === 'push') history.pushState(stateFor(panelId, moduleId), '', window.location.pathname + window.location.search);
+      else if (op === 'replace') history.replaceState(stateFor(panelId, moduleId), '', window.location.pathname + window.location.search + window.location.hash);
     } catch (e) { /* o navegador pode recusar (ex.: iframe); a navegação segue sem histórico */ }
   }
 
@@ -67,11 +79,16 @@
 
   function onPopState(event, ctx, show) {
     var decision = popDecision(event && event.state, ctx);
-    if (decision.type === 'show') show(decision.panel);
+    if (decision.type === 'show') show(decision.panel, decision.module || '');
   }
 
-  var api = { push: push, reset: reset, onPopState: onPopState };
-  var pure = { stateFor: stateFor, isPanelState: isPanelState, pushOp: pushOp, popDecision: popDecision };
+  /** O módulo aberto é o do estado atual do histórico? (então o "Voltar" da tela pode usar history.back()). */
+  function currentModule() {
+    return typeof history === 'undefined' ? '' : moduleOf(history.state);
+  }
+
+  var api = { push: push, reset: reset, onPopState: onPopState, currentModule: currentModule };
+  var pure = { moduleOf: moduleOf, stateFor: stateFor, isPanelState: isPanelState, pushOp: pushOp, popDecision: popDecision };
 
   // Navegador: window.LaiftPanelHistory. Node: module.exports, para scripts/panel-history.test.mjs.
   if (typeof module !== 'undefined' && module.exports) {
