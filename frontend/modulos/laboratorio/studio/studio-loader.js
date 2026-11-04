@@ -4,7 +4,7 @@
  * Antes era um <script> inline no index.html que buscava as bibliotecas no
  * unpkg/jsDelivr SEM versão (RDKit) e sem verificação de integridade. Agora:
  *   - versões fixas; OpenChemLib vem de ../vendor/ (TEC-01, mesmos bytes do npm);
- *     o RDKit segue no jsDelivr (o .wasm de 7,3 MB não entra no repositório);
+ *     o RDKit segue no jsDelivr (o .wasm de 7,3 MB não entra no repositório) e só é carregado sob demanda (getter __rdkitReady);
  *   - integrity (SRI) + crossorigin nos <script> injetados: se o CDN servir
  *     outro conteúdo, o navegador recusa;
  *   - o .wasm do RDKit vem da MESMA versão do .js (window.LAIFT_RDKIT_DIST,
@@ -95,14 +95,28 @@
   }
 
   global.LAIFT_RDKIT_BLOQUEADO_PELA_CSP = !cspPermiteEval();
-  global.__rdkitReady = global.LAIFT_RDKIT_BLOQUEADO_PELA_CSP
-    ? Promise.resolve(null)
-    : injetar(RDKIT, function () {
-      return typeof global.initRDKitModule === 'function';
-    }, 'RDKit Loader').then(function () { return global.initRDKitModule; }, function (err) {
-      console.warn('[RDKit Loader] ❌', err.message);
-      return null;
-    });
+
+  // Carga SOB DEMANDA: window.__rdkitReady é um getter; o <script> do RDKit só
+  // é injetado na primeira leitura (studio.js lê ao precisar de descritores,
+  // SMARTS ou reações). O .wasm (7,3 MB) só é buscado depois, pelo initRDKitModule.
+  // A bancada nunca carrega este arquivo: o Estúdio é um iframe aberto por clique.
+  var rdkitPromise = null;
+  function carregarRDKit() {
+    if (rdkitPromise) return rdkitPromise;
+    rdkitPromise = global.LAIFT_RDKIT_BLOQUEADO_PELA_CSP
+      ? Promise.resolve(null)
+      : injetar(RDKIT, function () {
+        return typeof global.initRDKitModule === 'function';
+      }, 'RDKit Loader').then(function () { return global.initRDKitModule; }, function (err) {
+        console.warn('[RDKit Loader] ❌', err.message);
+        return null;
+      });
+    return rdkitPromise;
+  }
+  Object.defineProperty(global, '__rdkitReady', {
+    configurable: true,
+    get: carregarRDKit
+  });
   if (global.LAIFT_RDKIT_BLOQUEADO_PELA_CSP) {
     console.info('[RDKit Loader] Desativado pela CSP desta página (exige \'unsafe-eval\'); usando estimativas.');
   }
