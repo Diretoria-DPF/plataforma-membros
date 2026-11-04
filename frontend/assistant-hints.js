@@ -19,6 +19,8 @@
     events: 'Quer ajuda com sua inscrição?',
     proposals: 'Posso te levar para criar uma proposta.',
     learn: 'Quer sugestão por onde começar a estudar?',
+    pharma: 'Quer rever um mecanismo de ação antes de seguir?',
+    toxic: 'Quer rever os antídotos de um grupo de intoxicações?',
     lab: 'Dúvida sobre vidraria ou preparo?',
     clinic: 'Quer revisar um caso antes?',
     atlas: 'Posso explicar alguma estrutura?',
@@ -29,7 +31,8 @@
     'panel-proposals': 'proposals',
     'panel-learn': 'learn',
   });
-  // Módulo de estudo (id em learning.js) → contexto. Farmacologia e Toxicologia usam o de Aprender.
+  // Módulo de estudo (id em learning.js e em modulos/catalogo.js) → contexto da Guia (humor e fala). Farmacologia e
+  // Toxicologia ficam no contexto de Aprender, mas têm dica própria (HINT_KEY_BY_MODULE, TRA-12).
   var CONTEXT_BY_MODULE = Object.freeze({
     farmaco: 'learn',
     toxico: 'learn',
@@ -37,6 +40,8 @@
     lab: 'lab',
     anatomia: 'atlas',
   });
+
+  var HINT_KEY_BY_MODULE = Object.freeze({ farmaco: 'pharma', toxico: 'toxic' });
 
   /** Valor do mapa para a chave, só se a chave for uma propriedade própria (nada de protótipo). */
   function own(map, key) {
@@ -46,6 +51,9 @@
   function contextForPanel(panelId) { return own(CONTEXT_BY_PANEL, panelId); }
 
   function contextForModule(moduleId) { return own(CONTEXT_BY_MODULE, moduleId); }
+
+  /** Chave da dica do módulo: a própria (Farmacologia, Toxicologia) ou o contexto dele. */
+  function hintKeyForModule(moduleId) { return own(HINT_KEY_BY_MODULE, moduleId) || contextForModule(moduleId); }
 
   /** Contexto com dica → { context, text }; sem dica → null. */
   function hintFor(context) {
@@ -156,8 +164,11 @@
 
     function moduleChanged(moduleId) {
       state = { panel: state.panel, module: typeof moduleId === 'string' ? moduleId : '' };
-      offer(contextForModule(state.module));
+      offer(hintKeyForModule(state.module));
     }
+
+    /** Módulo aberto agora ('' se nenhum): vai junto da pergunta à Guia como {panel, module}. */
+    function moduleId() { return state.module; }
 
     /** Contexto da Guia na tela: o módulo aberto, ou o painel. */
     function context() {
@@ -176,6 +187,7 @@
       panelChanged: panelChanged,
       moduleChanged: moduleChanged,
       context: context,
+      moduleId: moduleId,
       hide: hide,
       reset: reset,
       isShowing: function () { return node !== null; },
@@ -187,6 +199,7 @@
     HINT_TEXT: HINT_TEXT,
     contextForPanel: contextForPanel,
     contextForModule: contextForModule,
+    hintKeyForModule: hintKeyForModule,
     hintFor: hintFor,
     shouldShow: shouldShow,
     createHints: createHints,
