@@ -79,6 +79,21 @@ const DEFAULT_SYSTEMS = Object.freeze(['esqueletico']);
 const BACKGROUND_SYSTEMS = Object.freeze(['muscular']);
 const BACKGROUND_DELAY_MS = 1500;
 
+/**
+ * Estruturas exibidas num sistema (ficha, navegador) diferente do arquivo de
+ * modelo que contém a malha: a epiglote e a cartilagem tireóidea são do sistema
+ * respiratório, mas as malhas vêm dos modelos digestório e esquelético.
+ */
+const MESH_HOST_SYSTEMS = Object.freeze({
+  'za:epiglottis': Object.freeze(['digestorio']),
+  'za:thyroid-cartilage': Object.freeze(['digestorio', 'esqueletico']),
+});
+
+/** Sistemas a carregar para exibir `sid`: o da entrada mais os que hospedam a malha. */
+export function systemsToLoad(sid, entry) {
+  return [...new Set([entry && entry.system, ...(MESH_HOST_SYSTEMS[sid] || [])].filter(Boolean))];
+}
+
 /** Conexão lenta ou economia de dados (Network Information API, quando existe). */
 export function isConstrainedConnection(nav = (typeof navigator !== 'undefined' ? navigator : {})) {
   const c = nav && nav.connection;
@@ -838,7 +853,7 @@ async function boot() {
   }
   async function revealAndFocus(sid, { focus = true } = {}) {
     const entry = contentStore.getEntry(sid);
-    if (entry && entry.system && !assetLoader.isLoaded(entry.system)) await loadSystem(entry.system);
+    await Promise.all(systemsToLoad(sid, entry).filter((sys) => !assetLoader.isLoaded(sys)).map((sys) => loadSystem(sys)));
     // Estrutura do órgão detalhado do HRA ("za:vh-*"): carrega esse arquivo também.
     if (entry && entry.system && /^za:vh-/.test(sid) && !assetLoader.isLoaded(entry.system, { variant: 'hra' })) {
       await loadSystem(entry.system, { variant: 'hra' });
@@ -879,7 +894,7 @@ async function boot() {
     const systems = new Set(caso.correctSystem ? [caso.correctSystem] : []);
     for (const sid of sids) {
       const entry = contentStore.getEntry(sid);
-      if (entry && entry.system) systems.add(entry.system);
+      systemsToLoad(sid, entry).forEach((sys) => systems.add(sys));
     }
     await Promise.all([...systems].filter((sys) => !assetLoader.isLoaded(sys)).map(loadSystem));
     const layers = new Set();
