@@ -153,3 +153,13 @@ html[data-theme="light"] .right-tab-bar { background: var(--laift-surface-alt); 
 html[data-theme="light"] .rtab-btn.active { background: #0369a1; color: #fff; }
 .manual-btn[hidden] { display: none; }
 html[data-theme="light"] .data-val-highlight, html[data-theme="light"] #molName { color: #0a5f73; }
+
+/* O3 — painel "Processo guiado" (motor novo, chave labMotor) */
+.lab-processo { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.lab-processo p { margin: 0; line-height: 1.45; }
+.lab-processo-progresso { font-weight: 600; }
+.lab-processo-calculo { display: flex; flex-direction: column; gap: 4px; }
+.lab-processo-campo input { min-height: 44px; width: 8em; font-size: 1rem; }
+.lab-processo-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.lab-processo-acoes .btn, .lab-processo .panel-section-header .btn { min-height: 44px; }
+.lab-processo-caderno ol { margin: 4px 0 0; padding-left: 1.2em; font-size: 0.85rem; }
