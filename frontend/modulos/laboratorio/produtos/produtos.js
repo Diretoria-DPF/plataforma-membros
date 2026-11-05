@@ -5,7 +5,7 @@
  */
 /**
  * produtos.js — interface de Produtos e Controle de qualidade do Laboratório (O5).
- * Só monta a tela se a flag local labProdutos estiver ligada (?flags=labProdutos).
+ * Só monta a tela se a flag local labProdutos estiver ligada (padrão; ?flags=-labProdutos desliga).
  * Todo texto entra por textContent; os dados vêm dos JSON de ../data (mesma origem).
  * A execução passo a passo dos processos entra no Laboratório pela integração com o script.js (depois da O3).
  */

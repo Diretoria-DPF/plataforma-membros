@@ -7,7 +7,7 @@
 // - regras puras (conferência de receita, livro, balanço, enchimento, controle de qualidade, progresso no aparelho);
 // - dados em JSON: toda regra regulatória tem fonte e marca de conferência; nada de rota de síntese;
 // - nenhum campo procedimental para substância 'educacional' do seed unificado;
-// - módulo atrás de flag local desligada por padrão; CSP sem inline; sem texto público de revisão.
+// - módulo atrás de flag local ligada por padrão; CSP sem inline; sem texto público de revisão.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -33,13 +33,13 @@ const seed = require(path.join(lab, 'data', 'lab-seed.js'));
 const { NOMES_GUERRA, NOMES_ILICITAS } = await import(pathToFileURL(path.join(raiz, 'tools/lab/validar-seed.mjs')).href);
 
 // ---------- flag local ----------
-test('flag labRegulacao vem desligada e só liga por ?flags= ou __labFlags', () => {
-  assert.equal(R.flagLigada('labRegulacao', '', null), false);
-  assert.equal(R.flagLigada('labRegulacao', '?flags=labRegulacao', null), true);
-  assert.equal(R.flagLigada('labRegulacao', '?flags=outra,labRegulacao', null), true);
+test('flag labRegulacao vem ligada e desliga por ?flags=-labRegulacao ou __labFlags', () => {
+  assert.equal(R.flagLigada('labRegulacao', '', null), true);
+  assert.equal(R.flagLigada('labRegulacao', '?flags=-labRegulacao', null), false);
+  assert.equal(R.flagLigada('labRegulacao', '?flags=outra,-labRegulacao', null), false);
   assert.equal(R.flagLigada('labRegulacao', '?flags=-labRegulacao', { labRegulacao: true }), false);
-  assert.equal(R.flagLigada('labRegulacao', '', { labRegulacao: true }), true);
-  assert.equal(R.flagLigada('labRegulacao', '?flags=labRegulacaoX', null), false);
+  assert.equal(R.flagLigada('labRegulacao', '', { labRegulacao: false }), false);
+  assert.equal(R.flagLigada('labRegulacao', '?flags=-labRegulacaoX', null), true);
 });
 
 // ---------- conferência de receita ----------
@@ -328,15 +328,15 @@ function clinica(search, overrides) {
   return { casos: vm.runInContext('clinicalCases', sandbox), jornadas: vm.runInContext('clinicalJourneys', sandbox), sandbox };
 }
 
-test('clínica: com a flag desligada nada muda na lista de casos nem nas jornadas', () => {
-  const base = clinica('', null);
+test('clínica: com ?flags=-clinControlados nada muda na lista de casos nem nas jornadas', () => {
+  const base = clinica('?flags=-clinControlados', null);
   const sem = vm.runInNewContext(PATIENTS_SRC + '\n[clinicalCases.length, clinicalJourneys.length]', {});
   assert.deepEqual([base.casos.length, base.jornadas.length], Array.from(sem));
 });
 
-test('clínica: com ?flags=clinControlados entram 4 casos no formato existente e a jornada nova', () => {
-  const on = clinica('?flags=clinControlados', null);
-  const base = clinica('', null);
+test('clínica: por padrão entram 4 casos no formato existente e a jornada nova', () => {
+  const on = clinica('', null);
+  const base = clinica('?flags=-clinControlados', null);
   const novos = on.casos.filter((c) => /^caso_ctrl_/.test(c.id));
   assert.equal(novos.length, 4);
   assert.equal(on.casos.length, base.casos.length + 4);
@@ -358,7 +358,7 @@ test('clínica: com ?flags=clinControlados entram 4 casos no formato existente e
 });
 
 test('clínica: os casos não trazem rota de síntese nem agente de guerra, e valores numéricos de dose ficam fora do gabarito', () => {
-  const on = clinica('?flags=clinControlados', null);
+  const on = clinica('', null);
   const txt = JSON.stringify(on.casos.filter((c) => /^caso_ctrl_/.test(c.id)));
   assert.doesNotMatch(txt, /s[ií]ntese|sintetiz|rota de|reagente|clandestin/i);
   assert.ok(!NOMES_GUERRA.test(txt));

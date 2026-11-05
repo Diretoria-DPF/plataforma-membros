@@ -22,9 +22,9 @@
   var TIPOS_MOVIMENTO = ['entrada', 'saida', 'perda', 'ajuste'];
   var CHAVE_PROGRESSO = 'laift_regulacao_v1';
 
-  /** Flag local: desligada por padrão; liga por ?flags=nome ou window.__labFlags = { nome: true }. */
+  /** Flag local: ligada por padrão; ?flags=-nome desliga (ou window.__labFlags = { nome: false }). */
   function flagLigada(nome, search, overrides) {
-    var ligada = false;
+    var ligada = true;
     if (overrides && typeof overrides === 'object' && nome in overrides) ligada = !!overrides[nome];
     var bruto = '';
     var m = /[?&]flags=([^&]*)/.exec(search || '');

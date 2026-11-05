@@ -69,8 +69,8 @@ async function jogarMissao1(frame) {
 }
 
 async function cenarioDesligado() {
-  console.log('  chave desligada (padrão)');
-  const { app, frame } = await abrir(null);
+  console.log('  chave desligada (?flags=-labMotor)');
+  const { app, frame } = await abrir({ labMotor: false });
   try {
     check(await frame.evaluate(() => !document.getElementById('btnTrilha')), 'sem botão da trilha com a chave desligada');
     check(await frame.evaluate(() => typeof window.LabTutor === 'undefined' && typeof window.LabTrilha === 'undefined'), 'tutor não carregado');

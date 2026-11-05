@@ -8,8 +8,8 @@
  * Titulação de opioide, rotação de opioides, intoxicação por benzodiazepínico e overdose de opioide com naloxona.
  *
  * Mesmo formato dos casos de patients.js (caseSource "builtin"), carregado logo depois dele. Ficam atrás
- * de uma flag LOCAL, desligada por padrão: só entram na lista com ?flags=clinControlados
- * (ou window.__labFlags = { clinControlados: true }). Não liga nenhuma flag do servidor.
+ * de uma flag LOCAL, ligada por padrão: saem da lista com ?flags=-clinControlados
+ * (ou window.__labFlags = { clinControlados: false }). Não liga nenhuma flag do servidor.
  * O gabarito trata de princípios e de conduta, sem doses numéricas: doses, razões de equianalgesia e
  * tempos seguem o protocolo do serviço e a literatura vigente.
  */
@@ -18,7 +18,7 @@
   if (typeof clinicalCases === 'undefined' || typeof clinicalJourneys === 'undefined') return;
 
   function ligada() {
-    var ligado = false;
+    var ligado = true;
     var ov = typeof window !== 'undefined' && window.__labFlags;
     if (ov && typeof ov === 'object' && 'clinControlados' in ov) ligado = !!ov.clinControlados;
     var m = /[?&]flags=([^&]*)/.exec(typeof location !== 'undefined' && location.search ? location.search : '');

@@ -174,8 +174,8 @@ test('carregador (O4): tutor depois do motor, trilha e processos só da lista fe
   const G = require('../modulos/laboratorio/js/lab-guia.js');
   const cab = { filhos: [], appendChild(n) { this.filhos.push(n); } };
   const doc = { querySelector: () => cab, getElementById: (id) => cab.filhos.find((n) => n.id === id) || null, createElement: () => ({ dataset: {}, addEventListener() {} }) };
-  assert.equal(Car.iniciar({ document: doc, LabGuia: G, location: { search: '' } }), false);
+  assert.equal(Car.iniciar({ document: doc, LabGuia: G, location: { search: '?flags=-labMotor' } }), false);
   assert.equal(cab.filhos.length, 0);
-  assert.equal(Car.iniciar({ document: doc, LabGuia: G, location: { search: '?flags=labMotor' } }), true);
+  assert.equal(Car.iniciar({ document: doc, LabGuia: G, location: { search: '' } }), true);
   assert.deepEqual(cab.filhos.map((n) => n.id), ['btnProcessoGuiado', 'btnTrilha']);
 });

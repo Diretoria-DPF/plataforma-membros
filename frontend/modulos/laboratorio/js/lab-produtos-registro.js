@@ -51,9 +51,9 @@
     return null;
   }
 
-  /** Flag local (desligada por padrão): ?flags=labProdutos liga; ?flags=-labProdutos desliga. */
+  /** Flag local (ligada por padrão): ?flags=-labProdutos desliga. */
   function flagLigada(search) {
-    var ligada = false;
+    var ligada = true;
     var bruto = '';
     try { bruto = new URLSearchParams(search || '').get('flags') || ''; } catch (e) { bruto = ''; }
     bruto.split(',').forEach(function (parte) {
