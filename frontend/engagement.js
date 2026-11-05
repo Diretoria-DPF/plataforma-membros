@@ -290,6 +290,13 @@
     if (root.LaiftLearning && root.LaiftLearning.openModule) root.LaiftLearning.openModule(id);
   }
 
+  /** "Revisar erros" (A3): vai ao Aprender e abre o módulo com mais erros a rever (no Quiz, já com a sessão de revisão). */
+  function openReview(app, id) {
+    app.showPanel('panel-learn');
+    if (root.LaiftLearning && root.LaiftLearning.startReview) root.LaiftLearning.startReview(id);
+    else if (root.LaiftLearning && root.LaiftLearning.openModule) root.LaiftLearning.openModule(id);
+  }
+
   /** "Fazer o primeiro quiz" (ENG-04): vai ao Aprender e abre o simulado de Farmacologia na questão 1. */
   function openFirstQuiz(app) {
     app.showPanel('panel-learn');
@@ -341,7 +348,7 @@
     buildSection: buildSection, isFirstQuizCandidate: isFirstQuizCandidate, openFirstQuiz: openFirstQuiz, buildStrip: buildStrip,
     fetchEngagement: fetchEngagement, assemble: assemble, mountHome: mountHome, refreshHub: refreshHub,
     // Início v3 (home-v3.js) reaproveita estes pedaços para montar o cartão de foco e o resumo do dia.
-    openModule: openModule, saveGoal: saveGoal, MODULE_LABELS: MODULE_LABELS, ACTIVITY_LABELS: ACTIVITY_LABELS,
+    openModule: openModule, openReview: openReview, saveGoal: saveGoal, MODULE_LABELS: MODULE_LABELS, ACTIVITY_LABELS: ACTIVITY_LABELS,
     GOALS: GOALS,
   };
 

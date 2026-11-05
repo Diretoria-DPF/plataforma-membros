@@ -19,8 +19,8 @@
  * API com armazenamento (nunca lança, mesmo com localStorage bloqueado):
  *   createStore(storage, ownerFn) -> { record, pending, due, count, ids, clear }
  *
- * Reuso na A3: `due(store, Date.now())` devolve o que já venceu; `createStore(...).ids('farmacologia')` basta
- * para montar a sessão. Atlas e Clínica podem usar outro `module` na mesma chave.
+ * Reuso na A3 (revisao-espacada.js): `due(store, Date.now())` devolve o que já venceu; o `id` pode ser número (Quiz) ou
+ * texto de até 80 caracteres (casos do Atlas e da Clínica); Atlas e Clínica usam outro `module` na mesma chave.
  * Script clássico (global LaiftQuizErrors) e, em Node, module.exports.
  */
 (function (global) {
@@ -46,7 +46,7 @@
 
   function validItem(item) {
     return !!item && typeof item === 'object' && typeof item.module === 'string' && item.module
-      && typeof item.id === 'number' && isFinite(item.id);
+      && ((typeof item.id === 'number' && isFinite(item.id)) || (typeof item.id === 'string' && item.id.length > 0 && item.id.length <= 80));
   }
 
   function cleanItem(item) {
@@ -116,7 +116,7 @@
 
   /** Todos os erros ainda não quitados, o mais recente primeiro. */
   function pending(store, module) {
-    return list(store, module).sort(function (a, b) { return Date.parse(b.last) - Date.parse(a.last) || b.id - a.id; });
+    return list(store, module).sort(function (a, b) { return Date.parse(b.last) - Date.parse(a.last) || String(b.id).localeCompare(String(a.id), 'pt', { numeric: true }); });
   }
 
   /** Só os que já venceram em `now` (o mais atrasado primeiro). */

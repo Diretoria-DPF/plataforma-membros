@@ -314,6 +314,21 @@ const ClinicEngine = (() => {
     } catch (e) { /* armazenamento indisponível: só perde a marca visual */ }
   }
 
+  /**
+   * Revisão espaçada (A3, revisao-espacada.js): o resultado do caso do plantão entra na revisão dos erros guardada neste
+   * aparelho. Só casos do plantão (builtin): os de IA e do acervo não voltam com o mesmo id. Nunca trava o atendimento.
+   */
+  function registrarRevisao(caso, correto) {
+    try {
+      if (!window.LaiftReview || !caso || caseSourceOf(caso) !== 'builtin') return;
+      window.LaiftReview.record({ module: 'clinica', id: String(caso.id), topic: String(caso.queixaPrincipal || '').slice(0, 80), correct: correto });
+    } catch (e) { /* a revisão é um extra */ }
+  }
+
+  function casosParaRever() {
+    try { return window.LaiftReview ? window.LaiftReview.dueIds('clinica').map(String) : []; } catch (e) { return []; }
+  }
+
   function renderBedsGrid() {
     initDomReferences();
     if (!dom.bedsGrid) return;
@@ -328,6 +343,7 @@ const ClinicEngine = (() => {
     }
 
     const resolvidos = lerCasosResolvidos();
+    const aRever = casosParaRever();
 
     clinicalCases.forEach((c, index) => {
       const isConcluido = resolvidos.includes(String(c.id));
@@ -346,6 +362,7 @@ const ClinicEngine = (() => {
             className: `bed-status ${isConcluido ? 'is-done' : 'is-open'}`,
             text: isConcluido ? '✅ Concluído' : '🟡 Em Aberto',
           }),
+          ...(aRever.includes(String(c.id)) ? [el('span', { className: 'bed-status is-review', text: '🔁 Rever hoje' })] : []),
         ]),
         el('h4', { className: 'bed-title', text: `Leito 0${index + 1}: ${nome}` }),
         el('p', { className: 'bed-complaint', text: `"${queixa}"` }),
@@ -1115,6 +1132,7 @@ const ClinicEngine = (() => {
 
     if (response.success && response.result) {
       registrarCasoResolvido(currentCase.id);
+      registrarRevisao(currentCase, Core.reviewCorrect(response.result, outcome));
       showPreceptorModal(response.result, outcome, {
         note: response.saved === false ? 'A avaliação foi feita, mas não pôde ser registrada nas suas estatísticas agora.' : '',
       });

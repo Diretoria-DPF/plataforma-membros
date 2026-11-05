@@ -33,6 +33,9 @@
   'use strict';
 
   var BUNDLES = {
+    // Revisão espaçada de erros (A3): guardada no aparelho; usada pelo "Para hoje" do Aprender v2 e da Início v3 e pela
+    // Guia (ver REQUIRES: quem depende dela a carrega antes do próprio pacote).
+    revisao: ['modulos/shared/quiz-errors.js', 'modulos/shared/revisao-espacada.js', 'para-hoje.js'],
     admin: [
       'admin-ai.js', 'admin-moderation.js', 'admin-usage.js', 'selection-admin.js', 'privacy-admin.js',
       'admin-library-extras.js', 'admin-library-publicar.js', 'admin-library-lote.js', 'admin-library.js',
@@ -75,15 +78,22 @@
       'assistant-mood-glue.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia-props.js',
       'modulos/shared/lia/lia-scenes.js', 'modulos/shared/lia/lia.js', 'assistant-feedback.js',
       'assistant-research.js', 'assistant-moderation.js', 'assistant-hints.js', 'assistant-typing.js',
-      'assistant-drag.js', 'assistant-suggestions.js', 'assistant-turnstile.js', 'assistant.js',
+      'assistant-drag.js', 'assistant-suggestions.js', 'assistant-turnstile.js', 'assistant-next.js', 'assistant.js',
     ],
   };
+
+  /** Pacotes que precisam de outro antes de si (carregado por inteiro antes; o mesmo pacote nunca baixa duas vezes). */
+  var REQUIRES = { inicio3: ['revisao'], aprender2: ['revisao'] };
+  /** O mesmo, mas opcional: se o pacote exigido falhar (sem rede), o pedido segue sem ele (a Guia funciona sem a revisão). */
+  var OPTIONAL_REQUIRES = { lia: ['revisao'] };
 
   /** Espera de ociosidade para quem só visita (a Guia sobe depois do load, sem disputar a primeira pintura). */
   var IDLE_TIMEOUT_MS = 3000;
 
   /** Cria um carregador ligado a um documento (a página usa o real; os testes usam um falso). */
-  function createLoader(doc, bundles) {
+  function createLoader(doc, bundles, requires, optionalRequires) {
+    var deps = requires || REQUIRES;
+    var optional = optionalRequires || OPTIONAL_REQUIRES;
     var pending = {};
 
     function inject(src) {
@@ -101,7 +111,10 @@
       var list = bundles[name];
       if (!list) return Promise.reject(new Error('Pacote desconhecido: ' + name));
       if (!pending[name]) {
-        pending[name] = Promise.all(list.map(inject)).then(function () { return name; }, function (err) {
+        var needs = (deps[name] || []).map(load).concat((optional[name] || []).map(function (dep) { return load(dep).catch(function () { return null; }); }));
+        // Sem dependência, os <script> entram na hora (como sempre); com dependência, depois do pacote exigido.
+        var run = needs.length ? Promise.all(needs).then(function () { return Promise.all(list.map(inject)); }) : Promise.all(list.map(inject));
+        pending[name] = run.then(function () { return name; }, function (err) {
           delete pending[name]; // permite tentar de novo (rede voltou)
           throw err;
         });
@@ -121,7 +134,7 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { BUNDLES: BUNDLES, IDLE_TIMEOUT_MS: IDLE_TIMEOUT_MS, createLoader: createLoader, whenIdle: whenIdle };
+    module.exports = { BUNDLES: BUNDLES, REQUIRES: REQUIRES, OPTIONAL_REQUIRES: OPTIONAL_REQUIRES, IDLE_TIMEOUT_MS: IDLE_TIMEOUT_MS, createLoader: createLoader, whenIdle: whenIdle };
     return;
   }
 

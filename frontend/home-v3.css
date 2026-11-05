@@ -163,6 +163,8 @@
   background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--c);
 }
 .v3-row--quiz .v3-row__ico { --c: var(--v3-streak); }
+.v3-row--review .v3-row__ico { --c: #8a4b00; }
+html[data-theme="dark"] .v3-row--review .v3-row__ico { --c: #f0b878; }
 .v3-row--event .v3-row__ico { --c: #2455a6; }
 html[data-theme="dark"] .v3-row--event .v3-row__ico { --c: #8db4f0; }
 .v3-row--voting .v3-row__ico { --c: #0b6e4f; }

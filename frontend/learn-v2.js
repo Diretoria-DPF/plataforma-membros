@@ -103,17 +103,25 @@
     return out;
   }
 
-  function todayItems(eng) {
-    var items = [];
-    if (eng) {
-      items.push({
-        kind: 'quiz', icon: 'star', title: 'Quiz do dia',
-        sub: eng.dailyQuizDone ? 'Feito hoje. Toque para rever' : '5 questões · cerca de 3 min',
-      });
-    }
-    items.push({ kind: 'simulado', icon: 'clock', title: 'Simulado', sub: 'Pratique em Farmacologia', module: 'farmaco' });
-    items.push({ kind: 'caso', icon: 'heart', title: 'Caso clínico', sub: 'Casos e plantão na Clínica virtual', module: 'clinica' });
-    return items;
+  function paraHojeLib() {
+    if (root.LaiftParaHoje) return root.LaiftParaHoje;
+    return typeof require === 'function' ? require('./para-hoje.js') : null;
+  }
+
+  /** A3: "Para hoje" unificado (para-hoje.js): erros a rever e quiz do dia, mais simulado e caso clínico daqui. */
+  function todayItems(eng, review) {
+    return paraHojeLib().build(eng, review, [
+      { kind: 'simulado', icon: 'clock', title: 'Simulado', sub: 'Pratique em Farmacologia', module: 'farmaco' },
+      { kind: 'caso', icon: 'heart', title: 'Caso clínico', sub: 'Casos e plantão na Clínica virtual', module: 'clinica' },
+    ]);
+  }
+
+  /** Erros a rever no aparelho (revisao-espacada.js); sem o módulo ou sem armazenamento, nada vence. */
+  function reviewSummary(app) {
+    var review = root.LaiftReview || (typeof require === 'function' ? require('./modulos/shared/revisao-espacada.js') : null);
+    if (!review) return null;
+    var identity = app && typeof app.getIdentity === 'function' ? app.getIdentity() : null;
+    return review.read({ email: identity && identity.email, now: Date.now() });
   }
 
   function clampPct(value) {
@@ -320,6 +328,7 @@
   }
 
   function todayAction(ctx, item) {
+    if (item.kind === 'review') return function () { ctx.openReview(item.module); };
     if (item.kind === 'quiz') {
       if (!root.LaiftDailyQuiz) return function () { ctx.openModule('farmaco'); };
       return function () {
@@ -340,7 +349,7 @@
     head.id = 'l2-today-title';
     section.appendChild(head);
     var list = el(doc, 'ul', 'l2-today');
-    todayItems(ctx.data.eng).forEach(function (item) {
+    todayItems(ctx.data.eng, ctx.review).forEach(function (item) {
       var li = el(doc, 'li');
       var row = button(doc, 'l2-row l2-row--' + item.kind, '', todayAction(ctx, item));
       row.setAttribute('data-l2-opener', '');
@@ -667,6 +676,7 @@
       data: { eng: null, goal: 10, last: null }, slots: parts.slots, openGuia: openGuia,
     };
     ctx.openModule = function (id) { lib.openModule(app, id); };
+    ctx.openReview = function (id) { lib.openReview(app, id); };
     ctx.openSheet = function (card, opener) { openSheet(ctx, card, opener); };
     ctx.reload = function () { return refresh(ctx, mine); };
     ctx.changeGoal = function (value) {
@@ -687,6 +697,7 @@
       ctx.byModule = res[0] ? res[0].byModule || null : null;
       ctx.data = lib.assemble(res[1]);
       ctx.weak = res[2];
+      ctx.review = reviewSummary(app);
       clear(host);
       host.appendChild(buildTop(ctx));
       host.appendChild(parts.body);
@@ -722,7 +733,7 @@
 
   var api = {
     MODULES: MODULES, weekDots: weekDots, ringPercent: ringPercent, ringLabel: ringLabel, ringHint: ringHint,
-    streakLabel: streakLabel, focusModel: focusModel, todayItems: todayItems, weakItems: weakItems, buildWeak: buildWeak, moduleCards: moduleCards,
+    streakLabel: streakLabel, focusModel: focusModel, todayItems: todayItems, reviewSummary: reviewSummary, weakItems: weakItems, buildWeak: buildWeak, moduleCards: moduleCards,
     overallChips: overallChips, badgeItems: badgeItems, sheetSummary: sheetSummary, ensureStyles: ensureStyles,
     buildTop: buildTop, buildFocus: buildFocus, buildDay: buildDay, buildToday: buildToday, buildModules: buildModules,
     buildOverall: buildOverall, buildPerformance: buildPerformance, buildBadges: buildBadges,

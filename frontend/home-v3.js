@@ -52,6 +52,7 @@
     star: ['M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z'],
     calendar: ['M6 5h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z', 'M8 3v4M16 3v4M3 10h18'],
     check: ['M5 12l5 5 9-10'],
+    clock: ['M12 5a8 8 0 1 1 0 16 8 8 0 0 1 0-16z', 'M12 9v4l3 2M9 3h6'],
     chevron: ['M9 6l6 6-6 6'],
   };
 
@@ -114,16 +115,23 @@
     return { id: last.id, title: lib.MODULE_LABELS[last.id], detail: detail.join(' · ') || 'Retome de onde parou' };
   }
 
-  /** Itens de "Para hoje": quiz do dia, próximo evento e votação aberta. Só entra o que existe. */
-  function todayItems(summary, eng, now) {
+  function paraHojeLib() {
+    if (root.LaiftParaHoje) return root.LaiftParaHoje;
+    return typeof require === 'function' ? require('./para-hoje.js') : null;
+  }
+
+  /** A3: erros a rever no aparelho (revisao-espacada.js); sem o módulo ou sem armazenamento, nada vence. */
+  function reviewSummary(app) {
+    var review = root.LaiftReview || (typeof require === 'function' ? require('./modulos/shared/revisao-espacada.js') : null);
+    if (!review) return null;
+    var identity = app && typeof app.getIdentity === 'function' ? app.getIdentity() : null;
+    return review.read({ email: identity && identity.email, now: Date.now() });
+  }
+
+  /** Itens de "Para hoje": erros a rever, quiz do dia, próximo evento e votação aberta. Só entra o que existe. */
+  function todayItems(summary, eng, now, review) {
     var items = [];
     var home = homeLib();
-    if (eng) {
-      items.push({
-        kind: 'quiz', icon: 'star', title: 'Quiz do dia',
-        sub: eng.dailyQuizDone ? 'Feito hoje. Toque para rever' : '5 questões · cerca de 3 min',
-      });
-    }
     var events = summary && Array.isArray(summary.nextEvents) ? summary.nextEvents : [];
     if (events.length && events[0] && events[0].title) {
       var event = events[0];
@@ -140,7 +148,7 @@
         sub: rel ? 'Encerra ' + rel : 'Participe da decisão',
       });
     }
-    return items;
+    return paraHojeLib().build(eng, review, items); // A3: revisão e quiz do dia primeiro (mesma lista do Aprender)
   }
 
   /** Cartões de assuntos com o aproveitamento de apiLearnGetMyStats (byModule); sem dado, sem porcentagem. */
@@ -336,6 +344,7 @@
   }
 
   function todayAction(ctx, item) {
+    if (item.kind === 'review') return function () { engagementLib().openReview(ctx.app, item.module); };
     if (item.kind === 'quiz') {
       if (!root.LaiftDailyQuiz) return function () { ctx.app.showPanel('panel-learn'); };
       return function () {
@@ -351,7 +360,7 @@
 
   /** "Para hoje": lista curta. Sem nenhum item, a seção some. */
   function buildToday(ctx) {
-    var items = todayItems(ctx.summary, ctx.data.eng, ctx.now);
+    var items = todayItems(ctx.summary, ctx.data.eng, ctx.now, ctx.review);
     if (!items.length) return null;
     var doc = ctx.doc;
     var section = el(doc, 'section', 'v3-section');
@@ -476,6 +485,7 @@
     return lib.fetchEngagement(ctx.app, ctx.token).then(function (eng) {
       if (mine !== generation) return;
       ctx.data = lib.assemble(eng || ctx.data.eng);
+      ctx.review = reviewSummary(ctx.app);
       paintBody(ctx);
     });
   }
@@ -523,6 +533,7 @@
       if (mine !== generation) return;
       ctx.summary = res[0];
       ctx.stats = res[2];
+      ctx.review = reviewSummary(app);
       ctx.data = lib.assemble(res[1]);
       paintAvisos(ctx);
       if (!res[0] && !res[1]) { setSlot(parts.slots.focus, failureNode(ctx)); host.setAttribute('aria-busy', 'false'); return; }
@@ -565,7 +576,7 @@
 
   var api = {
     SUBJECTS: SUBJECTS, weekDots: weekDots, ringPercent: ringPercent, ringLabel: ringLabel, ringHint: ringHint,
-    streakLabel: streakLabel, focusModel: focusModel, todayItems: todayItems, subjectCards: subjectCards,
+    streakLabel: streakLabel, focusModel: focusModel, todayItems: todayItems, reviewSummary: reviewSummary, subjectCards: subjectCards,
     ensureStyles: ensureStyles, buildTop: buildTop, buildFocus: buildFocus, buildDay: buildDay, buildToday: buildToday,
     buildSubjects: buildSubjects, load: load, reset: reset, mountProfile: mountProfile,
   };
