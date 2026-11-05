@@ -1,0 +1,20 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Cartão "Desempenho" do Perfil (carregado sob demanda por desempenho.js). Em fluxo normal, sem posicionamento. */
+.profile-desempenho-card { margin-top: var(--density-gap, 16px); }
+.profile-desempenho-card h3 { margin: 0 0 4px; }
+.desemp-nota { margin: 0 0 8px; font-size: 0.85rem; color: var(--laift-muted, #94a3b8); }
+.desemp-corpo { display: grid; gap: 12px; }
+.desemp-fonte__nome { margin: 0 0 6px; }
+.desemp-lista { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 8px; }
+.desemp-item { display: flex; flex-direction: column; gap: 2px; padding: 8px; border: 1px solid var(--laift-border, #334155); border-radius: 8px; min-width: 0; }
+.desemp-item__nome { font-weight: 700; }
+.desemp-item__barra { width: 100%; height: 10px; }
+.desemp-item__valor { font-weight: 700; }
+.desemp-item__texto { font-size: 0.8rem; color: var(--laift-muted, #94a3b8); overflow-wrap: anywhere; }
+.desemp-sugestao { margin: 8px 0 0; font-weight: 700; }
+.desemp-atalho { min-height: 44px; margin-top: 8px; }
+.desemp-erro { margin: 0; }
