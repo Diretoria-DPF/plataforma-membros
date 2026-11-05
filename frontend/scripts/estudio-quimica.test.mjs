@@ -85,7 +85,6 @@ function carregarDicionarioBancada() {
 // Exceções documentadas: divergência conhecida que NÃO é corrigida neste PR.
 // Chave "origem:chave" -> motivo. Entradas ausentes aqui falham o teste.
 const EXCECOES_SMILES_VS_MASSA = {
-  'script.js:Dipirona_s': 'DICIONARIO_MOLECULAR da bancada (js/script.js) é do agente da bancada; o Estúdio já usa o SMILES corrigido (smiles-corrigidos.js).',
 };
 
 function smilesEfetivo(e) {
