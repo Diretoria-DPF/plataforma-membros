@@ -23,7 +23,8 @@
   var PADRAO = { ligada: true, nivel: 'completa' };
 
   // Chaves de recurso locais (rollback sem republicar tudo): a URL aceita ?flags=-labGuiado.
-  var FLAGS_PADRAO = { labGuiado: true };
+  // labMotor (O3): "Processo guiado" com o motor novo, desligado por padrão (?flags=labMotor liga).
+  var FLAGS_PADRAO = { labGuiado: true, labMotor: false };
 
   function flagLigada(nome, search, sobrescritas) {
     if (!(nome in FLAGS_PADRAO)) return false;

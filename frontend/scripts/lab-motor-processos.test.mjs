@@ -20,6 +20,9 @@ const K = require('../modulos/laboratorio/js/lab-motor-caderno.js');
 const { ESPECIES } = require('../modulos/laboratorio/js/lab-motor-especies.js');
 const { ESPECIES: ESPECIES_TODAS } = require('../modulos/laboratorio/js/lab-motor-especies-farmaco.js');
 
+const O2 = await import('../../tools/lab/validar-seed.mjs');
+const SEED = require('../modulos/laboratorio/data/lab-seed.js');
+const OPCOES_O2 = { especies: ESPECIES, nomesVetados: [O2.NOMES_GUERRA, O2.NOMES_ILICITAS] };
 const DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '../modulos/laboratorio/data/processos');
 const ctx = { especies: ESPECIES };
 const carregar = (arq) => JSON.parse(fs.readFileSync(path.join(DIR, arq), 'utf8'));
@@ -39,7 +42,7 @@ test('validador: todo processo em data/processos/*.json é válido (gate de CI)'
   const arquivos = fs.readdirSync(DIR).filter((f) => f.endsWith('.json'));
   assert.ok(arquivos.length >= 1);
   for (const f of arquivos) {
-    const r = V.validarProcesso(carregar(f), { especies: ESPECIES_TODAS });
+    const r = V.validarProcesso(carregar(f), { ...OPCOES_O2, especies: ESPECIES_TODAS });
     assert.deepEqual(r.erros, [], f);
     assert.equal(carregar(f).id + '.json', f, 'nome do arquivo = id');
   }
@@ -279,4 +282,48 @@ test('executor: sessão imutável — executar não altera a sessão recebida', 
   assert.ok(Object.isFrozen(s0));
   const fim = P.rodarProcesso(NACL, ctx, { respostas: RESPOSTAS }).sessao;
   assert.equal(P.executarEtapa(fim, NACL, ctx, {}).resultado.status, 'terminado');
+});
+
+// ── Alinhamento com a O2 (seed único e validar-seed.mjs) ───────────────────
+
+test('O2: vocabulário de restrição do motor é o mesmo do validador do seed', () => {
+  assert.deepEqual(V.RESTRICOES, O2.RESTRICOES);
+  assert.deepEqual(V.RESTRICOES_ABSOLUTAS, O2.RESTRICOES_ABSOLUTAS);
+  assert.deepEqual(V.NIVEIS_CONTEUDO, O2.NIVEIS);
+  assert.deepEqual(O2.validarSeed(SEED), [], 'o seed segue válido');
+});
+
+test('O2: espécies do motor vêm do seed (massa molar, nível e restrição) com o complemento só onde falta', () => {
+  for (const sub of SEED.substancias) {
+    for (const a of sub.aliases) {
+      const e = ESPECIES[a.id];
+      if (!e) continue;
+      const ls = sub.props.massa_molar || [];
+      const l = ls.find((x) => x.fases && x.fases.includes(a.fase)) || ls[0];
+      const mm = l && l.v;
+      if (mm) assert.equal(e.mm, mm, a.id);
+      assert.equal(e.nivel_conteudo, sub.nivel_conteudo, a.id);
+      assert.equal(e.restricao, sub.restricao || null, a.id);
+    }
+  }
+  assert.ok(ESPECIES.Sacarose_s, 'fora do seed, fica no complemento');
+});
+
+test('O2: toda espécie restrita do seed reprova rota de síntese completa; as absolutas, qualquer processo completo', () => {
+  const restritas = SEED.substancias.filter((s) => s.restricao);
+  assert.ok(restritas.length >= 1);
+  for (const sub of restritas) {
+    const id = sub.aliases[0].id;
+    const sint = processoCom(id, 'sintese');
+    assert.equal(V.validarProcesso(sint, OPCOES_O2).ok, false, `síntese com ${id}`);
+    if (O2.RESTRICOES_ABSOLUTAS.includes(sub.restricao)) assert.equal(V.validarProcesso(processoCom(id), OPCOES_O2).ok, false, id);
+  }
+});
+
+test('O2: nomes vetados do validar-seed (guerra e ilícitas) também reprovam processo completo', () => {
+  for (const titulo of ['Preparo com mustard agent', 'Purificação de fentanyl', 'Rota de nitazeno']) {
+    const p = copia(NACL);
+    p.titulo = titulo;
+    assert.equal(V.validarProcesso(p, OPCOES_O2).ok, false, titulo);
+  }
 });

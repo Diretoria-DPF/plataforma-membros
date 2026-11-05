@@ -4,11 +4,12 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * LAIFT — dados mínimos de espécies para o motor de processos (O3).
+ * LAIFT — espécies do motor de processos (O3), montadas a partir do seed único da O2
+ * (data/lab-seed.js, carregado antes na página) mais um complemento didático.
  *
- * Tabela pequena e provisória: só o que os processos de exemplo e os testes usam.
- * Quando o seed único da O2 (data/lab-seed.js) entrar, um adaptador passa a
- * alimentar o motor a partir dele; o formato abaixo é o contrato do motor.
+ * Do seed (fonte única, com proveniência): nome, massa molar, densidade, pontos de fusão e
+ * ebulição, dissociação, nivel_conteudo e restricao. Do complemento: só o que o seed ainda
+ * não tem. Espécie fora do seed (ex.: sacarose) fica só no complemento, marcada 'NV'.
  *
  * Campos: nome, mm (g/mol), fase ('solido' | 'liquido'), densidade (g/mL, líquidos),
  * cp (J/(g·K)), teb e pf (°C), dHvap (J/g), solubilidade { solventeId: [[T °C, g/100 g]] },
@@ -22,7 +23,9 @@
   const NV = 'NV';
   const FONTE_PENDENTE = 'valor didático a conferir com fonte primária';
 
-  const ESPECIES = {
+  // Campos didáticos que o seed ainda não tem (cp, ΔHvap, S(T), pKa, K_D, Ksp, perigos, descarte).
+  // Massa molar, densidade, pontos de fusão e ebulição, nome e nível de conteúdo vêm do seed quando existem.
+  const COMPLEMENTO = {
     H2O_l: {
       nome: 'Água purificada', mm: 18.015, fase: 'liquido', densidade: 0.997, cp: 4.18,
       teb: 100, pf: 0, dHvap: 2257, residuo: 'aquoso_neutro', perigos: [],
@@ -110,7 +113,53 @@
     return o;
   }
 
-  const API = congelar({ ESPECIES, RF_ILUSTRATIVO });
+  const FASES = { l: 'liquido', s: 'solido', aq: 'solido', g: 'gas' };
+
+  function linha(sub, chave, fase) {
+    const ls = (sub.props && sub.props[chave]) || [];
+    if (!ls.length) return null;
+    const daFase = ls.filter((l) => l.fases && l.fases.indexOf(fase) >= 0);
+    return (daFase[0] || ls[0]);
+  }
+  function v(sub, chave, fase) { const l = linha(sub, chave, fase); return l && Number.isFinite(l.v) ? l.v : null; }
+
+  /** Tabela do motor: cada alias do seed vira uma espécie; o complemento preenche o que faltar. */
+  function montarEspecies(seed, complemento) {
+    const out = {};
+    for (const sub of (seed && seed.substancias) || []) {
+      for (const a of sub.aliases || []) {
+        const fase = FASES[a.fase] || 'solido';
+        const c = complemento[a.id] || {};
+        const mm = v(sub, 'massa_molar', a.fase);
+        if (!(mm > 0) && !(c.mm > 0)) continue;
+        const ph = Array.isArray(a.dissociation) ? Object.fromEntries(a.dissociation.map(([ion, n]) => [ion, n])) : null;
+        const e = Object.assign({}, c, {
+          nome: a.label || sub.nome_pt || c.nome || a.id,
+          mm: mm > 0 ? mm : c.mm,
+          fase: c.fase || fase,
+          nivel_conteudo: sub.nivel_conteudo || 'completo',
+          restricao: sub.restricao || null,
+          fonte: `seed ${seed.data_version}`,
+          confianca: (linha(sub, 'massa_molar', a.fase) || {}).c === undefined ? 'NV' : `seed-c${linha(sub, 'massa_molar', a.fase).c}`
+        });
+        const dens = v(sub, 'densidade', a.fase);
+        if (e.fase === 'liquido') e.densidade = dens > 0 ? dens : c.densidade;
+        const teb = v(sub, 'bp', a.fase);
+        const pf = v(sub, 'fp', a.fase);
+        if (teb !== null) e.teb = teb;
+        if (pf !== null) e.pf = pf;
+        if (!e.ph && ph) e.ph = ph;
+        out[a.id] = e;
+      }
+    }
+    for (const id of Object.keys(complemento)) if (!out[id]) out[id] = Object.assign({ restricao: null, nivel_conteudo: 'completo' }, complemento[id]);
+    return out;
+  }
+
+  const SEED = (typeof module !== 'undefined' && module.exports) ? require('../data/lab-seed.js') : (raiz && raiz.LAB_SEED);
+  const ESPECIES = montarEspecies(SEED, COMPLEMENTO);
+
+  const API = congelar({ ESPECIES, COMPLEMENTO, RF_ILUSTRATIVO, montarEspecies, versaoSeed: SEED ? SEED.data_version : null });
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   if (raiz) raiz.LabMotorEspecies = API;
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : null));

@@ -1,0 +1,33 @@
+{
+  "versao": 1,
+  "exercicios": [
+    {
+      "id": "esc_ex_01", "titulo": "Fechamento sem divergência", "unidade": "comprimidos",
+      "medicamento": "Medicamento X da lista B1, comprimido de 10 mg (nome fictício para o exercício)",
+      "estoque_inicial": 120,
+      "movimentos": [
+        { "tipo": "entrada", "qtd": 200, "documento": "Nota fiscal 1001" },
+        { "tipo": "saida", "qtd": 30, "documento": "Notificação de receita B nº 0001" },
+        { "tipo": "saida", "qtd": 28, "documento": "Notificação de receita B nº 0002" },
+        { "tipo": "saida", "qtd": 30, "documento": "Notificação de receita B nº 0003" },
+        { "tipo": "perda", "qtd": 2, "documento": "Termo de quebra 01" }
+      ],
+      "contagem_fisica": 230,
+      "explicacao": "Saldo do livro: 120 + 200 − 30 − 28 − 30 − 2 = 230. A contagem física confere, então não há divergência a apurar.",
+      "fonte": "Portaria SVS/MS 344/98, capítulos da escrituração e dos balanços.", "nv": true
+    },
+    {
+      "id": "esc_ex_02", "titulo": "Contagem menor que o livro", "unidade": "comprimidos",
+      "medicamento": "Medicamento Y da lista B1, comprimido de 5 mg (nome fictício para o exercício)",
+      "estoque_inicial": 50,
+      "movimentos": [
+        { "tipo": "entrada", "qtd": 100, "documento": "Nota fiscal 2040" },
+        { "tipo": "saida", "qtd": 20, "documento": "Notificação de receita B nº 0101" },
+        { "tipo": "saida", "qtd": 25, "documento": "Notificação de receita B nº 0102" }
+      ],
+      "contagem_fisica": 103,
+      "explicacao": "Saldo do livro: 50 + 100 − 20 − 25 = 105. Contagem física 103, divergência de −2. Não se corrige o livro às escondidas: apura-se a causa (conferir as receitas e os lançamentos), lança-se o ajuste com justificativa e comunica-se à vigilância sanitária quando a norma exigir.",
+      "fonte": "Portaria SVS/MS 344/98, capítulos da escrituração e das infrações; conferir a comunicação exigida.", "nv": true
+    }
+  ]
+}

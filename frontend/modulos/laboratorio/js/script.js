@@ -138,54 +138,8 @@
   // =========================================================================
   // 4. MOTOR DE BANCO DE DADOS LOCAL (IndexedDB)
   // =========================================================================
-  const DB_CACHE = {
-    db: null,
-    async init() {
-      if (this.db) return this.db;
-      return new Promise((resolve) => {
-        try {
-          if (!window.indexedDB) return resolve(null);
-          const req = indexedDB.open('LAIFT_LocalChem_v2', 1);
-          req.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('moleculas')) db.createObjectStore('moleculas', { keyPath: 'chave' });
-            if (!db.objectStoreNames.contains('respostasIA')) db.createObjectStore('respostasIA', { keyPath: 'pergunta' });
-          };
-          req.onsuccess = (e) => { this.db = e.target.result; resolve(this.db); };
-          req.onerror = () => resolve(null);
-        } catch (err) {
-          resolve(null);
-        }
-      });
-    },
-    async get(storeName, key) {
-      if (!key) return null;
-      const db = await this.init();
-      if (!db) return null;
-      return new Promise((resolve) => {
-        try {
-          const tx = db.transaction(storeName, 'readonly');
-          const req = tx.objectStore(storeName).get(String(key).toLowerCase().trim());
-          req.onsuccess = () => resolve(req.result ? req.result.dados : null);
-          req.onerror = () => resolve(null);
-        } catch (e) { resolve(null); }
-      });
-    },
-    async set(storeName, key, dados) {
-      if (!key || !dados) return;
-      const db = await this.init();
-      if (!db) return;
-      try {
-        const tx = db.transaction(storeName, 'readwrite');
-        tx.objectStore(storeName).put({
-          chave: String(key).toLowerCase().trim(),
-          pergunta: String(key).toLowerCase().trim(),
-          dados: dados,
-          ts: Date.now()
-        });
-      } catch (e) {}
-    }
-  };
+  // Cache local em IndexedDB: js/lab-cache-local.js (extraído na O3, mesmo comportamento).
+  const DB_CACHE = window.LabCacheLocal.criarCacheLocal(window.indexedDB || null);
 
   // =========================================================================
   // 5. ESTADO GLOBAL DO LABORATÓRIO
@@ -271,23 +225,10 @@
 
   const avisosSemReacao = new Set();
 
-  /** Nome legível de uma espécie para o log e as etiquetas (nunca o id interno). */
-  function rotulo(id) {
-    const info = (typeof LAB_DATABASE !== 'undefined' && LAB_DATABASE.species && LAB_DATABASE.species[id]) || DICIONARIO_MOLECULAR[id] || null;
-    if (info && info.label) return info.label;
-    const NOMES = { H2O_l: 'Água', 'H+': 'H⁺', 'OH-': 'OH⁻', H2_g: 'Hidrogênio (H₂)', CO2_g: 'Dióxido de carbono (CO₂)', Cl2_g: 'Cloro (Cl₂)', CH3COOH: 'Ácido acético', 'CH3COO-': 'Acetato', NH3: 'Amônia', 'NH4+': 'Amônio', Cu_s: 'Cobre', Pb_s: 'Chumbo', BaSO4_s: 'Sulfato de bário' };
-    if (NOMES[id]) return NOMES[id];
-    return String(id).replace(/_s$|_g$|_l$|_aq$/, '')
-      .replace(/_(\d)-$/, (m, n) => ({ 2: '²⁻', 3: '³⁻' }[n] || '⁻'))
-      .replace(/(\d)\+$/, (m, n) => ({ 2: '²⁺', 3: '³⁺' }[n] || '⁺'))
-      .replace(/\+$/, '⁺').replace(/-$/, '⁻');
-  }
-
-  function unidadeDe(id) {
-    const info = (typeof LAB_DATABASE !== 'undefined' && LAB_DATABASE.species && LAB_DATABASE.species[id]) || null;
-    const fase = info && info.phase ? info.phase : String(id).slice(-1);
-    return (fase === 's') ? 'g' : (fase === 'l' || fase === 'q' || fase === 'aq') ? 'mL' : '';
-  }
+  // Nome legível e unidade: js/lab-rotulos.js (extraído na O3, mesmo comportamento).
+  const especiesDaBase = () => (typeof LAB_DATABASE !== 'undefined' && LAB_DATABASE.species) || null;
+  function rotulo(id) { return window.LabRotulos.rotulo(id, especiesDaBase(), DICIONARIO_MOLECULAR); }
+  function unidadeDe(id) { return window.LabRotulos.unidadeDe(id, especiesDaBase()); }
 
   function qtd(chave) { return sys.especies.get(chave) || 0; }
   function adicionarEspecie(chave, mmol) { if (mmol <= 0) return; sys.especies.set(chave, (sys.especies.get(chave) || 0) + mmol); }
@@ -961,28 +902,12 @@
   // =========================================================================
   // 10. SISTEMA DE MISSÕES E ROTEIROS PRÁTICOS
   // =========================================================================
-  const missoes = [
-    { titulo: "Missão 1: Neutralização Básica", desc: "Neutraliza um ácido forte com uma base forte até pH entre 7,0 e 7,5 (volume de pelo menos 20 mL).", check: () => calcularpH() >= 7.0 && calcularpH() <= 7.5 && sys.vol >= 20 && (qtd('Cl-') + qtd('NO3-') + qtd('SO4_2-') + qtd('ClO4-') > 0) && (qtd('Na+') + qtd('K+') + qtd('Li+') > 0) },
-    { titulo: "Missão 2: Chuva de Ouro", desc: "Forma um precipitado amarelo intenso de Iodeto de Chumbo (PbI₂).", check: () => qtd('PbI2_s') > 0.1 },
-    { titulo: "Missão 3: Libertação de Gás H₂", desc: "Faz um metal sólido reagir com ácido para gerar gás Hidrogénio.", check: () => qtd('H2_g') > 1 },
-    { titulo: "Missão 4: Ponto de Ebulição", desc: "Aquece a água no laboratório até que comece a evaporar ativamente (100°C).", check: () => sys.temp >= 100 && qtd('H2O_l') > 0 },
-    { titulo: "Missão 5: Síntese da Aspirina", desc: "Mistura Ácido Salicílico + Anidrido Acético (1:1 em mol) com H₂SO₄, agitação e 60 a 80°C por 30 minutos simulados.", check: () => reacoesCatalogadas.has('sintese_aspirina') },
-    { titulo: "Missão 6: Chuva de Prata", desc: "Mistura Nitrato de Prata (AgNO₃) com Cloreto (Ex: NaCl ou HCl) para formar AgCl.", check: () => qtd('AgCl_s') > 0.1 },
-    { titulo: "Missão 7: Síntese de Paracetamol", desc: "Mistura 4-Aminofenol + Anidrido Acético sob aquecimento (80 a 100°C) e agitação, por 45 minutos simulados.", check: () => reacoesCatalogadas.has('sintese_paracetamol') },
-    { titulo: "Missão 8: Ambiente Super Ácido", desc: "Cria uma solução altamente corrosiva com pH menor ou igual a 2.0.", check: () => calcularpH() <= 2.0 && sys.vol > 10 },
-    { titulo: "Missão 9: Aroma de Banana (Éster)", desc: "Mistura Ácido Acético com Álcool Isopentílico catalisado por H₂SO₄ sob calor.", check: () => reacoesCatalogadas.has('sintese_aroma_banana') },
-    { titulo: "Missão 10: Efervescência de Carbonato", desc: "Mistura um carbonato (como NaHCO₃ ou CaCO₃) com ácido para liberar CO₂.", check: () => qtd('CO2_g') > 0.5 }
-  ];
-  const CHAVE_MISSOES = 'laift_lab_missoes_v1';
-  function lerMissaoSalva() {
-    try {
-      const n = parseInt(localStorage.getItem(CHAVE_MISSOES), 10);
-      return Number.isInteger(n) && n >= 0 && n <= missoes.length ? n : 0;
-    } catch (e) { return 0; }
-  }
-  function salvarMissao() {
-    try { localStorage.setItem(CHAVE_MISSOES, String(missaoAtual)); } catch (e) { /* armazenamento indisponível: segue sem salvar */ }
-  }
+  // Missões e progresso: js/lab-missoes.js (extraído na O3, mesmo comportamento).
+  const missoes = window.LabMissoes.MISSOES;
+  const leituraMissao = () => window.LabMissoes.leituraDaBancada(sys, calcularpH, reacoesCatalogadas);
+  function armazenamentoLocal() { try { return window.localStorage; } catch (e) { return null; } }
+  function lerMissaoSalva() { return window.LabMissoes.lerProgresso(armazenamentoLocal()); }
+  function salvarMissao() { window.LabMissoes.salvarProgresso(armazenamentoLocal(), missaoAtual); }
   let missaoAtual = lerMissaoSalva();
 
   function atualizarUI_Missao() {
@@ -1015,7 +940,7 @@
 
   function verificarMissoes() {
     if (missaoAtual >= missoes.length) return;
-    if (missoes[missaoAtual].check()) {
+    if (missoes[missaoAtual].check(leituraMissao())) {
       const badge = document.getElementById('missionStatus');
       if (badge && badge.innerText !== 'Concluída ✅') {
         badge.innerText = 'Concluída ✅';

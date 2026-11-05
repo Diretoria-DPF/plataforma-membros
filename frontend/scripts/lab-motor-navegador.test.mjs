@@ -14,6 +14,7 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 
 const JS = path.join(path.dirname(fileURLToPath(import.meta.url)), '../modulos/laboratorio/js');
+const SEED_JS = path.join(JS, '../data/lab-seed.js');
 const DATA = path.join(JS, '../data/processos');
 
 // Ordem de carregamento no navegador (o lab-quimica.js já existe na página).
@@ -30,12 +31,16 @@ const TETO_RUNTIME_BYTES = 120 * 1024;
 const TETO_RUNTIME_GZIP = 40 * 1024;
 
 test('navegador: os módulos carregam como <script> comuns (globais em window) e rodam o processo de exemplo', () => {
-  const janela = {};
-  const caixa = vm.createContext({ window: janela, console });
+  const caixa = vm.createContext({ console });
+  caixa.window = caixa;
+  const janela = caixa;
+  vm.runInContext(fs.readFileSync(SEED_JS, 'utf8'), caixa, { filename: 'lab-seed.js' });
   for (const f of ORDEM) vm.runInContext(fs.readFileSync(path.join(JS, f), 'utf8'), caixa, { filename: f });
   for (const g of ['LabMotorEstado', 'LabMotorFisica', 'LabMotorRelogio', 'LabMotorOperacoes', 'LabMotorProcesso', 'LabMotorCaderno', 'LabMotorValidador']) {
     assert.ok(janela[g], `window.${g} ausente`);
   }
+  assert.ok(janela.LabMotorEspecies.versaoSeed, 'espécies montadas a partir do seed da O2 já carregado na página');
+  assert.equal(janela.LabMotorEspecies.ESPECIES.NaCl_s.nome, 'Cloreto de Sódio');
   const proc = JSON.parse(fs.readFileSync(path.join(DATA, 'proc_nacl_09_v1.json'), 'utf8'));
   const ctx = { especies: janela.LabMotorEspecies.ESPECIES };
   assert.equal(janela.LabMotorValidador.validarProcesso(proc, ctx).ok, true);
