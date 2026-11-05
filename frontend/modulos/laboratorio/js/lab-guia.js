@@ -23,8 +23,9 @@
   var PADRAO = { ligada: true, nivel: 'completa' };
 
   // Chaves de recurso locais (rollback sem republicar tudo): a URL aceita ?flags=-labGuiado.
+  // labCertificado (O8): certificado por nível, desligado até a decisão D-5 do dono.
   // labMotor (O3): "Processo guiado" com o motor novo, desligado por padrão (?flags=labMotor liga).
-  var FLAGS_PADRAO = { labGuiado: true, labMotor: false };
+  var FLAGS_PADRAO = { labGuiado: true, labMotor: false, labCertificado: false };
 
   function flagLigada(nome, search, sobrescritas) {
     if (!(nome in FLAGS_PADRAO)) return false;

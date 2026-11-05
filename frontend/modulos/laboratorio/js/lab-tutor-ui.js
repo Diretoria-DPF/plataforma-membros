@@ -14,6 +14,8 @@
   const LT = raiz.LabTutor;
   const C = raiz.LabTutorControles;
   const Tr = raiz.LabTrilha;
+  const Cx = raiz.LabContexto;     // O8: falas da Guia e do Preceptor por passo
+  const Bu = raiz.LabBoletimUI;    // O8: boletim e certificado
   // Espécies da O5 (farmacotécnica) incluem as da base; sem elas, fica a base.
   const ESP = raiz.LabMotorEspeciesFarmaco || raiz.LabMotorEspecies;
   const ctx = { especies: ESP.ESPECIES, rf: ESP.RF_ILUSTRATIVO };
@@ -73,16 +75,26 @@
     }
   }
 
+  // O8: boletim e certificado (telas em lab-boletim-ui.js)
+  function ponte() {
+    const G = raiz.LabGuia;
+    return { h, montar: montarTela, cabecalho, armazenamento, progresso: () => Tr.lerProgresso(armazenamento()), trilha: () => dados.trilha,
+      certificado: !!G && G.flagLigada('labCertificado', raiz.location.search, raiz.__labFlags || null) };
+  }
+  function abrirBoletim() { Bu.abrirBoletim(ponte()); }
+
   // trilha
   const ROTULO_BOTAO = { disponivel: 'Jogar', concluida: 'Jogar de novo' };
 
   function abrirTrilha(_janela, d) {
-    if (d) dados = d;
+    if (d) { dados = d; Bu.configurar(d.trilha); }
     const t = montarTela();
     const sit = Tr.situacao(dados.trilha, Tr.lerProgresso(armazenamento()));
     const porId = Object.fromEntries(sit.map((s) => [s.missao.id, s]));
     cabecalho(t, 'ttTitulo', dados.trilha.titulo, false);
     t.appendChild(h('p', { className: 'lmt-nota', text: 'Cada nível treina competências do curso. O progresso fica guardado neste aparelho.' }));
+    t.appendChild(h('p', { id: 'ttGuia', className: 'lmt-guia-trilha', text: Cx.sugestaoTrilha(sit) }));
+    t.appendChild(h('div', { className: 'lmt-acoes' }, [botao('ttBoletim', 'Boletim por competência', abrirBoletim)]));
     for (const g of Tr.porNivel(dados.trilha)) {
       t.appendChild(h('h3', { className: 'lmt-nivel', text: `Nível ${g.nivel}: ${g.nome}` }));
       t.appendChild(h('ul', { className: 'lmt-cartoes' }, g.missoes.map((m) => cartao(porId[m.id]))));
@@ -115,7 +127,7 @@
 
   function jogarCom(missao, processo) {
     const semente = (Date.now() % 2147483646) + 1;
-    jogo = { missao, processo, tutor: LT.criar(processo, missao, ctx, { semente, ajuda: preferencia(missao) }), etapaId: null };
+    jogo = { missao, processo, tutor: LT.criar(processo, missao, ctx, { semente, ajuda: preferencia(missao) }), etapaId: null, vistos: [] };
     const t = montarTela();
     cabecalho(t, 'tmTitulo', missao.titulo, true);
     t.appendChild(h('details', { className: 'lmt-objetivos-missao' }, [h('summary', { text: 'Objetivos da missão' }), h('ul', {}, missao.objetivos.map((o) => h('li', { text: o })))]));
@@ -251,10 +263,15 @@
     jogo.etapaId = v.etapaId;
     texto('tmProgresso', `${v.progresso}: ${v.etapaTitulo}`);
     texto('tmAcontecendo', v.acontecendo ? `O que está acontecendo: ${v.acontecendo}` : 'Siga o procedimento: escolha o controle e preencha os valores.');
-    texto('tmPorqueTexto', v.porque ? `Preceptor: ${v.porque}` : '');
-    mostrar('tmPorque', !!v.porque);
-    texto('tmInstrucao', v.alvo ? `A Guia: use o controle "${v.rotuloAlvo}", marcado com "!".` : (v.rotuloAlvo ? 'A Guia: se travar, peça uma dica.' : ''));
-    mostrar('tmInstrucao', !!v.rotuloAlvo);
+    const pre = Cx.falaPreceptor(v, jogo.vistos);
+    jogo.vistos = pre.vistos;
+    texto('tmPorqueTexto', pre.texto);
+    mostrar('tmPorque', !!pre.texto);
+    const det = doc.getElementById('tmPorque');
+    if (det) { if (mudou) det.open = false; det.dataset.lido = pre.novo ? '0' : '1'; }
+    const guia = Cx.falaGuia(v);
+    texto('tmInstrucao', guia);
+    mostrar('tmInstrucao', !!guia);
     mostrar('tmCalculo', !!v.calculo);
     if (v.calculo) { texto('tmCalculoRotulo', `Cálculo antes de executar: ${v.calculo.pergunta}`); texto('tmCalculoUnidade', ` ${v.calculo.unidade}`); }
     if (mudou) { const r = doc.getElementById('tmResposta'); if (r) r.value = ''; atualizarPadroes(); }
@@ -338,9 +355,10 @@
       t.appendChild(h('ul', { id: 'tmDesvios' }, res.desvios.map((d) => h('li', { text: `${d.etapaTitulo}: ${d.texto}` }))));
     }
     if (res.conclusao) t.appendChild(h('p', { className: 'lmt-conclusao', text: res.conclusao }));
+    t.appendChild(h('p', { id: 'tmGuiaFim', className: 'lmt-guia-trilha', text: Cx.falaGuia({ terminado: true }, Tr.situacao(dados.trilha, p)) }));
     t.appendChild(h('details', { className: 'lmt-caderno' }, [h('summary', { text: 'Caderno completo' }), h('pre', { className: 'lmt-caderno-texto', text: raiz.LabMotorCaderno.paraTexto(tutor.sessao.caderno) })]));
     t.appendChild(h('div', { className: 'lmt-acoes' }, [
-      botao('tmDeNovo', 'Fazer de novo', () => jogar(missao), 'btn btn-play'), botao('tmVerTrilha', 'Ver a trilha', () => abrirTrilha()), botao('tmSair', 'Voltar à bancada', sair)
+      botao('tmDeNovo', 'Fazer de novo', () => jogar(missao), 'btn btn-play'), botao('tmVerTrilha', 'Ver a trilha', () => abrirTrilha()), botao('tmBoletim', 'Ver o boletim', abrirBoletim), botao('tmSair', 'Voltar à bancada', sair)
     ]));
     focar('tmResultadoTitulo');
   }
