@@ -368,6 +368,75 @@
     return section;
   }
 
+  // ---------- Missão da semana e conquistas pessoais (A6; só no aparelho, sem ranking) ----------
+
+  /** Dados da missão e das conquistas deste aparelho; sem o módulo (ou sem armazenamento), null e a seção some. */
+  function missionData(app, now) {
+    var lib = root.LaiftMissao;
+    if (!lib) return null;
+    try {
+      var who = app && typeof app.getIdentity === 'function' ? app.getIdentity() : null;
+      var store = lib.createStore(root.localStorage, function () { return lib.ownerTag(who && who.email); });
+      return { status: store.status(now), achievements: store.achievements() };
+    } catch (e) { return null; }
+  }
+
+  function missionHint(st) {
+    if (st.complete) return 'Missão cumprida. Até a próxima semana.';
+    return st.daysLeft === 1 ? 'Último dia desta semana. Sem pressão: o que ficar volta como nova missão.' : 'Faltam ' + st.daysLeft + ' dias nesta semana.';
+  }
+
+  function buildMission(ctx) {
+    var st = ctx.mission && ctx.mission.status;
+    if (!st || !st.tasks.length) return null;
+    var doc = ctx.doc;
+    var section = el(doc, 'section', 'l2-section');
+    section.setAttribute('aria-labelledby', 'l2-mission-title');
+    var head = el(doc, 'h2', 'l2-section__title', 'Missão da semana');
+    head.id = 'l2-mission-title';
+    section.appendChild(head);
+    var card = el(doc, 'div', 'l2-mission');
+    card.appendChild(el(doc, 'p', 'l2-mission__hint', missionHint(st)));
+    var list = el(doc, 'ul', 'l2-mission__list');
+    st.tasks.forEach(function (task) {
+      var li = el(doc, 'li', 'l2-mission__task' + (task.complete ? ' is-done' : ''));
+      li.setAttribute('data-l2-task', task.module);
+      var line = el(doc, 'span', 'l2-mission__line');
+      line.appendChild(el(doc, 'strong', '', task.label));
+      line.appendChild(el(doc, 'small', '', task.complete ? 'Feita' : task.done + ' de ' + task.target));
+      li.appendChild(line);
+      li.appendChild(bar(doc, Math.round(task.done * 100 / task.target), task.done + ' de ' + task.target + ' atividades'));
+      list.appendChild(li);
+    });
+    card.appendChild(list);
+    section.appendChild(card);
+    return section;
+  }
+
+  function buildMyAchievements(ctx) {
+    var items = ctx.mission && ctx.mission.achievements;
+    if (!items || !items.length) return null;
+    var doc = ctx.doc;
+    var section = el(doc, 'section', 'l2-section');
+    section.setAttribute('aria-labelledby', 'l2-mine-title');
+    var head = el(doc, 'h2', 'l2-section__title', 'Minhas conquistas');
+    head.id = 'l2-mine-title';
+    section.appendChild(head);
+    section.appendChild(el(doc, 'p', 'l2-mission__hint', 'Visíveis só para você, neste aparelho.'));
+    var list = el(doc, 'ul', 'l2-mine');
+    items.slice(0, 12).forEach(function (a) {
+      var li = el(doc, 'li', 'l2-mine__item');
+      li.setAttribute('data-l2-mine', a.id);
+      var medal = el(doc, 'span', 'l2-badge__medal');
+      medal.appendChild(icon(doc, 'star'));
+      li.appendChild(medal);
+      li.appendChild(el(doc, 'strong', '', a.label));
+      list.appendChild(li);
+    });
+    section.appendChild(list);
+    return section;
+  }
+
   function buildWeak(ctx) {
     if (!ctx.weak || !ctx.weak.length) return null;
     var doc = ctx.doc;
@@ -592,7 +661,7 @@
     if (node) slot.appendChild(node);
   }
 
-  var SLOTS = ['focus', 'day', 'today', 'weak', 'modules', 'overall', 'perf', 'badges'];
+  var SLOTS = ['focus', 'day', 'today', 'mission', 'weak', 'modules', 'overall', 'perf', 'badges', 'mine'];
 
   function layout(doc) {
     var body = el(doc, 'div', 'l2-body');
@@ -615,11 +684,14 @@
     setSlot(slots.focus, buildFocus(ctx));
     setSlot(slots.day, buildDay(ctx));
     setSlot(slots.today, buildToday(ctx));
+    ctx.mission = missionData(ctx.app, ctx.now);
+    setSlot(slots.mission, buildMission(ctx));
     setSlot(slots.weak, buildWeak(ctx));
     setSlot(slots.modules, buildModules(ctx));
     setSlot(slots.overall, ctx.stats ? buildOverall(ctx) : null);
     setSlot(slots.perf, ctx.stats ? buildPerformance(ctx) : statsFailure(ctx));
     setSlot(slots.badges, ctx.stats ? buildBadges(ctx) : null);
+    setSlot(slots.mine, buildMyAchievements(ctx));
     var hasCard = !slots.focus.classList.contains('hidden') || !slots.day.classList.contains('hidden');
     ctx.host.classList.toggle('has-card', hasCard);
     ctx.host.setAttribute('aria-busy', 'false');
@@ -736,7 +808,7 @@
     streakLabel: streakLabel, focusModel: focusModel, todayItems: todayItems, reviewSummary: reviewSummary, weakItems: weakItems, buildWeak: buildWeak, moduleCards: moduleCards,
     overallChips: overallChips, badgeItems: badgeItems, sheetSummary: sheetSummary, ensureStyles: ensureStyles,
     buildTop: buildTop, buildFocus: buildFocus, buildDay: buildDay, buildToday: buildToday, buildModules: buildModules,
-    buildOverall: buildOverall, buildPerformance: buildPerformance, buildBadges: buildBadges,
+    buildOverall: buildOverall, buildPerformance: buildPerformance, buildBadges: buildBadges, buildMission: buildMission, buildMyAchievements: buildMyAchievements, missionData: missionData,
     load: load, reset: reset, closeSheet: closeSheet,
   };
 

@@ -158,7 +158,21 @@
       try { return E.createStore(global.localStorage, ownerNow); } catch (e) { return null; }
     }
 
+    // A6: missão da semana e conquistas pessoais (missao-semana.js; só no aparelho, sem ranking).
+    function createMission() {
+      var M = global.LaiftMissao;
+      if (!M) return null;
+      try { return M.createStore(global.localStorage, ownerNow); } catch (e) { return null; }
+    }
+    var mission = createMission();
+
+    function recordMission(q, correct) {
+      if (!mission || !q) return;
+      try { mission.record({ module: cfg.module, topic: q.topic, correct: correct, now: Date.now() }); } catch (e) { /* conquistas nunca travam o quiz */ }
+    }
+
     function recordError(q, correct) {
+      recordMission(q, correct);
       if (!errors || !q) return;
       errors.record({ module: cfg.module, id: q.id, topic: q.topic, correct: correct, now: Date.now() });
       refreshReviewButton();

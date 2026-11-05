@@ -218,3 +218,13 @@
 @media (prefers-reduced-motion: reduce) {
   :root[data-flag-learn-v2-enabled] .l2-strip, :root[data-flag-learn-v2-enabled] .l2-badges { scroll-behavior: auto; }
 }
+
+/* Missão da semana e conquistas pessoais (A6) */
+:root[data-flag-learn-v2-enabled] .l2-mission { padding: 14px 16px; border-radius: var(--laift-radius-lg); background: var(--layer-1); color: var(--laift-text); box-shadow: inset 0 0 0 1px var(--hairline), var(--elev-1); display: grid; gap: 10px; }
+:root[data-flag-learn-v2-enabled] .l2-mission__hint { margin: 0; font-size: 14px; color: var(--laift-muted); }
+:root[data-flag-learn-v2-enabled] .l2-mission__list, :root[data-flag-learn-v2-enabled] .l2-mine { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+:root[data-flag-learn-v2-enabled] .l2-mission__line { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+:root[data-flag-learn-v2-enabled] .l2-mission__line small { color: var(--laift-muted); font-size: 13px; white-space: nowrap; }
+:root[data-flag-learn-v2-enabled] .l2-mission__task.is-done strong { color: var(--laift-muted); }
+:root[data-flag-learn-v2-enabled] .l2-mine { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+:root[data-flag-learn-v2-enabled] .l2-mine__item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--laift-radius-lg); background: var(--layer-1); box-shadow: inset 0 0 0 1px var(--hairline); }
