@@ -16,6 +16,7 @@
 
   <link rel="stylesheet" href="../shared/style.css">
   <link rel="stylesheet" href="fiscal.css">
+  <link rel="stylesheet" href="fiscal-gate.css">
 </head>
 <body class="fiscal-page">
 
@@ -62,7 +63,8 @@
           <strong id="scanResultTitle" class="fiscal-result-title"></strong>
           <span id="scanResultDetail" class="fiscal-result-detail"></span>
         </div>
-        <p class="fiscal-note">O leitor continua ligado para o próximo. Sem QR? Busque a pessoa pelo nome logo abaixo.</p>
+        <label class="fiscal-sound"><input type="checkbox" id="scanSound"> Som ao ler</label>
+        <p class="fiscal-note">Leia a credencial da pessoa (Perfil ou Início, “Abrir crachá virtual”): o QR do crachá muda a cada 30 segundos e vale só para este evento. A assinatura é conferida no servidor; o leitor continua ligado para o próximo. Sem rede, as leituras ficam guardadas e são enviadas ao reconectar. Sem QR? Busque a pessoa pelo nome logo abaixo.</p>
       </section>
 
       <section class="fiscal-card" aria-labelledby="fiscalRecentTitle">
@@ -132,6 +134,7 @@
        impressa DESTE documento (sem pop-up nem document.write). -->
   <div id="printArea" class="print-area" aria-hidden="true"></div>
 
+  <script src="fiscal-gate.js"></script>
   <script src="fiscal-engine.js"></script>
   <script src="fiscal-page.js"></script>
 </body>

@@ -1,0 +1,1024 @@
+{
+  "id": "proc_alcool_gel_70_v1",
+  "versao": 1,
+  "titulo": "Álcool em gel antisséptico a 70 % (p/p)",
+  "categoria": "farmacotecnica",
+  "nivel": 4,
+  "nivel_conteudo": "completo",
+  "restricao": null,
+  "revisado_por": null,
+  "forma": "gel_antisseptico",
+  "setor": "saneante",
+  "conferencia": {
+    "estado": "pendente",
+    "nota": "[NV] Valores numéricos, faixas de critério, tolerâncias e citações de norma a conferir com a fonte primária (edição e artigo vigentes) antes de publicar."
+  },
+  "duracaoSimuladaMin": 90,
+  "via": "topica",
+  "objetivos": [
+    "Corrigir a massa de álcool pelo teor da matéria-prima",
+    "Hidratar e neutralizar um gelificante",
+    "Completar a massa (q.s.p.)",
+    "Conferir teor alcoólico, pH e viscosidade"
+  ],
+  "fontesOficiais": [
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 42/2010 (ANVISA): preparação alcoólica para higiene das mãos em serviços de saúde"
+    },
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 67/2007 (ANVISA)"
+    },
+    {
+      "tipo": "OMS",
+      "citacao": "Organização Mundial da Saúde: Guide to Local Production, WHO-recommended Handrub Formulations (2010)"
+    }
+  ],
+  "formulacao": {
+    "base": "para 200 g",
+    "itens": [
+      {
+        "especie": "Etanol96_l",
+        "funcao": "ativo antisséptico",
+        "quantidade": {
+          "valor": 150.9,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "Carbomer_s",
+        "funcao": "gelificante",
+        "quantidade": {
+          "valor": 1,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "Trietanolamina_l",
+        "funcao": "neutralizante",
+        "quantidade": {
+          "valor": 1.5,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "Glicerina_l",
+        "funcao": "umectante",
+        "quantidade": {
+          "valor": 2.9,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "H2O_l",
+        "funcao": "veículo",
+        "quantidade": {
+          "valor": 200,
+          "unidade": "g",
+          "qsp": true
+        }
+      }
+    ]
+  },
+  "cq": [
+    {
+      "ensaio": "teor alcoólico",
+      "criterio": "entre 68 e 72 % p/p"
+    },
+    {
+      "ensaio": "pH",
+      "criterio": "entre 5,5 e 7,5"
+    },
+    {
+      "ensaio": "viscosidade",
+      "criterio": "entre 3.000 e 12.000 mPa·s"
+    },
+    {
+      "ensaio": "limite microbiano (conceitual)",
+      "criterio": "preparação tópica"
+    }
+  ],
+  "referencias": [
+    {
+      "titulo": "RDC nº 42/2010 (ANVISA)",
+      "nota": "[NV] conferir título, vigência e enquadramento regulatório do produto (saneante ou cosmético)"
+    },
+    {
+      "titulo": "OMS: WHO-recommended Handrub Formulations (2010)",
+      "nota": "[NV] conferir a formulação e a forma de citação"
+    },
+    {
+      "titulo": "RDC nº 67/2007 (ANVISA)",
+      "nota": "[NV] conferir vigência e alterações"
+    }
+  ],
+  "recipientes": [
+    {
+      "id": "bequer_a",
+      "tipo": "bequer",
+      "capMl": 400
+    },
+    {
+      "id": "bequer_b",
+      "tipo": "bequer",
+      "capMl": 250
+    },
+    {
+      "id": "frasco_250",
+      "tipo": "frasco",
+      "capMl": 260
+    }
+  ],
+  "materiais": {
+    "especies": [
+      {
+        "id": "Etanol96_l",
+        "papel": "ativo",
+        "quantidade": {
+          "valor": 150.9,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Carbomer_s",
+        "papel": "gelificante",
+        "quantidade": {
+          "valor": 1,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Trietanolamina_l",
+        "papel": "neutralizante",
+        "quantidade": {
+          "valor": 1.5,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Glicerina_l",
+        "papel": "umectante",
+        "quantidade": {
+          "valor": 2.9,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "H2O_l",
+        "papel": "veículo",
+        "quantidade": {
+          "valor": 200,
+          "unidade": "g"
+        }
+      }
+    ],
+    "vidraria": [
+      "bequer_a",
+      "bequer_b",
+      "frasco_250"
+    ],
+    "equipamentos": [
+      "balanca_analitica",
+      "agitador",
+      "phmetro",
+      "viscosimetro"
+    ]
+  },
+  "seguranca": {
+    "epi": [
+      "jaleco",
+      "luvas_nitrila",
+      "oculos"
+    ],
+    "capela": true,
+    "riscos": [
+      "vapor inflamável de etanol",
+      "irritante para os olhos"
+    ],
+    "residuos": [
+      {
+        "tipo": "solvente_organico",
+        "destino": "organico_nao_halogenado"
+      }
+    ]
+  },
+  "etapas": [
+    {
+      "id": "e1",
+      "titulo": "Paramentação",
+      "oQueEstaAcontecendo": "Você veste os equipamentos de proteção antes de abrir qualquer frasco e liga a exaustão.",
+      "porQue": "O álcool é inflamável e libera vapor: a exaustão ligada e a ausência de chama protegem você. O jaleco e as luvas evitam contato com o ativo.",
+      "preCondicoes": [],
+      "acao": {
+        "operacao": "paramentar",
+        "parametros": {
+          "epi": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos"
+          ],
+          "capela": true
+        },
+        "alvoUI": "painelSeguranca"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "epi",
+          "op": "contem",
+          "valor": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos"
+          ],
+          "mensagemSeFalhar": "Falta equipamento de proteção: jaleco, luvas_nitrila, oculos.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "titulo": "Calcular a fase alcoólica e dispersar o carbômero",
+      "oQueEstaAcontecendo": "Você calcula a massa de álcool e, em um béquer, você pesa 1,00 g de carbômero e 30,00 g de água purificada e deixa hidratar por 15 minutos sob agitação suave.",
+      "porQue": "O carbômero forma grumos se cair de uma vez na água. Hidratar primeiro dá um gel liso depois da neutralização.",
+      "calculoPrevio": {
+        "pergunta": "Quantos gramas de álcool etílico 96 °GL (92,8 % p/p de etanol) para 200 g de gel a 70 % p/p de etanol?",
+        "formula": "m = alvo(% p/p) × massa final ÷ teor da matéria-prima",
+        "resposta": 150.86,
+        "tolerancia": 0.5,
+        "unidade": "g"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e1"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_a"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Carbomer_s",
+            "massaG": 1,
+            "recipiente": "bequer_a"
+          },
+          "alvoUI": "reagente:Carbomer_s"
+        },
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_a"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "H2O_l",
+            "massaG": 30,
+            "recipiente": "bequer_a"
+          },
+          "alvoUI": "reagente:H2O_l"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_a",
+          "especie": "Carbomer_s",
+          "op": "entre",
+          "valor": [
+            0.985,
+            1.015
+          ],
+          "mensagemSeFalhar": "Massa fora de 1 ± 0.015 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_a",
+          "especie": "H2O_l",
+          "op": "entre",
+          "valor": [
+            29.97,
+            30.03
+          ],
+          "mensagemSeFalhar": "Massa fora de 30 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "titulo": "Hidratar",
+      "oQueEstaAcontecendo": "A dispersão fica sob agitação suave por 15 minutos.",
+      "porQue": "O polímero precisa de tempo para hidratar e abrir as cadeias antes de neutralizar.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e2"
+        }
+      ],
+      "acao": {
+        "operacao": "misturar",
+        "parametros": {
+          "recipiente": "bequer_a",
+          "tecnica": "agitacao_mecanica",
+          "tempoMin": 15
+        },
+        "alvoUI": "btnMisturar"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "bequer_a",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "titulo": "Neutralizar com trietanolamina",
+      "oQueEstaAcontecendo": "Você pesa 1,50 g de trietanolamina na dispersão e mistura por 5 minutos: o gel se forma.",
+      "porQue": "O carbômero só espessa quando a base neutraliza os grupos ácidos. Pouca base deixa o gel ralo e com pH baixo; muita base deixa o pH alto e o gel instável.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e3"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_a"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Trietanolamina_l",
+            "massaG": 1.5,
+            "recipiente": "bequer_a"
+          },
+          "alvoUI": "reagente:Trietanolamina_l"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_a",
+          "especie": "Trietanolamina_l",
+          "op": "entre",
+          "valor": [
+            1.47,
+            1.53
+          ],
+          "mensagemSeFalhar": "Massa fora de 1.5 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "titulo": "Misturar até formar o gel",
+      "oQueEstaAcontecendo": "A mistura gira por 5 minutos.",
+      "porQue": "A neutralização completa leva alguns minutos de agitação.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e4"
+        }
+      ],
+      "acao": {
+        "operacao": "misturar",
+        "parametros": {
+          "recipiente": "bequer_a",
+          "tecnica": "agitacao_mecanica",
+          "tempoMin": 5
+        },
+        "alvoUI": "btnMisturar"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "bequer_a",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e6",
+      "titulo": "Pesar a fase alcoólica",
+      "oQueEstaAcontecendo": "Em outro béquer, você pesa 150,90 g de álcool etílico 96 °GL e 2,90 g de glicerina.",
+      "porQue": "O álcool dá a ação antisséptica e a glicerina evita o ressecamento da pele. A massa de álcool considera que a matéria-prima tem 92,8 % de etanol em massa.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e5"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_b"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Etanol96_l",
+            "massaG": 150.9,
+            "recipiente": "bequer_b"
+          },
+          "alvoUI": "reagente:Etanol96_l"
+        },
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_b"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Glicerina_l",
+            "massaG": 2.9,
+            "recipiente": "bequer_b"
+          },
+          "alvoUI": "reagente:Glicerina_l"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_b",
+          "especie": "Etanol96_l",
+          "op": "entre",
+          "valor": [
+            150.85,
+            150.95
+          ],
+          "mensagemSeFalhar": "Massa fora de 150.9 ± 0.05 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_b",
+          "especie": "Glicerina_l",
+          "op": "entre",
+          "valor": [
+            2.87,
+            2.93
+          ],
+          "mensagemSeFalhar": "Massa fora de 2.9 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        },
+        {
+          "gatilho": {
+            "grandeza": "massa",
+            "recipiente": "bequer_b",
+            "especie": "Etanol96_l",
+            "op": "<",
+            "valor": 145
+          },
+          "consequencia": "teor_alcoolico_baixo",
+          "explicacao": "Sem corrigir pelo teor do álcool (92,8 %), o gel fica com menos de 70 % de etanol e perde ação antisséptica.",
+          "correcao": "Divida pela fração de etanol da matéria-prima: massa = 70 × 200 ÷ 92,8."
+        }
+      ]
+    },
+    {
+      "id": "e7",
+      "titulo": "Incorporar a fase alcoólica",
+      "oQueEstaAcontecendo": "A fase alcoólica vai ao gel aos poucos, sob agitação, por 10 minutos.",
+      "porQue": "Adicionar o álcool ao gel já neutralizado e em porções evita que o polímero precipite em grumos.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e6"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "transferir",
+          "parametros": {
+            "origem": "bequer_b",
+            "destino": "bequer_a",
+            "enxague": true
+          },
+          "alvoUI": "btnTransferir"
+        },
+        {
+          "operacao": "misturar",
+          "parametros": {
+            "recipiente": "bequer_a",
+            "tecnica": "agitacao_mecanica",
+            "tempoMin": 10
+          },
+          "alvoUI": "btnMisturar"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "bequer_a",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e8",
+      "titulo": "Completar a massa com água (q.s.p. 200 g)",
+      "oQueEstaAcontecendo": "A balança é tarada e a água purificada completa até 200,00 g.",
+      "porQue": "A água que falta fecha a massa e, junto da fase alcoólica, fixa o teor de etanol em 70 % p/p.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e7"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "completarMassa",
+          "parametros": {
+            "recipiente": "bequer_a",
+            "especie": "H2O_l",
+            "massaFinalG": 200
+          },
+          "alvoUI": "btnCompletarMassa"
+        },
+        {
+          "operacao": "misturar",
+          "parametros": {
+            "recipiente": "bequer_a",
+            "tecnica": "agitacao_mecanica",
+            "tempoMin": 10
+          },
+          "alvoUI": "btnMisturar"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "bequer_a",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e9",
+      "titulo": "Teor alcoólico",
+      "oQueEstaAcontecendo": "O teor de etanol é determinado e comparado à faixa do produto.",
+      "porQue": "Álcool abaixo de cerca de 70 % p/p perde eficácia contra micro-organismos; acima, evapora rápido e agride a pele.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e8"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "teor_alcoolico",
+            "recipiente": "bequer_a",
+            "faixa": [
+              68,
+              72
+            ]
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_teor_alcoolico_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e10",
+      "titulo": "pH",
+      "oQueEstaAcontecendo": "O pHmetro calibrado mede o gel diluído em água.",
+      "porQue": "O pH mostra se a neutralização foi correta e se o produto é seguro para a pele.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e9"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "calibrar",
+          "parametros": {
+            "tampoes": [
+              4,
+              7
+            ]
+          },
+          "alvoUI": "phmetroCalibrar"
+        },
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "ph",
+            "recipiente": "bequer_a",
+            "faixa": [
+              5.5,
+              7.5
+            ],
+            "modelo": {
+              "variavel": {
+                "especie": "Trietanolamina_l",
+                "por": "Carbomer_s",
+                "base": "razao"
+              },
+              "pontos": [
+                [
+                  0,
+                  3.2
+                ],
+                [
+                  0.5,
+                  4.6
+                ],
+                [
+                  1,
+                  5.7
+                ],
+                [
+                  1.5,
+                  6.4
+                ],
+                [
+                  2.5,
+                  7.2
+                ],
+                [
+                  4,
+                  8.4
+                ]
+              ]
+            }
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_ph_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e11",
+      "titulo": "Viscosidade",
+      "oQueEstaAcontecendo": "O viscosímetro rotacional lê o torque do gel com um fuso adequado.",
+      "porQue": "Sem neutralização suficiente, o carbômero não espessa e o gel escorre das mãos.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e10"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "viscosidade",
+            "recipiente": "bequer_a",
+            "faixa": [
+              3000,
+              12000
+            ],
+            "modelo": {
+              "variavel": {
+                "especie": "Carbomer_s",
+                "base": "pp"
+              },
+              "pontos": [
+                [
+                  0,
+                  5
+                ],
+                [
+                  0.25,
+                  1500
+                ],
+                [
+                  0.5,
+                  6000
+                ],
+                [
+                  1,
+                  15000
+                ]
+              ],
+              "ativacao": {
+                "variavel": {
+                  "especie": "Trietanolamina_l",
+                  "por": "Carbomer_s",
+                  "base": "razao"
+                },
+                "minimo": 1,
+                "fatorSeNaoAtivado": 0.01
+              }
+            },
+            "fator": 100
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_viscosidade_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e12",
+      "titulo": "Limite microbiano (conceitual)",
+      "oQueEstaAcontecendo": "Uma amostra vai a contagem de micro-organismos, como ensaio conceitual.",
+      "porQue": "Com 70 % de etanol o produto é autoconservado, mas a contaminação na manipulação ainda é um risco.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e11"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "limite_microbiano",
+            "recipiente": "bequer_a",
+            "categoria": "cutaneo"
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_limite_microbiano_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e13",
+      "titulo": "Envasar",
+      "oQueEstaAcontecendo": "O gel passa a um frasco de 250 mL, que é fechado logo em seguida.",
+      "porQue": "O frasco fechado evita a evaporação do álcool, que mudaria o teor.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e12"
+        }
+      ],
+      "acao": {
+        "operacao": "transferir",
+        "parametros": {
+          "origem": "bequer_a",
+          "destino": "frasco_250",
+          "enxague": true
+        },
+        "alvoUI": "btnTransferir"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "frasco_250",
+          "especie": "Etanol96_l",
+          "op": "entre",
+          "valor": [
+            149.9,
+            151.9
+          ],
+          "mensagemSeFalhar": "Parte do álcool ficou no béquer.",
+          "consequencia": "aviso"
+        }
+      ]
+    },
+    {
+      "id": "e14",
+      "titulo": "Rotular",
+      "oQueEstaAcontecendo": "Você preenche o rótulo com os dados do produto, do lote e do responsável, e as advertências aplicáveis.",
+      "porQue": "Sem rótulo completo o produto não pode ser identificado, rastreado nem usado com segurança.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e13"
+        }
+      ],
+      "acao": {
+        "operacao": "rotular",
+        "parametros": {
+          "recipiente": "frasco_250",
+          "campos": {
+            "lote": "LAB-004",
+            "fabricacao": "data da prática",
+            "validade": "conforme o procedimento da bancada",
+            "responsavel": "turma",
+            "produto": "Álcool em gel antisséptico",
+            "concentracao": "Etanol a 70 % p/p",
+            "advertencias": "Inflamável. Manter longe do fogo e fora do alcance de crianças."
+          },
+          "camposObrigatorios": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "advertencias"
+          ]
+        },
+        "alvoUI": "painelRotulo"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "rotuloCompleto",
+          "recipiente": "frasco_250",
+          "campos": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "advertencias"
+          ],
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Rótulo incompleto: preencha todos os campos obrigatórios.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e15",
+      "titulo": "Descarte e limpeza",
+      "oQueEstaAcontecendo": "Os restos dos béqueres vão ao frasco de resíduo orgânico não halogenado e a vidraria é lavada.",
+      "porQue": "Resíduo com álcool não vai para a pia: é inflamável e segue o destino de solvente orgânico.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e14"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "bequer_a",
+            "destino": "organico_nao_halogenado"
+          },
+          "alvoUI": "painelDescarte"
+        },
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "bequer_b",
+            "destino": "organico_nao_halogenado"
+          },
+          "alvoUI": "painelDescarte"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "residuoConforme",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Destino de descarte inadequado para este resíduo.",
+          "consequencia": "nao_conforme"
+        }
+      ]
+    }
+  ],
+  "resultadoEsperado": {
+    "produto": "Etanol96_l",
+    "criterios": [
+      {
+        "descricao": "Etanol 96 °GL no frasco entre 149 e 152 g",
+        "grandeza": "massa",
+        "recipiente": "frasco_250",
+        "especie": "Etanol96_l",
+        "op": "entre",
+        "valor": [
+          149,
+          152
+        ]
+      },
+      {
+        "descricao": "Rótulo completo",
+        "grandeza": "rotuloCompleto",
+        "recipiente": "frasco_250",
+        "campos": [
+          "produto",
+          "concentracao",
+          "lote",
+          "fabricacao",
+          "validade",
+          "responsavel",
+          "advertencias"
+        ],
+        "op": "==",
+        "valor": true
+      }
+    ]
+  }
+}

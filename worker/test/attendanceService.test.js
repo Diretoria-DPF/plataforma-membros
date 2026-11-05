@@ -3,6 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
+import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 import * as AttendanceService from '../src/services/attendanceService.js';
 import { makeSql, makeEnv } from './helpers/mockEnv.js';
 
@@ -25,6 +26,8 @@ function queryText(sql, callIndex) {
 function flipChar(c) {
   return c === 'A' ? 'B' : 'A';
 }
+
+beforeEach(() => __resetFlagCacheForTests());
 
 describe('QR de presença v2 (HMAC com chave derivada do pepper)', () => {
   const env = makeEnv();
@@ -136,6 +139,7 @@ describe('AttendanceService.checkIn', () => {
     const sql = makeSql();
     sql
       .mockResolvedValueOnce(RATE_OK)
+      .mockResolvedValueOnce([]) // feature_flags (modo de transição do QR v2)
       .mockResolvedValueOnce(OPEN_EVENT)
       .mockResolvedValueOnce(PERSON)
       .mockResolvedValueOnce([{ checked_in_at: '2026-09-26T12:00:00Z' }]) // UPDATE … RETURNING
@@ -146,10 +150,10 @@ describe('AttendanceService.checkIn', () => {
       message: 'Presença registrada: Ana Souza.',
       participant: { profileId: MEMBER.profileId, fullName: 'Ana Souza', role: 'member', alreadyCheckedIn: false, walkIn: false, checkedInAt: '2026-09-26T12:00:00Z' },
     });
-    expect(boundValues(sql, 2)).toEqual([MEMBER.profileId]); // perfil = o do QR verificado
-    expect(queryText(sql, 3)).toContain('UPDATE event_registrations');
-    expect(queryText(sql, 3)).toContain('checked_in_at IS NULL');
-    expect(boundValues(sql, 3)).toEqual([ADMIN.profileId, 'qr', EVENT_ID, MEMBER.profileId]);
+    expect(boundValues(sql, 3)).toEqual([MEMBER.profileId]); // perfil = o do QR verificado
+    expect(queryText(sql, 4)).toContain('UPDATE event_registrations');
+    expect(queryText(sql, 4)).toContain('checked_in_at IS NULL');
+    expect(boundValues(sql, 4)).toEqual([ADMIN.profileId, 'qr', EVENT_ID, MEMBER.profileId]);
     expect(env.HOT_CACHE.delete).not.toHaveBeenCalled(); // contagem de inscritos não mudou
   });
 
@@ -393,8 +397,10 @@ describe('AttendanceService.badges', () => {
         { id: VISITOR.profileId, full_name: 'Beto', role: 'visitor', league_position: null, avatar_url: 'javascript:alert(1)' },
         { id: MEMBER.profileId, full_name: 'Ana', role: 'member', league_position: 'diretor', avatar_url: 'https://media.laift.com.br/avatars/ana.png' },
       ])
+      .mockResolvedValueOnce([]) // feature_flags: attendance_qr_rotating_only desligada
       .mockResolvedValueOnce(undefined);
     const res = await AttendanceService.badges(sql, env, ADMIN, { profileIds: [MEMBER.profileId, VISITOR.profileId.toUpperCase(), MEMBER.profileId, missing] }, 'cid');
+    expect(res.rotatingOnly).toBe(false);
     expect(boundValues(sql, 0)[0]).toEqual([MEMBER.profileId, VISITOR.profileId, missing]);
     expect(res.badges.map((b) => [b.profileId, b.fullName, b.role, b.leaguePosition])).toEqual([
       [MEMBER.profileId, 'Ana', 'member', 'diretor'],
@@ -404,6 +410,21 @@ describe('AttendanceService.badges', () => {
     for (const b of res.badges) {
       expect(await AttendanceService.verifyAttendanceQr(env, b.qrPayload)).toBe(b.profileId);
     }
-    expect(JSON.parse(boundValues(sql, 1).slice(-1)[0])).toEqual({ requested: 3, issued: 2 });
+    expect(JSON.parse(boundValues(sql, 2).slice(-1)[0])).toEqual({ requested: 3, issued: 2, rotatingOnly: false });
+  });
+
+  test('com attendance_qr_rotating_only ligada o crachá sai SEM QR (o v2 permanente não vale mais no portão)', async () => {
+    const env = makeEnv();
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ id: MEMBER.profileId, full_name: 'Ana', role: 'member', league_position: null, avatar_url: null }])
+      .mockResolvedValueOnce([{ key: 'attendance_qr_rotating_only', enabled: true, rollout_pct: 100, conditions: {} }])
+      .mockResolvedValueOnce(undefined);
+    const res = await AttendanceService.badges(sql, env, ADMIN, { profileIds: [MEMBER.profileId] }, 'cid');
+    expect(res.rotatingOnly).toBe(true);
+    expect(res.badges).toHaveLength(1);
+    expect(res.badges[0].qrPayload).toBeNull();
+    expect(res.badges[0].fullName).toBe('Ana');
+    expect(JSON.parse(boundValues(sql, 2).slice(-1)[0])).toMatchObject({ rotatingOnly: true });
   });
 });

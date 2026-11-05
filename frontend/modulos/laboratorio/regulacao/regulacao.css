@@ -1,0 +1,37 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+:root { --rg-fundo: #f8fafc; --rg-texto: #0f172a; --rg-suave: #475569; --rg-borda: #cbd5e1; --rg-card: #ffffff; --rg-acento: #1d4ed8; --rg-ok: #166534; --rg-ok-fundo: #dcfce7; --rg-erro: #991b1b; --rg-erro-fundo: #fee2e2; }
+@media (prefers-color-scheme: dark) {
+  :root { --rg-fundo: #0b1220; --rg-texto: #e2e8f0; --rg-suave: #94a3b8; --rg-borda: #334155; --rg-card: #111827; --rg-acento: #93c5fd; --rg-ok: #86efac; --rg-ok-fundo: #14532d; --rg-erro: #fca5a5; --rg-erro-fundo: #450a0a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--rg-fundo); color: var(--rg-texto); line-height: 1.5; }
+.rg-topo, .rg-main { max-width: 860px; margin: 0 auto; padding: 16px; }
+.rg-topo h1 { margin: 8px 0 4px; font-size: 1.5rem; }
+.rg-sub, .rg-progresso, .rg-fonte, .rg-aviso { color: var(--rg-suave); font-size: 0.9rem; margin: 4px 0; }
+.rg-voltar { color: var(--rg-acento); display: inline-block; min-height: 44px; line-height: 44px; }
+.rg-abas { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; padding: 0; list-style: none; }
+.rg-aba, .rg-btn { min-height: 44px; padding: 8px 14px; border: 1px solid var(--rg-borda); border-radius: 10px; background: var(--rg-card); color: var(--rg-texto); font: inherit; cursor: pointer; }
+.rg-aba[aria-selected="true"], .rg-btn.rg-principal { background: var(--rg-acento); color: var(--rg-fundo); border-color: var(--rg-acento); }
+.rg-aba:focus-visible, .rg-btn:focus-visible, .rg-campo:focus-within, input:focus-visible, select:focus-visible { outline: 3px solid var(--rg-acento); outline-offset: 2px; }
+.rg-card { background: var(--rg-card); border: 1px solid var(--rg-borda); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; }
+.rg-card h2, .rg-card h3 { margin: 0 0 6px; font-size: 1.05rem; }
+.rg-campo { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; padding: 8px; border: 1px solid var(--rg-borda); border-radius: 8px; margin: 0 0 6px; }
+.rg-campo input { margin-top: 4px; width: 20px; height: 20px; }
+.rg-rotulo { font-weight: 600; display: block; }
+.rg-lista { display: grid; gap: 8px; padding: 0; margin: 0 0 12px; list-style: none; }
+.rg-linha { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+.rg-entrada { min-height: 44px; padding: 6px 10px; border: 1px solid var(--rg-borda); border-radius: 8px; background: var(--rg-card); color: var(--rg-texto); font: inherit; width: 9rem; }
+.rg-resultado { padding: 10px 12px; border-radius: 10px; margin-top: 10px; }
+.rg-resultado.rg-certo { background: var(--rg-ok-fundo); color: var(--rg-ok); }
+.rg-resultado.rg-errado { background: var(--rg-erro-fundo); color: var(--rg-erro); }
+.rg-tabela { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.rg-tabela th, .rg-tabela td { border-bottom: 1px solid var(--rg-borda); padding: 6px 8px; text-align: left; }
+.rg-tabela .rg-num { text-align: right; font-variant-numeric: tabular-nums; }
+.rg-etapa summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; }
+fieldset { border: 1px solid var(--rg-borda); border-radius: 10px; margin: 8px 0; }
+@media (max-width: 480px) { .rg-entrada { width: 100%; } }
+@media (prefers-reduced-motion: no-preference) { .rg-aba, .rg-btn { transition: background-color 0.15s; } }

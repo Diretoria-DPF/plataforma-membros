@@ -1,0 +1,42 @@
+{
+  "versao": 1,
+  "trilhas": [
+    {
+      "id": "digestorio-orgaos",
+      "titulo": "Sistema digestório: seis órgãos",
+      "sistema": "digestorio",
+      "descricao": "Língua, estômago, duodeno, vesícula biliar, pâncreas e fígado, um a um, com a câmera indo até cada órgão.",
+      "passos": ["za:tongue", "za:stomach", "za:duodenum", "za:gallbladder", "za:pancreas", "za:liver"]
+    },
+    {
+      "id": "coracao-circulacao",
+      "titulo": "Coração: câmaras e vaso de saída",
+      "sistema": "cardiovascular",
+      "descricao": "As câmaras do coração na ordem em que o sangue as percorre; entre o tronco pulmonar e o átrio esquerdo, o sangue passa pelo pulmão.",
+      "passos": ["za:right-atrium", "za:right-ventricle", "za:pulmonary-trunk", "za:left-atrium", "za:left-ventricle"]
+    },
+    {
+      "id": "endocrino-eixo",
+      "titulo": "Hipotálamo, hipófise e glândulas",
+      "sistema": "endocrino",
+      "descricao": "Do hipotálamo à hipófise (adeno-hipófise e neuro-hipófise), depois a tireoide e a suprarrenal.",
+      "passos": ["za:hypothalamus", "za:adenohypophysis", "za:neurohypophysis", "za:thyroid-gland", "za:suprarenal-gland-r"]
+    },
+    {
+      "id": "respiratorio-pulmoes",
+      "titulo": "Vias aéreas e lobos pulmonares",
+      "sistema": "respiratorio",
+      "descricao": "A traqueia e os três lobos do pulmão direito e os dois do esquerdo.",
+      "passos": ["za:trachea", "za:superior-lobe-of-right-lung", "za:middle-lobe-of-right-lung", "za:inferior-lobe-of-right-lung", "za:superior-lobe-of-left-lung", "za:inferior-lobe-of-left-lung"]
+    }
+  ],
+  "desafio": {
+    "excluirCasos": [
+      "caso-injecao-deltoide",
+      "caso-neuroeixo-espinhal",
+      "caso-bhe-neurologia",
+      "caso-organofosforado",
+      "caso-filtro-renal"
+    ]
+  }
+}

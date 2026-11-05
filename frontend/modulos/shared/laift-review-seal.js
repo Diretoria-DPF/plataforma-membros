@@ -78,6 +78,15 @@
       .then(function (wantsToReport) { return wantsToReport ? send(ctx) : undefined; });
   }
 
+  /** Aviso de erro iniciado pela pessoa (sem qualquer texto sobre estado de revisão): confirma e envia. */
+  function report(ctx) {
+    var kind = (ctx && ctx.kind) || 'questão';
+    if (!global.LaiftDialog) return Promise.resolve();
+    return global.LaiftDialog.confirm('Enviar um aviso de erro sobre esta ' + kind + ' para a diretoria?',
+      { title: 'Reportar erro', okLabel: 'Enviar aviso', cancelLabel: 'Cancelar' })
+      .then(function (ok) { return ok ? send(ctx) : undefined; });
+  }
+
   function create(item, ctx, opts) {
     if (reviewState(item, opts) !== 'unreviewed') return null;
     if (!global.LaiftDialog || !global.document) return null;
@@ -91,5 +100,5 @@
     return btn;
   }
 
-  global.LaiftReviewSeal = { reviewState: reviewState, create: create, buildReportMessage: buildReportMessage };
+  global.LaiftReviewSeal = { reviewState: reviewState, create: create, report: report, buildReportMessage: buildReportMessage };
 })(typeof window !== 'undefined' ? window : globalThis);

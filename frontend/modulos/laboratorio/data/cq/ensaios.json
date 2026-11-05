@@ -1,0 +1,127 @@
+{
+  "versao": 1,
+  "conferencia": { "estado": "pendente", "nota": "[NV] Critérios, limites e números dos métodos a conferir com a Farmacopeia Brasileira vigente e com as monografias antes de publicar." },
+  "revisado_por": null,
+  "ensaios": [
+    {
+      "id": "peso_medio",
+      "nome": "Peso médio",
+      "formas": ["capsula", "comprimido"],
+      "oQueMede": "A regularidade do enchimento ou da compressão entre as unidades.",
+      "metodo": ["Pese individualmente 20 unidades.", "Calcule o peso médio.", "Compare cada unidade com o limite individual."],
+      "calculo": "Limite individual = peso médio × (1 ± percentual da faixa)",
+      "criterio": "No máximo 2 unidades fora do limite individual e nenhuma fora do dobro desse limite. Cápsulas: ±10 % abaixo de 300 mg e ±7,5 % de 300 mg em diante. Comprimidos: ±10 % abaixo de 80 mg, ±7,5 % de 80 a 250 mg e ±5 % acima de 250 mg.",
+      "errosComuns": [{ "erro": "Pesar menos de 20 unidades", "consequencia": "Estatística fraca: um lote ruim pode passar." }, { "erro": "Usar o peso teórico em vez do peso médio como referência do limite individual", "consequencia": "Lote regular pode ser reprovado ou lote irregular, aprovado." }],
+      "referencia": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: determinação de peso em formas farmacêuticas sólidas",
+      "funcao": "pesoMedio"
+    },
+    {
+      "id": "uniformidade",
+      "nome": "Uniformidade de doses unitárias (conteúdo)",
+      "formas": ["capsula", "comprimido"],
+      "oQueMede": "Se cada unidade tem a dose declarada, mesmo quando o peso é regular.",
+      "metodo": ["Determine o teor de ativo de 10 unidades, como percentual do declarado.", "Calcule a média e o desvio padrão.", "Calcule o valor de aceitação."],
+      "calculo": "VA = |M − média| + k × s, com k = 2,4 (10 unidades) e M = média limitada a 98,5-101,5 %",
+      "criterio": "VA até 15,0 no primeiro estágio. No segundo estágio (30 unidades), k = 2,0, VA até 15,0 e nenhuma unidade fora de 75 a 125 % de M.",
+      "errosComuns": [{ "erro": "Misturar sem diluição geométrica um ativo em baixa proporção", "consequencia": "Desvio padrão alto e valor de aceitação acima do limite." }],
+      "referencia": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: uniformidade de doses unitárias",
+      "funcao": "uniformidadeDoses"
+    },
+    {
+      "id": "ph",
+      "nome": "pH",
+      "formas": ["solucao", "xarope", "suspensao", "gel", "sabonete"],
+      "oQueMede": "A acidez ou a alcalinidade do produto, ligada à estabilidade, à segurança para a pele e à conservação.",
+      "metodo": ["Calibre o pHmetro com dois tampões que abranjam a faixa esperada.", "Meça a amostra à temperatura indicada.", "Registre o valor e a temperatura."],
+      "calculo": "Leitura direta do instrumento.",
+      "criterio": "A faixa vem da especificação de cada produto (por exemplo, sabonete líquido entre 5,5 e 7,0 neste laboratório).",
+      "errosComuns": [{ "erro": "Medir sem calibrar", "consequencia": "Leitura deslocada e decisão errada de liberar ou reprovar." }, { "erro": "Medir produto com alto teor de álcool como se fosse aquoso", "consequencia": "Leitura instável; use a diluição indicada no método." }],
+      "referencia": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: determinação do pH",
+      "funcao": "naFaixa"
+    },
+    {
+      "id": "densidade",
+      "nome": "Densidade",
+      "formas": ["solucao", "xarope", "saneante"],
+      "oQueMede": "A relação entre massa e volume, que confere a concentração de uma solução.",
+      "metodo": ["Pese o picnômetro vazio e cheio de amostra à temperatura de referência.", "Divida a massa da amostra pelo volume do picnômetro."],
+      "calculo": "d = (massa cheio − massa vazio) ÷ volume",
+      "criterio": "A faixa vem da especificação do produto.",
+      "errosComuns": [{ "erro": "Bolha de ar no picnômetro", "consequencia": "Volume menor que o nominal e densidade subestimada." }],
+      "referencia": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: determinação da densidade de massa",
+      "funcao": "densidadePicnometro"
+    },
+    {
+      "id": "viscosidade",
+      "nome": "Viscosidade",
+      "formas": ["gel", "sabonete", "suspensao"],
+      "oQueMede": "A resistência ao escoamento, que define o espalhamento, a dosagem e a estabilidade física.",
+      "metodo": ["Escolha o fuso e a velocidade para que o torque fique entre 10 e 100 %.", "Aguarde a leitura estabilizar.", "Multiplique o torque pelo fator do conjunto."],
+      "calculo": "η (mPa·s) = leitura de torque (%) × fator do fuso e da velocidade",
+      "criterio": "A faixa vem da especificação do produto.",
+      "errosComuns": [{ "erro": "Torque fora de 10 a 100 %", "consequencia": "Leitura sem confiança: troque o fuso ou a velocidade." }],
+      "referencia": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: viscosidade",
+      "funcao": "viscosidadeRotacional"
+    },
+    {
+      "id": "teor_titulacao",
+      "nome": "Teor por titulação",
+      "formas": ["materia_prima", "solucao", "reagente_analitico"],
+      "oQueMede": "A quantidade de analito por reação com um titulante de concentração conhecida.",
+      "metodo": ["Padronize o titulante com padrão primário.", "Pese ou meça a amostra.", "Titule até o ponto final com indicador adequado.", "Calcule o teor."],
+      "calculo": "Massa do analito = V(L) × C × f × MM × razão estequiométrica; teor = massa ÷ amostra × 100",
+      "criterio": "A faixa vem da monografia ou da especificação (por exemplo, 95 a 105 % do valor nominal neste laboratório).",
+      "errosComuns": [{ "erro": "Passar do ponto final", "consequencia": "Volume gasto maior e teor superestimado." }, { "erro": "Esquecer o fator de correção do titulante", "consequencia": "Erro sistemático em todos os resultados." }],
+      "referencia": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: análise volumétrica",
+      "funcao": "teorTitulacao"
+    },
+    {
+      "id": "desintegracao",
+      "nome": "Desintegração",
+      "formas": ["capsula", "comprimido"],
+      "oQueMede": "O tempo para a forma sólida se desfazer em meio aquoso a 37 °C.",
+      "metodo": ["Coloque 6 unidades no aparelho de desintegração.", "Anote o tempo em que a última se desfaz."],
+      "calculo": "Tempo máximo entre as unidades.",
+      "criterio": "Cápsulas duras até 45 minutos e comprimidos não revestidos até 30 minutos neste laboratório.",
+      "errosComuns": [{ "erro": "Compactação excessiva", "consequencia": "Desintegração lenta e atraso na liberação do ativo." }],
+      "referencia": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: ensaio de desintegração",
+      "funcao": "desintegracao"
+    },
+    {
+      "id": "dissolucao",
+      "nome": "Dissolução (didática)",
+      "formas": ["capsula", "comprimido"],
+      "oQueMede": "A velocidade e a extensão com que o ativo passa para o meio de dissolução.",
+      "metodo": ["Coloque uma unidade em cada cuba, com o meio e a rotação do método.", "Retire amostras no tempo indicado.", "Determine o percentual dissolvido de cada unidade."],
+      "calculo": "Avaliação em estágios S1 (6 unidades), S2 (12) e S3 (24).",
+      "criterio": "S1: todas com pelo menos Q + 5 %. S2: média de 12 unidades pelo menos Q e nenhuma abaixo de Q − 15 %. S3: média de 24 pelo menos Q, no máximo 2 abaixo de Q − 15 % e nenhuma abaixo de Q − 25 %.",
+      "errosComuns": [{ "erro": "Meio desgaseificado de forma insuficiente", "consequencia": "Bolhas nas unidades e resultados baixos e dispersos." }],
+      "referencia": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: ensaio de dissolução",
+      "funcao": "dissolucaoEstagios"
+    },
+    {
+      "id": "limite_microbiano",
+      "nome": "Limite microbiano (conceitual)",
+      "formas": ["solucao", "xarope", "suspensao", "gel", "sabonete", "pomada"],
+      "oQueMede": "A contagem de micro-organismos aeróbios, bolores e leveduras e a ausência de patógenos indicadores.",
+      "metodo": ["Prepare a amostra em diluente neutralizante.", "Semeie em meios para bactérias e para fungos.", "Conte as colônias após a incubação."],
+      "calculo": "UFC por g ou mL = colônias × fator de diluição",
+      "criterio": "Preparações orais aquosas: até 100 UFC/mL de aeróbios e 10 de fungos; orais não aquosas: 1.000 e 100; cutâneas: 100 e 10, sem Staphylococcus aureus nem Pseudomonas aeruginosa. Ausência de Escherichia coli em preparações orais.",
+      "errosComuns": [{ "erro": "Produto aquoso sem conservante", "consequencia": "Crescimento microbiano e reprovação do lote." }],
+      "referencia": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: controle microbiológico de produtos não estéreis",
+      "funcao": "limiteMicrobiano"
+    },
+    {
+      "id": "esterilidade",
+      "nome": "Esterilidade (conceitual)",
+      "formas": ["solucao_esteril"],
+      "oQueMede": "A ausência de micro-organismos viáveis em produto que deve ser estéril.",
+      "metodo": ["Inocule a amostra em dois meios de cultura.", "Incube pelo tempo do método.", "Observe turvação."],
+      "calculo": "Sem cálculo: resultado qualitativo.",
+      "criterio": "Sem crescimento em nenhum meio.",
+      "errosComuns": [{ "erro": "Contaminação da amostra durante o teste", "consequencia": "Resultado falso positivo; o teste exige ambiente asséptico." }],
+      "referencia": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: ensaio de esterilidade",
+      "funcao": "esterilidade"
+    }
+  ]
+}

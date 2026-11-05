@@ -275,12 +275,18 @@ async function scannerLogicScenario() {
     // Dublê de Html5QrcodeScanner: guarda o callback de sucesso passado pelo
     // fiscal-engine.js a .render(onScan, ...) — mesma técnica de fase2.e2e.js
     // (que já dubla window.print para não abrir o diálogo real).
+    // O leitor usa Html5Qrcode.start() (câmera traseira ligada de uma vez); o dublê guarda o callback de sucesso.
     await frame.evaluate(() => {
-      window.Html5QrcodeScanner = function FakeScanner() {
-        this.render = (successCb) => { window.__qrOnScan = successCb; };
+      window.Html5Qrcode = function FakeScanner() {
+        this.start = (cfg, opts, successCb) => { window.__startCfg = cfg; window.__qrOnScan = successCb; return Promise.resolve(); };
+        this.stop = () => Promise.resolve();
         this.clear = () => Promise.resolve();
       };
     });
+    await frame.evaluate(() => { window.__vibrated = []; navigator.vibrate = (ms) => { window.__vibrated.push(ms); return true; }; });
+    const startBox = await frame.locator('#scannerStart').boundingBox();
+    check(startBox && startBox.height >= 44 && startBox.width >= 44, 'TRA-09: o botão "Ler QR Code" tem alvo de pelo menos 44 px (' + Math.round(startBox ? startBox.height : 0) + ' px de altura)');
+    check(await frame.evaluate(() => !!document.getElementById('scanSound') && !document.getElementById('scanSound').checked), 'TRA-09: o som ao ler existe e começa desligado');
     await tap(frame, '#scannerStart');
     const started = await frame.evaluate(() => ({
       readerVisible: !document.getElementById('reader').classList.contains('hidden'),
@@ -291,9 +297,12 @@ async function scannerLogicScenario() {
     check(started.readerVisible && started.startHidden && started.stopVisible && started.hasCallback,
       'com a biblioteca "disponível" (dublê), o leitor abre de verdade (sem a mensagem de indisponível)');
 
+    check(await frame.evaluate(() => window.__startCfg && window.__startCfg.facingMode === 'environment'), 'TRA-09: a câmera traseira liga com um toque só (sem segundo botão)');
+
     // ---- LAIFT:v2:... chega à Worker como check-in por QR ----
     const QR_V2 = 'LAIFT:v2:11111111-1111-4111-8111-111111111111.AbCdEfGhIjKlMnOpQrStUv_-';
     await frame.evaluate((text) => window.__qrOnScan(text), QR_V2);
+    check(await frame.evaluate(() => window.__vibrated.length >= 1), 'TRA-09: o aparelho vibra ao ler o QR');
     await frame.waitForFunction(() => /Presença registrada/.test(document.getElementById('status').textContent), null, { timeout: 5000 }).catch(() => {});
     check(checkInCalls.length === 1 && checkInCalls[0].method === 'qr' && checkInCalls[0].qrPayload === QR_V2 && checkInCalls[0].eventId === E1,
       'QR v2 lido pela câmera vira apiAdminAttendanceCheckIn com {method:"qr", qrPayload}');
@@ -330,6 +339,22 @@ async function scannerLogicScenario() {
       startVisible: !document.getElementById('scannerStart').classList.contains('hidden'),
     }));
     check(stopped.readerHidden && stopped.startVisible, '"Parar leitor" esconde a câmera e volta o botão de iniciar');
+
+    // ---- permissão negada e sem câmera: mensagens claras em português ----
+    for (const [name, rx, label] of [['NotAllowedError', /permissão da câmera foi negada/, 'permissão negada'], ['NotFoundError', /Nenhuma câmera/, 'sem câmera']]) {
+      await frame.evaluate((errName) => {
+        window.Html5Qrcode = function FailingScanner() {
+          this.start = () => { const e = new Error('x'); e.name = errName; return Promise.reject(e); };
+          this.stop = () => Promise.resolve();
+          this.clear = () => Promise.resolve();
+        };
+      }, name);
+      await tap(frame, '#scannerStart');
+      await frame.waitForFunction((src) => new RegExp(src).test(document.getElementById('status').textContent), rx.source, { timeout: 5000 }).catch(() => {});
+      const msg = await frame.evaluate(() => document.getElementById('status').textContent);
+      check(rx.test(msg), 'TRA-09: ' + label + ' vira mensagem clara em português (' + msg + ')');
+      check(await frame.evaluate(() => !document.getElementById('scannerStart').classList.contains('hidden')), 'TRA-09: depois do erro o botão de iniciar volta (' + label + ')');
+    }
 
     const errs = realErrors(app);
     check(errs.length === 0, 'sem erros de JavaScript (lógica do leitor)' + (errs.length ? ': ' + errs.join(' | ') : ''));

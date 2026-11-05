@@ -1,0 +1,199 @@
+{
+  "id": "proc_nacl_09_v1",
+  "versao": 1,
+  "titulo": "Solução de cloreto de sódio a 0,9 % (p/v)",
+  "categoria": "farmacotecnica",
+  "nivel": 1,
+  "nivel_conteudo": "completo",
+  "restricao": null,
+  "revisado_por": null,
+  "conferencia": {
+    "estado": "pendente",
+    "nota": "[NV] Valores numéricos, tolerâncias e campos de rótulo a conferir com fonte primária (Formulário Nacional, norma vigente) antes de publicar."
+  },
+  "duracaoSimuladaMin": 30,
+  "objetivos": [
+    "Calcular a massa de soluto para uma concentração em % p/v",
+    "Tarar a balança e pesar com exatidão",
+    "Dissolver, transferir quantitativamente e completar o volume em balão volumétrico",
+    "Calcular a osmolaridade ideal da solução",
+    "Envasar, rotular e descartar resíduos corretamente"
+  ],
+  "referencias": [
+    { "titulo": "Formulário Nacional da Farmacopeia Brasileira (edição vigente)", "nota": "[NV] conferir a monografia e a forma de citação" },
+    { "titulo": "PubChem: Sodium chloride (CID 5234)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5234" }
+  ],
+  "recipientes": [
+    { "id": "bequer_100", "tipo": "bequer", "capMl": 100 },
+    { "id": "balao_100", "tipo": "balao_volumetrico", "capMl": 110 }
+  ],
+  "materiais": {
+    "especies": [
+      { "id": "NaCl_s", "papel": "soluto", "quantidade": { "valor": 0.9, "unidade": "g" } },
+      { "id": "H2O_l", "papel": "solvente", "quantidade": { "valor": 100, "unidade": "mL" } }
+    ],
+    "vidraria": ["bequer_100", "proveta_100", "balao_volumetrico_100", "bastao_vidro", "funil_simples", "frasco_125"],
+    "equipamentos": ["balanca_analitica", "agitador", "phmetro"]
+  },
+  "seguranca": {
+    "epi": ["jaleco", "luvas_nitrila", "oculos"],
+    "capela": false,
+    "riscos": [],
+    "residuos": [{ "tipo": "solucao_salina_residual", "destino": "pia" }]
+  },
+  "etapas": [
+    {
+      "id": "e1",
+      "titulo": "Paramentação",
+      "oQueEstaAcontecendo": "Você veste jaleco, luvas e óculos antes de abrir os frascos.",
+      "porQue": "Mesmo com reagentes de baixo risco, o EPI evita contaminação do produto e protege os olhos de respingos.",
+      "preCondicoes": [],
+      "acao": { "operacao": "paramentar", "parametros": { "epi": ["jaleco", "luvas_nitrila", "oculos"] }, "alvoUI": "painelSeguranca" },
+      "verificacoes": [
+        { "grandeza": "epi", "op": "contem", "valor": ["jaleco", "luvas_nitrila", "oculos"], "mensagemSeFalhar": "Falta EPI: vista jaleco, luvas e óculos.", "consequencia": "bloqueia_etapa" }
+      ]
+    },
+    {
+      "id": "e2",
+      "titulo": "Calcular e pesar o cloreto de sódio",
+      "oQueEstaAcontecendo": "Com o béquer tarado na balança, você adiciona cloreto de sódio até a leitura de 0,90 g.",
+      "porQue": "Em % p/v, 0,9 % significa 0,9 g de soluto em cada 100 mL de solução; a tara zera a massa do béquer.",
+      "calculoPrevio": { "pergunta": "Quantos gramas de NaCl para 100 mL a 0,9 % p/v?", "formula": "m = C(%) × V(mL) / 100", "resposta": 0.9, "tolerancia": 0.01, "unidade": "g" },
+      "preCondicoes": [{ "grandeza": "etapaConcluida", "op": "==", "valor": "e1", "mensagemSeFalhar": "Paramente-se antes de pesar." }],
+      "acao": [
+        { "operacao": "tarar", "parametros": { "recipiente": "bequer_100" }, "alvoUI": "balancaTara" },
+        { "operacao": "pesar", "parametros": { "especie": "NaCl_s", "massaG": 0.9, "recipiente": "bequer_100" }, "alvoUI": "reagente:NaCl_s" }
+      ],
+      "verificacoes": [
+        { "grandeza": "massa", "recipiente": "bequer_100", "especie": "NaCl_s", "op": "entre", "valor": [0.885, 0.915], "mensagemSeFalhar": "Massa fora de 0,90 ± 0,015 g: ajuste antes de seguir.", "consequencia": "aviso" }
+      ],
+      "errosComuns": [
+        { "gatilho": { "grandeza": "desvio", "op": "contem", "valor": "sem_tara" }, "consequencia": "massa_registrada_inclui_recipiente", "explicacao": "Sem tara, a leitura soma a massa do béquer e o registro fica errado.", "correcao": "Coloque o béquer vazio no prato e toque em Tara antes de pesar." }
+      ]
+    },
+    {
+      "id": "e3",
+      "titulo": "Dissolver em parte da água",
+      "oQueEstaAcontecendo": "Cerca de 70 mL de água purificada entram no béquer e a agitação dissolve os cristais.",
+      "porQue": "Dissolver em volume menor que o final deixa espaço para enxaguar o béquer e completar o volume no balão.",
+      "preCondicoes": [{ "grandeza": "etapaConcluida", "op": "==", "valor": "e2" }],
+      "acao": [
+        { "operacao": "medirVolume", "parametros": { "especie": "H2O_l", "volumeMl": 70, "vidraria": "proveta", "recipiente": "bequer_100" }, "alvoUI": "reagente:H2O_l" },
+        { "operacao": "dissolver", "parametros": { "recipiente": "bequer_100", "agitacao": true, "tempoMin": 3 }, "alvoUI": "btnAgitar" }
+      ],
+      "verificacoes": [
+        { "grandeza": "massaSolido", "recipiente": "bequer_100", "especie": "NaCl_s", "op": "<=", "valor": 0.0005, "mensagemSeFalhar": "Ainda há cristais no fundo: continue agitando.", "consequencia": "aguardar" }
+      ],
+      "errosComuns": [
+        { "gatilho": { "grandeza": "parametro", "campo": "agitacao", "op": "==", "valor": false }, "consequencia": "dissolucao_lenta", "explicacao": "Sem agitação, a dissolução demora muito mais.", "correcao": "Agite com bastão de vidro ou agitador magnético." }
+      ]
+    },
+    {
+      "id": "e4",
+      "titulo": "Transferir quantitativamente para o balão",
+      "oQueEstaAcontecendo": "A solução passa ao balão volumétrico de 100 mL pelo funil; o béquer e o funil são enxaguados com água e o enxágue também vai ao balão.",
+      "porQue": "Sem enxágue, parte do soluto fica na parede do béquer e a concentração final fica abaixo de 0,9 %.",
+      "preCondicoes": [{ "grandeza": "etapaConcluida", "op": "==", "valor": "e3" }],
+      "acao": { "operacao": "transferir", "parametros": { "origem": "bequer_100", "destino": "balao_100", "enxague": true }, "alvoUI": "btnTransferir" },
+      "verificacoes": [
+        { "grandeza": "massa", "recipiente": "balao_100", "especie": "NaCl_s", "op": "entre", "valor": [0.88, 0.92], "mensagemSeFalhar": "Massa de NaCl no balão abaixo do esperado: houve perda na transferência.", "consequencia": "aviso" }
+      ],
+      "errosComuns": [
+        { "gatilho": { "grandeza": "desvio", "op": "contem", "valor": "sem_enxague" }, "consequencia": "concentracao_abaixo", "explicacao": "Cerca de 2 % do soluto ficou no béquer sem enxágue.", "correcao": "Enxágue o béquer duas ou três vezes com pequenas porções de água e junte ao balão." }
+      ]
+    },
+    {
+      "id": "e5",
+      "titulo": "Completar o volume",
+      "oQueEstaAcontecendo": "Água purificada entra até o menisco tocar a marca de 100 mL, com o balão à temperatura ambiente.",
+      "porQue": "O balão é calibrado para 20-25 °C; completar quente dá volume errado depois de esfriar.",
+      "preCondicoes": [
+        { "grandeza": "etapaConcluida", "op": "==", "valor": "e4" },
+        { "grandeza": "tempC", "recipiente": "balao_100", "op": "<=", "valor": 30, "mensagemSeFalhar": "Espere a solução esfriar antes de completar o volume." }
+      ],
+      "acao": { "operacao": "avolumar", "parametros": { "recipiente": "balao_100", "solvente": "H2O_l", "volumeFinalMl": 100 }, "alvoUI": "btnAvolumar" },
+      "verificacoes": [
+        { "grandeza": "volumeMl", "recipiente": "balao_100", "op": "entre", "valor": [99.8, 100.2], "mensagemSeFalhar": "O volume passou da marca: a concentração fica abaixo de 0,9 %.", "consequencia": "aviso" }
+      ],
+      "errosComuns": [
+        { "gatilho": { "grandeza": "desvio", "op": "contem", "valor": "avolumado_quente" }, "consequencia": "volume_errado_ao_esfriar", "explicacao": "A solução quente ocupa mais volume; ao esfriar, fica abaixo da marca.", "correcao": "Espere chegar à temperatura ambiente antes de completar." }
+      ]
+    },
+    {
+      "id": "e6",
+      "titulo": "Homogeneizar",
+      "oQueEstaAcontecendo": "Com a tampa, você inverte o balão várias vezes até a solução ficar uniforme.",
+      "porQue": "Logo depois de completar, a água do topo ainda não se misturou com a solução do fundo.",
+      "preCondicoes": [{ "grandeza": "etapaConcluida", "op": "==", "valor": "e5" }],
+      "acao": { "operacao": "agitar", "parametros": { "recipiente": "balao_100", "tempoMin": 5 }, "alvoUI": "btnAgitar" },
+      "verificacoes": [
+        { "grandeza": "homogeneo", "recipiente": "balao_100", "op": "==", "valor": true, "mensagemSeFalhar": "Continue invertendo o balão até homogeneizar.", "consequencia": "aguardar" }
+      ]
+    },
+    {
+      "id": "e7",
+      "titulo": "Conferir o pH e calcular a osmolaridade",
+      "oQueEstaAcontecendo": "O pHmetro é calibrado com dois tampões e mede uma alíquota da solução.",
+      "porQue": "Cloreto de sódio não é ácido nem base: no modelo ideal, o pH fica perto de 7. A osmolaridade mostra por que a solução é próxima da isotônica.",
+      "calculoPrevio": { "pergunta": "Qual a osmolaridade ideal de NaCl 0,9 % (58,44 g/mol; 2 partículas por fórmula)?", "formula": "Osm = (9 g/L ÷ 58,44 g/mol) × 2 × 1000", "resposta": 308, "tolerancia": 3, "unidade": "mOsm/L" },
+      "preCondicoes": [{ "grandeza": "etapaConcluida", "op": "==", "valor": "e6" }],
+      "acao": [
+        { "operacao": "calibrar", "parametros": { "tampoes": [4, 7] }, "alvoUI": "phmetroCalibrar" },
+        { "operacao": "medirPH", "parametros": { "recipiente": "balao_100", "instrumento": "phmetro" }, "alvoUI": "phmetro" }
+      ],
+      "verificacoes": [
+        { "grandeza": "leitura", "evento": "ph", "op": "entre", "valor": [6.5, 7.5], "mensagemSeFalhar": "pH fora do esperado: confira a calibração e a água usada.", "consequencia": "aviso" }
+      ],
+      "errosComuns": [
+        { "gatilho": { "grandeza": "desvio", "op": "contem", "valor": "phmetro_sem_calibrar" }, "consequencia": "leitura_com_desvio", "explicacao": "Sem calibrar, o pHmetro mostra um valor deslocado.", "correcao": "Calibre com ao menos dois tampões antes de medir." }
+      ]
+    },
+    {
+      "id": "e8",
+      "titulo": "Envasar",
+      "oQueEstaAcontecendo": "A solução vai do balão para um frasco limpo de 125 mL.",
+      "porQue": "O frasco protege o produto. Uma solução para uso injetável exigiria ainda esterilização e envase asséptico, assunto de outra missão.",
+      "preCondicoes": [{ "grandeza": "etapaConcluida", "op": "==", "valor": "e7" }],
+      "acao": { "operacao": "envasar", "parametros": { "origem": "balao_100", "frasco": "frasco_125", "volumeMl": 100, "capMl": 125 }, "alvoUI": "btnEnvasar" },
+      "verificacoes": [
+        { "grandeza": "volumeMl", "recipiente": "frasco_125", "op": ">=", "valor": 98, "mensagemSeFalhar": "Volume envasado menor que o esperado.", "consequencia": "aviso" }
+      ]
+    },
+    {
+      "id": "e9",
+      "titulo": "Rotular",
+      "oQueEstaAcontecendo": "Você preenche o rótulo com produto, concentração, lote, datas e responsável.",
+      "porQue": "Sem rótulo completo, o produto não pode ser identificado nem rastreado.",
+      "preCondicoes": [{ "grandeza": "etapaConcluida", "op": "==", "valor": "e8" }],
+      "acao": {
+        "operacao": "rotular",
+        "parametros": {
+          "recipiente": "frasco_125",
+          "campos": { "produto": "Solução de cloreto de sódio", "concentracao": "0,9 % p/v", "lote": "LAB-001", "fabricacao": "data da prática", "validade": "conforme o procedimento da bancada", "responsavel": "turma" }
+        },
+        "alvoUI": "painelRotulo"
+      },
+      "verificacoes": [
+        { "grandeza": "rotuloCompleto", "recipiente": "frasco_125", "op": "==", "valor": true, "mensagemSeFalhar": "Rótulo incompleto: preencha todos os campos.", "consequencia": "nao_conforme" }
+      ]
+    },
+    {
+      "id": "e10",
+      "titulo": "Descarte e limpeza",
+      "oQueEstaAcontecendo": "O resto de solução do béquer vai à pia com água corrente e a vidraria é lavada.",
+      "porQue": "Solução salina diluída pode ir à pia; outros resíduos têm destino próprio. Descarte correto é requisito ambiental.",
+      "preCondicoes": [{ "grandeza": "etapaConcluida", "op": "==", "valor": "e9" }],
+      "acao": { "operacao": "descartar", "parametros": { "recipiente": "bequer_100", "destino": "pia" }, "alvoUI": "painelDescarte" },
+      "verificacoes": [
+        { "grandeza": "residuoConforme", "op": "==", "valor": true, "mensagemSeFalhar": "Destino de descarte inadequado para este resíduo.", "consequencia": "nao_conforme" }
+      ]
+    }
+  ],
+  "resultadoEsperado": {
+    "produto": "NaCl_s",
+    "criterios": [
+      { "descricao": "Concentração entre 0,88 e 0,92 % p/v", "grandeza": "concentracaoPV", "recipiente": "frasco_125", "especie": "NaCl_s", "op": "entre", "valor": [0.88, 0.92] },
+      { "descricao": "Rótulo completo", "grandeza": "rotuloCompleto", "recipiente": "frasco_125", "op": "==", "valor": true }
+    ]
+  }
+}

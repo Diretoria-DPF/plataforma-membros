@@ -456,7 +456,7 @@
   },
   "za:mesenterio-peritonio": {
     "ids": {
-      "wikidata": "Q193107",
+      "wikidata": "Q1135563",
       "mesh": "D008643",
       "icd10": [
         "K65",
@@ -508,7 +508,7 @@
   },
   "za:pancreas-fracao-exocrina": {
     "ids": {
-      "wikidata": "Q9612",
+      "wikidata": "Q9618",
       "mesh": "D010179",
       "icd10": [
         "K85-K86",

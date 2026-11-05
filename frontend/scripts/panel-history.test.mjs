@@ -36,7 +36,7 @@ test('pushOp: primeira tela só marca; troca empilha; repetir o mesmo painel nã
 });
 
 test('popDecision: voltar reabre o painel anterior', () => {
-  assert.deepEqual(H.popDecision(H.stateFor('panel-learn'), ctx()), { type: 'show', panel: 'panel-learn' });
+  assert.deepEqual(H.popDecision(H.stateFor('panel-learn'), ctx()), { type: 'show', panel: 'panel-learn', module: '' });
 });
 
 test('popDecision: mesmo painel, painel fechado para este modo e sessão encerrada são ignorados ou caem na Início', () => {
@@ -60,16 +60,42 @@ test('onPopState chama show só quando há o que mostrar', () => {
 
 test('a primeira tela mantém o hash da URL (link do Atlas e telas públicas dependem dele)', () => {
   const code = read('panel-history.js');
-  assert.ok(code.includes("replaceState(stateFor(panelId), '', window.location.pathname + window.location.search + window.location.hash)"));
+  assert.ok(code.includes("replaceState(stateFor(panelId, moduleId), '', window.location.pathname + window.location.search + window.location.hash)"));
   assert.equal(code.split('pushState(')[1].split(')')[0].includes('hash'), false);
 });
 
 test('app.js empilha ao trocar de painel, trata popstate sem empilhar de novo e reinicia no logout', () => {
   const app = read('app.js');
-  assert.match(app, /LaiftPanelHistory\.push\(panelId\)/);
+  assert.match(app, /LaiftPanelHistory\.push\(panelId, /);
   assert.match(app, /addEventListener\('popstate'/);
-  assert.match(app, /showPanel\(id, \{ fromHistory: true \}\)/);
+  assert.match(app, /showPanel\(panelId, \{ fromHistory: true \}\)/);
   assert.match(app, /LaiftPanelHistory\.reset\(\)/);
+});
+
+test('TRA-03: o módulo aberto entra no estado e o voltar fecha o módulo sem sair do Aprender', () => {
+  assert.deepEqual(H.stateFor('panel-learn', 'farmaco'), { laift: 'panel', panel: 'panel-learn', module: 'farmaco' });
+  assert.equal(H.stateFor('panel-learn', 'x"; y').module, undefined);
+  assert.equal(H.isPanelState({ laift: 'panel', panel: 'panel-learn', module: '../x' }), false);
+  assert.equal(H.moduleOf(H.stateFor('panel-learn', 'lab')), 'lab');
+  assert.equal(H.pushOp(H.stateFor('panel-learn'), 'panel-learn', false, 'lab'), 'push');
+  assert.equal(H.pushOp(H.stateFor('panel-learn', 'lab'), 'panel-learn', false, 'lab'), 'none');
+  const c = ctx({ current: 'panel-learn', currentModule: 'lab' });
+  assert.deepEqual(H.popDecision(H.stateFor('panel-learn'), c), { type: 'show', panel: 'panel-learn', module: '' });
+  assert.deepEqual(H.popDecision(H.stateFor('panel-learn', 'lab'), c), { type: 'ignore' });
+  assert.deepEqual(H.popDecision(H.stateFor('panel-learn', 'lab'), ctx({ current: 'panel-learn' })), { type: 'show', panel: 'panel-learn', module: 'lab' });
+  const shown = [];
+  H.onPopState({ state: H.stateFor('panel-learn', 'lab') }, ctx({ current: 'panel-learn' }), (id, mod) => shown.push([id, mod]));
+  assert.deepEqual(shown, [['panel-learn', 'lab']]);
+});
+
+test('TRA-03: app.js e learning.js usam a pilha do histórico para abrir e fechar módulo', () => {
+  const app = read('app.js');
+  assert.match(app, /currentModule: /);
+  assert.match(app, /closeModule\(\{ fromHistory: true \}\)/);
+  const learning = read('learning.js');
+  assert.match(learning, /LaiftPanelHistory\.push\('panel-learn', id\)/);
+  assert.match(learning, /LaiftPanelHistory\.currentModule\(\)/);
+  assert.match(learning, /'Escape'/);
 });
 
 test('está no index.html, no build e no cache do service worker', () => {

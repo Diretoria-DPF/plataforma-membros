@@ -19,14 +19,12 @@
   var SVG_NS = 'http://www.w3.org/2000/svg';
   var WEEK_DAYS = 7;
 
-  /** Módulos: chave do servidor (byModule), identificador de learning.js, arte (viewBox 64) e descrição do hub. */
-  var MODULES = [
-    { id: 'farmaco', stat: 'farmacologia', name: 'Farmacologia', sub: 'Simulador · 240 questões', art: 'pill', desc: 'Mecanismos de ação, farmacocinética clínica, receptores e farmacodinâmica comparada.' },
-    { id: 'toxico', stat: 'toxicologia', name: 'Toxicologia', sub: 'Antídotos · 240 questões', art: 'flask', desc: 'Intoxicações agudas, defensivos agrícolas, animais peçonhentos e antídotos.' },
-    { id: 'clinica', stat: 'clinica', name: 'Clínica virtual', sub: 'Casos e plantão', art: 'heart', desc: 'Plantão multipaciente, acervo da liga, roteiro semiológico e preceptor com IA.' },
-    { id: 'lab', stat: 'laboratorio', name: 'Laboratório virtual', sub: 'Bancada e moléculas 3D', art: 'molecule', desc: 'Ensaios de bancada, sínteses, identificação de compostos e estúdio molecular 3D.' },
-    { id: 'anatomia', stat: 'anatomia', name: 'Anatomia e PK 3D', sub: 'Corpo humano e vias', art: 'body', desc: 'Corpo humano 3D, farmacocinética visual e vias metabólicas.' },
-  ];
+  /** Catálogo único (modulos/shared/catalogo.js; no Node, o próprio arquivo) + arte (viewBox 64) de cada módulo. */
+  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/shared/catalogo.js') : root.LaiftModules;
+  var ART_BY_ID = { farmaco: 'pill', toxico: 'flask', clinica: 'heart', lab: 'molecule', anatomia: 'body' };
+  var MODULES = CATALOG.MODULES.map(function (m) {
+    return { id: m.id, stat: m.stat, name: m.name, sub: m.sub, art: ART_BY_ID[m.id], desc: m.desc };
+  });
 
   var ART = {
     pill: [['rect', { x: 10, y: 22, width: 44, height: 20, rx: 10, transform: 'rotate(-35 32 32)' }], ['path', { d: 'M24 24l16 16' }]],
@@ -105,17 +103,25 @@
     return out;
   }
 
-  function todayItems(eng) {
-    var items = [];
-    if (eng) {
-      items.push({
-        kind: 'quiz', icon: 'star', title: 'Quiz do dia',
-        sub: eng.dailyQuizDone ? 'Feito hoje. Toque para rever' : '5 questões · cerca de 3 min',
-      });
-    }
-    items.push({ kind: 'simulado', icon: 'clock', title: 'Simulado', sub: 'Pratique em Farmacologia', module: 'farmaco' });
-    items.push({ kind: 'caso', icon: 'heart', title: 'Caso clínico', sub: 'Casos e plantão na Clínica virtual', module: 'clinica' });
-    return items;
+  function paraHojeLib() {
+    if (root.LaiftParaHoje) return root.LaiftParaHoje;
+    return typeof require === 'function' ? require('./para-hoje.js') : null;
+  }
+
+  /** A3: "Para hoje" unificado (para-hoje.js): erros a rever e quiz do dia, mais simulado e caso clínico daqui. */
+  function todayItems(eng, review, mission) {
+    return paraHojeLib().build(eng, review, [
+      { kind: 'simulado', icon: 'clock', title: 'Simulado', sub: 'Pratique em Farmacologia', module: 'farmaco' },
+      { kind: 'caso', icon: 'heart', title: 'Caso clínico', sub: 'Casos e plantão na Clínica virtual', module: 'clinica' },
+    ], mission);
+  }
+
+  /** Erros a rever no aparelho (revisao-espacada.js); sem o módulo ou sem armazenamento, nada vence. */
+  function reviewSummary(app) {
+    var review = root.LaiftReview || (typeof require === 'function' ? require('./modulos/shared/revisao-espacada.js') : null);
+    if (!review) return null;
+    var identity = app && typeof app.getIdentity === 'function' ? app.getIdentity() : null;
+    return review.read({ email: identity && identity.email, now: Date.now() });
   }
 
   function clampPct(value) {
@@ -322,6 +328,7 @@
   }
 
   function todayAction(ctx, item) {
+    if (item.kind === 'review') return function () { ctx.openReview(item.module); };
     if (item.kind === 'quiz') {
       if (!root.LaiftDailyQuiz) return function () { ctx.openModule('farmaco'); };
       return function () {
@@ -342,7 +349,7 @@
     head.id = 'l2-today-title';
     section.appendChild(head);
     var list = el(doc, 'ul', 'l2-today');
-    todayItems(ctx.data.eng).forEach(function (item) {
+    todayItems(ctx.data.eng, ctx.review, ctx.mission && ctx.mission.todayItem).forEach(function (item) {
       var li = el(doc, 'li');
       var row = button(doc, 'l2-row l2-row--' + item.kind, '', todayAction(ctx, item));
       row.setAttribute('data-l2-opener', '');
@@ -361,6 +368,75 @@
     return section;
   }
 
+  // ---------- Missão da semana e conquistas pessoais (A6; só no aparelho, sem ranking) ----------
+
+  /** Dados da missão e das conquistas deste aparelho; sem o módulo (ou sem armazenamento), null e a seção some. */
+  function missionData(app, now) {
+    var lib = root.LaiftMissao;
+    if (!lib) return null;
+    try {
+      var who = app && typeof app.getIdentity === 'function' ? app.getIdentity() : null;
+      var store = lib.createStore(root.localStorage, function () { return lib.ownerTag(who && who.email); });
+      return { status: store.status(now), achievements: store.achievements(), todayItem: store.paraHojeItem(now) };
+    } catch (e) { return null; }
+  }
+
+  function missionHint(st) {
+    if (st.complete) return 'Missão cumprida. Até a próxima semana.';
+    return st.daysLeft === 1 ? 'Último dia desta semana. Sem pressão: o que ficar volta como nova missão.' : 'Faltam ' + st.daysLeft + ' dias nesta semana.';
+  }
+
+  function buildMission(ctx) {
+    var st = ctx.mission && ctx.mission.status;
+    if (!st || !st.tasks.length) return null;
+    var doc = ctx.doc;
+    var section = el(doc, 'section', 'l2-section');
+    section.setAttribute('aria-labelledby', 'l2-mission-title');
+    var head = el(doc, 'h2', 'l2-section__title', 'Missão da semana');
+    head.id = 'l2-mission-title';
+    section.appendChild(head);
+    var card = el(doc, 'div', 'l2-mission');
+    card.appendChild(el(doc, 'p', 'l2-mission__hint', missionHint(st)));
+    var list = el(doc, 'ul', 'l2-mission__list');
+    st.tasks.forEach(function (task) {
+      var li = el(doc, 'li', 'l2-mission__task' + (task.complete ? ' is-done' : ''));
+      li.setAttribute('data-l2-task', task.module);
+      var line = el(doc, 'span', 'l2-mission__line');
+      line.appendChild(el(doc, 'strong', '', task.label));
+      line.appendChild(el(doc, 'small', '', task.complete ? 'Feita' : task.done + ' de ' + task.target));
+      li.appendChild(line);
+      li.appendChild(bar(doc, Math.round(task.done * 100 / task.target), task.done + ' de ' + task.target + ' atividades'));
+      list.appendChild(li);
+    });
+    card.appendChild(list);
+    section.appendChild(card);
+    return section;
+  }
+
+  function buildMyAchievements(ctx) {
+    var items = ctx.mission && ctx.mission.achievements;
+    if (!items || !items.length) return null;
+    var doc = ctx.doc;
+    var section = el(doc, 'section', 'l2-section');
+    section.setAttribute('aria-labelledby', 'l2-mine-title');
+    var head = el(doc, 'h2', 'l2-section__title', 'Minhas conquistas');
+    head.id = 'l2-mine-title';
+    section.appendChild(head);
+    section.appendChild(el(doc, 'p', 'l2-mission__hint', 'Visíveis só para você, neste aparelho.'));
+    var list = el(doc, 'ul', 'l2-mine');
+    items.slice(0, 12).forEach(function (a) {
+      var li = el(doc, 'li', 'l2-mine__item');
+      li.setAttribute('data-l2-mine', a.id);
+      var medal = el(doc, 'span', 'l2-badge__medal');
+      medal.appendChild(icon(doc, 'star'));
+      li.appendChild(medal);
+      li.appendChild(el(doc, 'strong', '', a.label));
+      list.appendChild(li);
+    });
+    section.appendChild(list);
+    return section;
+  }
+
   function buildWeak(ctx) {
     if (!ctx.weak || !ctx.weak.length) return null;
     var doc = ctx.doc;
@@ -369,7 +445,7 @@
     var head = el(doc, 'h2', 'l2-section__title', 'Para reforçar');
     head.id = 'l2-weak-title';
     section.appendChild(head);
-    var list = el(doc, 'ul', 'l2-today');
+    var list = el(doc, 'ul', 'l2-weak');
     ctx.weak.forEach(function (item) {
       var li = el(doc, 'li');
       var row = button(doc, 'l2-row l2-row--simulado', '', function () { ctx.openModule(item.id); });
@@ -585,7 +661,7 @@
     if (node) slot.appendChild(node);
   }
 
-  var SLOTS = ['focus', 'day', 'today', 'weak', 'modules', 'overall', 'perf', 'badges'];
+  var SLOTS = ['focus', 'day', 'today', 'mission', 'weak', 'modules', 'overall', 'perf', 'badges', 'mine'];
 
   function layout(doc) {
     var body = el(doc, 'div', 'l2-body');
@@ -607,12 +683,15 @@
     var slots = ctx.slots;
     setSlot(slots.focus, buildFocus(ctx));
     setSlot(slots.day, buildDay(ctx));
+    ctx.mission = missionData(ctx.app, ctx.now);
     setSlot(slots.today, buildToday(ctx));
+    setSlot(slots.mission, buildMission(ctx));
     setSlot(slots.weak, buildWeak(ctx));
     setSlot(slots.modules, buildModules(ctx));
     setSlot(slots.overall, ctx.stats ? buildOverall(ctx) : null);
     setSlot(slots.perf, ctx.stats ? buildPerformance(ctx) : statsFailure(ctx));
     setSlot(slots.badges, ctx.stats ? buildBadges(ctx) : null);
+    setSlot(slots.mine, buildMyAchievements(ctx));
     var hasCard = !slots.focus.classList.contains('hidden') || !slots.day.classList.contains('hidden');
     ctx.host.classList.toggle('has-card', hasCard);
     ctx.host.setAttribute('aria-busy', 'false');
@@ -669,6 +748,7 @@
       data: { eng: null, goal: 10, last: null }, slots: parts.slots, openGuia: openGuia,
     };
     ctx.openModule = function (id) { lib.openModule(app, id); };
+    ctx.openReview = function (id) { lib.openReview(app, id); };
     ctx.openSheet = function (card, opener) { openSheet(ctx, card, opener); };
     ctx.reload = function () { return refresh(ctx, mine); };
     ctx.changeGoal = function (value) {
@@ -689,6 +769,7 @@
       ctx.byModule = res[0] ? res[0].byModule || null : null;
       ctx.data = lib.assemble(res[1]);
       ctx.weak = res[2];
+      ctx.review = reviewSummary(app);
       clear(host);
       host.appendChild(buildTop(ctx));
       host.appendChild(parts.body);
@@ -724,10 +805,10 @@
 
   var api = {
     MODULES: MODULES, weekDots: weekDots, ringPercent: ringPercent, ringLabel: ringLabel, ringHint: ringHint,
-    streakLabel: streakLabel, focusModel: focusModel, todayItems: todayItems, weakItems: weakItems, buildWeak: buildWeak, moduleCards: moduleCards,
+    streakLabel: streakLabel, focusModel: focusModel, todayItems: todayItems, reviewSummary: reviewSummary, weakItems: weakItems, buildWeak: buildWeak, moduleCards: moduleCards,
     overallChips: overallChips, badgeItems: badgeItems, sheetSummary: sheetSummary, ensureStyles: ensureStyles,
     buildTop: buildTop, buildFocus: buildFocus, buildDay: buildDay, buildToday: buildToday, buildModules: buildModules,
-    buildOverall: buildOverall, buildPerformance: buildPerformance, buildBadges: buildBadges,
+    buildOverall: buildOverall, buildPerformance: buildPerformance, buildBadges: buildBadges, buildMission: buildMission, buildMyAchievements: buildMyAchievements, missionData: missionData,
     load: load, reset: reset, closeSheet: closeSheet,
   };
 

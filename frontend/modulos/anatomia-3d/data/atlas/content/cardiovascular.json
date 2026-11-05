@@ -579,10 +579,10 @@
   },
   "za:vh-f-right-ventricle": {
     "ids": {
-      "wikidata": "Q876089",
-      "fma": "7101",
-      "uberon": "UBERON:0002084",
-      "ta2": "A12.1.04.001"
+      "wikidata": "Q1308310",
+      "fma": "7098",
+      "uberon": "UBERON:0002080",
+      "ta2": "A12.1.02.001"
     },
     "summary_pt": "Ventrículo refere-se a uma câmara inferior do coração. O coração humano possui dois ventrículos. O ventrículo direito recebe o sangue através da valva tricúspide, vindo da aurícula direita e o ventrículo esquerdo recebe o sangue através da valva bicúspide, vindo da aurícula esquerdo. Ventrículos são as câmaras do coração cuja função é bombear o sangue para a circulação sistémica, através da artéria aórta, no caso do ventrículo esquerdo, e para a circulação pulmonar, através da artéria pulmonar, no caso do ventrículo direito. Os ventrículos estão ligados às aurículas, que recebem sangue arterial pelas veias pulmonares (aurícula esquerda) e sangue venoso pela veia cava superior e inferior (aurícula direita).",
     "sources": [

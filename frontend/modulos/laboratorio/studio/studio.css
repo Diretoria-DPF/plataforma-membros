@@ -144,7 +144,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: 1px solid var(--border-active);
   padding: 8px 18px;
   border-radius: 20px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: #cbd5e1;
   z-index: 50;
   backdrop-filter: blur(6px);
@@ -156,7 +156,7 @@ body.presentation-mode .studio-watermark-overlay {
   border-radius: 3px;
   padding: 1px 5px;
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--neon-cyan);
 }
 
@@ -217,7 +217,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .studio-sub-badge {
-  font-size: 0.54rem;
+  font-size: 0.75rem;
   font-family: var(--font-mono);
   color: #64748b;
   letter-spacing: 0.5px;
@@ -231,7 +231,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: 1px solid rgba(0, 229, 255, 0.3);
   color: var(--neon-sky);
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 12px;
@@ -253,7 +253,7 @@ body.presentation-mode .studio-watermark-overlay {
   color: #e2e8f0;
   border-radius: 6px;
   padding: 5px 10px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
@@ -415,7 +415,7 @@ body.presentation-mode .studio-watermark-overlay {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-subtle);
   color: #94a3b8;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 700;
   padding: 3px 9px;
   border-radius: 12px;
@@ -483,14 +483,14 @@ body.presentation-mode .studio-watermark-overlay {
 
 .comp-favorite-star {
   color: var(--neon-yellow);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   flex-shrink: 0;
   filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.6));
 }
 
 .comp-unstable-flag {
   color: var(--neon-yellow);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   flex-shrink: 0;
   animation: pulseUnstable 1.5s infinite alternate;
 }
@@ -509,7 +509,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .comp-name {
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: #f1f5f9;
   white-space: nowrap;
@@ -519,13 +519,13 @@ body.presentation-mode .studio-watermark-overlay {
 
 .comp-formula {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   color: #94a3b8;
 }
 
 .comp-badge-mass {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   color: var(--neon-sky);
   background: rgba(56, 189, 248, 0.1);
   border: 1px solid rgba(56, 189, 248, 0.2);
@@ -545,7 +545,7 @@ body.presentation-mode .studio-watermark-overlay {
   align-items: center;
   justify-content: flex-end;
   font-family: var(--font-mono);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   color: #64748b;
   flex-shrink: 0;
 }
@@ -601,7 +601,7 @@ body.presentation-mode .studio-watermark-overlay {
   color: #cbd5e1;
   padding: 5px 9px;
   border-radius: 5px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
@@ -821,13 +821,13 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .indicator-texts strong {
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   color: var(--neon-rose);
   letter-spacing: 0.6px;
 }
 
 .indicator-texts small {
-  font-size: 0.56rem;
+  font-size: 0.75rem;
   color: #cbd5e1;
 }
 
@@ -892,7 +892,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .atom-inspector-meta small {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   color: #94a3b8;
   font-family: var(--font-mono);
 }
@@ -916,7 +916,7 @@ body.presentation-mode .studio-watermark-overlay {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 
 .atom-inspector-row {
@@ -945,7 +945,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: none;
   color: #fff;
   font-family: var(--font-ui);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   padding: 6px;
   border-radius: 6px;
@@ -969,7 +969,7 @@ body.presentation-mode .studio-watermark-overlay {
   padding: 5px 10px;
   border-radius: 6px;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1001,7 +1001,7 @@ body.presentation-mode .studio-watermark-overlay {
   border-radius: 8px;
   padding: 8px 14px;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: #fde047;
   z-index: 30;
   backdrop-filter: blur(6px);
@@ -1027,7 +1027,7 @@ body.presentation-mode .studio-watermark-overlay {
   color: #fff;
   padding: 3px 9px;
   border-radius: 4px;
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
 }
@@ -1072,7 +1072,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .hud-title {
-  font-size: 0.54rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   color: #64748b;
@@ -1123,7 +1123,7 @@ body.presentation-mode .studio-watermark-overlay {
   background: rgba(0, 229, 255, 0.12);
   border: 1px solid var(--border-active);
   color: var(--neon-cyan);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 700;
   padding: 1px 6px;
   border-radius: 4px;
@@ -1146,7 +1146,7 @@ body.presentation-mode .studio-watermark-overlay {
 
 .cadd-badge {
   font-family: var(--font-mono);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 5px;
@@ -1240,7 +1240,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .cadd-subtitle {
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   color: #94a3b8;
   font-family: var(--font-mono);
 }
@@ -1305,7 +1305,7 @@ body.presentation-mode .studio-watermark-overlay {
   flex-direction: column;
   gap: 4px;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 .cadd-param-item {
@@ -1324,7 +1324,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: 1px solid rgba(239, 68, 68, 0.4);
   border-radius: 6px;
   padding: 8px 10px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: #fca5a5;
   line-height: 1.4;
 }
@@ -1334,7 +1334,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: 1px solid rgba(0, 255, 136, 0.3);
   border-radius: 6px;
   padding: 8px 10px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: #86efac;
 }
 
@@ -1377,7 +1377,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   color: #94a3b8;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 600;
   padding: 3px 8px;
   cursor: pointer;
@@ -1451,7 +1451,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: 1px dashed #475569 !important;
   color: #64748b;
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: 0.75rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1464,7 +1464,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .ptable-z {
-  font-size: 0.5rem;
+  font-size: 0.75rem;
   color: #64748b;
   align-self: flex-start;
   padding-left: 2px;
@@ -1481,7 +1481,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .ptable-mass {
-  font-size: 0.46rem;
+  font-size: 0.75rem;
   color: #94a3b8;
   font-family: var(--font-mono);
   line-height: 1;
@@ -1538,7 +1538,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .ptable-hero-badge .hero-z {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   color: #94a3b8;
   font-family: var(--font-mono);
 }
@@ -1563,7 +1563,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .ptable-hero-family {
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   color: var(--neon-cyan);
   font-weight: 700;
   text-transform: uppercase;
@@ -1573,7 +1573,7 @@ body.presentation-mode .studio-watermark-overlay {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-family: var(--font-mono);
   margin-bottom: 12px;
 }
@@ -1597,7 +1597,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: 1px solid rgba(0, 229, 255, 0.2);
   border-radius: 6px;
   padding: 8px 10px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: #cbd5e1;
   line-height: 1.4;
   margin-bottom: 12px;
@@ -1606,7 +1606,7 @@ body.presentation-mode .studio-watermark-overlay {
 .ptable-valence-check {
   border-radius: 6px;
   padding: 8px 10px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   margin-bottom: 10px;
   line-height: 1.4;
 }
@@ -1635,7 +1635,7 @@ body.presentation-mode .studio-watermark-overlay {
 .btn-execute-atom-add {
   border: none;
   font-family: var(--font-ui);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
   padding: 8px 6px;
   border-radius: 6px;
@@ -1686,7 +1686,7 @@ body.presentation-mode .studio-watermark-overlay {
   display: flex;
   justify-content: space-between;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: #94a3b8;
 }
 
@@ -1697,7 +1697,7 @@ body.presentation-mode .studio-watermark-overlay {
 .diag-status {
   border-radius: 5px;
   padding: 7px 9px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   line-height: 1.4;
   font-family: var(--font-mono);
 }
@@ -1745,7 +1745,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .bio-detected-title {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   color: #94a3b8;
@@ -1762,7 +1762,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: 1px solid var(--neon-purple);
   color: #d8b4fe;
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   padding: 3px 8px;
   border-radius: 4px;
 }
@@ -1805,7 +1805,7 @@ body.presentation-mode .studio-watermark-overlay {
 
 .bio-card-scheme {
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   color: #38bdf8;
   background: rgba(0, 229, 255, 0.06);
   padding: 2px 6px;
@@ -1814,7 +1814,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .bio-card-desc {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: #94a3b8;
   line-height: 1.4;
 }
@@ -1824,7 +1824,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: 1px solid var(--neon-purple);
   color: #e9d5ff;
   font-family: var(--font-ui);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   padding: 6px 10px;
   border-radius: 6px;
@@ -1868,7 +1868,7 @@ body.presentation-mode .studio-watermark-overlay {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 .delta-table th,
@@ -1880,7 +1880,7 @@ body.presentation-mode .studio-watermark-overlay {
 
 .delta-table th {
   color: #94a3b8;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
 }
 
@@ -1920,7 +1920,7 @@ body.presentation-mode .studio-watermark-overlay {
 
 .similarity-target-smiles {
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   color: #94a3b8;
   word-break: break-all;
 }
@@ -1978,14 +1978,14 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .similarity-result-name {
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: #f1f5f9;
 }
 
 .similarity-result-formula {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   color: #94a3b8;
 }
 
@@ -2017,7 +2017,7 @@ body.presentation-mode .studio-watermark-overlay {
   border: 1px solid var(--border-active);
   border-radius: 6px;
   color: #f8fafc;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   outline: none;
 }
 
@@ -2055,7 +2055,7 @@ body.presentation-mode .studio-watermark-overlay {
   padding: 6px 10px;
   background: rgba(0, 229, 255, 0.08);
   border-bottom: 1px solid var(--border-active);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--neon-cyan);
   white-space: nowrap;
@@ -2079,7 +2079,7 @@ body.presentation-mode .studio-watermark-overlay {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 .comparison-table th,
@@ -2091,7 +2091,7 @@ body.presentation-mode .studio-watermark-overlay {
 
 .comparison-table th {
   color: #94a3b8;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   background: rgba(2, 6, 23, 0.6);
 }
@@ -2205,7 +2205,7 @@ body.presentation-mode .studio-watermark-overlay {
     display: none;
   }
   .studio-titles h1 {
-    font-size: 0.72rem;
+    font-size: 0.75rem;
   }
   .studio-sub-badge {
     display: none;
@@ -2237,7 +2237,7 @@ body.presentation-mode .studio-watermark-overlay {
   }
   .tool-btn {
     padding: 4px 6px;
-    font-size: 0.66rem;
+    font-size: 0.75rem;
   }
 }
 
@@ -2268,7 +2268,7 @@ body.presentation-mode .studio-watermark-overlay {
   }
   .studio-btn {
     padding: 4px 6px;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
   }
   .btn-icon-only {
     min-width: 26px;
@@ -2276,16 +2276,16 @@ body.presentation-mode .studio-watermark-overlay {
     font-size: 0.75rem;
   }
   .studio-titles h1 {
-    font-size: 0.62rem;
+    font-size: 0.75rem;
     letter-spacing: 0.4px;
   }
   .badge-counter {
-    font-size: 0.55rem;
+    font-size: 0.75rem;
     padding: 2px 5px;
   }
   .tool-btn {
     padding: 4px 6px;
-    font-size: 0.66rem;
+    font-size: 0.75rem;
     min-width: 28px;
   }
   .studio-telemetry-hud {
@@ -2293,13 +2293,13 @@ body.presentation-mode .studio-watermark-overlay {
     padding: 0 6px;
   }
   .hud-title {
-    font-size: 0.5rem;
+    font-size: 0.75rem;
   }
   .hud-value {
-    font-size: 0.68rem;
+    font-size: 0.75rem;
   }
   .cadd-badge {
-    font-size: 0.54rem;
+    font-size: 0.75rem;
     padding: 2px 5px;
   }
 /* =========================================================================
@@ -2336,7 +2336,7 @@ body.presentation-mode .studio-watermark-overlay {
 }
 
 .chembl-stat span {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -2352,7 +2352,7 @@ body.presentation-mode .studio-watermark-overlay {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 .chembl-activity-table th,
@@ -2364,7 +2364,7 @@ body.presentation-mode .studio-watermark-overlay {
 
 .chembl-activity-table th {
   color: #94a3b8;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   background: rgba(2, 6, 23, 0.6);
   position: sticky;
@@ -2394,7 +2394,7 @@ body.presentation-mode .studio-watermark-overlay {
   flex-direction: column;
   gap: 4px;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 .crossref-item {
@@ -2424,22 +2424,22 @@ body.presentation-mode .studio-watermark-overlay {
 .studio-inline-error { color: var(--neon-rose); }
 .studio-inline-error { font-size: 0.75rem; }
 .studio-empty-msg .spinner-inline { margin-right: 8px; }
-.studio-hint { font-size: 0.72rem; }
+.studio-hint { font-size: 0.75rem; }
 .studio-accent-text { color: var(--neon-cyan); }
-.studio-smiles-line { font-family: var(--font-mono); font-size: 0.7rem; color: #cbd5e1; word-break: break-all; }
+.studio-smiles-line { font-family: var(--font-mono); font-size: 0.75rem; color: #cbd5e1; word-break: break-all; }
 .bio-groups-chips { margin-top: 6px; }
 .bio-card-tag { align-self: flex-start; margin-top: 2px; }
 .studio-section-title { color: var(--laift-text); font-size: 0.82rem; margin: 12px 0 8px; }
 .valence-idle { background: rgba(255, 255, 255, 0.04); color: var(--laift-muted); }
 .ptable-pharma-title { color: var(--neon-cyan); display: block; margin-bottom: 3px; }
-.similarity-result-mass { text-align: right; font-family: var(--font-mono); font-size: 0.65rem; color: var(--laift-muted); }
+.similarity-result-mass { text-align: right; font-family: var(--font-mono); font-size: 0.75rem; color: var(--laift-muted); }
 .chembl-activity-scroll { max-height: 400px; overflow-y: auto; border: 1px solid var(--border-subtle); border-radius: 6px; }
 .studio-3d-unavailable {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   max-width: 80%; text-align: center; line-height: 1.6;
   color: var(--neon-yellow); font-size: 0.8rem;
 }
-.studio-3d-unavailable span { color: var(--laift-muted); font-size: 0.7rem; }
+.studio-3d-unavailable span { color: var(--laift-muted); font-size: 0.75rem; }
 
 /* Foco visível em todos os controles (itens de lista e da tabela periódica
    agora são focáveis por teclado). */
@@ -2510,3 +2510,35 @@ select:focus-visible {
   }
   .studio-toolbar-ribbon { overflow-x: auto; }
 }
+
+/* Alvos de toque de pelo menos 44 px em qualquer dispositivo (WCAG 2.5.5/2.5.8). */
+.studio-btn,
+.tool-btn,
+.category-pill,
+.ptable-pill,
+.btn-close-modal,
+.btn-apply-transform,
+.atom-inspector-close,
+.unstable-actions button {
+  min-height: 44px;
+  min-width: 44px;
+}
+.compound-item {
+  min-height: 44px;
+}
+
+/* Quem pede menos movimento não recebe animações nem transições. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Descoberta de moléculas (O7): lista de alertas na comparação de análogos */
+.studio-list-plain { list-style: none; margin: 0.5rem 0; padding: 0; font-size: 0.8rem; color: #cbd5e1; }
+.studio-list-plain li { padding: 0.15rem 0; }

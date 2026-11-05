@@ -75,3 +75,12 @@ test('menu: o item vira Portaria', () => {
   assert.ok(index.includes('<span>Portaria</span>'));
   assert.ok(index.includes('<span class="app-menu__titulo">Portaria</span>'));
 });
+
+test('Portaria: com o portão só no QR rotativo, o crachá em PDF e o lote saem sem QR permanente', () => {
+  const studio = read('modulos/cracha/cracha.js');
+  assert.match(JS, /b\.qrPayload\s*\?\s*el\('img', \{ className: 'badge-qr'/, 'cartão do lote/PDF só desenha QR se houver payload');
+  assert.match(JS, /badge-qr-none/);
+  assert.match(JS, /b\.qrPayload \? '&qr=' \+ encodeURIComponent\(b\.qrPayload\) : '&semqr=1'/);
+  assert.match(studio, /get\("semqr"\) === "1"/);
+  assert.match(CSS, /\.badge-qr-none/);
+});

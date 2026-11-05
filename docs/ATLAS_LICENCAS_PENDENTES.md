@@ -6,6 +6,20 @@
 > auditoria. Origem: relatório "ATLAS — Licenças dos modelos — 2026-10-13"
 > (auditoria técnica somente leitura; **não é parecer jurídico**).
 
+## Atualização 2026-11-04 (Onda 0)
+
+- A tela de Créditos deixou de afirmar CC BY-SA 4.0 para tudo: lista, por fonte,
+  nome, autoria ou origem e licença como declaradas no License.txt do Z-Anatomy
+  e no humanatlas.io (js/ui/credits.js, MODEL_NOTICES). Os modelos não foram alterados.
+- **Pendência para o dono (decisão):** substituir ou remover, antes de qualquer
+  cobrança, os modelos abaixo. Nada foi removido nesta onda.
+  - NC declarada: Rim e Pelve renal, esquerdos e direitos (CC BY-NC 4.0);
+    Cóclea e Vestíbulo, esquerdos e direitos (CC BY-NC-SA 4.0).
+  - Sem licença informada: 174 nós de cérebro (Brainder e Substância branca, Univ. de Washington).
+  - Sem licença documentada: body.glb (modelo de reserva).
+- Opções por estrutura: ver seção 7 do relatório de 13/10 (rim pelo HRA CC BY, retirar
+  cóclea e vestíbulo, resolver o cérebro).
+
 Resumo em uma frase: há partes dos GLBs com licença **não comercial (NC)** ou
 **desconhecida**, e o app declara tudo como CC BY-SA 4.0. Para estudo gratuito
 o risco é baixo; para **cobrança (ou contribuição por acessos maiores)** vira

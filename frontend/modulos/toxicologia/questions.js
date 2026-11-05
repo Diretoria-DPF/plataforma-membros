@@ -251,10 +251,10 @@ const allQuestions = [
     id: 25,
     module: "toxico",
     topic: "Antídotos",
-    question: "Na intoxicação aguda por Fosfeto de Alumínio ou Zinco (liberadores de gás fosfina), destaca-se na terapia de suporte intensivo:",
-    options: ["Sulfato de magnésio para estabilização de membrana miocárdica e suporte hemodinâmico", "Atropinização plena precoce", "Próprio fosfeto em baixas doses", "Carvão ativado seriado em altas doses"],
+    question: "Na intoxicação aguda por Fosfeto de Alumínio ou Zinco (liberadores de gás fosfina), qual medida costuma ser citada como adjuvante de suporte, embora com evidência limitada?",
+    options: ["Sulfato de magnésio, proposto para estabilização de membrana miocárdica", "Atropinização plena precoce", "Próprio fosfeto em baixas doses", "Carvão ativado seriado em altas doses"],
     correct: 0,
-    explanation: "Não existe antídoto específico para a fosfina; o sulfato de magnésio atua como antioxidante e estabilizador de membrana contra as arritmias ventriculares malignas induzidas pelo veneno.",
+    explanation: "Não existe antídoto específico para a fosfina; o sulfato de magnésio é proposto como adjuvante (estabilização de membrana e possível efeito antioxidante), mas a evidência clínica é fraca e o benefício é controverso. O tratamento é de suporte, com monitorização hemodinâmica e do ritmo cardíaco.",
     apiFallback: false
   },
 
@@ -385,10 +385,10 @@ const allQuestions = [
     id: 38,
     module: "toxico",
     topic: "Praguicidas",
-    question: "Qual inseticida organoclorado ciclodieno atua como antagonista não-competitivo no canal de cloreto acoplado ao receptor GABA-A?",
+    question: "Qual inseticida organoclorado (isômero gama do hexaclorociclo-hexano) atua como antagonista não-competitivo no canal de cloreto acoplado ao receptor GABA-A?",
     options: ["DDT", "Lindano", "Permetrina", "Metamidofós"],
     correct: 1,
-    explanation: "O lindano (gama-hexaclorociclo-hexano) bloqueia os receptores inibitórios GABA-A no SNC, predispondo a episódios convulsivos e hipertermia por desinibição neuronal.",
+    explanation: "O lindano (gama-hexaclorociclo-hexano, que não pertence ao grupo dos ciclodienos, como dieldrina e endrin) bloqueia os receptores inibitórios GABA-A no SNC, predispondo a episódios convulsivos e hipertermia por desinibição neuronal.",
     apiFallback: false
   },
   {
@@ -405,10 +405,10 @@ const allQuestions = [
     id: 40,
     module: "toxico",
     topic: "Praguicidas",
-    question: "O achado ocular semiológico patognomônico da estimulação muscarínica na síndrome colinérgica por organofosforados é:",
+    question: "O achado ocular semiológico típico da estimulação muscarínica na síndrome colinérgica por organofosforados é:",
     options: ["Midríase reativa bilateral", "Anisocoria com nistagmo rotatório", "Miose puntiforme bilateral", "Midríase fixa não-fotorreagente"],
     correct: 2,
-    explanation: "A estimulação excessiva de receptores M3 no músculo esfíncter da íris provoca constrição pupilar acentuada e involuntária (miose em cabeça de alfinete).",
+    explanation: "A estimulação excessiva de receptores M3 no músculo esfíncter da íris provoca constrição pupilar acentuada e involuntária (miose em cabeça de alfinete). A miose não é exclusiva: também ocorre, por exemplo, com opioides e clonidina, e pode haver midríase por efeito nicotínico.",
     apiFallback: false
   },
   {
@@ -916,7 +916,7 @@ const allQuestions = [
     question: "A ingestão crônica de águas contaminadas por Arsênio inorgânico associa-se semiologicamente ao desenvolvimento de:",
     options: ["Hiperqueratose palmoplantar nodular e hiperpigmentação cutânea em 'gotas de chuva'", "Alopecia universal com estrias purpúreas", "Dermatite herpetiforme descamativa", "Eritema nodoso recidivante"],
     correct: 0,
-    explanation: "O arsênio deposita-se em tecidos ricos em queratina, gerando espessamento da pele nas mãos/pés e hiperpigmentação salpicada patognomônica.",
+    explanation: "O arsênio deposita-se em tecidos ricos em queratina, gerando espessamento da pele nas mãos/pés e hiperpigmentação salpicada, característica da exposição crônica (embora não exclusiva).",
     apiFallback: false
   },
   {
@@ -1360,7 +1360,7 @@ const allQuestions = [
     question: "A clássica tríade semiológica diagnóstica da overdose aguda por Opioides compreende:",
     options: ["Miose puntiforme bilateral, depressão respiratória (bradipneia/apneia) e rebaixamento do nível de consciência (coma)", "Midríase bilateral, taquicardia e agitação", "Hipertensão grave, convulsões e sudorese", "Paralisia flácida, midríase e diarreia"],
     correct: 0,
-    explanation: "A depressão do centro respiratório bulbar, a inibição cortical e a estimulação do núcleo de Edinger-Westphal produzem a tríade patognomônica.",
+    explanation: "A depressão do centro respiratório bulbar, a inibição cortical e a estimulação do núcleo de Edinger-Westphal produzem a tríade clássica da overdose por opioides.",
     apiFallback: false
   },
   {
@@ -1990,9 +1990,9 @@ const allQuestions = [
     module: "toxico",
     topic: "Plantas Tóxicas",
     question: "O tratamento farmacológico específico da intoxicação grave por Saia-Branca com delírio e agitação refratária baseia-se na:",
-    options: ["Atropina", "Fisostigmina (antagonista anticolinérgico que reverte o quadro central)", "Neostigmina", "Naloxona"],
+    options: ["Atropina", "Fisostigmina (inibidor da colinesterase que atravessa a barreira hematoencefálica)", "Neostigmina", "Naloxona"],
     correct: 1,
-    explanation: "Como a Datura stramonium satura o cérebro de alcaloides anticolinérgicos, a fisostigmina cruza a BHE para recuperar a concentração de acetilcolina.",
+    explanation: "Plantas conhecidas como saia-branca (gêneros Brugmansia e Datura) contêm alcaloides anticolinérgicos. A fisostigmina inibe a colinesterase e atravessa a barreira hematoencefálica, aumentando a acetilcolina no sistema nervoso central. Seu uso exige cautela e monitorização, e é evitado, por exemplo, com sinais de intoxicação por antidepressivos tricíclicos ou QRS alargado.",
     apiFallback: false
   },
   {

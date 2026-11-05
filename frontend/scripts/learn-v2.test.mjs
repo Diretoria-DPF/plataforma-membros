@@ -172,6 +172,11 @@ test('buildWeak (ENG-06): cada tópico abre o módulo dele; sem tópico fraco, a
   const section = v2.buildWeak(ctx);
   assert.match(textOf(section), /Para reforçar/);
   assert.match(textOf(section), /Antídotos/);
+  // A lista tem classe própria: o e2e conta os itens de "Para hoje" por .l2-today e não pode somar estes.
+  const weakSrc = SRC.split('function buildWeak')[1].split('return section')[0];
+  assert.match(weakSrc, /'ul', 'l2-weak'/);
+  assert.doesNotMatch(weakSrc, /'ul', 'l2-today'/);
+  assert.match(CSS, /\.l2-weak/);
   const btns = all(section, (n) => n.tag === 'button');
   assert.equal(btns.length, 1);
   btns[0].listeners.click();
@@ -219,4 +224,11 @@ test('fiação: pacote aprender2 sob demanda; learning.js só carrega com a flag
   assert.match(SRC, /learn-v2\.css/);
   assert.ok(!ler('index.html').includes('learn-v2'), 'index.html não referencia a tela nova');
   assert.ok(!ler('sw.js').includes('learn-v2'), 'sw.js não pré-cacheia a tela nova');
+});
+
+test('todayItems: a missão da semana entra depois do quiz do dia e antes do simulado', () => {
+  const item = { kind: 'missao', icon: 'star', module: 'farmaco', title: 'Missão da semana', sub: '5 atividades em Farmacologia' };
+  const items = v2.todayItems({ dailyQuizDone: false }, null, item);
+  assert.deepEqual(items.map((i) => i.kind), ['quiz', 'missao', 'simulado', 'caso']);
+  assert.equal(items[1].module, 'farmaco');
 });
