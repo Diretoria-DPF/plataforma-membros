@@ -14,14 +14,13 @@ import { SYSTEMS, LAYERS } from '../core/contracts.js';
  * @param {Function} options.onAction - Callback chamado com {action, sid}
  * @returns {Object} Interface da ficha: {render, setTab, clear, getTab}
  */
-/** Texto padrão de rascunho automático: nunca é mostrado ao público (a ficha fica sem resumo). */
-const PLACEHOLDER_SUMMARY = /^\s*resumo ainda n[ãa]o redigido/i;
+/** Frase padrão de texto automático ("Resumo ainda não redigido — aguardando…"): nunca é mostrada ao público. */
+const PLACEHOLDER_SENTENCE = /\s*resumo ainda n[ãa]o redigido[^.]*\.?/gi;
 
 /** Resumo apresentável ao público, ou '' quando não há texto útil. */
 export function publicSummary(text) {
   if (typeof text !== 'string') return '';
-  const t = text.trim();
-  return !t || PLACEHOLDER_SUMMARY.test(t) ? '' : t;
+  return text.replace(PLACEHOLDER_SENTENCE, '').trim();
 }
 
 /** Fatos neutros de uma estrutura sem ficha: sistema, camada (localização) e lado. */

@@ -34,6 +34,10 @@ test('o resumo padrão de rascunho automático nunca é mostrado', () => {
   assert.equal(mod.publicSummary('  resumo ainda nao redigido '), '');
   assert.equal(mod.publicSummary(undefined), '');
   assert.equal(mod.publicSummary('   '), '');
+  assert.equal(
+    mod.publicSummary('Estrutura anatômica com dados do órgão. Resumo ainda não redigido — aguardando revisão humana.'),
+    'Estrutura anatômica com dados do órgão.',
+  );
 });
 
 test('um resumo real é mantido', () => {

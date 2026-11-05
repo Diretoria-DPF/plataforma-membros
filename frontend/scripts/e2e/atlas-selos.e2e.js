@@ -69,7 +69,7 @@ async function runAt(viewport) {
       return { text: root ? root.textContent.replace(/\s+/g, ' ') : '', status: !!(root && root.querySelector('.atlas-card-status')), seal: !!(root && root.querySelector('.laift-review-seal')) };
     }, card);
     check(!cardInfo.status && !cardInfo.seal, `${label}: ficha sem selo ⓘ nem selo de status`);
-    check(!/revisad|rascunho|auto-?draft|autom[aá]tic|antigo|por IA|aguardando|sem descri/i.test(cardInfo.text), `${label}: ficha sem texto de revisão (${cardInfo.text.slice(0, 80)})`);
+    check(!/revisad|rascunho|auto-?draft|autom[aá]tic|antigo|por IA|aguardando|sem descri/i.test(cardInfo.text), `${label}: ficha sem texto de revisão (${(cardInfo.text.match(/.{0,30}(revisad|rascunho|auto-?draft|autom[aá]tic|antigo|por IA|aguardando|sem descri).{0,30}/i) || [cardInfo.text.slice(0, 60)])[0]})`);
     check(contentReqs.some((u) => /content\/cardiovascular\.json/.test(u)), `${label}: abrir a ficha baixa só o arquivo do sistema dela`);
     // M4: Meu estudo mostra o progresso nas fichas completas (abriu o rim → 1 de 2).
     await frame.evaluate(() => { const I = window.__atlasInternals; I.bus.emit(I.bus.EVENTS.STRUCTURE_SELECT, { sid: 'za:kidney-l', source: 'search' }); });
