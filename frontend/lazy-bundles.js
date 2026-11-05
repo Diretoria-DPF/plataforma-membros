@@ -13,6 +13,7 @@
 //  - destaques: carregado quando a flag highlights_enabled está ligada (Início) ou a tela de gestão abre (app.js);
 //  - entradaV2: carregado quando a flag entrada_v2_enabled está ligada e a pessoa não está logada (app.js);
 //  - inicio3: carregado quando a flag home_v2_enabled está ligada (Início v3 e Meu desempenho no Perfil; app.js);
+//  - desempenho: carregado quando o Perfil abre com a flag home_v2_enabled ligada (cartão "Desempenho"; app.js);
 //  - eventos2: carregado quando a flag events_v2_enabled está ligada e a tela Eventos abre (app.js);
 //  - perfil2: carregado quando a flag profile_v2_enabled está ligada e o Perfil abre (app.js);
 //  - admin2: carregado quando a flag admin_v2_enabled está ligada e um painel administrativo abre (app.js);
@@ -47,6 +48,8 @@
     mentoria: ['mentoring.js'],
     // Entrada v2 (flag entrada_v2_enabled): tela de abertura de quem não está logado; o CSS é injetado pelo próprio script.
     entradaV2: ['entrada-v2.js'],
+    // Desempenho no Perfil (O8): cartão por competência, só neste aparelho; lê o mesmo armazenamento que a trilha do Laboratório alimenta.
+    desempenho: ['modulos/laboratorio/js/lab-boletim.js', 'desempenho.js'],
     // Início v3: tela nova e navegação responsiva, só com a flag home_v2_enabled ligada (app.js).
     inicio3: ['home-v3.js'],
     // Aprender v2: tela nova do hub, só com a flag learn_v2_enabled ligada (learning.js). O CSS é injetado pelo script.

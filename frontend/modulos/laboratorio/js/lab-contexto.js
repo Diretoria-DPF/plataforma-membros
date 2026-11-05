@@ -23,7 +23,7 @@
 
   function proximo(situacao) {
     const livre = (situacao || []).find((s) => s.estado === 'disponivel');
-    return livre ? `Próximo passo: ${livre.missao.titulo}.` : 'Próximo passo: veja o boletim e o certificado.';
+    return livre ? `Próximo passo: ${livre.missao.titulo}.` : 'Próximo passo: veja o seu desempenho.';
   }
 
   /** Sugestão da Guia na tela da trilha. */

@@ -85,6 +85,21 @@ test('resumo: sem nota, sem posição, sem comparação; texto neutro', () => {
   assert.equal(t.semApoio, 1);
 });
 
+test('sugestão: a competência de menor nível abaixo de proficiente; nenhuma quando tudo está proficiente', () => {
+  assert.equal(B.sugestao(B.vazio(), R).id, 'seguranca', 'sem registro: a primeira da rubrica');
+  const b = varios(B.vazio(), Array(5).fill(ev('pesagem', 'acerto')).concat([ev('biosseguranca', 'acerto'), ev('residuos', 'acerto'), ev('calculo', 'acerto'), ev('calculo', 'acerto'), ev('cq', 'acerto'), ev('cq', 'acerto'), ev('rotulagem', 'acerto'), ev('investigacao', 'acerto')]));
+  assert.equal(B.sugestao(b, R), null, 'tudo proficiente');
+  const c = varios(b, [ev('cq', 'erro'), ev('cq', 'erro'), ev('cq', 'erro')]);
+  assert.deepEqual(B.sugestao(c, R), { id: 'qualidade', nome: 'Controle de qualidade' });
+});
+
+test('limiares em dados: a nota da rubrica explica o propósito e os valores aprovados estão em trilha_v1.json', () => {
+  assert.match(R.nota, /aprovada pelo dono/);
+  assert.match(R.nota, /sugere treino/);
+  assert.deepEqual(R.limiares, { em_desenvolvimento: 0.5, proficiente: 0.8, dominio: 0.9 });
+  assert.equal(R.pesoDica, 0.25);
+});
+
 test('guarda no aparelho: ida e volta, lixo normalizado, armazenamento quebrado não derruba', () => {
   const mem = new Map();
   const arm = { getItem: (k) => (mem.has(k) ? mem.get(k) : null), setItem: (k, v) => { mem.set(k, v); }, removeItem: (k) => { mem.delete(k); } };

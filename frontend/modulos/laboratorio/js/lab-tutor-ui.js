@@ -15,7 +15,7 @@
   const C = raiz.LabTutorControles;
   const Tr = raiz.LabTrilha;
   const Cx = raiz.LabContexto;     // O8: falas da Guia e do Preceptor por passo
-  const Bu = raiz.LabBoletimUI;    // O8: boletim e certificado
+  const Bu = raiz.LabBoletimUI;    // O8: desempenho
   // Espécies da O5 (farmacotécnica) incluem as da base; sem elas, fica a base.
   const ESP = raiz.LabMotorEspeciesFarmaco || raiz.LabMotorEspecies;
   const ctx = { especies: ESP.ESPECIES, rf: ESP.RF_ILUSTRATIVO };
@@ -75,11 +75,9 @@
     }
   }
 
-  // O8: boletim e certificado (telas em lab-boletim-ui.js)
+  // O8: desempenho (tela em lab-boletim-ui.js)
   function ponte() {
-    const G = raiz.LabGuia;
-    return { h, montar: montarTela, cabecalho, armazenamento, progresso: () => Tr.lerProgresso(armazenamento()), trilha: () => dados.trilha,
-      certificado: !!G && G.flagLigada('labCertificado', raiz.location.search, raiz.__labFlags || null) };
+    return { h, montar: montarTela, cabecalho, armazenamento };
   }
   function abrirBoletim() { Bu.abrirBoletim(ponte()); }
 
@@ -94,7 +92,7 @@
     cabecalho(t, 'ttTitulo', dados.trilha.titulo, false);
     t.appendChild(h('p', { className: 'lmt-nota', text: 'Cada nível treina competências do curso. O progresso fica guardado neste aparelho.' }));
     t.appendChild(h('p', { id: 'ttGuia', className: 'lmt-guia-trilha', text: Cx.sugestaoTrilha(sit) }));
-    t.appendChild(h('div', { className: 'lmt-acoes' }, [botao('ttBoletim', 'Boletim por competência', abrirBoletim)]));
+    t.appendChild(h('div', { className: 'lmt-acoes' }, [botao('ttBoletim', 'Desempenho', abrirBoletim)]));
     for (const g of Tr.porNivel(dados.trilha)) {
       t.appendChild(h('h3', { className: 'lmt-nivel', text: `Nível ${g.nivel}: ${g.nome}` }));
       t.appendChild(h('ul', { className: 'lmt-cartoes' }, g.missoes.map((m) => cartao(porId[m.id]))));
@@ -358,7 +356,7 @@
     t.appendChild(h('p', { id: 'tmGuiaFim', className: 'lmt-guia-trilha', text: Cx.falaGuia({ terminado: true }, Tr.situacao(dados.trilha, p)) }));
     t.appendChild(h('details', { className: 'lmt-caderno' }, [h('summary', { text: 'Caderno completo' }), h('pre', { className: 'lmt-caderno-texto', text: raiz.LabMotorCaderno.paraTexto(tutor.sessao.caderno) })]));
     t.appendChild(h('div', { className: 'lmt-acoes' }, [
-      botao('tmDeNovo', 'Fazer de novo', () => jogar(missao), 'btn btn-play'), botao('tmVerTrilha', 'Ver a trilha', () => abrirTrilha()), botao('tmBoletim', 'Ver o boletim', abrirBoletim), botao('tmSair', 'Voltar à bancada', sair)
+      botao('tmDeNovo', 'Fazer de novo', () => jogar(missao), 'btn btn-play'), botao('tmVerTrilha', 'Ver a trilha', () => abrirTrilha()), botao('tmBoletim', 'Ver o desempenho', abrirBoletim), botao('tmSair', 'Voltar à bancada', sair)
     ]));
     focar('tmResultadoTitulo');
   }

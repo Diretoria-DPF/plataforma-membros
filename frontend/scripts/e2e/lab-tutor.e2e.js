@@ -117,19 +117,19 @@ async function cenarioMissao(viewport, nome) {
     await frame.click('#tiConfirmar');
     check(/Causa encontrada/.test(await frame.textContent('#tiRetorno')), 'investigação: causa encontrada na etapa 5');
     check(await frame.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'sem rolagem horizontal');
-    check(await frame.evaluate(() => { const b = JSON.parse(localStorage.getItem('laift_lab_boletim_v1')); return b.c.seguranca.acertos >= 2 && b.c.calculo.acertos === 2 && b.c.desvio.acertos === 1; }), 'boletim registra os eventos no aparelho');
+    check(await frame.evaluate(() => { const b = JSON.parse(localStorage.getItem('laift_lab_boletim_v1')); return b.c.seguranca.acertos >= 2 && b.c.calculo.acertos === 2 && b.c.desvio.acertos === 1; }), 'desempenho registra os eventos no aparelho');
     await frame.click('#tmTrilha');
     await frame.waitForSelector('#ttTitulo');
     check(/A Guia sugere/.test(await frame.textContent('#ttGuia')), 'a Guia sugere a próxima missão na trilha');
     await frame.click('#ttBoletim');
     await frame.waitForSelector('#tbLista');
-    check(await frame.evaluate(() => document.querySelectorAll('#tbLista li').length === 6), 'boletim com seis competências');
-    check(await frame.evaluate(() => /nota|ranking|posição/i.test(document.getElementById('labMotorTela').textContent.replace(/não tem nota, posição nem comparação/, '')) === false), 'boletim sem nota nem ranking');
-    check(await frame.evaluate(() => !document.getElementById('tbCertificados') && document.documentElement.scrollWidth <= window.innerWidth + 1), 'certificado oculto com a chave desligada; sem rolagem horizontal');
+    check(await frame.evaluate(() => document.querySelectorAll('#tbLista li').length === 6), 'desempenho com seis competências');
+    check(await frame.evaluate(() => /nota|ranking|posição/i.test(document.getElementById('labMotorTela').textContent.replace(/não tem nota, posição nem comparação/, '')) === false), 'desempenho sem nota nem ranking');
+    check(await frame.evaluate(() => /certificad|carga hor/i.test(document.getElementById('labMotorTela').textContent) === false && document.documentElement.scrollWidth <= window.innerWidth + 1 && !!document.getElementById('tbSugestao')), 'desempenho sem certificado nem carga horária; com sugestão de treino; sem rolagem horizontal');
     await frame.click('#tbApagar');
     await frame.click('#tbApagar');
     await frame.waitForSelector('#tbLista');
-    check(await frame.evaluate(() => JSON.parse(localStorage.getItem('laift_lab_boletim_v1') || '{"c":{}}').c.seguranca === undefined), 'apagar o boletim limpa o aparelho');
+    check(await frame.evaluate(() => JSON.parse(localStorage.getItem('laift_lab_boletim_v1') || '{"c":{}}').c.seguranca === undefined), 'apagar o desempenho limpa o aparelho');
     await frame.click('#tmTrilha');
     await frame.waitForSelector('#ttTitulo');
     check(await frame.evaluate(() => document.querySelector('[data-missao="m_xarope"]').dataset.estado === 'disponivel'), 'nível 6 (xarope) abre depois da Missão 1');
@@ -168,30 +168,8 @@ async function cenarioProva() {
   } finally { await app.close(); }
 }
 
-async function cenarioCertificado() {
-  console.log('  certificado por nível (chave labCertificado)');
-  const { app, frame, csp } = await abrir({ labMotor: true, labCertificado: true });
-  try {
-    await frame.evaluate(() => localStorage.setItem('laift_lab_trilha_v1', JSON.stringify({ v: 1, missoes: { m1_nacl_09: { vezes: 1, conforme: true, menorDesvios: 0 } } })));
-    await abrirTrilha(frame);
-    await frame.click('#ttBoletim');
-    await frame.click('#tbCertificados');
-    await frame.waitForSelector('#tcLista');
-    check(await frame.evaluate(() => document.querySelectorAll('#tcLista li').length === 1), 'um certificado elegível (nível 0)');
-    await frame.click('#tcVer-0');
-    await frame.waitForSelector('#tcFolha, #tcSemNome');
-    const t = await frame.evaluate(() => (document.getElementById('tcFolha') || document.getElementById('tcSemNome')).textContent);
-    check(/Certificado de conclusão/.test(t) && /Nível 0/.test(t), `certificado montado no aparelho (${t.slice(0, 60)})`);
-    check(!/revisad|rascunho|IA/i.test(t), 'sem selo de revisão ou IA');
-    check(await frame.evaluate(() => !!document.getElementById('tcImprimir')), 'botão de imprimir ou salvar em PDF');
-    check(csp.length === 0, `sem violação de CSP (${JSON.stringify(csp)})`);
-    check(app.errors.length === 0, `sem erro de JavaScript (${app.errors.join(' | ')})`);
-  } finally { await app.close(); }
-}
-
 module.exports = async function () {
   await cenarioDesligado();
-  await cenarioCertificado();
   await cenarioMissao({ width: 1280, height: 800 }, 'desktop');
   await cenarioMissao({ width: 390, height: 844 }, 'celular');
   await cenarioProva();

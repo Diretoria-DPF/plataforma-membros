@@ -38,13 +38,13 @@ test('Guia: no nível Completa nomeia o controle e o "!"; em Só dica nomeia a e
   assert.equal(X.falaGuia(vistaDe('prova')), '');
 });
 
-test('Guia no fim da missão: sugere a próxima missão disponível ou o boletim', () => {
+test('Guia no fim da missão: sugere a próxima missão disponível ou o desempenho', () => {
   const fim = { terminado: true };
   const t = X.falaGuia(fim, Tr.situacao(TRILHA, feita));
   assert.match(t, /^A Guia/);
   assert.match(t, /desinfetante/i, 'a próxima disponível da trilha');
   const todas = Object.fromEntries(TRILHA.missoes.filter((m) => m.processoRef).map((m) => [m.id, { vezes: 1, conforme: true, menorDesvios: 0 }]));
-  assert.match(X.falaGuia(fim, Tr.situacao(TRILHA, { v: 1, missoes: todas })), /boletim/i);
+  assert.match(X.falaGuia(fim, Tr.situacao(TRILHA, { v: 1, missoes: todas })), /desempenho/i);
 });
 
 test('Guia na trilha: sugere a primeira missão ainda não concluída e disponível', () => {
@@ -83,9 +83,9 @@ test('cada etapa de cada processo completo tem o texto que a Guia e o Preceptor 
   }
 });
 
-test('o CSS dos textos contextuais não sobrepõe nada: sem position fixed/absolute/sticky nos blocos da Guia, do Preceptor, do boletim e do certificado', () => {
+test('o CSS dos textos contextuais não sobrepõe nada: sem position fixed/absolute/sticky nos blocos da Guia, do Preceptor, do desempenho', () => {
   const css = fs.readFileSync(path.join(LAB, 'lab-guia.css'), 'utf8');
-  for (const seletor of ['lmt-instrucao', 'lmt-porque', 'lmt-boletim', 'lmt-certificado-tela']) {
+  for (const seletor of ['lmt-instrucao', 'lmt-porque', 'lmt-boletim']) {
     assert.match(css, new RegExp(`\\.${seletor}\\b`), `${seletor} existe no CSS`);
     const bloco = [...css.matchAll(new RegExp(`\\.${seletor}\\b[^{]*\\{([^}]*)\\}`, 'g'))].map((m) => m[1]).join(';');
     assert.doesNotMatch(bloco, /position\s*:\s*(fixed|absolute|sticky)/, seletor);

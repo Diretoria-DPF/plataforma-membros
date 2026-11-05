@@ -4,9 +4,11 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * LAIFT — boletim pessoal por competência (O8), puro. Soma os eventos 'lab:competencia' do tutor em seis grupos
+ * LAIFT — desempenho pessoal por competência (O8; antes "boletim"), puro. Soma os eventos 'lab:competencia' do tutor em seis grupos
  * definidos em dados (trilha_v1.json, `boletim`; rubrica proposta, decisão D-4 do dono) e devolve um nível de
- * proficiência por grupo. Sem nota, sem posição, sem comparação. Guardado só no aparelho; a versão na conta é a
+ * proficiência por grupo. Sem nota, sem posição, sem comparação. Os limiares (rubrica.limiares, rubrica.pesoDica,
+ * rubrica.dominioSemApoio) são DADOS aprovados pelo dono: definem o rótulo de cada competência e quando sugerir
+ * treino (`sugestao`). O cartão "Desempenho" do Perfil (desempenho.js) lê o mesmo armazenamento. Guardado só no aparelho; a versão na conta é a
  * migração 055 (escrita, não aplicada, atrás da flag lab_boletim_conta_enabled): `paraConta` é o contrato dela.
  */
 (function (raiz) {
@@ -81,6 +83,16 @@
     });
   }
 
+  /** Competência a treinar: a de menor nível abaixo de "proficiente" (empate: ordem da rubrica); null se nenhuma. */
+  function sugestao(boletim, rubrica) {
+    let melhor = null;
+    for (const g of resumo(boletim, rubrica)) {
+      const i = ORDEM.indexOf(g.nivel);
+      if (i < ORDEM.indexOf('proficiente') && (!melhor || i < melhor.i)) melhor = { i, id: g.id, nome: g.nome };
+    }
+    return melhor ? { id: melhor.id, nome: melhor.nome } : null;
+  }
+
   /** Erros de forma da rubrica: cada competência da trilha em exatamente um grupo; fontes existentes. */
   function validarRubrica(trilha) {
     const r = trilha && trilha.boletim;
@@ -123,7 +135,7 @@
     });
   }
 
-  const API = { CHAVE, COLUNAS_CONTA, vazio, normalizar, registrar, resumo, validarRubrica, ler, salvar, apagar, paraConta };
+  const API = { CHAVE, ORDEM, COLUNAS_CONTA, sugestao, vazio, normalizar, registrar, resumo, validarRubrica, ler, salvar, apagar, paraConta };
   if (emNode) module.exports = API;
   if (raiz) raiz.LabBoletim = API;
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : null));
