@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="../shared/laift-dialog.css">
   <link rel="stylesheet" href="../shared/laift-tokens.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="lab-guia.css">
 
   <!-- Os controladores de interface (tela cheia, abas, visão mobile, Estúdio)
        ficam em js/script.js: sem <script> inline, pronto para a CSP. -->
@@ -43,15 +44,54 @@
         🧬 Estúdio 3D
       </button>
 
-      <button class="manual-btn btn-comece" id="btnComece" title="Monte a primeira reação, a síntese da aspirina, em 3 passos" data-action="comecarAqui">
+      <button class="manual-btn btn-comece" id="btnComece" title="Pratique a síntese da aspirina com a Guia apontando cada controle" data-action="comecarAqui">
         ▶ Comece aqui
       </button>
 
-      <button class="manual-btn" id="btnManual" title="Roteiro de bancada: como usar o laboratório" data-action="abrirManual">
-        📖 Roteiro
+      <button class="manual-btn" id="btnManual" title="Manual: como usar o laboratório" data-action="abrirManual">
+        📖 Manual
       </button>
     </div>
   </header>
+
+  <!-- ==========================================
+       FAIXA FIXA DA MISSÃO + AJUDA NO PROCESSO (O1)
+  ========================================== -->
+  <section class="faixa-missao" id="faixaMissao" aria-label="Missão atual e ajuda no processo">
+    <div class="faixa-topo">
+      <div class="faixa-quem">
+        <span class="faixa-rotulo" id="faixaRotulo">Missão</span>
+        <strong class="faixa-titulo" id="faixaTitulo">Carregando missão...</strong>
+      </div>
+      <div class="faixa-ajuda">
+        <button type="button" class="faixa-btn" id="ajudaSwitch" role="switch" aria-checked="true">Ajuda no processo: ligada</button>
+        <select class="faixa-nivel" id="ajudaNivel" aria-label="Nível da ajuda no processo">
+          <option value="completa">Completa</option>
+          <option value="dica">Só dica</option>
+          <option value="prova">Prova</option>
+        </select>
+      </div>
+    </div>
+    <progress class="faixa-progresso" id="faixaProgresso" max="100" value="0" hidden aria-label="Progresso do roteiro"></progress>
+    <p class="faixa-passo" id="faixaPasso"></p>
+    <div class="faixa-balao" id="labBalao" role="status" aria-live="polite" hidden>
+      <p class="faixa-balao-guia"><strong>A Guia:</strong> <span id="balaoGuia"></span></p>
+      <div id="balaoPorqueWrap" hidden>
+        <details class="faixa-porque">
+          <summary>Por quê?</summary>
+          <p><strong>Preceptor:</strong> <span id="balaoPorque"></span></p>
+        </details>
+      </div>
+    </div>
+    <div class="faixa-acoes">
+      <button type="button" class="faixa-btn" id="btnPassoVoltar" hidden>Voltar</button>
+      <button type="button" class="faixa-btn" id="btnPassoRepetir" hidden>Repetir</button>
+      <button type="button" class="faixa-btn" id="btnPassoPular" hidden>Pular</button>
+      <button type="button" class="faixa-btn faixa-btn--forte" id="btnVerAndamento" hidden>Ver andamento</button>
+      <button type="button" class="faixa-btn faixa-btn--forte" id="btnFaixaAvancar" hidden>Avançar</button>
+      <button type="button" class="faixa-btn" id="btnSairRoteiro" hidden>Sair do roteiro</button>
+    </div>
+  </section>
 
   <!-- ==========================================
        GRID PRINCIPAL DA BANCADA (100dvh LOCKED)
@@ -184,7 +224,7 @@
       <div class="bench"></div>
 
       <!-- Botão Preceptor -->
-      <button id="labChatWidgetBtn" data-action="toggleLabChat" title="Consultar o Preceptor da Bancada">
+      <button id="labChatWidgetBtn" data-action="toggleLabChat" title="Perguntar ao Preceptor da bancada">
         💬 <span>Preceptor de Bancada</span>
       </button>
 
@@ -200,7 +240,7 @@
         <button class="rtab-btn active" data-tab="tabMol" data-action="switchRightTab" data-arg="tabMol">🔬 Molécula</button>
         <button class="rtab-btn" data-tab="tabPH" data-action="switchRightTab" data-arg="tabPH">📈 Curva pH</button>
         <button class="rtab-btn" data-tab="tabLog" data-action="switchRightTab" data-arg="tabLog">📋 Vaso/Log</button>
-        <button class="rtab-btn" data-tab="tabMissao" data-action="switchRightTab" data-arg="tabMissao">🎯 Roteiro</button>
+        <button class="rtab-btn" data-tab="tabMissao" data-action="switchRightTab" data-arg="tabMissao">🎯 Missões</button>
       </div>
 
       <div class="tab-content-container">
@@ -284,14 +324,14 @@
           </div>
         </div>
 
-        <!-- Aba 4: Roteiro -->
+        <!-- Aba 4: Missões -->
         <div class="rtab-pane" id="tabMissao">
           <div class="panel mission-box" style="height: 100%; display: flex; flex-direction: column;">
             <div class="panel-section-header">
-              <h3 style="color: var(--neon-green, #4ade80);"><span class="icon-dot" style="background: var(--neon-green);"></span> Roteiro Ativo</h3>
-              <button class="btn btn-clear" data-action="abrirLivroMissoes">Livro</button>
+              <h3 style="color: var(--neon-green, #4ade80);"><span class="icon-dot" style="background: var(--neon-green);"></span> Missão ativa</h3>
+              <button class="btn btn-clear" data-action="abrirLivroMissoes">Todas as missões</button>
             </div>
-            <h4 id="missionTitle">Carregando roteiro...</h4>
+            <h4 id="missionTitle">Carregando missão...</h4>
             <p id="missionDesc"></p>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
               <span class="badge" id="missionStatus">Pendente</span>
@@ -329,7 +369,7 @@
   <div id="labChatDrawer" role="dialog" aria-label="Preceptor de bancada">
     <div class="lab-chat-header">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <h4>💬 Preceptor IA</h4>
+        <h4>💬 Preceptor</h4>
         <span class="chat-status-badge" id="preceptorStatusBadge" role="status" aria-live="polite" data-state="online">Online</span>
       </div>
       <div style="display: flex; align-items: center; gap: 6px;">
@@ -357,37 +397,39 @@
 
   <div class="manual-modal" id="comeceModal" role="dialog" aria-modal="true" aria-labelledby="comeceTitulo" style="display: none;">
     <div class="manual-content">
-      <h3 id="comeceTitulo">▶ Comece aqui: síntese da aspirina em 3 passos</h3>
+      <h3 id="comeceTitulo">▶ Comece aqui: síntese da aspirina</h3>
       <p>C₇H₆O₃ + (CH₃CO)₂O → C₉H₈O₄ + CH₃COOH. A proporção é 1:1 em mol. O ácido salicílico (2,76 g = 20 mmol) é o reagente limitante; o anidrido acético (2 mL = 21 mmol) fica ligeiramente em excesso.</p>
-      <ol id="comecePassos">
-        <li id="comecePasso1"><strong>Passo 1.</strong> Pesar 2,76 g de ácido salicílico.</li>
-        <li id="comecePasso2"><strong>Passo 2.</strong> Adicionar 2 mL de anidrido acético e 0,1 mL de ácido sulfúrico (catalisador).</li>
-        <li id="comecePasso3"><strong>Passo 3.</strong> Ligar o agitador e manter 70 °C (faixa de 60 a 80 °C) por cerca de 30 minutos simulados.</li>
-      </ol>
-      <p id="comeceTexto" role="status" aria-live="polite">Toque em "Executar passo" para montar cada etapa na bancada.</p>
-      <button class="close-manual" id="btnPassoComece" data-action="passoComeceAqui">Executar passo 1</button>
+      <p>Você monta a síntese: a Guia aponta o controle certo em cada passo, mas quem escolhe, digita e toca é você. A bancada será limpa antes de começar.</p>
+      <button class="close-manual" id="btnComeceIniciar" type="button">Começar</button>
       <button class="close-manual" data-action="fecharComece">Fechar</button>
     </div>
   </div>
 
-  <div class="manual-modal" id="manualModal" role="dialog" aria-modal="true" aria-label="Roteiro de bancada" style="display: none;">
+  <div class="manual-modal" id="manualModal" role="dialog" aria-modal="true" aria-label="Manual do laboratório" style="display: none;">
     <div class="manual-content">
-      <h3>📖 Roteiro de Bancada & Síntese</h3>
-      <p>Simulador farmacotécnico e físico-químico da LAIFT com inteligência artificial integrada.</p>
+      <h3>📖 Manual do Laboratório</h3>
+      <p>Simulador farmacotécnico e físico-químico da LAIFT. Cinco passos para a primeira prática:</p>
+      <ol>
+        <li><strong>Escolha o reagente</strong> no catálogo (painel Reagentes) e a vidraria.</li>
+        <li><strong>Informe a quantidade</strong>: gramas para sólidos, mililitros para líquidos. Escolha o modo de adição.</li>
+        <li><strong>Toque em Adicionar.</strong> Use Aquecer, Banho Gelo ou Alvo para a temperatura e o Agitador para misturar.</li>
+        <li><strong>Acompanhe</strong> temperatura, pH e volume. No painel Análise ficam a molécula, a curva de pH e o registro do que acontece.</li>
+        <li><strong>Siga uma missão.</strong> A faixa no topo mostra a missão atual. Em "Comece aqui" a Guia leva você pela síntese da aspirina.</li>
+      </ol>
       <ul>
-        <li><strong>Preceptor com IA:</strong> Pergunte no chat sobre qualquer rota de síntese (Dipirona, Aspirina, Paracetamol, etc.). O preceptor responderá considerando reagentes e mecanismos estequiométricos. Há uma cota diária de perguntas por pessoa.</li>
-        <li><strong>Visualização Híbrida 2D/3D:</strong> Alterne entre a fórmula estrutural plana e o modelo tridimensional WebGL manipulável diretamente na aba de Molécula.</li>
-        <li><strong>Memória de Aprendizado:</strong> As conformações 3D pesquisadas ficam guardadas no navegador (IndexedDB) e as rotas de síntese mais pedidas ficam em cache no servidor, para resposta imediata.</li>
+        <li><strong>Ajuda no processo:</strong> liga e desliga na faixa do topo. Completa mostra um "!" sobre o controle certo e a dica; Só dica mostra apenas a dica; Prova não mostra nada. A escolha fica salva neste aparelho.</li>
+        <li><strong>Preceptor:</strong> tire dúvidas de síntese no chat. Há uma cota diária de perguntas por pessoa.</li>
+        <li><strong>Visualização 2D e 3D:</strong> alterne na aba Molécula. O Estúdio 3D abre a modelagem molecular completa.</li>
       </ul>
-      <button class="close-manual" data-action="fecharManual">Fechar Roteiro</button>
+      <button class="close-manual" data-action="fecharManual">Fechar manual</button>
     </div>
   </div>
 
-  <div class="manual-modal" id="missionsModal" role="dialog" aria-modal="true" aria-label="Roteiros experimentais" style="display: none;">
+  <div class="manual-modal" id="missionsModal" role="dialog" aria-modal="true" aria-label="Missões do laboratório" style="display: none;">
     <div class="manual-content">
-      <h3 style="color: var(--neon-green, #4ade80);">📚 Roteiros Experimentais LAIFT</h3>
+      <h3 style="color: var(--neon-green, #4ade80);">📚 Missões do Laboratório</h3>
       <div id="missionsList"></div>
-      <button class="close-manual" data-action="fecharLivroMissoes">Fechar Livro</button>
+      <button class="close-manual" data-action="fecharLivroMissoes">Fechar</button>
     </div>
   </div>
 
@@ -420,6 +462,8 @@
   <script src="js/lab-storage.js"></script>
   <script src="js/lab-preceptor.js"></script>
   <script src="js/lab-quimica.js"></script>
+  <script src="js/lab-guia.js"></script>
+  <script src="js/lab-guia-ui.js"></script>
   <script src="js/script.js"></script>
 </body>
 </html>
