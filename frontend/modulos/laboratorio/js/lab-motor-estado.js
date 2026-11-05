@@ -179,12 +179,17 @@
     return g;
   }
 
-  /** Volume (mL) de uma fase líquida: soma dos líquidos com densidade; soluto dissolvido não soma (aproximação didática). */
+  /**
+   * Volume (mL) de uma fase líquida: soma dos líquidos com densidade. O soluto dissolvido não soma volume
+   * (aproximação didática), salvo se a espécie declarar `volumeEspecificoMLg` (mL por g dissolvido; O5):
+   * soluções concentradas, como xarope, não fecham o volume sem isso.
+   */
   function volumeFaseMl(c, especies) {
     let v = 0;
     for (const id of Object.keys(c)) {
       const e = info(especies, id);
       if (e.fase === 'liquido' && e.densidade > 0) v += massaDeMmol(e, c[id]) / e.densidade;
+      else if (e.volumeEspecificoMLg > 0) v += massaDeMmol(e, c[id]) * e.volumeEspecificoMLg;
     }
     return v;
   }

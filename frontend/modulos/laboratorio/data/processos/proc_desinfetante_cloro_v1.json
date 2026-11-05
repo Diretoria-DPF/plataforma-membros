@@ -1,0 +1,526 @@
+{
+  "id": "proc_desinfetante_cloro_v1",
+  "versao": 1,
+  "titulo": "Desinfetante de superfícies a 0,1 % de cloro ativo",
+  "categoria": "farmacotecnica",
+  "nivel": 2,
+  "nivel_conteudo": "completo",
+  "restricao": null,
+  "revisado_por": null,
+  "forma": "desinfetante",
+  "setor": "saneante",
+  "conferencia": {
+    "estado": "pendente",
+    "nota": "[NV] Valores numéricos, faixas de critério, tolerâncias e citações de norma a conferir com a fonte primária (edição e artigo vigentes) antes de publicar."
+  },
+  "duracaoSimuladaMin": 45,
+  "via": "superficies",
+  "objetivos": [
+    "Diluir um estoque por balanço de massa (C1·m1 = C2·m2)",
+    "Pesar a água antes do concentrado",
+    "Conferir o cloro ativo",
+    "Rotular com advertências e primeiros socorros"
+  ],
+  "fontesOficiais": [
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 59/2010 (ANVISA): produtos saneantes"
+    },
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 67/2007 (ANVISA), como referência de boas práticas de manipulação"
+    }
+  ],
+  "formulacao": {
+    "base": "para 1.000 g",
+    "itens": [
+      {
+        "especie": "AguaSanitaria_l",
+        "funcao": "ativo desinfetante",
+        "quantidade": {
+          "valor": 40,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "H2O_l",
+        "funcao": "veículo",
+        "quantidade": {
+          "valor": 960,
+          "unidade": "g",
+          "qsp": true
+        }
+      }
+    ]
+  },
+  "cq": [
+    {
+      "ensaio": "cloro ativo",
+      "criterio": "entre 900 e 1.100 ppm"
+    }
+  ],
+  "referencias": [
+    {
+      "titulo": "RDC nº 59/2010 (ANVISA), produtos saneantes",
+      "nota": "[NV] conferir título, vigência e norma que a substituiu"
+    },
+    {
+      "titulo": "RDC nº 67/2007 (ANVISA)",
+      "nota": "[NV] conferir vigência e alterações"
+    }
+  ],
+  "recipientes": [
+    {
+      "id": "bequer_1500",
+      "tipo": "bequer",
+      "capMl": 1500
+    },
+    {
+      "id": "frasco_1000",
+      "tipo": "frasco",
+      "capMl": 1100
+    }
+  ],
+  "materiais": {
+    "especies": [
+      {
+        "id": "AguaSanitaria_l",
+        "papel": "ativo",
+        "quantidade": {
+          "valor": 40,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "H2O_l",
+        "papel": "veículo",
+        "quantidade": {
+          "valor": 960,
+          "unidade": "g"
+        }
+      }
+    ],
+    "vidraria": [
+      "bequer_1500",
+      "frasco_1000"
+    ],
+    "equipamentos": [
+      "balanca_analitica"
+    ]
+  },
+  "seguranca": {
+    "epi": [
+      "jaleco",
+      "luvas_nitrila",
+      "oculos",
+      "mascara"
+    ],
+    "capela": true,
+    "riscos": [
+      "corrosivo",
+      "vapor de cloro se misturado a ácido"
+    ],
+    "residuos": [
+      {
+        "tipo": "solucao_hipoclorito_diluida",
+        "destino": "neutralizar_e_pia"
+      }
+    ]
+  },
+  "etapas": [
+    {
+      "id": "e1",
+      "titulo": "Paramentação",
+      "oQueEstaAcontecendo": "Você veste os equipamentos de proteção antes de abrir qualquer frasco e liga a exaustão.",
+      "porQue": "O hipoclorito é corrosivo e libera vapor de cloro: óculos, luvas, máscara e exaustão protegem olhos, pele e vias aéreas.",
+      "preCondicoes": [],
+      "acao": {
+        "operacao": "paramentar",
+        "parametros": {
+          "epi": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos",
+            "mascara"
+          ],
+          "capela": true
+        },
+        "alvoUI": "painelSeguranca"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "epi",
+          "op": "contem",
+          "valor": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos",
+            "mascara"
+          ],
+          "mensagemSeFalhar": "Falta equipamento de proteção: jaleco, luvas_nitrila, oculos, mascara.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "titulo": "Pesar a água",
+      "oQueEstaAcontecendo": "No frasco de preparo, você pesa 960,00 g de água purificada.",
+      "porQue": "Preparar por massa evita o erro de volume e dá o mesmo resultado em qualquer temperatura.",
+      "calculoPrevio": {
+        "pergunta": "Quantos gramas de água sanitária (2,5 % de cloro ativo) para 1.000 g de solução a 0,1 % de cloro ativo?",
+        "formula": "m = C(final) × massa final ÷ C(estoque)",
+        "resposta": 40,
+        "tolerancia": 0.3,
+        "unidade": "g"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e1"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_1500"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "H2O_l",
+            "massaG": 960,
+            "recipiente": "bequer_1500"
+          },
+          "alvoUI": "reagente:H2O_l"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_1500",
+          "especie": "H2O_l",
+          "op": "entre",
+          "valor": [
+            959.95,
+            960.05
+          ],
+          "mensagemSeFalhar": "Massa fora de 960 ± 0.05 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "titulo": "Pesar a água sanitária",
+      "oQueEstaAcontecendo": "Você pesa 40,00 g de água sanitária (2,5 % de cloro ativo) sobre a água, com tara antes.",
+      "porQue": "A diluição é C1·m1 = C2·m2: 2,5 % × 40 g = 0,1 % × 1.000 g. A água sanitária é adicionada à água e nunca o contrário em recipiente seco.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e2"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_1500",
+          "especie": "H2O_l",
+          "op": ">=",
+          "valor": 900,
+          "mensagemSeFalhar": "Pese a água primeiro: o hipoclorito concentrado entra sobre a água.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_1500"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "AguaSanitaria_l",
+            "massaG": 40,
+            "recipiente": "bequer_1500"
+          },
+          "alvoUI": "reagente:AguaSanitaria_l"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_1500",
+          "especie": "AguaSanitaria_l",
+          "op": "entre",
+          "valor": [
+            39.95,
+            40.05
+          ],
+          "mensagemSeFalhar": "Massa fora de 40 ± 0.05 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "titulo": "Homogeneizar",
+      "oQueEstaAcontecendo": "A solução é mexida por 5 minutos.",
+      "porQue": "Sem mistura, o hipoclorito fica em camadas e a concentração varia entre o fundo e o topo.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e3"
+        }
+      ],
+      "acao": {
+        "operacao": "agitar",
+        "parametros": {
+          "recipiente": "bequer_1500",
+          "tempoMin": 6
+        },
+        "alvoUI": "btnAgitar"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "bequer_1500",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "titulo": "Cloro ativo",
+      "oQueEstaAcontecendo": "O cloro ativo é determinado e comparado à faixa de 900 a 1.100 ppm.",
+      "porQue": "Cloro ativo abaixo da faixa não desinfeta; acima, corrói superfícies e irrita sem benefício.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e4"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "cloro_ativo",
+            "recipiente": "bequer_1500",
+            "faixa": [
+              900,
+              1100
+            ]
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_cloro_ativo_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e6",
+      "titulo": "Envasar",
+      "oQueEstaAcontecendo": "A solução passa a um frasco opaco de 1 L, que é fechado.",
+      "porQue": "O hipoclorito se decompõe com a luz e o calor: frasco opaco, fechado e fora do sol.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e5"
+        }
+      ],
+      "acao": {
+        "operacao": "transferir",
+        "parametros": {
+          "origem": "bequer_1500",
+          "destino": "frasco_1000",
+          "enxague": true
+        },
+        "alvoUI": "btnTransferir"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "frasco_1000",
+          "especie": "AguaSanitaria_l",
+          "op": "entre",
+          "valor": [
+            39,
+            41
+          ],
+          "mensagemSeFalhar": "Parte da água sanitária ficou no recipiente de preparo.",
+          "consequencia": "aviso"
+        }
+      ]
+    },
+    {
+      "id": "e7",
+      "titulo": "Rotular",
+      "oQueEstaAcontecendo": "Você preenche o rótulo com os dados do produto, do lote e do responsável, e as advertências aplicáveis.",
+      "porQue": "Sem rótulo completo o produto não pode ser identificado, rastreado nem usado com segurança.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e6"
+        }
+      ],
+      "acao": {
+        "operacao": "rotular",
+        "parametros": {
+          "recipiente": "frasco_1000",
+          "campos": {
+            "lote": "LAB-004",
+            "fabricacao": "data da prática",
+            "validade": "conforme o procedimento da bancada",
+            "responsavel": "turma",
+            "produto": "Desinfetante de superfícies com cloro ativo",
+            "concentracao": "0,1 % de cloro ativo (1.000 ppm)",
+            "advertencias": "Não misture com outros produtos, principalmente ácidos e amoníaco. Corrosivo. Manter fora do alcance de crianças.",
+            "primeiros_socorros": "Em caso de contato com os olhos, lavar com água corrente por 15 minutos e procurar atendimento"
+          },
+          "camposObrigatorios": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "advertencias",
+            "primeiros_socorros"
+          ]
+        },
+        "alvoUI": "painelRotulo"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "rotuloCompleto",
+          "recipiente": "frasco_1000",
+          "campos": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "advertencias",
+            "primeiros_socorros"
+          ],
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Rótulo incompleto: preencha todos os campos obrigatórios.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e8",
+      "titulo": "Descarte e limpeza",
+      "oQueEstaAcontecendo": "Você descarta os restos de cada recipiente no destino correto e lava a vidraria.",
+      "porQue": "O destino do resíduo depende da sua natureza; descarte correto é requisito de segurança e ambiental.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e7"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "bequer_1500",
+            "destino": "neutralizar_e_pia"
+          },
+          "alvoUI": "painelDescarte"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "residuoConforme",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Destino de descarte inadequado para este resíduo.",
+          "consequencia": "nao_conforme"
+        }
+      ]
+    }
+  ],
+  "resultadoEsperado": {
+    "produto": "AguaSanitaria_l",
+    "criterios": [
+      {
+        "descricao": "Água sanitária no frasco entre 39 e 41 g",
+        "grandeza": "massa",
+        "recipiente": "frasco_1000",
+        "especie": "AguaSanitaria_l",
+        "op": "entre",
+        "valor": [
+          39,
+          41
+        ]
+      },
+      {
+        "descricao": "Rótulo completo",
+        "grandeza": "rotuloCompleto",
+        "recipiente": "frasco_1000",
+        "campos": [
+          "produto",
+          "concentracao",
+          "lote",
+          "fabricacao",
+          "validade",
+          "responsavel",
+          "advertencias",
+          "primeiros_socorros"
+        ],
+        "op": "==",
+        "valor": true
+      }
+    ]
+  }
+}

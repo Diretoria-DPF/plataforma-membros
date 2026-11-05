@@ -37,7 +37,7 @@ const LAB = path.join(RAIZ, 'frontend', 'modulos', 'laboratorio');
 const SAIDA = path.join(LAB, 'data', 'lab-seed.js');
 
 export const SCHEMA_VERSION = 1;
-export const DATA_VERSION = '2026-11-05.1';
+export const DATA_VERSION = '2026-11-05.2';
 const DATA_CURADORIA = '2026-11-05';
 const DATA_PUBCHEM_CORRECAO = '2026-11-04';
 
@@ -77,6 +77,44 @@ const RESTRICAO_POR_PRODUTO = {
 };
 const CONTROLADO_BR = { C17H19NO3_s: 'A1', C14H14N2O3_s: 'B1' };
 
+// ---- O5: formulações de farmacotécnica, saneantes e cosméticos ----
+// Ingredientes dos processos (ids do motor) → id legado do seed (substância de estrutura definida).
+const INGREDIENTE_PARA_SUBSTANCIA = {
+  H2O_l: 'H2O_l', NaCl_s: 'NaCl_s', AcidoAscorbico_s: 'C6H8O6_s', AcidoCitrico_s: 'C6H8O7_s', Glicerina_l: 'C3H5(OH)3_l',
+  Sacarose_s: 'Sacarose_s', Lactose_s: 'Lactose_s', HidroxidoMg_s: 'HidroxidoMg_s', OxidoZinco_s: 'OxidoZinco_s',
+  Trietanolamina_l: 'Trietanolamina_l', MetilParabeno_s: 'MetilParabeno_s', Fenoxietanol_l: 'Fenoxietanol_l',
+};
+// Misturas e polímeros sem estrutura única (sem InChIKey): ficam em `excipientes`.
+const EXCIPIENTES_MISTURA = {
+  Etanol96_l: { nome_pt: 'Álcool etílico 96 °GL', natureza: 'mistura', funcao: 'ativo antisséptico / solvente' },
+  Carbomer_s: { nome_pt: 'Carbômero', natureza: 'polimero', funcao: 'gelificante' },
+  GomaXantana_s: { nome_pt: 'Goma xantana', natureza: 'polimero', funcao: 'agente suspensor' },
+  Vaselina_s: { nome_pt: 'Vaselina sólida', natureza: 'mistura', funcao: 'base oleosa' },
+  Lanolina_s: { nome_pt: 'Lanolina anidra', natureza: 'mistura', funcao: 'emoliente' },
+  LaurilEterSulfatoNa_l: { nome_pt: 'Lauril éter sulfato de sódio (solução a 27 %)', natureza: 'mistura', funcao: 'tensoativo' },
+  CocoamidopropilBetaina_l: { nome_pt: 'Cocoamidopropil betaína (solução a 30 %)', natureza: 'mistura', funcao: 'tensoativo anfótero' },
+  Polissorbato20_l: { nome_pt: 'Polissorbato 20', natureza: 'mistura', funcao: 'solubilizante' },
+  Fragrancia_l: { nome_pt: 'Fragrância', natureza: 'mistura', funcao: 'fragrância' },
+  AguaSanitaria_l: { nome_pt: 'Água sanitária (hipoclorito de sódio, 2,5 % de cloro ativo)', natureza: 'mistura', funcao: 'ativo desinfetante' },
+  HCl_01M_l: { nome_pt: 'Solução de ácido clorídrico 0,1 mol/L (amostra de controle de qualidade)', natureza: 'mistura', funcao: 'amostra de controle de qualidade' },
+};
+
+function carregarFormulacoes() {
+  const dir = path.join(LAB, 'data', 'processos');
+  const procs = fs.readdirSync(dir).filter((f) => f.endsWith('.json')).sort().map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')));
+  const formulacoes = procs.filter((p) => p.formulacao).map((p) => ({
+    id: p.id, nome_pt: p.titulo, forma: p.forma, setor: p.setor, via: p.via || null, base: p.formulacao.base,
+    itens: p.formulacao.itens.map((i) => ({ ingrediente: i.especie, funcao: i.funcao, quantidade: i.quantidade.valor, unidade: i.quantidade.unidade, qsp: Boolean(i.quantidade.qsp) })),
+    fontes_oficiais: p.fontesOficiais, cq: p.cq,
+    nivel_conteudo: 'completo', restricao: null, fonte: 'curadoria_laift', data: DATA_CURADORIA, confianca: 2, revisado_por: null,
+  }));
+  const usados = new Set(formulacoes.flatMap((f) => f.itens.map((i) => i.ingrediente)));
+  const excipientes = Object.keys(EXCIPIENTES_MISTURA).filter((id) => usados.has(id)).sort().map((id) => ({
+    id, ...EXCIPIENTES_MISTURA[id], nivel_conteudo: 'completo', restricao: null, fonte: 'curadoria_laift', data: DATA_CURADORIA, confianca: 2, revisado_por: null,
+  }));
+  return { formulacoes, excipientes };
+}
+
 // ---- Substâncias do catálogo da bancada que não tinham dado nenhum (identidade apenas) ----
 // Massa molar calculada da fórmula; densidade e pontos não são inventados.
 const COMPLEMENTOS = {
@@ -99,6 +137,14 @@ const COMPLEMENTOS = {
   CaCl2_aq: { label: 'Cloreto de Cálcio', formula: 'CaCl2', smiles: '[Ca+2].[Cl-].[Cl-]', pubchemQuery: 'Calcium chloride', iupac: 'calcium;dichloride' },
   BaCl2_aq: { label: 'Cloreto de Bário', formula: 'BaCl2', smiles: '[Ba+2].[Cl-].[Cl-]', pubchemQuery: 'Barium chloride', iupac: 'barium(2+);dichloride' },
   fenolftaleina: { label: 'Fenolftaleína (indicador)', formula: 'C20H14O4', smiles: 'O=C1OC(c2ccccc12)(c1ccc(O)cc1)c1ccc(O)cc1', pubchemQuery: 'Phenolphthalein', iupac: '3,3-bis(4-hydroxyphenyl)-2-benzofuran-1-one', phase: 's' },
+  // O5 (farmacotécnica): ativos e excipientes de estrutura definida usados nas formulações.
+  Sacarose_s: { label: 'Sacarose', formula: 'C12H22O11', smiles: 'OCC1OC(OC2(CO)OC(CO)C(O)C2O)C(O)C(O)C1O', pubchemQuery: 'Sucrose', iupac: 'sucrose' },
+  Lactose_s: { label: 'Lactose', formula: 'C12H22O11', smiles: 'OCC1OC(OC2C(O)C(O)C(O)OC2CO)C(O)C(O)C1O', pubchemQuery: 'Lactose', iupac: 'lactose' },
+  HidroxidoMg_s: { label: 'Hidróxido de Magnésio', formula: 'H2MgO2', smiles: '[Mg+2].[OH-].[OH-]', pubchemQuery: 'Magnesium hydroxide', iupac: 'magnesium;dihydroxide', phase: 's' },
+  OxidoZinco_s: { label: 'Óxido de Zinco', formula: 'OZn', smiles: '[Zn]=O', pubchemQuery: 'Zinc oxide', iupac: 'oxozinc', phase: 's' },
+  Trietanolamina_l: { label: 'Trietanolamina', formula: 'C6H15NO3', smiles: 'OCCN(CCO)CCO', pubchemQuery: 'Triethanolamine', iupac: '2-[bis(2-hydroxyethyl)amino]ethanol' },
+  MetilParabeno_s: { label: 'Metilparabeno', formula: 'C8H8O3', smiles: 'COC(=O)c1ccc(O)cc1', pubchemQuery: 'Methylparaben', iupac: 'methyl 4-hydroxybenzoate' },
+  Fenoxietanol_l: { label: 'Fenoxietanol', formula: 'C8H10O2', smiles: 'OCCOc1ccccc1', pubchemQuery: 'Phenoxyethanol', iupac: '2-phenoxyethanol' },
 };
 
 const lerTexto = (rel) => fs.readFileSync(path.join(LAB, rel), 'utf8');
@@ -288,7 +334,8 @@ export async function gerarSeed() {
     return p;
   });
 
-  const seed = { schema_version: SCHEMA_VERSION, data_version: DATA_VERSION, gerado_por: 'tools/lab/gerar-seed.mjs', fontes: FONTES, substancias, reacoes, processos };
+  const { formulacoes, excipientes } = carregarFormulacoes();
+  const seed = { schema_version: SCHEMA_VERSION, data_version: DATA_VERSION, gerado_por: 'tools/lab/gerar-seed.mjs', fontes: FONTES, substancias, reacoes, processos, excipientes, formulacoes, mapa_ingredientes: INGREDIENTE_PARA_SUBSTANCIA };
   return { seed, conflitos };
 }
 
@@ -302,7 +349,10 @@ export function serializar(seed) {
     `    "fontes": ${JSON.stringify(seed.fontes)},`,
     `    "substancias": ${linhas(seed.substancias).replace(/\n/g, '\n  ')},`,
     `    "reacoes": ${linhas(seed.reacoes).replace(/\n/g, '\n  ')},`,
-    `    "processos": ${linhas(seed.processos).replace(/\n/g, '\n  ')}`,
+    `    "processos": ${linhas(seed.processos).replace(/\n/g, '\n  ')},`,
+    `    "excipientes": ${linhas(seed.excipientes).replace(/\n/g, '\n  ')},`,
+    `    "formulacoes": ${linhas(seed.formulacoes).replace(/\n/g, '\n  ')},`,
+    `    "mapa_ingredientes": ${JSON.stringify(seed.mapa_ingredientes)}`,
   ].join('\n');
   return `/*
  * Plataforma de Membros LAIFT

@@ -20,11 +20,13 @@ const DATA = path.join(JS, '../data/processos');
 // Ordem de carregamento no navegador (o lab-quimica.js já existe na página).
 const ORDEM = [
   'lab-quimica.js', 'lab-motor-estado.js', 'lab-motor-fisica.js', 'lab-motor-relogio.js', 'lab-motor-calculos.js',
-  'lab-motor-especies.js', 'lab-motor-op-base.js', 'lab-motor-op-separacao.js', 'lab-motor-op-cq.js',
-  'lab-motor-operacoes.js', 'lab-motor-condicoes.js', 'lab-motor-caderno.js', 'lab-motor-processo.js', 'lab-motor-validador.js'
+  'lab-motor-especies.js', 'lab-motor-especies-farmaco.js', 'lab-motor-op-base.js', 'lab-motor-op-separacao.js', 'lab-motor-op-cq.js',
+  'lab-farma-calculos.js', 'lab-cq.js', 'lab-motor-op-farma.js', 'lab-motor-operacoes.js', 'lab-motor-condicoes.js', 'lab-motor-caderno.js', 'lab-motor-processo.js', 'lab-motor-validador.js'
 ];
 const MOTOR = ORDEM.filter((f) => f.startsWith('lab-motor-'));
-const RUNTIME = MOTOR.filter((f) => !['lab-motor-validador.js', 'lab-motor-especies.js'].includes(f));
+// O3: o motor-base mede 120 KB; as peças de farmacotécnica/CQ da O5 têm orçamento próprio em lab-farmacotecnica.test.mjs.
+const O5 = ['lab-motor-especies-farmaco.js', 'lab-farma-calculos.js', 'lab-cq.js', 'lab-motor-op-farma.js'];
+const RUNTIME = MOTOR.filter((f) => !['lab-motor-validador.js', 'lab-motor-especies.js'].concat(O5).includes(f));
 const TETO_RUNTIME_BYTES = 120 * 1024;
 const TETO_RUNTIME_GZIP = 40 * 1024;
 

@@ -44,6 +44,12 @@
     esterilizacao_parametros: { nivel: 'regra_de_jogo', texto: 'Estéril só se os parâmetros mínimos do método forem cumpridos (autoclave a 121 °C por 15 min ou membrana de 0,22 µm).' },
     rotulagem_campos: { nivel: 'regra_de_jogo', texto: 'Rótulo conforme se tiver os campos mínimos definidos no processo.' },
     descarte_classes: { nivel: 'regra_de_jogo', texto: 'Resíduo conforme se o destino escolhido aceitar todas as classes de resíduo presentes.' },
+    mistura_homogeneidade: { nivel: 'regra_de_jogo', texto: 'Mistura de pós e semissólidos: a diluição geométrica (ou levigação) dá homogeneidade; mistura simples com componente abaixo de 5 % da massa deixa variação alta entre unidades.' },
+    enchimento_capsula: { nivel: 'aproximacao_didatica', texto: 'Enchimento por volume: massa por cápsula limitada por volume da cápsula × densidade aparente do pó; variação entre unidades sorteada pela semente.' },
+    qsp_massa: { nivel: 'regra_de_jogo', texto: 'Completar a massa final (q.s.p.) com o veículo, na resolução da balança.' },
+    cq_curva_didatica: { nivel: 'regra_de_jogo', texto: 'pH, viscosidade, desintegração e dissolução do produto vêm de curvas didáticas por composição, sem medida real; os critérios de aceitação seguem o processo.' },
+    cq_estatistica: { nivel: 'aproximacao_didatica', texto: 'Critérios de peso médio, uniformidade (valor de aceitação) e dissolução em estágios aplicados como no método geral citado.' },
+    cq_microbiano_conceitual: { nivel: 'regra_de_jogo', texto: 'Contagem microbiana conceitual: produto aquoso sem conservante ou envase sem assepsia cresce; com conservante e boas práticas, fica abaixo do limite.' },
     medida_ph_instrumento: { nivel: 'regra_de_jogo', texto: 'pHmetro calibrado lê com ±0,02; sem calibrar, desvio sistemático; fita lê em passos de 0,5.' }
   });
 
