@@ -19,14 +19,12 @@
   var SVG_NS = 'http://www.w3.org/2000/svg';
   var WEEK_DAYS = 7;
 
-  /** Módulos: chave do servidor (byModule), identificador de learning.js, arte (viewBox 64) e descrição do hub. */
-  var MODULES = [
-    { id: 'farmaco', stat: 'farmacologia', name: 'Farmacologia', sub: 'Simulador · 240 questões', art: 'pill', desc: 'Mecanismos de ação, farmacocinética clínica, receptores e farmacodinâmica comparada.' },
-    { id: 'toxico', stat: 'toxicologia', name: 'Toxicologia', sub: 'Antídotos · 240 questões', art: 'flask', desc: 'Intoxicações agudas, defensivos agrícolas, animais peçonhentos e antídotos.' },
-    { id: 'clinica', stat: 'clinica', name: 'Clínica virtual', sub: 'Casos e plantão', art: 'heart', desc: 'Plantão multipaciente, acervo da liga, roteiro semiológico e preceptor com IA.' },
-    { id: 'lab', stat: 'laboratorio', name: 'Laboratório virtual', sub: 'Bancada e moléculas 3D', art: 'molecule', desc: 'Ensaios de bancada, sínteses, identificação de compostos e estúdio molecular 3D.' },
-    { id: 'anatomia', stat: 'anatomia', name: 'Anatomia e PK 3D', sub: 'Corpo humano e vias', art: 'body', desc: 'Corpo humano 3D, farmacocinética visual e vias metabólicas.' },
-  ];
+  /** Catálogo único (modulos/shared/catalogo.js; no Node, o próprio arquivo) + arte (viewBox 64) de cada módulo. */
+  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/shared/catalogo.js') : root.LaiftModules;
+  var ART_BY_ID = { farmaco: 'pill', toxico: 'flask', clinica: 'heart', lab: 'molecule', anatomia: 'body' };
+  var MODULES = CATALOG.MODULES.map(function (m) {
+    return { id: m.id, stat: m.stat, name: m.name, sub: m.sub, art: ART_BY_ID[m.id], desc: m.desc };
+  });
 
   var ART = {
     pill: [['rect', { x: 10, y: 22, width: 44, height: 20, rx: 10, transform: 'rotate(-35 32 32)' }], ['path', { d: 'M24 24l16 16' }]],
@@ -369,7 +367,7 @@
     var head = el(doc, 'h2', 'l2-section__title', 'Para reforçar');
     head.id = 'l2-weak-title';
     section.appendChild(head);
-    var list = el(doc, 'ul', 'l2-today');
+    var list = el(doc, 'ul', 'l2-weak');
     ctx.weak.forEach(function (item) {
       var li = el(doc, 'li');
       var row = button(doc, 'l2-row l2-row--simulado', '', function () { ctx.openModule(item.id); });

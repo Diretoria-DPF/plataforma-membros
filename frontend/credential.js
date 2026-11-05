@@ -67,8 +67,19 @@
     if (res && res.success && typeof res.qrPayload === 'string' && QR_V2_RE.test(res.qrPayload)) {
       return { payload: res.qrPayload, kind: 'v2' };
     }
-    if (identity && identity.email) return { payload: 'LAIFT:ID:' + identity.email, kind: 'legacy' };
+    // TRA-10: o provisório NÃO leva o e-mail no QR (a imagem pode ser salva e compartilhada). Leva um identificador
+    // opaco, sem relação com a conta; o fiscal lê o formato antigo (LAIFT:ID:<e-mail>) e este, e em nenhum registra.
+    if (identity) return { payload: 'LAIFT:ID:' + opaqueId(), kind: 'legacy' };
     return null;
+  }
+
+  /** Identificador aleatório de 12 caracteres hexadecimais (nada da conta). */
+  function opaqueId() {
+    var bytes = new Uint8Array(6);
+    var cryptoApi = root.crypto;
+    if (cryptoApi && typeof cryptoApi.getRandomValues === 'function') cryptoApi.getRandomValues(bytes);
+    else for (var i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+    return Array.prototype.map.call(bytes, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
   }
 
   // ---------------------------------------------------------------------------

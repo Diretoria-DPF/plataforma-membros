@@ -47,43 +47,16 @@
     }
   })();
 
-  // Nomes de exibição dos módulos como a Worker os agrega (learning_attempts.module).
-  var STATS_MODULE_LABELS = [
-    ['farmacologia', 'Farmacologia'],
-    ['toxicologia', 'Toxicologia'],
-    ['clinica', 'Clínica (casos)'],
-    ['laboratorio', 'Laboratório'],
-    ['anatomia', 'Anatomia & PK'],
-  ];
+  // Nomes, ícones, descrições e caminhos vêm do catálogo único (modulos/catalogo.js, TRA-13/16): o mesmo nome
+  // aparece no Aprender, na Início v3 e na Guia. STATS_MODULE_LABELS usa as chaves como a Worker as agrega
+  // (learning_attempts.module).
+  var CATALOG = window.LaiftModules;
+  var STATS_MODULE_LABELS = CATALOG.MODULES.map(function (m) { return [m.stat, m.name]; });
   var STAT_IDS = ['learn-stat-accuracy', 'learn-stat-answered', 'learn-stat-sims', 'learn-stat-cases', 'learn-stat-lab'];
 
-  var MODULES = [
-    {
-      id: 'farmaco', icon: '💊', title: 'Farmacologia Básica', path: 'modulos/quiz/index.html',
-      desc: 'Mecanismos de ação, farmacocinética clínica, receptores e farmacodinâmica comparada.',
-      tags: ['Simulador', '240 questões'],
-    },
-    {
-      id: 'toxico', icon: '🧪', title: 'Toxicologia Clínica & Forense', path: 'modulos/toxicologia/index.html',
-      desc: 'Intoxicações agudas, defensivos agrícolas, animais peçonhentos e antídotos.',
-      tags: ['OpenFDA', '240 questões'],
-    },
-    {
-      id: 'clinica', icon: '🩺', title: 'Clínica Médica Virtual (OSCE)', path: 'modulos/clinica/index.html',
-      desc: 'Plantão multipaciente, acervo da liga, roteiro semiológico e preceptor com IA.',
-      tags: ['Preceptor IA', 'Acervo & plantão'],
-    },
-    {
-      id: 'lab', icon: '🔬', title: 'Laboratório Virtual', path: 'modulos/laboratorio/index.html',
-      desc: 'Ensaios de bancada, sínteses, identificação de compostos e estúdio molecular 3D.',
-      tags: ['Bancada', 'Estúdio 3D'],
-    },
-    {
-      id: 'anatomia', icon: '🧬', title: 'Anatomia & Farmacocinética 3D', path: 'modulos/anatomia-3d/index.html',
-      desc: 'Corpo humano 3D, farmacocinética visual e vias metabólicas.',
-      tags: ['Simulação PK', 'Atlas 3D'],
-    },
-  ];
+  var MODULES = CATALOG.MODULES.map(function (m) {
+    return { id: m.id, icon: m.icon, title: m.name, path: m.path, desc: m.desc, tags: m.tags.slice() };
+  });
 
   var FISCAL_PATH = 'modulos/fiscal/index.html';
 
@@ -300,12 +273,97 @@
     return frame;
   }
 
+  // ---------------------------------------------------------------------------
+  // Carregando e erro do módulo (TRA-08): enquanto o iframe não carrega, um esqueleto ocupa o lugar; se der erro,
+  // demorar demais ou o navegador mostrar a própria página de erro (offline), aparece a mensagem do app com
+  // "Tentar de novo". O estado mora num cartão por cima do iframe, dentro de #learn-frames.
+  // ---------------------------------------------------------------------------
+  var FRAME_TIMEOUT_MS = 12000;
+  var frameStates = {};
+
+  /** Pasta do módulo (ex.: /modulos/quiz/): o iframe carregou "o módulo" se a página dele está nessa pasta. */
+  function moduleDir(mod) {
+    try { return new URL(mod.path, window.location.href).pathname.replace(/[^/]*$/, ''); } catch (e) { return ''; }
+  }
+
+  function frameShowsModule(frame, mod) {
+    try {
+      var loc = frame.contentWindow && frame.contentWindow.location;
+      if (!loc || loc.protocol === 'chrome-error:') return false;
+      return loc.pathname.indexOf(moduleDir(mod)) === 0;
+    } catch (e) { return false; } // página de erro do navegador (outra origem) ou sem acesso
+  }
+
+  function syncFrameStates() {
+    Object.keys(frameStates).forEach(function (key) {
+      var st = frameStates[key];
+      st.overlay.classList.toggle('hidden', key !== activeModuleId || st.status === 'ready');
+    });
+  }
+
+  function renderFrameState(st, status, message) {
+    var A = app();
+    st.status = status;
+    A.clearEl(st.overlay);
+    if (status === 'loading') {
+      st.overlay.setAttribute('aria-busy', 'true');
+      st.overlay.appendChild(A.text('p', 'Carregando o módulo…', { className: 'learn-frame-state-text' }));
+      if (window.LaiftStates) st.overlay.appendChild(window.LaiftStates.createSkeleton(document, 3));
+    } else if (status === 'error') {
+      st.overlay.removeAttribute('aria-busy');
+      st.overlay.appendChild(A.text('p', message, { className: 'learn-frame-state-text' }));
+      st.overlay.appendChild(A.h('button', { type: 'button', className: 'learn-frame-retry', onclick: st.retry }, ['Tentar de novo']));
+    } else {
+      st.overlay.removeAttribute('aria-busy');
+    }
+    syncFrameStates();
+  }
+
+  function frameErrorMessage() {
+    return navigator.onLine === false
+      ? 'Sem conexão. Conecte-se à internet e tente de novo.'
+      : 'Não foi possível abrir este módulo agora. Tente de novo.';
+  }
+
+  function trackModuleFrame(id, mod, frame) {
+    var st = { status: 'loading', timer: null, overlay: app().h('div', { className: 'learn-frame-state hidden', role: 'status' }, []) };
+    function arm() {
+      window.clearTimeout(st.timer);
+      st.timer = window.setTimeout(function () { renderFrameState(st, 'error', frameErrorMessage()); }, FRAME_TIMEOUT_MS);
+    }
+    st.retry = function () {
+      renderFrameState(st, 'loading');
+      arm();
+      frame.setAttribute('src', frame.getAttribute('src'));
+    };
+    frame.addEventListener('load', function () {
+      window.clearTimeout(st.timer);
+      if (frameShowsModule(frame, mod)) renderFrameState(st, 'ready');
+      else renderFrameState(st, 'error', frameErrorMessage());
+    });
+    frame.addEventListener('error', function () {
+      window.clearTimeout(st.timer);
+      renderFrameState(st, 'error', frameErrorMessage());
+    });
+    frameStates[id] = st;
+    $('learn-frames').appendChild(st.overlay);
+    renderFrameState(st, 'loading');
+    arm();
+  }
+
+  /** Cria o iframe de um módulo do hub, já com o estado de carregamento/erro. */
+  function createModuleFrame(mod, path) {
+    var frame = createFrame($('learn-frames'), path, mod.title);
+    trackModuleFrame(mod.id, mod, frame);
+    return frame;
+  }
+
   /** Link compartilhado (#atlas=<sid>): abre o Atlas já na estrutura (Onda 3.5, C.2). */
   function openAtlasLink(sid) {
     var mod = findModule('anatomia');
     if (!mod || typeof sid !== 'string' || !/^[A-Za-z0-9:_.-]{1,120}$/.test(sid)) return false;
     if (!frames.anatomia) {
-      frames.anatomia = createFrame($('learn-frames'), mod.path + '#sid=' + sid, mod.title);
+      frames.anatomia = createModuleFrame(mod, mod.path + '#sid=' + sid);
     } else {
       try { frames.anatomia.contentWindow.location.hash = 'sid=' + sid; } catch (e) { /* outro domínio: abre sem a estrutura */ }
     }
@@ -318,13 +376,29 @@
     document.dispatchEvent(new CustomEvent('laift:modulechange', { detail: { module: moduleId } }));
   }
 
-  function openModule(id) {
+  /**
+   * A Guia (botão flutuante) sai de cima dos controles do módulo (TRA-05/06/07): com um módulo aberto, ela fica na
+   * linha da barra "← Voltar", à direita (ux.css, html[data-learn-module]). Aqui só se mede onde a barra está.
+   */
+  function placeAssistantForModule(id) {
+    var root = document.documentElement;
+    if (!id) { root.removeAttribute('data-learn-module'); root.style.removeProperty('--lia-module-top'); return; }
+    root.setAttribute('data-learn-module', id);
+    var bar = document.querySelector('#learn-viewer .learn-viewer-bar');
+    var top = bar ? Math.max(0, Math.round(bar.getBoundingClientRect().top)) : 0;
+    root.style.setProperty('--lia-module-top', top + 'px');
+  }
+
+  /** Abre o módulo. opts.fromHistory: veio do botão Voltar/Avançar do navegador (não empilha de novo). */
+  function openModule(id, opts) {
     var mod = findModule(id);
     if (!mod) return;
     var previousModuleId = activeModuleId;
     activeModuleId = id;
     openerCard = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.learn-card, [data-l2-opener]') : null;
-    if (!frames[id]) frames[id] = createFrame($('learn-frames'), mod.path, mod.title);
+    if (!frames[id]) frames[id] = createModuleFrame(mod, mod.path);
+    // TRA-03: o módulo aberto entra na pilha do histórico; o Voltar do navegador/Android o fecha.
+    if (!(opts && opts.fromHistory === true) && window.LaiftPanelHistory) window.LaiftPanelHistory.push('panel-learn', id);
     Object.keys(frames).forEach(function (key) {
       frames[key].classList.toggle('hidden', key !== id);
       // Modo imersivo (Onda 1, WP08 — docs/ATLAS_UX_SPEC.md §0/§1): só o
@@ -341,7 +415,9 @@
     $('learn-viewer-title').textContent = mod.icon + ' ' + mod.title;
     $('learn-hub').classList.add('hidden');
     $('learn-viewer').classList.remove('hidden');
+    syncFrameStates();
     window.scrollTo(0, 0);
+    placeAssistantForModule(id);
     // Teclado/leitor de tela: o foco vai para "← Módulos" (antes ficava num
     // cartão que acabou de sumir, e o próximo Tab ia para a barra inferior).
     $('learn-back').focus({ preventScroll: true });
@@ -357,7 +433,7 @@
     var mod = findModule('farmaco');
     if (!mod) return false;
     if (!frames.farmaco) {
-      frames.farmaco = createFrame($('learn-frames'), mod.path + '#primeiro-quiz', mod.title);
+      frames.farmaco = createModuleFrame(mod, mod.path + '#primeiro-quiz');
     } else {
       try { frames.farmaco.contentWindow.LaiftQuiz.quickStart(); } catch (e) { /* ainda carregando ou sem acesso: abre o módulo como está */ }
     }
@@ -365,9 +441,16 @@
     return true;
   }
 
-  /** Volta ao hub. Também chamado pelos módulos via LaiftIdentity.backToHub(). */
-  function closeModule() {
+  /**
+   * Volta ao hub. Também chamado pelos módulos via LaiftIdentity.backToHub(). Sem opts.fromHistory, desfaz também a
+   * entrada do módulo na pilha do histórico (history.back()), para o Voltar do navegador não reabrir o módulo.
+   */
+  function closeModule(opts) {
     var wasOpen = activeModuleId !== null;
+    var popEntry = wasOpen && !(opts && opts.fromHistory === true) && window.LaiftPanelHistory
+      && window.LaiftPanelHistory.currentModule() === activeModuleId;
+    placeAssistantForModule('');
+    syncFrameStatesClosed();
     if (document.fullscreenElement) document.exitFullscreen().catch(function () {});
     if (activeModuleId && frames[activeModuleId]) frames[activeModuleId].classList.remove('learn-frame-immersive');
     activeModuleId = null;
@@ -379,7 +462,25 @@
     openerCard = null;
     loadHub();
     if (wasOpen) emitModuleChange('');
+    if (popEntry) { try { history.back(); } catch (e) { /* sem histórico: o hub já está à vista */ } }
   }
+
+  function syncFrameStatesClosed() {
+    Object.keys(frameStates).forEach(function (key) { frameStates[key].overlay.classList.add('hidden'); });
+  }
+
+  /** Módulo aberto agora ('' se o hub está à vista). */
+  function activeModule() { return activeModuleId || ''; }
+
+  // Esc volta ao hub (coerente com "← Voltar"), a menos que haja diálogo aberto ou a tecla já tenha sido usada.
+  document.addEventListener('keydown', function (evt) {
+    if (evt.key !== 'Escape' || evt.defaultPrevented || !activeModuleId) return;
+    var panel = document.getElementById('panel-learn');
+    if (!panel || panel.classList.contains('hidden')) return;
+    if (document.querySelector('.modal-overlay:not(.hidden), dialog[open], .lia-panel:not(.hidden)')) return;
+    evt.preventDefault();
+    closeModule();
+  });
 
   function toggleFullscreen() {
     var frame = activeModuleId && frames[activeModuleId];
@@ -441,6 +542,9 @@
     frames = {};
     if (fiscalFrame) { fiscalFrame.remove(); fiscalFrame = null; }
     activeModuleId = null;
+    Object.keys(frameStates).forEach(function (key) { window.clearTimeout(frameStates[key].timer); frameStates[key].overlay.remove(); });
+    frameStates = {};
+    placeAssistantForModule('');
     statsRequestId++;
     // A busca em voo (se houver) será descartada: não pode deixar aria-busy preso.
     setStatsBusy(document.querySelector('#learn-hub .learn-stats'), false);
@@ -466,6 +570,7 @@
     openFirstQuiz: openFirstQuiz,
     openAtlasLink: openAtlasLink,
     closeModule: closeModule,
+    activeModule: activeModule,
     onProfileReady: onProfileReady,
     reset: reset,
   };

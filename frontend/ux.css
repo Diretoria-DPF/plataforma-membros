@@ -392,6 +392,19 @@ summary:focus-visible,
   .lia-head { cursor: grab; touch-action: none; }
   :root[data-lia-panel] .lia-panel, :root[data-lia-panel] .lia-launcher.lia-in-app ~ .lia-panel { left: var(--lia-px); top: var(--lia-py); right: auto; bottom: auto; }
 }
+/* Com um módulo aberto (learning.js põe html[data-learn-module] e --lia-module-top = topo da barra "← Voltar"), a
+   bolha da Guia fica na linha dessa barra, à direita, e o painel abre logo abaixo dela: nada cobre a aba "Preceptor"
+   do Laboratório, a ficha do Atlas nem o fim do quiz (TRA-05/06/07). Se a pessoa arrastou a Guia, vale a escolha dela. */
+:root[data-learn-module]:not([data-lia-moved]) .lia-launcher.lia-in-app {
+  top: var(--lia-module-top, 8px); right: 12px; bottom: auto; left: auto;
+}
+:root[data-learn-module] .lia-launcher-label { display: none; }
+:root[data-learn-module] .lia-launcher { padding: 0; }
+:root[data-learn-module] .learn-viewer-bar { padding-right: 64px; }
+:root[data-learn-module]:not([data-lia-panel]) .lia-launcher.lia-in-app ~ .lia-panel {
+  top: calc(var(--lia-module-top, 8px) + 56px); bottom: auto;
+  height: min(560px, calc(100dvh - var(--lia-module-top, 8px) - 72px));
+}
 .lia-reset-pos { display: inline; width: auto; min-height: 0; padding: 0; font-size: inherit; text-decoration: underline; }
 .lia-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface-alt); }
 .lia-title { display: grid; flex: 1; min-width: 0; }

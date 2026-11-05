@@ -21,14 +21,18 @@
   var DESEMP_ID = 'profile-desempenho';
   var DESEMP_HOST_ID = 'profile-desempenho-host';
 
-  /** Assuntos da faixa: chave do servidor (byModule), cores do gradiente e arte (viewBox 64). */
-  var SUBJECTS = [
-    { id: 'farmaco', stat: 'farmacologia', name: 'Farmacologia', sub: 'Simulador · 240 questões', c1: '#0f6f62', c2: '#1aa38f', art: 'pill' },
-    { id: 'toxico', stat: 'toxicologia', name: 'Toxicologia', sub: 'Antídotos · 240 questões', c1: '#7a2e8c', c2: '#b04fc4', art: 'flask' },
-    { id: 'clinica', stat: 'clinica', name: 'Clínica virtual', sub: 'Casos e plantão', c1: '#b3262e', c2: '#e0585f', art: 'heart' },
-    { id: 'lab', stat: 'laboratorio', name: 'Laboratório virtual', sub: 'Bancada e moléculas 3D', c1: '#1f5fa8', c2: '#4f93dd', art: 'molecule' },
-    { id: 'anatomia', stat: 'anatomia', name: 'Anatomia e PK 3D', sub: 'Corpo humano e vias', c1: '#0b6e4f', c2: '#3bbd8b', art: 'body' },
-  ];
+  /** Assuntos da faixa: nome e legenda do catálogo único (modulos/shared/catalogo.js; no Node, o próprio arquivo) + cores e arte. */
+  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/shared/catalogo.js') : root.LaiftModules;
+  var LOOK = {
+    farmaco: { c1: '#0f6f62', c2: '#1aa38f', art: 'pill' },
+    toxico: { c1: '#7a2e8c', c2: '#b04fc4', art: 'flask' },
+    clinica: { c1: '#b3262e', c2: '#e0585f', art: 'heart' },
+    lab: { c1: '#1f5fa8', c2: '#4f93dd', art: 'molecule' },
+    anatomia: { c1: '#0b6e4f', c2: '#3bbd8b', art: 'body' },
+  };
+  var SUBJECTS = CATALOG.MODULES.map(function (m) {
+    return { id: m.id, stat: m.stat, name: m.name, sub: m.sub, c1: LOOK[m.id].c1, c2: LOOK[m.id].c2, art: LOOK[m.id].art };
+  });
 
   /** Arte dos assuntos: [tag, atributos]. */
   var ART = {
