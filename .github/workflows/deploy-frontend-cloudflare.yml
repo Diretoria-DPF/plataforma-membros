@@ -64,7 +64,7 @@ jobs:
         working-directory: frontend
         run: |
           npm ci || npm install
-          npm install --no-save playwright
+          npm install --no-save playwright@1.64.1
           npx playwright install --with-deps chromium
 
       - name: Gera o build
