@@ -4,12 +4,8 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * LAIFT — tela da trilha e bancada do motor para a Missão 1 (O4). Baixado sob demanda (chave labMotor).
- *
- * Enquanto a tela está aberta, a bancada clássica fica oculta (classe `lab-motor-ativo` no <html>); ao sair, ela
- * volta como estava. Todo texto entra por textContent (LaiftDom.h); ouvintes por addEventListener; nada de HTML
- * montado a partir de dado. O "!" fica sobre o controle correto só no nível Completa da Ajuda no processo.
- * Eventos de competência saem como CustomEvent('lab:competencia') no document (ponto de extensão da O8).
+ * LAIFT — trilha e bancada do motor (O4), sob demanda (chave labMotor). Aberta, oculta a bancada clássica
+ * (html.lab-motor-ativo). Texto só por textContent (LaiftDom.h). Emite CustomEvent('lab:competencia') (O8).
  */
 (function (raiz) {
   'use strict';
@@ -18,7 +14,8 @@
   const LT = raiz.LabTutor;
   const C = raiz.LabTutorControles;
   const Tr = raiz.LabTrilha;
-  const ESP = raiz.LabMotorEspecies;
+  // Espécies da O5 (farmacotécnica) incluem as da base; sem elas, fica a base.
+  const ESP = raiz.LabMotorEspeciesFarmaco || raiz.LabMotorEspecies;
   const ctx = { especies: ESP.ESPECIES, rf: ESP.RF_ILUSTRATIVO };
 
   let tela = null;
@@ -32,6 +29,10 @@
   function armazenamento() { try { return raiz.localStorage; } catch (e) { return null; } }
   function botao(id, texto, fn, classe) { return h('button', { type: 'button', id, className: classe || 'btn btn-clear', text: texto, onClick: fn }); }
   function slug(t) { return String(t).replace(/[^A-Za-z0-9]/g, '-'); }
+  function cabecalho(t, id, titulo, comTrilha) {
+    t.appendChild(h('div', { className: 'lmt-cabecalho' }, [h('h2', { id, text: titulo }),
+      h('div', { className: 'lmt-acoes' }, [comTrilha ? botao('tmTrilha', 'Trilha', () => abrirTrilha()) : null, botao(comTrilha ? 'tmSair' : 'ttVoltarBancada', 'Voltar à bancada', sair)])]));
+  }
 
   function preferencia(missao) {
     const G = raiz.LabGuia;
@@ -39,7 +40,7 @@
     return G.lerPreferencia(armazenamento());
   }
 
-  // ---------------------------------------------------------------- tela e saída
+  // tela e saída
   function montarTela() {
     if (!tela || !doc.body.contains(tela)) {
       tela = h('section', { id: 'labMotorTela', className: 'lab-motor-tela', 'aria-label': 'Missões no motor do Laboratório' });
@@ -66,13 +67,13 @@
 
   function focar(id) { const n = doc.getElementById(id); if (n) { n.tabIndex = -1; n.focus(); } }
 
-  function emitir(lista) {
+  function emitir(lista, nome) {
     for (const ev of lista) {
-      try { doc.dispatchEvent(new raiz.CustomEvent('lab:competencia', { detail: ev })); } catch (e) { /* sem CustomEvent */ }
+      try { doc.dispatchEvent(new raiz.CustomEvent(nome || 'lab:competencia', { detail: ev })); } catch (e) { /* sem CustomEvent */ }
     }
   }
 
-  // ---------------------------------------------------------------- trilha
+  // trilha
   const ROTULO_BOTAO = { disponivel: 'Jogar', concluida: 'Jogar de novo' };
 
   function abrirTrilha(_janela, d) {
@@ -80,10 +81,7 @@
     const t = montarTela();
     const sit = Tr.situacao(dados.trilha, Tr.lerProgresso(armazenamento()));
     const porId = Object.fromEntries(sit.map((s) => [s.missao.id, s]));
-    t.appendChild(h('div', { className: 'lmt-cabecalho' }, [
-      h('h2', { id: 'ttTitulo', text: dados.trilha.titulo }),
-      botao('ttVoltarBancada', 'Voltar à bancada', sair)
-    ]));
+    cabecalho(t, 'ttTitulo', dados.trilha.titulo, false);
     t.appendChild(h('p', { className: 'lmt-nota', text: 'Cada nível treina competências do curso. O progresso fica guardado neste aparelho.' }));
     for (const g of Tr.porNivel(dados.trilha)) {
       t.appendChild(h('h3', { className: 'lmt-nivel', text: `Nível ${g.nivel}: ${g.nome}` }));
@@ -103,16 +101,23 @@
     ]);
   }
 
-  // ---------------------------------------------------------------- missão no motor
-  function jogar(missao) {
-    const processo = dados.processos[missao.processoRef];
+  // missão no motor
+  /** Baixa o processo da missão (só agora) e chama seguir(processo); mostra a falha sem quebrar a tela. */
+  function comProcesso(missao, seguir) {
+    dados.buscarProcesso(missao.processoRef).then(seguir, (e) => {
+      if (raiz.console) raiz.console.warn('[Laboratório] missão indisponível:', e.message);
+      const c = tela && Array.from(tela.querySelectorAll('.lmt-cartao')).find((n) => n.dataset.missao === missao.id);
+      if (c) c.appendChild(h('p', { className: 'lmt-fora', role: 'alert', text: 'Não foi possível abrir esta missão agora. Tente de novo.' }));
+    });
+  }
+
+  function jogar(missao) { comProcesso(missao, (processo) => jogarCom(missao, processo)); }
+
+  function jogarCom(missao, processo) {
     const semente = (Date.now() % 2147483646) + 1;
     jogo = { missao, processo, tutor: LT.criar(processo, missao, ctx, { semente, ajuda: preferencia(missao) }), etapaId: null };
     const t = montarTela();
-    t.appendChild(h('div', { className: 'lmt-cabecalho' }, [
-      h('h2', { id: 'tmTitulo', text: missao.titulo }),
-      h('div', { className: 'lmt-acoes' }, [botao('tmTrilha', 'Trilha', () => abrirTrilha()), botao('tmSair', 'Voltar à bancada', sair)])
-    ]));
+    cabecalho(t, 'tmTitulo', missao.titulo, true);
     t.appendChild(h('details', { className: 'lmt-objetivos-missao' }, [h('summary', { text: 'Objetivos da missão' }), h('ul', {}, missao.objetivos.map((o) => h('li', { text: o })))]));
     t.appendChild(h('div', { className: 'lmt-grade' }, [zonaTutor(), zonaControles(processo), zonaEstado()]));
     desenhar(true);
@@ -164,8 +169,7 @@
 
   function zonaControles(processo) {
     const grupos = [];
-    for (const alvo of C.alvosDoProcesso(processo)) {
-      const def = C.controle(alvo, ctx);
+    for (const { alvo, def } of C.controlesDoProcesso(processo, ctx)) {
       if (!def) continue;
       let g = grupos.find((x) => x.nome === def.grupo);
       if (!g) { g = { nome: def.grupo, itens: [] }; grupos.push(g); }
@@ -285,7 +289,7 @@
     }
   }
 
-  // ---------------------------------------------------------------- "!" sobre o controle correto
+  // "!" sobre o controle correto
   function limparMarca() {
     if (alvoEl) { alvoEl.classList.remove('lab-alvo'); alvoEl = null; }
     if (marca) marca.hidden = true;
@@ -317,13 +321,13 @@
     quadro = raiz.requestAnimationFrame(() => { quadro = 0; posicionarMarca(); });
   }
 
-  // ---------------------------------------------------------------- resultado
+  // resultado
   function mostrarResultado() {
     const { missao, processo, tutor } = jogo;
     const res = LT.resultado(tutor, processo, ctx, missao);
     const p = Tr.registrarConclusao(Tr.lerProgresso(armazenamento()), missao.id, { conforme: res.conforme, desvios: res.desvios.length });
     Tr.salvarProgresso(armazenamento(), p);
-    try { doc.dispatchEvent(new raiz.CustomEvent('lab:missao-concluida', { detail: { missao: missao.id, conforme: res.conforme, desvios: res.desvios.length } })); } catch (e) { /* sem CustomEvent */ }
+    emitir([{ missao: missao.id, conforme: res.conforme, desvios: res.desvios.length }], 'lab:missao-concluida');
     const t = montarTela();
     t.appendChild(h('div', { className: 'lmt-cabecalho' }, [h('h2', { id: 'tmResultadoTitulo', text: `Resultado: ${missao.titulo}` })]));
     t.appendChild(h('p', { id: 'tmResumo', className: res.conforme ? 'lmt-ok' : 'lmt-fora', text: res.resumo }));
@@ -341,15 +345,13 @@
     focar('tmResultadoTitulo');
   }
 
-  // ---------------------------------------------------------------- investigação (nível 8)
-  function investigar(missao) {
-    const processo = dados.processos[missao.processoRef];
+  // investigação (nível 8)
+  function investigar(missao) { comProcesso(missao, (processo) => investigarCom(missao, processo)); }
+
+  function investigarCom(missao, processo) {
     const inv = LT.montarInvestigacao(missao, processo, ctx);
     const t = montarTela();
-    t.appendChild(h('div', { className: 'lmt-cabecalho' }, [
-      h('h2', { id: 'tiTitulo', text: missao.titulo }),
-      h('div', { className: 'lmt-acoes' }, [botao('tmTrilha', 'Trilha', () => abrirTrilha()), botao('tmSair', 'Voltar à bancada', sair)])
-    ]));
+    cabecalho(t, 'tiTitulo', missao.titulo, true);
     t.appendChild(h('p', { className: 'lmt-instrucao', text: inv.enunciado }));
     t.appendChild(h('h3', { text: 'Caderno do lote' }));
     t.appendChild(h('ol', { id: 'tiRegistros', className: 'lmt-registros' }, inv.registros.map((r) => h('li', { text: r }))));

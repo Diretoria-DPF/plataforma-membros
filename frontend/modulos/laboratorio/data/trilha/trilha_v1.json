@@ -24,7 +24,7 @@
     "3": "Precipitação e ensaio-limite",
     "4": "Síntese didática",
     "5": "Extração",
-    "6": "Formas farmacêuticas",
+    "6": "Formas farmacêuticas e produtos",
     "7": "Teor e uso parenteral",
     "8": "Investigação de desvio"
   },
@@ -64,8 +64,34 @@
       "titulo": "Diluição de solução-estoque",
       "tipo": "processo",
       "processoRef": null,
-      "objetivos": ["Aplicar C1V1 = C2V2", "Escolher pipeta ou proveta pela incerteza da medida"],
-      "competencias": ["calculo", "volumetria"]
+      "objetivos": [
+        "Aplicar C1V1 = C2V2",
+        "Escolher pipeta ou proveta pela incerteza da medida"
+      ],
+      "competencias": [
+        "calculo",
+        "volumetria"
+      ]
+    },
+    {
+      "id": "m_desinfetante",
+      "nivel": 1,
+      "titulo": "Desinfetante de superfícies a 0,1 % de cloro ativo",
+      "tipo": "processo",
+      "processoRef": "proc_desinfetante_cloro_v1",
+      "ajudaPadrao": "dica",
+      "objetivos": [
+        "Diluir um estoque por balanço de massa (C1·m1 = C2·m2)",
+        "Pesar a água antes do concentrado",
+        "Conferir o cloro ativo"
+      ],
+      "competencias": [
+        "calculo",
+        "farmacotecnica"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ]
     },
     {
       "id": "m_ph_tampao",
@@ -73,8 +99,15 @@
       "titulo": "pH e tampão acetato",
       "tipo": "processo",
       "processoRef": null,
-      "objetivos": ["Diferenciar ácido forte e ácido fraco", "Relacionar pKa e capacidade tamponante", "Calibrar o pHmetro"],
-      "competencias": ["cq", "calculo"]
+      "objetivos": [
+        "Diferenciar ácido forte e ácido fraco",
+        "Relacionar pKa e capacidade tamponante",
+        "Calibrar o pHmetro"
+      ],
+      "competencias": [
+        "cq",
+        "calculo"
+      ]
     },
     {
       "id": "m_padronizacao_naoh",
@@ -82,8 +115,34 @@
       "titulo": "Padronização de hidróxido de sódio com biftalato de potássio",
       "tipo": "processo",
       "processoRef": null,
-      "objetivos": ["Conduzir uma titulação com indicador", "Calcular o fator de correção"],
-      "competencias": ["titulacao", "calculo"]
+      "objetivos": [
+        "Conduzir uma titulação com indicador",
+        "Calcular o fator de correção"
+      ],
+      "competencias": [
+        "titulacao",
+        "calculo"
+      ]
+    },
+    {
+      "id": "m_titulacao_hcl",
+      "nivel": 2,
+      "titulo": "Controle de qualidade: teor de uma solução de HCl 0,1 mol/L por titulação",
+      "tipo": "processo",
+      "processoRef": "proc_cq_titulacao_hcl_v1",
+      "ajudaPadrao": "dica",
+      "objetivos": [
+        "Calcular o volume esperado de titulante",
+        "Titular com indicador e reconhecer o ponto final",
+        "Calcular o teor e comparar com o critério"
+      ],
+      "competencias": [
+        "titulacao",
+        "cq"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ]
     },
     {
       "id": "m_precipitacao",
@@ -91,8 +150,15 @@
       "titulo": "Precipitação e filtração",
       "tipo": "processo",
       "processoRef": null,
-      "objetivos": ["Usar o produto de solubilidade para prever a precipitação", "Filtrar e secar o sólido", "Descartar resíduo de metal pesado no destino próprio"],
-      "competencias": ["separacao", "residuos"]
+      "objetivos": [
+        "Usar o produto de solubilidade para prever a precipitação",
+        "Filtrar e secar o sólido",
+        "Descartar resíduo de metal pesado no destino próprio"
+      ],
+      "competencias": [
+        "separacao",
+        "residuos"
+      ]
     },
     {
       "id": "m_limite_cloretos",
@@ -100,8 +166,12 @@
       "titulo": "Ensaio-limite de cloretos",
       "tipo": "processo",
       "processoRef": null,
-      "objetivos": ["Entender o ensaio farmacopeico por comparação com padrão"],
-      "competencias": ["cq"]
+      "objetivos": [
+        "Entender o ensaio farmacopeico por comparação com padrão"
+      ],
+      "competencias": [
+        "cq"
+      ]
     },
     {
       "id": "m_sintese_aas",
@@ -109,8 +179,16 @@
       "titulo": "Síntese do ácido acetilsalicílico",
       "tipo": "processo",
       "processoRef": null,
-      "objetivos": ["Identificar o reagente limitante", "Cristalizar e recristalizar", "Calcular o rendimento e conferir o ponto de fusão"],
-      "competencias": ["sintese", "separacao", "cq"]
+      "objetivos": [
+        "Identificar o reagente limitante",
+        "Cristalizar e recristalizar",
+        "Calcular o rendimento e conferir o ponto de fusão"
+      ],
+      "competencias": [
+        "sintese",
+        "separacao",
+        "cq"
+      ]
     },
     {
       "id": "m_paracetamol_ccd",
@@ -118,8 +196,14 @@
       "titulo": "Síntese do paracetamol e cromatografia em camada delgada",
       "tipo": "processo",
       "processoRef": null,
-      "objetivos": ["Entender a acetilação seletiva", "Calcular o Rf e avaliar a pureza"],
-      "competencias": ["sintese", "cq"]
+      "objetivos": [
+        "Entender a acetilação seletiva",
+        "Calcular o Rf e avaliar a pureza"
+      ],
+      "competencias": [
+        "sintese",
+        "cq"
+      ]
     },
     {
       "id": "m_extracao",
@@ -127,35 +211,151 @@
       "titulo": "Extração ácido-base",
       "tipo": "processo",
       "processoRef": null,
-      "objetivos": ["Relacionar partição e pH", "Usar o funil de separação", "Secar a fase orgânica"],
-      "competencias": ["separacao"]
+      "objetivos": [
+        "Relacionar partição e pH",
+        "Usar o funil de separação",
+        "Secar a fase orgânica"
+      ],
+      "competencias": [
+        "separacao"
+      ]
     },
     {
       "id": "m_xarope",
       "nivel": 6,
-      "titulo": "Xarope simples",
+      "titulo": "Xarope simples a 85 % (p/v)",
       "tipo": "processo",
-      "processoRef": null,
-      "objetivos": ["Relacionar solubilidade e temperatura", "Envasar e rotular uma preparação magistral"],
-      "competencias": ["farmacotecnica", "rotulagem"]
+      "processoRef": "proc_xarope_simples_v1",
+      "objetivos": [
+        "Calcular a massa de sacarose para uma concentração em % p/v",
+        "Entender por que soluções concentradas pedem menos água do que o volume final",
+        "Dissolver com calor brando sem caramelizar"
+      ],
+      "competencias": [
+        "farmacotecnica",
+        "rotulagem"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ],
+      "ajudaPadrao": "dica"
     },
     {
       "id": "m_suspensao",
       "nivel": 6,
-      "titulo": "Suspensão oral",
+      "titulo": "Suspensão oral de hidróxido de magnésio a 8 % (p/v)",
       "tipo": "processo",
-      "processoRef": null,
-      "objetivos": ["Levigar o pó", "Escolher o agente suspensor", "Orientar o uso com a frase agite antes de usar"],
-      "competencias": ["farmacotecnica"]
+      "processoRef": "proc_suspensao_mgoh2_v1",
+      "objetivos": [
+        "Preparar uma suspensão com ativo insolúvel",
+        "Usar levigação e agente suspensor",
+        "Dissolver o conservante a quente e esfriar antes de juntar"
+      ],
+      "competencias": [
+        "farmacotecnica"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ],
+      "ajudaPadrao": "dica"
     },
     {
       "id": "m_pomada",
       "nivel": 6,
-      "titulo": "Pomada magistral",
+      "titulo": "Pomada de óxido de zinco a 10 % (p/p)",
       "tipo": "processo",
-      "processoRef": null,
-      "objetivos": ["Comparar base oleosa e base hidrófila", "Incorporar o ativo com homogeneidade"],
-      "competencias": ["farmacotecnica"]
+      "processoRef": "proc_pomada_zno_v1",
+      "objetivos": [
+        "Preparar um semissólido por fusão e levigação",
+        "Completar a massa (q.s.p.) com a base",
+        "Resfriar com agitação para manter o ativo disperso"
+      ],
+      "competencias": [
+        "farmacotecnica"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ],
+      "ajudaPadrao": "dica"
+    },
+    {
+      "id": "m_capsulas_vitc",
+      "nivel": 6,
+      "titulo": "Cápsulas de ácido ascórbico 100 mg",
+      "tipo": "processo",
+      "processoRef": "proc_capsulas_vitc_v1",
+      "ajudaPadrao": "dica",
+      "objetivos": [
+        "Aplicar o fator de correção pelo teor do insumo",
+        "Misturar por diluição geométrica",
+        "Escolher a cápsula pelo volume do pó"
+      ],
+      "competencias": [
+        "farmacotecnica",
+        "cq"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ]
+    },
+    {
+      "id": "m_alcool_gel",
+      "nivel": 6,
+      "titulo": "Álcool em gel antisséptico a 70 % (p/p)",
+      "tipo": "processo",
+      "processoRef": "proc_alcool_gel_70_v1",
+      "ajudaPadrao": "dica",
+      "objetivos": [
+        "Corrigir a massa de álcool pelo teor da matéria-prima",
+        "Hidratar e neutralizar um gelificante",
+        "Completar a massa (q.s.p.)"
+      ],
+      "competencias": [
+        "farmacotecnica",
+        "cq"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ]
+    },
+    {
+      "id": "m_sabonete",
+      "nivel": 6,
+      "titulo": "Sabonete líquido com ajuste de pH e viscosidade",
+      "tipo": "processo",
+      "processoRef": "proc_sabonete_liquido_v1",
+      "ajudaPadrao": "dica",
+      "objetivos": [
+        "Preparar uma base tensoativa sem formar espuma",
+        "Ajustar o pH com ácido cítrico",
+        "Entender a curva do sal na viscosidade"
+      ],
+      "competencias": [
+        "farmacotecnica",
+        "cq"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ]
+    },
+    {
+      "id": "m_home_spray",
+      "nivel": 6,
+      "titulo": "Home spray (aromatizador de ambiente)",
+      "tipo": "processo",
+      "processoRef": "proc_home_spray_v1",
+      "ajudaPadrao": "dica",
+      "objetivos": [
+        "Solubilizar fragrância com tensoativo",
+        "Respeitar a ordem de adição",
+        "Completar a massa (q.s.p.)"
+      ],
+      "competencias": [
+        "farmacotecnica"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ]
     },
     {
       "id": "m_doseamento_aas",
@@ -163,17 +363,54 @@
       "titulo": "Doseamento de ácido acetilsalicílico por titulação",
       "tipo": "processo",
       "processoRef": null,
-      "objetivos": ["Fazer o ensaio de teor", "Comparar com a especificação e tratar resultado fora dela"],
-      "competencias": ["titulacao", "cq"]
+      "objetivos": [
+        "Fazer o ensaio de teor",
+        "Comparar com a especificação e tratar resultado fora dela"
+      ],
+      "competencias": [
+        "titulacao",
+        "cq"
+      ]
     },
     {
       "id": "m_parenteral",
       "nivel": 7,
-      "titulo": "Solução para uso parenteral (didática)",
+      "titulo": "Soro fisiológico a 0,9 % estéril (didática)",
       "tipo": "processo",
-      "processoRef": null,
-      "objetivos": ["Escolher entre filtração esterilizante e autoclave", "Reconhecer ativo termolábil", "Entender o envase asséptico"],
-      "competencias": ["esterilizacao", "farmacotecnica"]
+      "processoRef": "proc_sf09_esteril_v1",
+      "objetivos": [
+        "Calcular a massa de soluto para 500 mL",
+        "Esterilizar na autoclave no frasco final",
+        "Interpretar o teste de esterilidade conceitual"
+      ],
+      "competencias": [
+        "esterilizacao",
+        "farmacotecnica"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ],
+      "ajudaPadrao": "dica"
+    },
+    {
+      "id": "m_vitc_filtrada",
+      "nivel": 7,
+      "titulo": "Solução de ácido ascórbico a 5 % estéril por filtração",
+      "tipo": "processo",
+      "processoRef": "proc_vitc_filtrada_v1",
+      "ajudaPadrao": "dica",
+      "objetivos": [
+        "Escolher filtração esterilizante para um insumo termolábil",
+        "Envasar com técnica asséptica",
+        "Conferir teor, pH e esterilidade conceitual"
+      ],
+      "competencias": [
+        "esterilizacao",
+        "farmacotecnica"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ]
     },
     {
       "id": "m8_desvio_nacl",
@@ -181,14 +418,29 @@
       "titulo": "Investigação de desvio: lote de cloreto de sódio a 0,9 % fora da especificação",
       "tipo": "investigacao",
       "processoRef": "proc_nacl_09_v1",
-      "objetivos": ["Ler o caderno de um lote fora da especificação", "Achar a etapa que causou o desvio", "Propor a ação corretiva"],
-      "competencias": ["investigacao"],
-      "requer": ["m1_nacl_09"],
+      "objetivos": [
+        "Ler o caderno de um lote fora da especificação",
+        "Achar a etapa que causou o desvio",
+        "Propor a ação corretiva"
+      ],
+      "competencias": [
+        "investigacao"
+      ],
+      "requer": [
+        "m1_nacl_09"
+      ],
       "cenario": {
         "enunciado": "O lote LAB-001 saiu com concentração abaixo da especificação. Leia o caderno do lote e indique a etapa que causou o desvio.",
         "semente": 7,
-        "parametros": { "e5": { "volumeFinalMl": 105 } },
-        "respostas": { "e2": "0,9", "e7": "308" },
+        "parametros": {
+          "e5": {
+            "volumeFinalMl": 105
+          }
+        },
+        "respostas": {
+          "e2": "0,9",
+          "e7": "308"
+        },
         "etapaCausa": "e5",
         "explicacao": "No caderno, o volume foi completado a 105,0 mL em vez de 100 mL. A mesma massa de soluto num volume maior deixa a concentração abaixo de 0,9 % p/v.",
         "acaoCorretiva": "Completar o volume com o menisco tocando a marca do balão, com a solução à temperatura ambiente e o olhar na altura da marca. O lote fora da especificação não é liberado, e o desvio é registrado com a causa e a correção.",

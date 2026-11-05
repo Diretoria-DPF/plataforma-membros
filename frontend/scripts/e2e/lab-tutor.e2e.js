@@ -112,6 +112,17 @@ async function cenarioMissao(viewport, nome) {
     await frame.click('#tiConfirmar');
     check(/Causa encontrada/.test(await frame.textContent('#tiRetorno')), 'investigação: causa encontrada na etapa 5');
     check(await frame.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'sem rolagem horizontal');
+    await frame.click('#tmTrilha');
+    await frame.waitForSelector('#ttTitulo');
+    check(await frame.evaluate(() => document.querySelector('[data-missao="m_xarope"]').dataset.estado === 'disponivel'), 'nível 6 (xarope) abre depois da Missão 1');
+    await frame.click('#ttJogar-m_xarope');
+    await frame.waitForSelector('#tmProgresso');
+    check(/Etapa 1 de \d+/.test(await frame.textContent('#tmProgresso')), 'xarope (processo da O5) abre no motor');
+    await frame.check('#tm-painelSeguranca-epi-jaleco');
+    await frame.check('#tm-painelSeguranca-epi-luvas-nitrila');
+    await frame.check('#tm-painelSeguranca-epi-oculos');
+    await frame.click('#tmBtn-painelSeguranca');
+    check(/Etapa 2 de/.test(await frame.textContent('#tmProgresso')), 'xarope avança pela etapa 1');
     await frame.click('#tmSair');
     check(await frame.evaluate(() => !document.getElementById('labMotorTela') && getComputedStyle(document.getElementById('mainGrid')).display !== 'none'), 'sair devolve a bancada clássica');
     check(await frame.evaluate(() => window.sys.especies.size === 0), 'a bancada clássica não foi tocada pelo motor');

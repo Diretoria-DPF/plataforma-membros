@@ -4,14 +4,14 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * LAIFT — trilha de missões do Laboratório (O4). Funções puras, sem DOM.
- *
- * A trilha é dado (data/trilha/trilha_v1.json): níveis 0 a 8, cada missão com objetivos e, quando jogável,
- * o processo do motor (processoRef). Missão sem processo aparece como "Em preparação". O progresso fica só no
- * aparelho (localStorage, sempre com try/catch). O boletim por competência é da O8: aqui só há o resumo da missão.
+ * LAIFT — trilha de missões (O4), pura. Dado em data/trilha/trilha_v1.json (níveis 0 a 8); missão sem processo
+ * fica "Em preparação". Progresso só no aparelho (localStorage com try/catch). Boletim por competência: O8.
  */
 (function (raiz) {
   'use strict';
+
+  const emNode = typeof module !== 'undefined' && module.exports;
+  const C = emNode ? require('./lab-tutor-controles.js') : raiz.LabTutorControles;
 
   const CHAVE = 'laift_lab_trilha_v1';
   const ID = /^[a-z0-9_]{1,40}$/;
@@ -121,7 +121,7 @@
       if (!p) { erros.push(`${r}: processo inexistente ${m.processoRef}`); continue; }
       if (p.nivel_conteudo !== 'completo') { erros.push(`${r}: processo de nível educacional não é jogável`); continue; }
       if (m.tipo === 'processo') {
-        for (const e of p.etapas || []) if (!comp[(m.etapas || {})[e.id]]) erros.push(`${r}: etapa ${e.id} sem competência`);
+        for (const e of p.etapas || []) if (!comp[C.competenciaDaEtapa(m, e)]) erros.push(`${r}: etapa ${e.id} sem competência`);
       }
       if (m.tipo === 'investigacao') {
         const c = m.cenario || {};
@@ -133,6 +133,6 @@
   }
 
   const API = { CHAVE, ESTADOS, progressoVazio, lerProgresso, salvarProgresso, registrarConclusao, situacao, porNivel, validarTrilha };
-  if (typeof module !== 'undefined' && module.exports) module.exports = API;
+  if (emNode) module.exports = API;
   if (raiz) raiz.LabTrilha = API;
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : null));

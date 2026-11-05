@@ -4,16 +4,11 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * LAIFT — tutor das missões sobre o executor de processos (O4). Funções puras, sem DOM e sem IA.
- *
- * Quem age é a pessoa, pelos controles da bancada (`alvoUI` das ações). O tutor:
- *   - mostra o que está acontecendo e o porquê da etapa, e aponta o controle correto (o "!", só no nível Completa);
- *   - dá dica gradual em 3 degraus (porquê, controle e conta, resposta), tudo tirado dos dados do processo;
- *   - avança por evento do motor: a etapa só passa quando o executor a conclui (concluída, aguardar, bloqueada);
- *   - deixa o erro acontecer com a consequência do processo (pesar sem tarar, transferir sem enxágue...);
- *   - no modo Prova não ajuda: nada de "!", porquê nem dica; a explicação dos desvios vem só no resultado.
- * Cada acerto, erro, dica, pulo ou ação fora de ordem vira um evento de competência (ponto de extensão da O8).
- * O estado do tutor é imutável: toda função devolve um tutor novo.
+ * LAIFT — tutor das missões sobre o executor (O4). Puro, sem DOM e sem IA; estado imutável.
+ * A pessoa age pelos controles (`alvoUI`); o tutor mostra o que acontece e o porquê, aponta o controle ("!" só no
+ * nível Completa), dá dica em 3 degraus tirada do processo e avança quando o executor conclui a etapa. O erro
+ * acontece com a consequência do processo. Prova: sem ajuda; desvios explicados só no resultado.
+ * Acerto, erro, dica, pulo e ação fora de ordem viram eventos de competência (ponto de extensão da O8).
  */
 (function (raiz) {
   'use strict';
@@ -68,11 +63,11 @@
     const todos = t.competencias.concat(ev.map((e, i) => Object.freeze({ ...e, seq: t.seq + 1 + i })));
     return com(t, { competencias: Object.freeze(todos.slice(-MAX_EVENTOS)), seq: t.seq + ev.length });
   }
-  function competenciaDa(t, etapaId) { return t.competenciasEtapas[etapaId] || 'geral'; }
+  function competenciaDa(t, et) { return C.competenciaDaEtapa({ etapas: t.competenciasEtapas }, et); }
 
   function dicasDa(processo, et, indice, ctx) {
     const acao = acoes(et)[indice];
-    const def = C.controle(acao.alvoUI, ctx);
+    const def = C.controle(acao.alvoUI, ctx, acao);
     const calc = et.calculoPrevio;
     const casas = calc && Math.abs(calc.resposta) >= 10 ? 0 : 2;
     return [
@@ -114,7 +109,7 @@
     const et = etapa(t, processo);
     const i = Math.min(cursor(t), acoes(et).length - 1);
     const acao = acoes(et)[i];
-    const def = C.controle(acao.alvoUI, ctx);
+    const def = C.controle(acao.alvoUI, ctx, acao);
     return {
       ...base, terminado: false,
       progresso: `Etapa ${t.sessao.indice + 1} de ${total}`, etapaId: et.id, etapaTitulo: et.titulo,
@@ -147,12 +142,11 @@
     if (idx < 0) {
       const jaFeito = lista.some((a, i) => i < cur && a.alvoUI === en.alvo);
       if (jaFeito) return retornar(t, 'repetido', [ap.explica ? `${def.rotulo}: já feito nesta etapa.` : NEUTRO]);
-      const ev = evento(t, et.id, competenciaDa(t, et.id), 'fora_de_ordem', { controle: en.alvo });
+      const ev = evento(t, et.id, competenciaDa(t, et), 'fora_de_ordem', { controle: en.alvo });
       const msg = ap.explica ? `Ainda não é a vez de "${def.rotulo}". Etapa atual: ${et.titulo}.` : 'Esta ação não faz parte da etapa atual do procedimento.';
-      const r = retornar(comEventos(t, [ev]), 'fora_de_ordem', [msg], { competencia: ev });
-      return r;
+      return retornar(comEventos(t, [ev]), 'fora_de_ordem', [msg], { competencia: ev });
     }
-    const m = C.montarParametros(en.alvo, en.valores, ctx);
+    const m = C.montarParametros(en.alvo, en.valores, ctx, lista[idx]);
     if (!m.ok) return retornar(t, 'erro', [m.mensagem]);
 
     if (idx < lista.length - 1) return agirParcial(t, lista, idx, m.parametros, ctx, ap);
@@ -186,7 +180,7 @@
     });
     const r = P.executarEtapa(t.sessao, processo, ctx, { parametros: override, resposta });
     const st = r.resultado.status;
-    const comp = competenciaDa(t, et.id);
+    const comp = competenciaDa(t, et);
     const eventos = [];
     if (st === 'concluida') eventos.push(evento(t, et.id, comp, desviosNovos(t.sessao, r.sessao, et.id).length ? 'erro' : 'acerto'));
     if (st === 'bloqueada' || st === 'erro') eventos.push(evento(t, et.id, comp, 'erro'));
@@ -213,7 +207,7 @@
     const degrau = t.degrau + 1;
     const ctxE = ctx || { especies: {} };
     const dica = dicasDa(processo, et, Math.min(cursor(t), acoes(et).length - 1), ctxE)[degrau - 1];
-    const novo = comEventos(com(t, { degrau }), [evento(com(t, { degrau }), et.id, competenciaDa(t, et.id), 'dica')]);
+    const novo = comEventos(com(t, { degrau }), [evento(com(t, { degrau }), et.id, competenciaDa(t, et), 'dica')]);
     return { tutor: novo, dica };
   }
 
@@ -221,7 +215,7 @@
     if (t.sessao.terminado) return { tutor: t };
     const et = etapa(t, processo);
     const r = P.pularEtapa(t.sessao, processo, ctx);
-    const novo = comEventos(com(t, { sessao: r.sessao, feitas: [], aplicadas: [], previa: null, degrau: 0 }), [evento(t, et.id, competenciaDa(t, et.id), 'pulado')]);
+    const novo = comEventos(com(t, { sessao: r.sessao, feitas: [], aplicadas: [], previa: null, degrau: 0 }), [evento(t, et.id, competenciaDa(t, et), 'pulado')]);
     return retornar(novo, 'pulado', ['Etapa pulada: o efeito padrão foi aplicado e o caderno registra o pulo.']);
   }
 

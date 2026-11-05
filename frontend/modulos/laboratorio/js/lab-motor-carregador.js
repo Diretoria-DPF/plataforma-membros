@@ -16,14 +16,31 @@
 
   const ARQUIVOS = Object.freeze([
     'js/lab-motor-estado.js', 'js/lab-motor-fisica.js', 'js/lab-motor-relogio.js', 'js/lab-motor-calculos.js',
-    'js/lab-motor-especies.js', 'js/lab-motor-op-base.js', 'js/lab-motor-op-separacao.js', 'js/lab-motor-op-cq.js',
+    'js/lab-motor-especies.js', 'js/lab-motor-especies-farmaco.js',
+    'js/lab-motor-op-base.js', 'js/lab-motor-op-separacao.js', 'js/lab-motor-op-cq.js',
+    // O5: o registro de operações exige as de farmacotécnica (e elas, os cálculos e o CQ) antes dele.
+    'js/lab-farma-calculos.js', 'js/lab-cq.js', 'js/lab-motor-op-farma.js',
     'js/lab-motor-operacoes.js', 'js/lab-motor-condicoes.js', 'js/lab-motor-caderno.js', 'js/lab-motor-processo.js',
     'js/lab-motor-painel.js'
   ]);
   // O4: tutor, trilha e tela da Missão 1 no motor (baixados depois do motor, só ao abrir a trilha).
   const ARQUIVOS_TUTOR = Object.freeze(['js/lab-tutor-controles.js', 'js/lab-tutor.js', 'js/lab-trilha.js', 'js/lab-tutor-ui.js']);
   const TRILHA = 'data/trilha/trilha_v1.json';
-  const PROCESSOS = Object.freeze({ proc_nacl_09_v1: 'Solução de cloreto de sódio a 0,9 %' });
+  // Lista fechada de processos que a bancada pode buscar (todos com nivel_conteudo 'completo', conferido em teste).
+  const PROCESSOS = Object.freeze({
+    proc_nacl_09_v1: 'Solução de cloreto de sódio a 0,9 %',
+    proc_desinfetante_cloro_v1: 'Desinfetante a 0,1 % de cloro ativo',
+    proc_cq_titulacao_hcl_v1: 'Titulação de HCl 0,1 mol/L',
+    proc_xarope_simples_v1: 'Xarope simples',
+    proc_suspensao_mgoh2_v1: 'Suspensão de hidróxido de magnésio',
+    proc_pomada_zno_v1: 'Pomada de óxido de zinco',
+    proc_capsulas_vitc_v1: 'Cápsulas de ácido ascórbico',
+    proc_alcool_gel_70_v1: 'Álcool em gel a 70 %',
+    proc_sabonete_liquido_v1: 'Sabonete líquido',
+    proc_home_spray_v1: 'Home spray',
+    proc_sf09_esteril_v1: 'Soro fisiológico estéril',
+    proc_vitc_filtrada_v1: 'Ácido ascórbico estéril por filtração'
+  });
   const ID_PROCESSO = /^proc_[a-z0-9_]+$/;
 
   const carregando = {};
@@ -53,11 +70,13 @@
     const r = await buscar(TRILHA, { credentials: 'same-origin' });
     if (!r.ok) throw new Error(`trilha indisponível (${r.status})`);
     const trilha = await r.json();
-    const processos = {};
-    for (const m of trilha.missoes || []) {
-      if (m.processoRef && !processos[m.processoRef]) processos[m.processoRef] = await carregarProcesso(buscar, m.processoRef);
-    }
-    return { trilha, processos };
+    const cache = {};
+    // O processo só é baixado quando a pessoa joga a missão (uma vez por página).
+    const buscarProcesso = (id) => {
+      if (!cache[id]) cache[id] = carregarProcesso(buscar, id).catch((e) => { delete cache[id]; throw e; });
+      return cache[id];
+    };
+    return { trilha, buscarProcesso };
   }
 
   /** Busca o JSON do processo (id da lista fechada). */
