@@ -330,7 +330,7 @@ export const API_REGISTRY = {
   apiLearnGetEngagement: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => EngagementService.getEngagement(sql, identity)),
   apiLearnSetDailyGoal: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => EngagementService.setDailyGoal(sql, identity, asInput(input))),
   apiLearnRecordLabFormulation: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LearningService.recordLabFormulation(sql, identity, asInput(input), cid)),
-  apiLearnGetMyAttendanceQr: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.getMyAttendanceQr(env, identity)),
+  apiLearnGetMyAttendanceQr: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.getMyAttendanceQr(env, identity, asInput(input))),
   apiAdminAttendanceListEvents: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.listEvents(sql, identity)),
   apiAdminAttendanceCheckIn: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AttendanceService.checkIn(sql, env, identity, asInput(input), cid)),
   apiAdminAttendanceSearch: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.search(sql, identity, asInput(input))),

@@ -2020,8 +2020,9 @@ components:
           type: "array"
           prefixItems:
             - description: "sessionToken"
+            - description: "input"
           minItems: 0
-          maxItems: 1
+          maxItems: 2
     apiLearnGetMyStats:
       type: "object"
       required:
