@@ -651,46 +651,7 @@ const LAB_DATABASE = {
       dissociation: null
     },
 
-    // === TOXICOLOGIA FORENSE E GASES DE GUERRA ===
-    "C4H10FO2P_l": {
-      label: "Sarin (GB)",
-      phase: "l",
-      molarMass: 140.09,
-      density: 1.088,
-      bp: 158.0,
-      fp: -50.0,
-      formula: "C4H10FO2P",
-      smiles: "CC(C)OP(C)(=O)F",
-      iupac: "(RS)-propan-2-yl methylphosphonofluoridate",
-      pubchemQuery: "Sarin",
-      dissociation: null
-    },
-    "C11H26NO2PS_l": {
-      label: "Agente Nervoso VX",
-      phase: "l",
-      molarMass: 267.37,
-      density: 1.008,
-      bp: 298.0,
-      fp: -39.0,
-      formula: "C11H26NO2PS",
-      smiles: "CCOP(=O)(C)SCCN(C(C)C)C(C)C",
-      iupac: "O-ethyl S-[2-(diisopropylamino)ethyl] methylphosphonothioate",
-      pubchemQuery: "VX",
-      dissociation: null
-    },
-    "C4H8Cl2S_l": {
-      label: "Gás Mostarda (HD)",
-      phase: "l",
-      molarMass: 159.08,
-      density: 1.27,
-      bp: 217.0,
-      fp: 14.0,
-      formula: "C4H8Cl2S",
-      smiles: "ClCCSCCCl",
-      iupac: "1-chloro-2-(2-chloroethylsulfanyl)ethane",
-      pubchemQuery: "Sulfur mustard",
-      dissociation: null
-    },
+    // === TOXICOLOGIA FORENSE ===
     "C20H22N2O2_s": {
       label: "Estricnina",
       phase: "s",
