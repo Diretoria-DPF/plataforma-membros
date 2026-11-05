@@ -157,13 +157,27 @@ test('CSS: alvo >= 44px, glifo discreto (cor atenuada), foco visível; JS sem in
   assert.doesNotMatch(SRC, /\.innerHTML|insertAdjacentHTML|eval\(|new Function|document\.write/);
 });
 
-test('regra do dono: quiz, toxicologia e Atlas não carregam o selo de revisão (vista pública)', () => {
-  for (const page of ['modulos/quiz/index.html', 'modulos/toxicologia/index.html', 'modulos/anatomia-3d/index.html']) {
+test('integração: quiz e toxicologia carregam folha e script; motores usam o selo', () => {
+  const need = [
+    ['modulos/quiz/index.html', 'quiz-engine'],
+    ['modulos/toxicologia/index.html', 'quiz-engine'],
+  ];
+  for (const [page, before] of need) {
     const html = fs.readFileSync(path.join(frontend, page), 'utf8');
-    assert.doesNotMatch(html, /laift-review-seal/, page + ' ainda carrega o selo');
+    assert.match(html, /laift-review-seal\.css/, `${page} sem a folha`);
+    assert.match(html, /<script src="\.\.\/shared\/laift-review-seal\.js"><\/script>/, `${page} sem o script`);
+    assert.ok(html.indexOf('laift-dialog.js') < html.indexOf('laift-review-seal.js'), `${page}: dialog antes do selo`);
+    if (before) assert.ok(html.indexOf('laift-review-seal.js') < html.search(new RegExp(`<script src="[^"]*${before}\\.js`)), `${page}: selo antes do motor`);
   }
+  const engine = fs.readFileSync(path.join(frontend, 'modulos/shared/quiz-engine.js'), 'utf8');
+  // Regra do dono: o público não vê selo nem aviso de revisão nos quizzes; sobra só "Reportar erro".
+  assert.doesNotMatch(engine, /LaiftReviewSeal\.create|whenMissing|laift-review-seal-row/);
+  assert.match(engine, /LaiftReviewSeal\.report/);
+  assert.doesNotMatch(SRC.slice(SRC.indexOf('function report'), SRC.indexOf('function create')), /revisad|\bIA\b|rascunho/);
   const card = fs.readFileSync(path.join(frontend, 'modulos/anatomia-3d/js/ui/infocard.js'), 'utf8');
+  // Atlas: sem selo de revisão na ficha (regra do dono).
   assert.doesNotMatch(card, /LaiftReviewSeal/);
+  assert.doesNotMatch(fs.readFileSync(path.join(frontend, 'modulos/anatomia-3d/index.html'), 'utf8'), /laift-review-seal/);
 });
 
 test('ponte: laift-identity expõe reportContent e o app expõe submitContentReport sobre apiSubmitFeedback', () => {

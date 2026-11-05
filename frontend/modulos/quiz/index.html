@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../shared/laift-tokens.css">
     <link rel="stylesheet" href="../shared/quiz-engine.css">
     <link rel="stylesheet" href="../shared/laift-dialog.css">
+    <link rel="stylesheet" href="../shared/laift-review-seal.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -91,11 +92,11 @@
 
                         <!-- Coluna Principal: Enunciado e Alternativas -->
                         <div class="question-container">
-                            <div class="question-text" id="questionText" tabindex="-1" aria-live="polite"></div>
+                            <div class="question-text" id="questionText" tabindex="-1"></div>
                             <div class="options-container" id="optionsContainer" role="group" aria-labelledby="questionText"></div>
 
                             <!-- Área de Feedback / Explicação -->
-                            <div class="explanation" id="explanation" aria-live="polite">
+                            <div class="explanation" id="explanation">
                                 <h4>📖 Explicação Clínica:</h4>
                                 <p id="explanationText"></p>
                                 <div id="feedbackAnalogia" class="analogy-box" hidden></div>
@@ -111,7 +112,7 @@
                             <div class="mol-canvas-wrap">
                                 <canvas id="quizMolCanvas" width="220" height="140" role="img" aria-label="Estrutura 2D do fármaco em foco"></canvas>
                             </div>
-                            <div id="quizMolLabel" class="mol-label" aria-live="polite">--</div>
+                            <div id="quizMolLabel" class="mol-label">--</div>
                         </div>
 
                     </div>
@@ -123,7 +124,7 @@
                     </div>
                 </div>
 
-                <div class="results-container" id="resultsContainer" aria-live="polite" hidden></div>
+                <div class="results-container" id="resultsContainer" hidden></div>
             </main>
         </div>
     </div>
@@ -158,8 +159,10 @@
     <!-- DOM seguro e motor único de quiz (compartilhados com a Toxicologia) -->
     <script src="../shared/safe-dom.js"></script>
     <script src="../shared/laift-dialog.js"></script>
+    <script src="../shared/laift-review-seal.js"></script>
     <script src="../shared/quiz-offline-queue.js"></script>
     <script src="../shared/quiz-feedback.js"></script>
+    <script src="../shared/quiz-logic.js"></script>
     <script src="../shared/quiz-engine.js"></script>
 
     <!-- Módulos de Integração Científica e Dados -->
