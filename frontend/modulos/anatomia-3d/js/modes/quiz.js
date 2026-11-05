@@ -78,6 +78,23 @@ export function resolveResume(cases, progress, seed = QUIZ_SEED) {
 }
 
 /** Sid principal da resposta (nome no feedback, foco da câmera). */
+/**
+ * Revisão de erros (A3): os casos de `ids` (vencidos na revisão espaçada do aparelho) que ainda existem no banco, na
+ * ordem em que os ids chegaram e sem repetir. Ids antigos de casos removidos somem sem erro.
+ * @param {Array<{id:string}>} allCases
+ * @param {Array<string|number>} ids
+ */
+export function reviewCases(allCases, ids) {
+  const byId = new Map((Array.isArray(allCases) ? allCases : []).map((c) => [String(c.id), c]));
+  const seen = new Set();
+  const out = [];
+  (Array.isArray(ids) ? ids : []).forEach((id) => {
+    const key = String(id);
+    if (byId.has(key) && !seen.has(key)) { seen.add(key); out.push(byId.get(key)); }
+  });
+  return out;
+}
+
 export function mainSid(quizCase) {
   if (!quizCase) return null;
   if (Array.isArray(quizCase.correctSid)) return quizCase.correctSid[0] || null;
@@ -100,7 +117,7 @@ export function mainSid(quizCase) {
  *   sistemas da resposta, para a estrutura certa estar no corpo e poder ser tocada
  * @returns {Object} Implementação do contrato Mode
  */
-export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, loadCases, resolveSid, systemOf, prepareCase, confettiCount = () => 0, reducedMotion = () => false, setup = false, search = '' }) {
+export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, loadCases, resolveSid, systemOf, prepareCase, confettiCount = () => 0, reducedMotion = () => false, setup = false, search = '', review = () => window.LaiftReview || null }) {
   const { on, emit, EVENTS } = bus;
   const { get: storeGet, set: storeSet } = store;
 
@@ -137,6 +154,22 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
 
   function el(tag, attrs, children) { return window.LaiftDom.h(tag, attrs, children); }
 
+  /** Revisão espaçada (revisao-espacada.js, no aparelho): erro agenda a revisão, acerto de um erro antigo a adia. */
+  function recordReview(caso, correct) {
+    try {
+      const lib = review();
+      if (lib && typeof lib.record === 'function') lib.record({ module: 'anatomia', id: String(caso.id), topic: getLabel(mainSid(caso)) || '', correct });
+    } catch (err) { /* a revisão é um extra: nunca atrapalha o quiz */ }
+  }
+
+  /** Casos vencidos para revisar (vazio sem o módulo de revisão). */
+  function dueReviewCases() {
+    try {
+      const lib = review();
+      return lib && typeof lib.dueIds === 'function' ? reviewCases(allCases, lib.dueIds('anatomia')) : [];
+    } catch (err) { return []; }
+  }
+
   /** Tela de escolha: sistema e dificuldade; sorteia até 10 casos com semente nova (ou ?seed=). */
   function renderSetup() {
     ensureSheetNode();
@@ -151,6 +184,10 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     const difSel = mkSelect('quizDifficulty', 'Dificuldade', [{ value: 'todas', text: 'Todas' }, ...f.difficulties.map((x) => ({ value: x.id, text: `${x.label} (${x.count})` }))]);
     const info = el('p', { className: 'quiz-setup-info', role: 'status', 'aria-live': 'polite' }, []);
     const start = el('button', { type: 'button', id: 'quizStartBtn', className: 'quiz-btn' }, ['Começar']);
+    const due = dueReviewCases();
+    const reviewBtn = due.length
+      ? el('button', { type: 'button', id: 'quizReviewBtn', className: 'quiz-btn' }, [`Revisar meus erros (${due.length})`])
+      : null;
     const read = () => ({ system: sheetNode.querySelector('#quizSystem').value, difficulty: sheetNode.querySelector('#quizDifficulty').value });
     const refresh = () => {
       const n = filterCases(allCases, read()).length;
@@ -162,7 +199,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     sheetNode.appendChild(el('div', { className: 'quiz-card quiz-setup' }, [
       el('h3', { className: 'quiz-summary-title' }, ['Quiz 3D']),
       el('p', {}, ['Escolha o que treinar. Em cada caso, toque na estrutura que responde à pergunta.']),
-      sysSel, difSel, info, start,
+      sysSel, difSel, info, start, ...(reviewBtn ? [reviewBtn] : []),
     ]));
     sheetNode.querySelector('#quizSystem').addEventListener('change', refresh);
     sheetNode.querySelector('#quizDifficulty').addEventListener('change', refresh);
@@ -172,6 +209,14 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       currentIndex = 0; score = 0; correctCount = 0; totalCount = 0; sessionStartedAt = Date.now();
       renderQuizCard();
     });
+    if (reviewBtn) {
+      reviewBtn.addEventListener('click', () => {
+        selection = null;
+        cases = due;
+        currentIndex = 0; score = 0; correctCount = 0; totalCount = 0; sessionStartedAt = Date.now();
+        renderQuizCard();
+      });
+    }
     refresh();
   }
 
@@ -268,6 +313,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       score += points;
     }
 
+    recordReview(caso, correct);
     emit(EVENTS.QUIZ_ANSWER, { caseId: caso.id, sid, correct });
     showFeedback(caso, sid, correct, points);
   }

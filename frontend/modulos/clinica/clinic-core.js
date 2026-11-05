@@ -161,7 +161,18 @@
     return outcome === 'abandono' ? 'Desfecho: Abandono da Consulta' : 'Atendimento Finalizado';
   }
 
+  /** Nota mínima (0 a 100) do preceptor para o caso contar como acerto na revisão espaçada do aparelho (A3). */
+  var REVIEW_MIN_SCORE = 60;
+
+  /** Revisão espaçada: o caso só "acerta" se terminou (desfecho concluído) e a nota do preceptor chegou ao mínimo. */
+  function reviewCorrect(result, outcome) {
+    var score = result && Number(result.score);
+    return outcome === 'concluido' && isFinite(score) && score >= REVIEW_MIN_SCORE;
+  }
+
   root.ClinicCore = {
+    REVIEW_MIN_SCORE: REVIEW_MIN_SCORE,
+    reviewCorrect: reviewCorrect,
     UNAVAILABLE_MESSAGE: UNAVAILABLE_MESSAGE,
     OUTCOME_TO_SERVER: OUTCOME_TO_SERVER,
     byteLength: byteLength,
