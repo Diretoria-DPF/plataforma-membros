@@ -19,8 +19,8 @@
   var SVG_NS = 'http://www.w3.org/2000/svg';
   var WEEK_DAYS = 7;
 
-  /** Catálogo único (modulos/catalogo.js; no Node, o próprio arquivo) + arte (viewBox 64) de cada módulo. */
-  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/catalogo.js') : root.LaiftModules;
+  /** Catálogo único (modulos/shared/catalogo.js; no Node, o próprio arquivo) + arte (viewBox 64) de cada módulo. */
+  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/shared/catalogo.js') : root.LaiftModules;
   var ART_BY_ID = { farmaco: 'pill', toxico: 'flask', clinica: 'heart', lab: 'molecule', anatomia: 'body' };
   var MODULES = CATALOG.MODULES.map(function (m) {
     return { id: m.id, stat: m.stat, name: m.name, sub: m.sub, art: ART_BY_ID[m.id], desc: m.desc };
@@ -367,7 +367,7 @@
     var head = el(doc, 'h2', 'l2-section__title', 'Para reforçar');
     head.id = 'l2-weak-title';
     section.appendChild(head);
-    var list = el(doc, 'ul', 'l2-today');
+    var list = el(doc, 'ul', 'l2-weak');
     ctx.weak.forEach(function (item) {
       var li = el(doc, 'li');
       var row = button(doc, 'l2-row l2-row--simulado', '', function () { ctx.openModule(item.id); });

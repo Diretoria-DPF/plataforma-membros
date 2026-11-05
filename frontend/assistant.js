@@ -106,12 +106,6 @@
     return section && /^panel-[a-z-]{1,40}$/.test(section.id) ? section.id : '';
   }
 
-  /** Módulo de estudo aberto (id do catálogo), para a Guia saber onde a pessoa está; '' fora de módulo. */
-  function currentModule() {
-    var id = ui.hints && typeof ui.hints.moduleId === 'function' ? ui.hints.moduleId() : '';
-    return typeof id === 'string' && /^[a-z0-9]{1,30}$/.test(id) && currentPanel() === 'panel-learn' ? id : '';
-  }
-
   function scrollToEnd() {
     ui.log.scrollTop = ui.log.scrollHeight;
   }
@@ -429,7 +423,7 @@
     reactLia('think');
     var sentWith = token();
     var mine = ++ui.sendId;
-    var payload = turnstileLib().withToken({ message: message, context: { panel: currentPanel(), module: currentModule() }, history: history }, ui.challenge);
+    var payload = turnstileLib().withToken({ message: message, context: { panel: currentPanel(), module: hint('moduleId') || '' }, history: history }, ui.challenge);
     ui.app.callApi('apiAssistantChat', sentWith, payload).then(function (res) {
       if (mine !== ui.sendId) return; // a conta mudou no meio: a conversa foi zerada e esta resposta não vale
       if (res && res.disabled) { hideLauncher(); return; }

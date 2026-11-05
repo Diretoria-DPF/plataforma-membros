@@ -21,8 +21,8 @@
 
   /** Módulo da Worker (learning_attempts.module) -> id do cartão em learning.js. */
   var MODULE_IDS = { farmacologia: 'farmaco', toxicologia: 'toxico', clinica: 'clinica', laboratorio: 'lab', anatomia: 'anatomia' };
-  // Nomes do catálogo único (modulos/catalogo.js); no Node (testes) vem do próprio arquivo.
-  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/catalogo.js') : root.LaiftModules;
+  // Nomes do catálogo único (modulos/shared/catalogo.js); no Node (testes) vem do próprio arquivo.
+  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/shared/catalogo.js') : root.LaiftModules;
   var MODULE_LABELS = {};
   CATALOG.MODULES.forEach(function (m) { MODULE_LABELS[m.id] = m.name; });
   var ACTIVITY_LABELS = { quiz_estudo: 'simulado', quiz_prova: 'prova', caso_clinico: 'caso clínico', formulacao: 'formulação', simulacao_pk: 'simulação' };
@@ -85,10 +85,10 @@
   function streakText(streak) {
     var cur = streak && streak.current ? streak.current : 0;
     var best = streak && streak.best ? streak.best : 0;
-    if (cur > 0 && streak.activeToday) return cur + ' ' + plural(cur, 'dia seguido', 'dias seguidos') + '. Ótimo ritmo!';
-    if (cur > 0) return cur + ' ' + plural(cur, 'dia seguido', 'dias seguidos') + '. Uma questão hoje continua a sequência.';
+    if (cur > 0 && streak.activeToday) return cur + ' ' + plural(cur, 'dia de atividade seguido', 'dias de atividade seguidos') + '. Ótimo ritmo!';
+    if (cur > 0) return cur + ' ' + plural(cur, 'dia de atividade seguido', 'dias de atividade seguidos') + '. Qualquer atividade de estudo hoje continua a sequência.';
     if (best > 1) return 'Que tal recomeçar hoje? Seu recorde é de ' + best + ' dias.';
-    return 'Uma questão hoje começa a sua sequência.';
+    return 'Uma atividade de estudo hoje começa a sua sequência.';
   }
 
   function goalText(goal) {

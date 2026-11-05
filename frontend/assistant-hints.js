@@ -31,7 +31,7 @@
     'panel-proposals': 'proposals',
     'panel-learn': 'learn',
   });
-  // Módulo de estudo (id em learning.js e em modulos/catalogo.js) → contexto da Guia (humor e fala). Farmacologia e
+  // Módulo de estudo (id em learning.js e em modulos/shared/catalogo.js) → contexto da Guia (humor e fala). Farmacologia e
   // Toxicologia ficam no contexto de Aprender, mas têm dica própria (HINT_KEY_BY_MODULE, TRA-12).
   var CONTEXT_BY_MODULE = Object.freeze({
     farmaco: 'learn',

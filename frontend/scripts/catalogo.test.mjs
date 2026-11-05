@@ -3,7 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Catálogo único dos módulos (modulos/catalogo.js, TRA-13/16): nomes consistentes e contagem de questões
+// Catálogo único dos módulos (modulos/shared/catalogo.js, TRA-13/16): nomes consistentes e contagem de questões
 // conferida contra os bancos reais.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8');
-const C = createRequire(import.meta.url)('../modulos/catalogo.js');
+const C = createRequire(import.meta.url)('../modulos/shared/catalogo.js');
 
 function countQuestions(rel) {
   const sandbox = {};
@@ -53,5 +53,5 @@ test('as telas usam o catálogo e não repetem nomes nem a contagem fixa', () =>
     assert.doesNotMatch(code, /240 questões/, `${file} sem contagem fixa`);
     assert.doesNotMatch(code, /Anatomia (&|e) (PK|Farmacocin)/, `${file} sem nome repetido`);
   }
-  assert.match(read('index.html'), /modulos\/catalogo\.js/);
+  assert.match(read('index.html'), /modulos\/shared\/catalogo\.js/);
 });

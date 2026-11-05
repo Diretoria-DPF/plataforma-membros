@@ -21,8 +21,8 @@
   var DESEMP_ID = 'profile-desempenho';
   var DESEMP_HOST_ID = 'profile-desempenho-host';
 
-  /** Assuntos da faixa: nome e legenda do catálogo único (modulos/catalogo.js; no Node, o próprio arquivo) + cores e arte. */
-  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/catalogo.js') : root.LaiftModules;
+  /** Assuntos da faixa: nome e legenda do catálogo único (modulos/shared/catalogo.js; no Node, o próprio arquivo) + cores e arte. */
+  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/shared/catalogo.js') : root.LaiftModules;
   var LOOK = {
     farmaco: { c1: '#0f6f62', c2: '#1aa38f', art: 'pill' },
     toxico: { c1: '#7a2e8c', c2: '#b04fc4', art: 'flask' },

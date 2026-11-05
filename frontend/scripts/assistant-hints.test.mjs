@@ -147,8 +147,7 @@ test('TRA-12: Farmacologia e Toxicologia têm dica própria, curta e sem diminut
 
 test('TRA-12: a pergunta à Guia leva {panel, module}; o módulo vem do controlador de dicas e é validado', () => {
   const code = read('frontend/assistant.js');
-  assert.match(code, /context: \{ panel: currentPanel\(\), module: currentModule\(\) \}/);
-  assert.match(code, /\/\^\[a-z0-9\]\{1,30\}\$\/\.test\(id\)/);
+  assert.match(code, /context: \{ panel: currentPanel\(\), module: hint\('moduleId'\) \|\| '' \}/);
   const { hints } = makeHints();
   assert.equal(hints.moduleId(), '');
   hints.moduleChanged('lab');
@@ -180,7 +179,7 @@ test('os painéis e os módulos do mapa existem de verdade (index.html e learnin
   for (const panel of ['panel-events', 'panel-proposals', 'panel-learn']) {
     assert.match(html, new RegExp('id="' + panel + '"'));
   }
-  const catalogo = read('frontend/modulos/catalogo.js');
+  const catalogo = read('frontend/modulos/shared/catalogo.js');
   for (const mod of ['farmaco', 'toxico', 'clinica', 'lab', 'anatomia']) {
     assert.match(catalogo, new RegExp("id: '" + mod + "'"));
   }
