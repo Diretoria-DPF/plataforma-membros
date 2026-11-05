@@ -12,7 +12,8 @@
  *   - espécie de agente de guerra química/biológica/radiológica ou droga ilícita ⇒ só 'educacional';
  *   - rota de síntese de opioide ou psicoestimulante de alto potencial de abuso ⇒ só 'educacional';
  *   - processo 'educacional' não pode ter etapa executável, quantidade, condição nem rendimento.
- * Vocabulário de restrição alinhado ao seed da O2 (tools/lab/validar-seed.mjs).
+ * Vocabulário de restrição igual ao do seed da O2 (tools/lab/validar-seed.mjs; o CI confere), restrição e nível
+ * de cada espécie lidos do seed (ctx.especies) e listas de nomes vetados da O2 aceitas em `nomesVetados`.
  */
 (function (raiz) {
   'use strict';
@@ -165,10 +166,14 @@
     const completo = proc.nivel_conteudo === 'completo';
     const sintese = proc.categoria === 'sintese';
     const nomes = [normalizar(proc.titulo)];
+    const brutos = [String(proc.titulo || '')];
+    // Listas de nomes vetados extras (ex.: NOMES_GUERRA e NOMES_ILICITAS de tools/lab/validar-seed.mjs, a fonte da O2).
+    const vetadosExtras = Array.isArray(opcoes.nomesVetados) ? opcoes.nomesVetados.filter((r) => r instanceof RegExp) : [];
     if (completo && proc.restricao) erros.push(`processo completo com restrição declarada (${proc.restricao})`);
     for (const id of ids) {
       const r = restricaoDe(id, opcoes);
       nomes.push(normalizar(r.nome), normalizar(id));
+      brutos.push(String(r.nome), String(id));
       if (!completo) continue;
       if (r.restricao && RESTRICOES_ABSOLUTAS.includes(r.restricao)) erros.push(`processo completo com espécie restrita (${id}: ${r.restricao})`);
       else if (r.restricao && sintese) erros.push(`rota de síntese completa com espécie restrita (${id}: ${r.restricao})`);
@@ -176,7 +181,9 @@
     }
     if (completo) {
       const todos = nomes.join(' | ');
-      if (NOMES_ABSOLUTOS.test(todos)) erros.push('processo completo cita agente de guerra, agente biológico ou radiológico ou droga ilícita');
+      const todosBrutos = brutos.join(' | ');
+      const extra = vetadosExtras.some((r) => { r.lastIndex = 0; return r.test(todosBrutos) || r.test(todos); });
+      if (NOMES_ABSOLUTOS.test(todos) || extra) erros.push('processo completo cita agente de guerra, agente biológico ou radiológico ou droga ilícita');
       if (sintese && NOMES_SINTESE_RESTRITA.test(todos)) erros.push('rota de síntese completa de opioide ou psicoestimulante controlado');
     } else {
       if ((proc.etapas || []).some((e) => acoes(e).length || e.calculoPrevio)) erros.push('processo educacional não pode ter etapas executáveis');
