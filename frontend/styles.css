@@ -300,6 +300,10 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
 @media (min-width: 720px) {
   .app-main { max-width: 1200px; }
 }
+/* Desktop largo: o conteúdo (hub de módulos, listas) usa a tela em vez de uma coluna estreita centralizada. */
+@media (min-width: 1280px) {
+  .app-main { max-width: min(1520px, 94vw); }
+}
 
 .grid-2 { display: grid; grid-template-columns: 1fr; gap: var(--density-gap); }
 @media (min-width: 720px) {
@@ -662,6 +666,10 @@ button.learn-card {
 .learn-frame {
   display: block; width: 100%; height: calc(100dvh - 230px); min-height: 480px;
   border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface);
+}
+/* Desktop: a barra inferior é compacta, então o módulo ganha altura e deixa de parecer uma caixa curta. */
+@media (min-width: 1024px) {
+  .learn-frame { height: calc(100dvh - 190px); min-height: 640px; }
 }
 .learn-credential-qr {
   display: block; width: 220px; height: 220px; margin: 12px auto; image-rendering: pixelated;

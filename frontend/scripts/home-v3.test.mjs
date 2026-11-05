@@ -285,6 +285,8 @@ test('app.js: v3 só com a flag; sem a flag a Início antiga carrega como sempre
   assert.match(APP, /withBundle\('inicio3'/);
   assert.match(APP, /mountProfile\(window\.App, document\)/);
   assert.match(APP, /isSwipeExcluded[\s\S]{0,400}\.v3-strip, \.hl-list/, 'deslizar numa faixa rolável não troca de painel');
+  assert.match(APP, /function hasHorizontalScroller[\s\S]{0,400}overflowX === 'auto'/, 'qualquer ancestral com rolagem horizontal fica com o gesto');
+  assert.match(APP, /isSwipeExcluded[\s\S]{0,700}hasHorizontalScroller\(target/, 'isSwipeExcluded consulta a rolagem horizontal dos ancestrais');
 });
 
 test('CSS: tudo atrás da flag; alvos de 44 px; foco visível; movimento reduzido; faixas rolam; trilho de 88 e 248 px', () => {

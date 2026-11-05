@@ -1643,8 +1643,21 @@
   var SWIPE_MAX_OFF_AXIS_PX = 60;
   var swipeStart = null;
 
+  // Qualquer ancestral que role na horizontal (carrossel, chips, tabela) fica com o gesto:
+  // o arrasto rola o próprio elemento e não pode também trocar de painel.
+  function hasHorizontalScroller(target, boundary) {
+    for (var node = target; node && node !== boundary && node.nodeType === 1; node = node.parentElement) {
+      if (node.scrollWidth <= node.clientWidth + 1) continue;
+      var overflowX = window.getComputedStyle(node).overflowX;
+      if (overflowX === 'auto' || overflowX === 'scroll') return true;
+    }
+    return false;
+  }
+
   function isSwipeExcluded(target) {
-    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .adm2-bar, .modal-overlay, canvas, .learn-viewer, .v3-strip, .hl-list'));
+    if (!(target.closest)) return false;
+    if (target.closest('input, select, textarea, .bottom-nav, .adm2-bar, .modal-overlay, canvas, .learn-viewer, .v3-strip, .hl-list')) return true;
+    return hasHorizontalScroller(target, document.querySelector('.app-main'));
   }
 
   // Ordem do deslizar no modo membro: a mesma de antes do menu (os itens do menu entram no lugar certo).
