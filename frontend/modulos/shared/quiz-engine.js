@@ -42,6 +42,7 @@
   var QUEUED_MESSAGE = 'Salvo neste aparelho, será enviado quando houver internet.';
 
   var Logic = global.LaiftQuizLogic;
+  var SIZE_KEY_PREFIX = 'laiftQuizSize:'; // preferência por módulo (só deste aparelho)
 
   function $(id) { return global.document.getElementById(id); }
 
@@ -106,6 +107,7 @@
       allCorrect: 'Parabéns! Você acertou todas as questões!',
       studyTimer: 'Modo Estudo',
       reviewTimer: 'Modo Estudo (Revisão)',
+      errorsTimer: 'Revisão dos meus erros',
       performance: null,
     }, cfg.labels || {});
 
@@ -120,16 +122,20 @@
       answered: $('answeredStat'), correct: $('correctStat'), progressStat: $('progressStat'),
       totalStat: $('totalQuestionsStat'), status: $('quizStatus'),
       infoBtn: $('infoBtn'), infoModal: $('instructionsModal'), closeModal: $('closeModal'),
+      reviewErrors: $('reviewErrorsBtn'),
     };
+    var sizeButtons = Array.prototype.slice.call(global.document.querySelectorAll('.size-btn'));
     var modeButtons = Array.prototype.slice.call(global.document.querySelectorAll('.mode-btn'));
 
     var state = {
       bank: [], selected: new Set(), mode: 'study', questions: [], index: 0, answers: [],
       active: false, timeLeft: 0, timer: null, startedAt: 0, renderToken: 0, lastFocusedOption: null,
       seed: 0, // semente da ordem das alternativas (QZ-01): salva no estudo, nova a cada prova
+      size: 0, // A1: tamanho da sessão (5, 10, 20; 0 = todas as questões dos tópicos)
     };
 
     var queue = createQueue();
+    var errors = createErrors();
 
     function createQueue() {
       var Q = global.LaiftQuizQueue;
@@ -141,6 +147,64 @@
           try { var id = global.LaiftIdentity && global.LaiftIdentity.get(); return Q.ownerTag(id && id.email); } catch (e) { return ''; }
         },
       });
+    }
+
+    // ------------------------------------------------------------------
+    // A1: erros guardados no aparelho (quiz-errors.js; nada vai ao servidor) e tamanho da sessão.
+    // ------------------------------------------------------------------
+    function createErrors() {
+      var E = global.LaiftQuizErrors;
+      if (!E) return null;
+      try { return E.createStore(global.localStorage, ownerNow); } catch (e) { return null; }
+    }
+
+    function recordError(q, correct) {
+      if (!errors || !q) return;
+      errors.record({ module: cfg.module, id: q.id, topic: q.topic, correct: correct, now: Date.now() });
+      refreshReviewButton();
+    }
+
+    /** Questões do banco que o aparelho guardou como erro (o mais recente primeiro). */
+    function errorQuestions() {
+      if (!errors) return [];
+      var byId = {};
+      state.bank.forEach(function (q) { byId[String(q.id)] = q; });
+      return errors.ids(cfg.module).map(function (id) { return byId[String(id)]; }).filter(Boolean);
+    }
+
+    function refreshReviewButton() {
+      if (!el.reviewErrors) return;
+      var n = errorQuestions().length;
+      show(el.reviewErrors, n > 0);
+      el.reviewErrors.textContent = '🧠 Revisar meus erros (' + n + ')';
+    }
+
+    function reviewMyErrors() {
+      if (state.active) return;
+      var questions = errorQuestions();
+      if (!questions.length) { refreshReviewButton(); dialogAlert('Você não tem erros guardados neste aparelho.'); return; }
+      questions = Logic.pickSession(questions, state.size, { seed: Logic.newSeed(), mode: 'study' });
+      setMode('study');
+      setStatus('');
+      begin(questions, new Array(questions.length).fill(null), 0, L.errorsTimer);
+    }
+
+    function setSize(size) {
+      state.size = size === 5 || size === 10 || size === 20 ? size : 0;
+      sizeButtons.forEach(function (btn) {
+        var on = parseInt(btn.dataset.size, 10) === state.size;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    }
+
+    function chooseSize(size) {
+      setSize(size);
+      try { global.localStorage.setItem(SIZE_KEY_PREFIX + cfg.module, String(state.size)); } catch (e) { /* preferência não salva */ }
+    }
+
+    function restoreSize() {
+      try { setSize(parseInt(global.localStorage.getItem(SIZE_KEY_PREFIX + cfg.module), 10) || 0); } catch (e) { setSize(0); }
     }
 
     // ------------------------------------------------------------------
@@ -272,6 +336,7 @@
       if (el.progressStat) el.progressStat.textContent = (state.bank.length ? Math.round((answered / state.bank.length) * 100) : 0) + '%';
       show(el.resetBtn, answered > 0);
       show(el.continueBtn, answered > 0);
+      refreshReviewButton();
     }
 
     function showScreen(name) {
@@ -339,13 +404,13 @@
       var questions = state.bank.filter(function (q) { return state.selected.has(q.topic); });
       if (!questions.length) { setStatus(L.noQuestions, 'error'); return; }
       setStatus('');
+      var saved = state.mode === 'study' ? savedProgress() : null;
+      // A1: sessão curta (5/10/20); no estudo, as ainda não respondidas têm preferência.
+      questions = Logic.pickSession(questions, state.size, { seed: Logic.newSeed(), mode: state.mode, answered: saved ? saved.byId : {} });
       if (state.mode === 'exam') shuffle(questions);
       var answers = new Array(questions.length).fill(null);
       // Modo Estudo retoma as respostas já dadas nesses tópicos.
-      if (state.mode === 'study') {
-        var saved = savedProgress();
-        questions.forEach(function (q, i) { answers[i] = answerFor(saved, q); });
-      }
+      if (saved) questions.forEach(function (q, i) { answers[i] = answerFor(saved, q); });
       begin(questions, answers, 0);
     }
 
@@ -480,6 +545,7 @@
       // QZ-03: no estudo o gabarito aparece na primeira resposta; reresponder mudaria a pontuação enviada.
       if (!Logic.canAnswer(state.mode, state.answers[state.index])) return;
       state.answers[state.index] = orderOf(q)[position];
+      if (state.mode === 'study') recordError(q, state.answers[state.index] === q.correct); // prova: registra ao entregar
       saveProgress();
       updateStats();
       state.freshAnswer = true; // só uma resposta nova anima/vibra; navegar entre questões já respondidas, não
@@ -553,6 +619,9 @@
       state.active = false;
       stopTimer();
       var r = Logic.scoreAnswers(state.questions, state.answers);
+      if (state.mode === 'exam') {
+        state.questions.forEach(function (q, i) { if (state.answers[i] !== null && state.answers[i] !== undefined) recordError(q, state.answers[i] === q.correct); });
+      }
       var duration = Math.max(1, Math.round((Date.now() - state.startedAt) / 1000));
       var statusEl = showResults(r.correct, r.topicScores, r.topicCounts, r.answered, r.blank);
       if (!r.answered) { statusEl.textContent = 'Nenhuma questão respondida: nada foi registrado.'; return; }
@@ -717,6 +786,8 @@
       if (el.startBtn) el.startBtn.addEventListener('click', startQuiz);
       if (el.continueBtn) el.continueBtn.addEventListener('click', continueQuiz);
       if (el.resetBtn) el.resetBtn.addEventListener('click', resetProgress);
+      if (el.reviewErrors) el.reviewErrors.addEventListener('click', reviewMyErrors);
+      sizeButtons.forEach(function (btn) { btn.addEventListener('click', function () { chooseSize(parseInt(btn.dataset.size, 10)); }); });
       if (el.selectAll) el.selectAll.addEventListener('click', function () { state.selected = new Set(allTopics()); refreshSidebar(); });
       if (el.deselectAll) el.deselectAll.addEventListener('click', function () { state.selected.clear(); refreshSidebar(); });
       el.prev.addEventListener('click', function () { go(-1); });
@@ -756,6 +827,7 @@
       if (el.totalStat) el.totalStat.textContent = state.bank.length;
       renderTopics();
       setMode('study');
+      restoreSize();
       refreshSidebar();
       flushPending();
     }
@@ -773,6 +845,8 @@
       selectOption: selectOption,
       finishQuiz: finishQuiz,
       setMode: setMode,
+      reviewMyErrors: reviewMyErrors,
+      setSize: chooseSize,
       selectTopics: function (list) { state.selected = new Set(list || allTopics()); refreshSidebar(); },
     };
   }
