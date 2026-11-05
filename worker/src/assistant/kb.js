@@ -47,7 +47,7 @@ export const INTENTS = [
     id: 'credencial',
     title: 'Crachá virtual e QR de presença',
     keywords: ['cracha', 'credencial', 'qr', 'qr code', 'qrcode', 'portaria', 'presenca', 'check in', 'checkin', 'carteirinha'],
-    reply: 'Seu crachá virtual mostra seu nome, seu papel na liga e um QR Code de presença. Na portaria do evento, mostre o QR para o fiscal ler. Dá para ampliar o QR e salvar a imagem do crachá.',
+    reply: 'Seu crachá virtual mostra seu nome, seu papel na liga e um QR Code de presença. Na portaria do evento, mostre o QR para o fiscal ler: ele muda a cada 30 segundos e vale só para aquele evento, então mantenha o crachá aberto na tela. Salvar imagem guarda o crachá sem o QR. Para abrir, use Início ou Perfil, no botão Abrir crachá virtual.',
     actions: [{ type: 'open_credential', target: 'credential' }, nav('panel-events')],
     suggestions: ['Eventos abertos'],
   },
@@ -96,7 +96,7 @@ export const INTENTS = [
     defines: true, // lista ou define de fato: responde também a pergunta de definição (assistant/questionKind.js)
     title: 'Aba Aprender (todos os módulos)',
     keywords: ['aprender', 'modulo', 'modulos', 'estudar', 'estudos', 'conteudo', 'conteudos', 'cursos', 'trilha'],
-    reply: 'A aba Aprender reúne os módulos de estudo: Farmacologia (quiz), Toxicologia, Clínica Virtual, Laboratório Virtual e Atlas 3D. Escolha um para abrir. Lá também aparecem seu desempenho por módulo, suas conquistas e o seu crachá virtual.',
+    reply: 'A aba Aprender reúne os módulos de estudo: Farmacologia (quiz), Toxicologia, Clínica Virtual, Laboratório Virtual e Atlas 3D. Escolha um para abrir. Lá também aparecem seu desempenho por módulo e suas conquistas. O crachá virtual fica em Início e em Perfil, no botão Abrir crachá virtual.',
     actions: [nav('panel-learn'), mod('lab'), mod('anatomia'), mod('clinica')],
     suggestions: ['Como funciona o laboratório?', 'Atlas 3D'],
   },

@@ -23,8 +23,16 @@
  * (chave = HMAC(pepper, 'laift-attendance-qr-v1')), para não precisar de
  * segredo novo e sem reutilizar o pepper cru em outro contexto. Trocar o
  * pepper invalida todas as sessões E todos os QRs/crachás impressos.
+ *
+ * QR rotativo (A2, Fase A): LAIFT:v3:<profileId>.<eventId>.<janela>.<sig>.
+ * A janela é floor(tempo/30 s) na hora do SERVIDOR e a assinatura cobre
+ * perfil, evento e janela: o QR só vale para aquele evento e expira em
+ * ~90 s (captura de tela deixa de servir). A chave pode ser própria
+ * (ATTENDANCE_QR_SECRET, opcional); sem ela, deriva do pepper com outro
+ * domínio. O v2 permanente (crachá impresso) continua aceito.
  */
 import * as C from '../constants.js';
+import { isEnabled } from './featureFlagService.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
@@ -41,6 +49,18 @@ const QR_SIG_CHARS = 24;
 // fonte, fácil de apagar sem perceber numa edição).
 const UTF8_BOM = String.fromCharCode(0xfeff);
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// Modo de transição: enquanto a flag estiver desligada (padrão), o QR permanente
+// v2 do crachá impresso segue valendo. O admin liga a flag para encerrar o v2.
+const REQUIRE_ROTATING_FLAG = 'attendance_qr_rotating_only';
+const QR_V3_PREFIX = 'LAIFT:v3:';
+const QR_V3_KEY_DOMAIN = 'laift-attendance-qr-v3';
+const QR_WINDOW_SECONDS = 30;
+const QR_WINDOW_MS = QR_WINDOW_SECONDS * 1000;
+const QR_WINDOWS_BEHIND = 2;  // janela atual + 2 anteriores (~90 s no pior caso)
+const QR_WINDOWS_AHEAD = 1;   // folga de relógio entre isolates da Worker
+const SCANNED_AT_MAX_AGE_MS = 12 * 3600 * 1000; // fila offline do portão
+const SCANNED_AT_MAX_FUTURE_MS = 60 * 1000;
+const QR_V3_RE = /^LAIFT:v3:([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.(\d{1,10})\.([A-Za-z0-9_-]{24})$/;
 const QR_RE = /^LAIFT:v2:([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.([A-Za-z0-9_-]{24})$/;
 
 const ROLE_LABELS = { visitor: 'Visitante', member: 'Membro', admin: 'Administrador' };
@@ -54,18 +74,20 @@ const STATUS_LABELS = {
 // QR assinado
 // =============================================================================
 
-let qrKeyCache = null; // { pepper, promise } — importKey é caro; a chave não muda no isolate
+const qrKeyCache = new Map(); // `${domain}|${secret}` → Promise<CryptoKey>; importKey é caro e a chave não muda no isolate
 
-function getQrKey(pepper) {
-  if (!pepper) throw new Error('SESSION_TOKEN_PEPPER não configurado.'); // inesperado → mensagem genérica
-  if (qrKeyCache && qrKeyCache.pepper === pepper) return qrKeyCache.promise;
+function getQrKey(secret, domain) {
+  if (!secret) throw new Error('Segredo do QR de presença não configurado.'); // inesperado → mensagem genérica
+  const cacheKey = domain + '|' + secret;
+  const hit = qrKeyCache.get(cacheKey);
+  if (hit) return hit;
   const enc = new TextEncoder();
   const promise = crypto.subtle
-    .importKey('raw', enc.encode(pepper), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
-    .then((master) => crypto.subtle.sign('HMAC', master, enc.encode(QR_KEY_DOMAIN)))
+    .importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
+    .then((master) => crypto.subtle.sign('HMAC', master, enc.encode(domain)))
     .then((derived) => crypto.subtle.importKey('raw', derived, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']));
-  promise.catch(() => { qrKeyCache = null; });
-  qrKeyCache = { pepper, promise };
+  promise.catch(() => { qrKeyCache.delete(cacheKey); });
+  qrKeyCache.set(cacheKey, promise);
   return promise;
 }
 
@@ -76,7 +98,7 @@ function base64url(bytes) {
 }
 
 async function computeSignature(env, profileId) {
-  const key = await getQrKey(env.SESSION_TOKEN_PEPPER);
+  const key = await getQrKey(env.SESSION_TOKEN_PEPPER, QR_KEY_DOMAIN);
   // A mensagem assinada inclui o prefixo de versão: uma assinatura de v2
   // nunca vale para um formato futuro (v3) com o mesmo profileId.
   const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(QR_PREFIX + profileId));
@@ -106,9 +128,71 @@ export async function verifyAttendanceQr(env, payload) {
   return timingSafeEqual(expected, match[2]) && expected.length === QR_SIG_CHARS ? id : null;
 }
 
-/** apiLearnGetMyAttendanceQr — a credencial da PRÓPRIA sessão (qualquer papel). */
-export async function getMyAttendanceQr(env, identity) {
-  return { success: true, qrPayload: await signAttendanceQr(env, identity.profileId) };
+function windowOf(nowMs) {
+  return Math.floor(nowMs / QR_WINDOW_MS);
+}
+
+async function computeRotatingSignature(env, profileId, eventId, win) {
+  const key = await getQrKey(env.ATTENDANCE_QR_SECRET || env.SESSION_TOKEN_PEPPER, QR_V3_KEY_DOMAIN);
+  const message = QR_V3_PREFIX + profileId + '.' + eventId + '.' + win;
+  const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message));
+  return base64url(new Uint8Array(mac).slice(0, QR_SIG_BYTES));
+}
+
+/** QR rotativo de um evento: vale só para ele e só na janela de tempo (hora do servidor). */
+export async function signRotatingQr(env, profileId, eventId, nowMs) {
+  const pid = String(profileId || '').toLowerCase();
+  const eid = String(eventId || '').toLowerCase();
+  if (!UUID_RE.test(pid) || !UUID_RE.test(eid)) throw new Error('profileId/eventId inválido para o QR de presença.');
+  const win = windowOf(nowMs === undefined ? Date.now() : nowMs);
+  return QR_V3_PREFIX + pid + '.' + eid + '.' + win + '.' + (await computeRotatingSignature(env, pid, eid, win));
+}
+
+/**
+ * Confere um QR (v3 rotativo ou v2 permanente) para o evento informado.
+ * Devolve { ok: true, profileId, rotating } ou { ok: false, reason }, com
+ * reason em 'invalid' | 'expired' | 'wrong_event'.
+ */
+export async function inspectAttendanceQr(env, payload, { eventId, nowMs } = {}) {
+  const text = String(payload || '').trim();
+  const v3 = QR_V3_RE.exec(text);
+  if (v3) {
+    const profileId = v3[1].toLowerCase();
+    const qrEvent = v3[2].toLowerCase();
+    const win = Number(v3[3]);
+    const expected = await computeRotatingSignature(env, profileId, qrEvent, win);
+    if (!timingSafeEqual(expected, v3[4])) return { ok: false, reason: 'invalid' };
+    if (qrEvent !== String(eventId || '').toLowerCase()) return { ok: false, reason: 'wrong_event' };
+    const current = windowOf(nowMs === undefined ? Date.now() : nowMs);
+    if (win > current + QR_WINDOWS_AHEAD) return { ok: false, reason: 'invalid' };
+    if (win < current - QR_WINDOWS_BEHIND) return { ok: false, reason: 'expired' };
+    return { ok: true, profileId, rotating: true };
+  }
+  const legacyId = await verifyAttendanceQr(env, text);
+  return legacyId ? { ok: true, profileId: legacyId, rotating: false } : { ok: false, reason: 'invalid' };
+}
+
+/**
+ * apiLearnGetMyAttendanceQr — a credencial da PRÓPRIA sessão (qualquer papel).
+ * Com { eventId }, devolve o QR rotativo daquele evento (renovar em refreshAt);
+ * sem, o QR permanente v2 do crachá impresso.
+ */
+export async function getMyAttendanceQr(env, identity, input, nowMs) {
+  const rawEvent = input && typeof input === 'object' ? input.eventId : undefined;
+  if (rawEvent === undefined || rawEvent === null || rawEvent === '') {
+    return { success: true, qrPayload: await signAttendanceQr(env, identity.profileId) };
+  }
+  const eventId = requireUuid(rawEvent, 'Evento inválido para a credencial.');
+  const now = nowMs === undefined ? Date.now() : nowMs;
+  return {
+    success: true,
+    qrPayload: await signRotatingQr(env, identity.profileId, eventId, now),
+    rotating: true,
+    eventId,
+    windowSeconds: QR_WINDOW_SECONDS,
+    serverTime: now,
+    refreshAt: (windowOf(now) + 1) * QR_WINDOW_MS,
+  };
 }
 
 // =============================================================================
@@ -155,6 +239,7 @@ export async function listEvents(sql, identity) {
   `;
   return {
     success: true,
+    serverTime: Date.now(),
     events: rows.map((r) => ({
       id: r.id,
       title: r.title,
@@ -187,6 +272,25 @@ function mapRegistrationTriggerError(err, participantName) {
   return null;
 }
 
+const QR_REJECTION_MESSAGES = {
+  legacy_blocked: 'O QR Code permanente (formato antigo) foi encerrado. Peça para a pessoa abrir a credencial do evento na plataforma, que mostra um QR Code atualizado a cada 30 segundos.',
+  invalid: 'QR Code inválido ou adulterado. Peça para a pessoa abrir a credencial atualizada na plataforma, ou use a presença manual por e-mail.',
+  expired: 'O QR Code expirou (ele muda a cada 30 segundos). Peça para a pessoa manter a credencial aberta e mostrar o QR atual.',
+  wrong_event: 'Este QR Code é de outro evento. Peça para a pessoa abrir a credencial do evento certo.',
+};
+
+/**
+ * Hora em que o QR foi lido. A fila offline do portão reenvia depois; o
+ * instante da leitura (hora do aparelho, corrigida pelo relógio do servidor)
+ * vale só se não estiver no futuro nem tiver mais de 12 h; senão, vale agora.
+ */
+function effectiveScanTime(scannedAt) {
+  const now = Date.now();
+  const at = typeof scannedAt === 'number' && Number.isFinite(scannedAt) ? scannedAt : null;
+  if (at === null || at > now + SCANNED_AT_MAX_FUTURE_MS || at < now - SCANNED_AT_MAX_AGE_MS) return now;
+  return at;
+}
+
 /**
  * apiAdminAttendanceCheckIn — registra a presença. Idempotente: o segundo
  * check-in da mesma pessoa no mesmo evento devolve alreadyCheckedIn: true
@@ -209,19 +313,24 @@ export async function checkIn(sql, env, identity, input, correlationId) {
   if (method === 'qr') {
     const payload = typeof input.qrPayload === 'string' ? input.qrPayload.trim() : '';
     if (!payload || payload.length > 200) throw E.ValidationError('QR Code ausente ou inválido.');
-    const profileId = await verifyAttendanceQr(env, payload);
-    if (!profileId) {
-      await Logging.logAudit(sql, correlationId, identity.profileId, 'ATTENDANCE_CHECKIN', 'event', eventId, 'failure', { method, reason: 'invalid_qr' });
-      throw E.ValidationError('QR Code inválido ou adulterado. Peça para a pessoa abrir a credencial atualizada na plataforma, ou use a presença manual por e-mail.');
+    const checked = await inspectAttendanceQr(env, payload, { eventId, nowMs: effectiveScanTime(input.scannedAt) });
+    if (!checked.ok) {
+      await Logging.logAudit(sql, correlationId, identity.profileId, 'ATTENDANCE_CHECKIN', 'event', eventId, 'failure', { method, reason: 'qr_' + checked.reason });
+      throw E.ValidationError(QR_REJECTION_MESSAGES[checked.reason] || QR_REJECTION_MESSAGES.invalid);
     }
-    profileRows = () => sql`SELECT id, full_name, role, status, email_confirmed_at FROM profiles WHERE id = ${profileId}::uuid`;
+    if (!checked.rotating && await isEnabled(sql, REQUIRE_ROTATING_FLAG, null)) {
+      await Logging.logAudit(sql, correlationId, identity.profileId, 'ATTENDANCE_CHECKIN', 'event', eventId, 'failure', { method, reason: 'qr_legacy_blocked' });
+      throw E.ValidationError(QR_REJECTION_MESSAGES.legacy_blocked);
+    }
+    const profileId = checked.profileId;
+    profileRows = () => sql`SELECT id, full_name, role, status, email_confirmed_at, avatar_url FROM profiles WHERE id = ${profileId}::uuid`;
   } else if (method === 'manual') {
     const email = S.normalizeText(input.email).toLowerCase();
     if (!S.isValidEmail(email)) throw E.ValidationError('Informe um e-mail válido.');
-    profileRows = () => sql`SELECT id, full_name, role, status, email_confirmed_at FROM profiles WHERE email = ${email}`;
+    profileRows = () => sql`SELECT id, full_name, role, status, email_confirmed_at, avatar_url FROM profiles WHERE email = ${email}`;
   } else {
     const profileId = requireUuid(input.profileId, 'Participante inválido.');
-    profileRows = () => sql`SELECT id, full_name, role, status, email_confirmed_at FROM profiles WHERE id = ${profileId}::uuid`;
+    profileRows = () => sql`SELECT id, full_name, role, status, email_confirmed_at, avatar_url FROM profiles WHERE id = ${profileId}::uuid`;
   }
 
   const eventRows = await sql`SELECT id, title, status FROM events WHERE id = ${eventId}::uuid`;
@@ -318,6 +427,7 @@ export async function checkIn(sql, env, identity, input, correlationId) {
       profileId: person.id,
       fullName,
       role: person.role,
+      avatarUrl: person.avatar_url || undefined,
       alreadyCheckedIn,
       walkIn,
       checkedInAt,

@@ -3,6 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
+import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 import * as AttendanceService from '../src/services/attendanceService.js';
 import { makeSql, makeEnv } from './helpers/mockEnv.js';
 
@@ -25,6 +26,8 @@ function queryText(sql, callIndex) {
 function flipChar(c) {
   return c === 'A' ? 'B' : 'A';
 }
+
+beforeEach(() => __resetFlagCacheForTests());
 
 describe('QR de presença v2 (HMAC com chave derivada do pepper)', () => {
   const env = makeEnv();
@@ -136,6 +139,7 @@ describe('AttendanceService.checkIn', () => {
     const sql = makeSql();
     sql
       .mockResolvedValueOnce(RATE_OK)
+      .mockResolvedValueOnce([]) // feature_flags (modo de transição do QR v2)
       .mockResolvedValueOnce(OPEN_EVENT)
       .mockResolvedValueOnce(PERSON)
       .mockResolvedValueOnce([{ checked_in_at: '2026-09-26T12:00:00Z' }]) // UPDATE … RETURNING
@@ -146,10 +150,10 @@ describe('AttendanceService.checkIn', () => {
       message: 'Presença registrada: Ana Souza.',
       participant: { profileId: MEMBER.profileId, fullName: 'Ana Souza', role: 'member', alreadyCheckedIn: false, walkIn: false, checkedInAt: '2026-09-26T12:00:00Z' },
     });
-    expect(boundValues(sql, 2)).toEqual([MEMBER.profileId]); // perfil = o do QR verificado
-    expect(queryText(sql, 3)).toContain('UPDATE event_registrations');
-    expect(queryText(sql, 3)).toContain('checked_in_at IS NULL');
-    expect(boundValues(sql, 3)).toEqual([ADMIN.profileId, 'qr', EVENT_ID, MEMBER.profileId]);
+    expect(boundValues(sql, 3)).toEqual([MEMBER.profileId]); // perfil = o do QR verificado
+    expect(queryText(sql, 4)).toContain('UPDATE event_registrations');
+    expect(queryText(sql, 4)).toContain('checked_in_at IS NULL');
+    expect(boundValues(sql, 4)).toEqual([ADMIN.profileId, 'qr', EVENT_ID, MEMBER.profileId]);
     expect(env.HOT_CACHE.delete).not.toHaveBeenCalled(); // contagem de inscritos não mudou
   });
 
