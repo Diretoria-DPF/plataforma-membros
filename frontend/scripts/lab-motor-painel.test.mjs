@@ -21,14 +21,15 @@ const { ESPECIES } = require('../modulos/laboratorio/js/lab-motor-especies.js');
 const NACL = JSON.parse(fs.readFileSync(path.join(LAB, 'data/processos/proc_nacl_09_v1.json'), 'utf8'));
 const ctx = { especies: ESPECIES };
 
-test('chave labMotor: desligada por padrão, liga com ?flags=labMotor; labGuiado segue ligado', () => {
-  assert.equal(G.flagLigada('labMotor', '', null), false);
-  assert.equal(G.flagLigada('labMotor', '?flags=labMotor', null), true);
+test('chave labMotor: ligada por padrão, ?flags=-labMotor desliga; labGuiado segue ligado', () => {
+  assert.equal(G.flagLigada('labMotor', '', null), true);
+  assert.equal(G.flagLigada('labMotor', '?flags=-labMotor', null), false);
+  assert.equal(G.flagLigada('labMotor', '', { labMotor: false }), false);
   assert.equal(G.flagLigada('labGuiado', '', null), true);
   const janela = (search, flags) => ({ LabGuia: G, location: { search }, __labFlags: flags });
-  assert.equal(Car.flagLigada(janela('', null)), false);
-  assert.equal(Car.flagLigada(janela('?flags=labMotor', null)), true);
-  assert.equal(Car.flagLigada(janela('', { labMotor: true })), true);
+  assert.equal(Car.flagLigada(janela('', null)), true);
+  assert.equal(Car.flagLigada(janela('?flags=-labMotor', null)), false);
+  assert.equal(Car.flagLigada(janela('', { labMotor: false })), false);
   assert.equal(Car.flagLigada({}), false);
 });
 
@@ -47,10 +48,10 @@ function docFalso() {
 
 test('carregador: só insere o botão com a chave ligada; o motor não é baixado até o toque', () => {
   const desligado = docFalso();
-  assert.equal(Car.iniciar({ document: desligado, LabGuia: G, location: { search: '' } }), false);
+  assert.equal(Car.iniciar({ document: desligado, LabGuia: G, location: { search: '?flags=-labMotor' } }), false);
   assert.equal(desligado.cab.filhos.length, 0);
   const ligado = docFalso();
-  assert.equal(Car.iniciar({ document: ligado, LabGuia: G, location: { search: '?flags=labMotor' } }), true);
+  assert.equal(Car.iniciar({ document: ligado, LabGuia: G, location: { search: '' } }), true);
   assert.equal(ligado.cab.filhos[0].id, 'btnProcessoGuiado');
   assert.equal(ligado.cab.filhos[0].textContent, 'Processo guiado');
   assert.equal(ligado.scripts.length, 0, 'nenhum script do motor antes do toque');
@@ -106,4 +107,23 @@ test('painel e carregador: sem innerHTML, sem handler inline, sem eval; carregad
   const html = fs.readFileSync(path.join(LAB, 'index.html'), 'utf8');
   assert.ok(html.indexOf('js/lab-motor-carregador.js') > html.indexOf('js/script.js'));
   assert.ok(!/lab-motor-(estado|processo|painel)\.js/.test(html), 'o motor não é carregado com a página');
+});
+
+test('atalhos: Produtos e Regulação entram abaixo do cabeçalho de Missões, cada um na sua chave; ?flags=-nome tira', () => {
+  function criar() {
+    const nos = [];
+    const elemento = () => ({ attrs: {}, filhos: [], setAttribute(k, v) { this.attrs[k] = v; }, appendChild(n) { this.filhos.push(n); } });
+    const pai = { filhos: [], insertBefore(n) { nos.push(n); } };
+    const cab = { parentNode: pai, nextSibling: null };
+    return { nos, doc: { querySelector: () => cab, getElementById: (id) => nos.find((n) => n.id === id) || null, createElement: elemento } };
+  }
+  const rodar = (search, flags) => { const c = criar(); const ok = Car.iniciarAtalhos({ document: c.doc, LabGuia: G, location: { search }, __labFlags: flags }); return { ok, nav: c.nos[0] }; };
+  const padrao = rodar('', null);
+  assert.equal(padrao.ok, true);
+  assert.equal(padrao.nav.attrs['aria-label'], 'Outras áreas do Laboratório');
+  assert.deepEqual(padrao.nav.filhos.map((l) => [l.id, l.href]), [['lnkProdutos', 'produtos/index.html'], ['lnkRegulacao', 'regulacao/index.html']]);
+  assert.deepEqual(rodar('?flags=-labProdutos', null).nav.filhos.map((l) => l.id), ['lnkRegulacao']);
+  assert.deepEqual(rodar('', { labRegulacao: false }).nav.filhos.map((l) => l.id), ['lnkProdutos']);
+  assert.equal(rodar('?flags=-labProdutos,-labRegulacao', null).ok, false);
+  assert.equal(Car.iniciarAtalhos({ document: criar().doc }), false);
 });

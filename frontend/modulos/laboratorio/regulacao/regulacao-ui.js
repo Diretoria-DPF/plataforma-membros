@@ -5,7 +5,7 @@
  */
 /**
  * regulacao-ui.js — interface do balcão simulado de controlados.
- * Só monta a tela se a flag local labRegulacao estiver ligada (?flags=labRegulacao).
+ * Só monta a tela se a flag local labRegulacao estiver ligada (padrão; ?flags=-labRegulacao desliga).
  * Todo texto entra por textContent; os dados vêm dos JSON de data/ (mesma origem).
  */
 (function () {

@@ -27,10 +27,11 @@ async function abrir(flags, viewport) {
 }
 
 async function cenarioDesligado() {
-  console.log('  chave desligada (padrão)');
-  const { app, frame } = await abrir(null);
+  console.log('  chaves desligadas (rollback: ?flags=-nome ou __labFlags)');
+  const { app, frame } = await abrir({ labMotor: false, labProdutos: false, labRegulacao: false });
   try {
     check(await frame.evaluate(() => !document.getElementById('btnProcessoGuiado')), 'sem botão "Processo guiado" com a chave desligada');
+    check(await frame.evaluate(() => !document.getElementById('labAtalhos')), 'sem atalhos de Produtos e Regulação com as chaves desligadas');
     check(await frame.evaluate(() => typeof window.LabMotorProcesso === 'undefined'), 'motor não carregado');
     check(await frame.evaluate(() => window.LabMissoes.MISSOES.length === 10 && /Missão 1 de 10/.test(document.getElementById('faixaRotulo').textContent)), 'missões e faixa da O1 seguem iguais');
     check(app.errors.length === 0, 'sem erro de JavaScript');
@@ -42,6 +43,10 @@ async function cenarioLigado(viewport, nome) {
   const { app, frame, csp } = await abrir({ labMotor: true }, viewport);
   try {
     check(await frame.evaluate(() => typeof window.LabMotorProcesso === 'undefined'), 'motor ainda não baixado antes do toque');
+    await frame.evaluate(() => { if (window.switchRightTab) window.switchRightTab('tabMissao'); if (window.innerWidth < 640 && window.setMobileView) window.setMobileView('analise'); });
+    const atalhos = await frame.evaluate(() => [...document.querySelectorAll('#labAtalhos a')].map((a) => ({ href: a.getAttribute('href'), h: Math.round(a.getBoundingClientRect().height), texto: a.textContent })));
+    check(atalhos.length === 2 && atalhos[0].href === 'produtos/index.html' && atalhos[1].href === 'regulacao/index.html', `atalhos de Produtos e Regulação visíveis por padrão (${JSON.stringify(atalhos)})`);
+    check(atalhos.every((a) => a.h >= 44), 'atalhos com alvo de toque de 44 px');
     await frame.evaluate(() => { if (window.switchRightTab) window.switchRightTab('tabMissao'); if (window.innerWidth < 640 && window.setMobileView) window.setMobileView('analise'); });
     await frame.click('#btnProcessoGuiado');
     await frame.waitForSelector('#labProcesso #lpProgresso');

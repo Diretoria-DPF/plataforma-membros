@@ -42,11 +42,11 @@ test('lista Produtos: cada item aponta para um processo existente e nenhum proce
   assert.ok(Object.values(Reg.porSetor()).every((l) => Array.isArray(l)));
 });
 
-test('flag labProdutos: desligada por padrão; liga e desliga pela URL', () => {
-  assert.equal(Reg.flagLigada(''), false);
-  assert.equal(Reg.flagLigada('?flags=labProdutos'), true);
-  assert.equal(Reg.flagLigada('?flags=outra,labProdutos'), true);
-  assert.equal(Reg.flagLigada('?flags=labProdutos,-labProdutos'), false);
+test('flag labProdutos: ligada por padrão; ?flags=-labProdutos desliga', () => {
+  assert.equal(Reg.flagLigada(''), true);
+  assert.equal(Reg.flagLigada('?flags=-labProdutos'), false);
+  assert.equal(Reg.flagLigada('?flags=outra,-labProdutos'), false);
+  assert.equal(Reg.flagLigada('?flags=-labProdutos,labProdutos'), true);
 });
 
 // ── Página ──────────────────────────────────────────────────────────────────
@@ -88,10 +88,10 @@ test('página de Produtos: sem a flag mostra só o aviso; com a flag monta as ab
     vm.runInNewContext(ler('produtos/produtos.js'), { window: janela, document: doc, URLSearchParams, fetch: () => Promise.reject(new Error('sem rede')), console });
     return raizEl;
   }
-  const desligada = rodar('');
+  const desligada = rodar('?flags=-labProdutos');
   assert.equal(desligada.children.length, 1);
   assert.match(desligada.children[0].textContent, /ainda não está disponível/);
-  const ligada = rodar('?flags=labProdutos');
+  const ligada = rodar('');
   assert.ok(ligada.children.length >= 1);
   const abas = JSON.stringify(ligada);
   for (const t of ['Produtos', 'Controle de qualidade', 'Cálculos']) assert.ok(abas.includes(t), t);

@@ -9,7 +9,7 @@
  * Arquivo pequeno, carregado com a página. O motor (~110 KB) e o painel só são baixados quando a
  * pessoa toca em "Processo guiado" (scripts do mesmo domínio, na ordem certa: CSP script-src 'self').
  * O4: "Trilha de missões" baixa motor + tutor e a trilha (data/trilha), e joga a Missão 1 no motor.
- * Atrás da chave local `labMotor` (desligada por padrão; liga com ?flags=labMotor).
+ * Atrás da chave local `labMotor` (ligada por padrão; ?flags=-labMotor desliga).
  */
 (function (raiz) {
   'use strict';
@@ -117,6 +117,37 @@
     return true;
   }
 
+  const ATALHOS = [
+    { flag: 'labProdutos', id: 'lnkProdutos', texto: 'Produtos e controle de qualidade', href: 'produtos/index.html' },
+    { flag: 'labRegulacao', id: 'lnkRegulacao', texto: 'Regulação (controlados)', href: 'regulacao/index.html' }
+  ];
+
+  /** Atalhos para as páginas de Produtos e de Regulação (cada uma na sua chave), logo abaixo do cabeçalho de Missões. */
+  function iniciarAtalhos(janela) {
+    const doc = janela.document;
+    const G = janela.LabGuia;
+    if (!G || typeof G.flagLigada !== 'function') return false;
+    const cabecalho = doc.querySelector('#tabMissao .panel-section-header');
+    if (!cabecalho || !cabecalho.parentNode || doc.getElementById('labAtalhos')) return false;
+    const busca = janela.location ? janela.location.search : '';
+    const ativos = ATALHOS.filter((a) => G.flagLigada(a.flag, busca, janela.__labFlags || null));
+    if (!ativos.length) return false;
+    const nav = doc.createElement('nav');
+    nav.id = 'labAtalhos';
+    nav.className = 'lab-atalhos';
+    nav.setAttribute('aria-label', 'Outras áreas do Laboratório');
+    ativos.forEach((a) => {
+      const link = doc.createElement('a');
+      link.id = a.id;
+      link.className = 'lab-atalho';
+      link.href = a.href;
+      link.textContent = a.texto;
+      nav.appendChild(link);
+    });
+    cabecalho.parentNode.insertBefore(nav, cabecalho.nextSibling);
+    return true;
+  }
+
   /** Abre a trilha (O4): a Missão 1 é jogada no motor, no lugar da bancada clássica, só enquanto durar. */
   async function abrirTrilha(janela) {
     const doc = janela.document;
@@ -150,8 +181,8 @@
     if (btn) { btn.disabled = false; btn.textContent = 'Processo guiado'; }
   }
 
-  const API = { ARQUIVOS, ARQUIVOS_TUTOR, TRILHA, PROCESSOS, carregarMotor, carregarTutor, carregarProcesso, carregarTrilha, flagLigada, iniciar, abrir, abrirTrilha };
+  const API = { ARQUIVOS, ARQUIVOS_TUTOR, TRILHA, PROCESSOS, carregarMotor, carregarTutor, carregarProcesso, carregarTrilha, flagLigada, iniciar, iniciarAtalhos, abrir, abrirTrilha };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   if (raiz) raiz.LabMotorCarregador = API;
-  if (raiz && raiz.document && !(typeof module !== 'undefined' && module.exports)) iniciar(raiz);
+  if (raiz && raiz.document && !(typeof module !== 'undefined' && module.exports)) { iniciar(raiz); iniciarAtalhos(raiz); }
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : null));

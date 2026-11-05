@@ -4,8 +4,8 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * atlas-trilhas.e2e.js — Trilhas e desafios (A4), atrás da flag `trilhas`.
- *  - Com a flag desligada o modo não aparece e setMode('trilhas') não faz nada.
+ * atlas-trilhas.e2e.js — Trilhas e desafios (A4), ligada por padrão (rollback: ?flags=-trilhas).
+ *  - Com ?flags=-trilhas o modo não aparece e setMode('trilhas') não faz nada.
  *  - Trilha guiada: passo a passo seleciona a estrutura, grava o progresso no aparelho e conclui.
  *  - Encontre a estrutura: acerto por toque no 3D e nome pela lista.
  *  - Desafio diário: 3 questões, resultado salvo e sem refazer no mesmo dia; sem tocar no 3D.
@@ -19,7 +19,7 @@ async function ready(frame) {
 // waitForSelector usa requestAnimationFrame e engasga quando o 3D por software está ocupado; aqui a espera é por intervalo.
 const has = (frame, selector) => frame.waitForFunction((s) => !!document.querySelector(s), selector, { polling: 100, timeout: 30000 });
 
-const FLAGS_OFF = { onboarding: false, hints: false };
+const FLAGS_OFF = { onboarding: false, hints: false, trilhas: false };
 const FLAGS_ON = { onboarding: false, hints: false, trilhas: true };
 
 module.exports = async function atlasTrilhas() {

@@ -252,3 +252,9 @@ html[data-theme="light"] .lmt-fora { color: #991b1b; }
 .lmt-boletim-item meter { width: 100%; height: 10px; }
 .lmt-boletim-nivel { font-weight: 700; }
 .lmt-boletim-texto { margin: 0; font-size: 0.82rem; }
+
+/* Atalhos para Produtos e Regulação (carregador): alvo de toque de 44 px, quebram linha no celular. */
+.lab-atalhos { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+.lab-atalho { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #546e7a; border-radius: 6px; color: #b0bec5; font-size: 0.85rem; text-decoration: none; }
+.lab-atalho:hover, .lab-atalho:focus-visible { background: #546e7a; color: #fff; }
+html[data-theme="light"] .lab-atalho { color: var(--laift-text); border-color: var(--laift-border-strong); }
