@@ -56,7 +56,7 @@
     },
     MetilParabeno_s: {
       nome: 'Metilparabeno', mm: 152.15, fase: 'solido', cp: 1.3, pf: 127,
-      solubilidade: { H2O_l: [[25, 0.25], [80, 2.0]] }, residuo: 'organico_nao_halogenado', perigos: ['irritante'], conservante: true, funcao: 'conservante', ...comum
+      solubilidade: { H2O_l: [[25, 0.25], [80, 2.0]] }, residuo: 'aquoso_neutro', perigos: ['irritante'], conservante: true, funcao: 'conservante', ...comum
     },
     AcidoCitrico_s: {
       nome: 'Ácido cítrico', mm: 192.12, fase: 'solido', cp: 1.1, pf: 153,
@@ -82,7 +82,7 @@
     },
     Fenoxietanol_l: {
       nome: 'Fenoxietanol', mm: 138.16, fase: 'liquido', densidade: 1.107, cp: 2.0, teb: 247, dHvap: 500,
-      residuo: 'organico_nao_halogenado', perigos: ['irritante'], conservante: true, funcao: 'conservante', ...comum
+      residuo: 'aquoso_neutro', perigos: ['irritante'], conservante: true, funcao: 'conservante', ...comum
     },
     LaurilEterSulfatoNa_l: {
       nome: 'Lauril éter sulfato de sódio (solução a 27 %)', mm: 420, fase: 'liquido', densidade: 1.03, cp: 3.6, teb: 105, dHvap: 2000,
@@ -98,7 +98,7 @@
     },
     Fragrancia_l: {
       nome: 'Fragrância', mm: 150, fase: 'liquido', densidade: 0.95, cp: 2.0, teb: 220, dHvap: 400,
-      residuo: 'organico_nao_halogenado', perigos: ['inflamavel'], funcao: 'fragrância', ...comum
+      residuo: 'aquoso_neutro', perigos: ['inflamavel'], funcao: 'fragrância', ...comum
     },
     HCl_01M_l: {
       nome: 'Solução de ácido clorídrico 0,1 mol/L (amostra)', mm: 10000, fase: 'liquido', densidade: 1.0, cp: 4.1, teb: 100, dHvap: 2257,

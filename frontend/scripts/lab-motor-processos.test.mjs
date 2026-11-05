@@ -18,6 +18,7 @@ const Cd = require('../modulos/laboratorio/js/lab-motor-condicoes.js');
 const E = require('../modulos/laboratorio/js/lab-motor-estado.js');
 const K = require('../modulos/laboratorio/js/lab-motor-caderno.js');
 const { ESPECIES } = require('../modulos/laboratorio/js/lab-motor-especies.js');
+const { ESPECIES: ESPECIES_TODAS } = require('../modulos/laboratorio/js/lab-motor-especies-farmaco.js');
 
 const DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '../modulos/laboratorio/data/processos');
 const ctx = { especies: ESPECIES };
@@ -38,7 +39,7 @@ test('validador: todo processo em data/processos/*.json é válido (gate de CI)'
   const arquivos = fs.readdirSync(DIR).filter((f) => f.endsWith('.json'));
   assert.ok(arquivos.length >= 1);
   for (const f of arquivos) {
-    const r = V.validarProcesso(carregar(f), { especies: ESPECIES });
+    const r = V.validarProcesso(carregar(f), { especies: ESPECIES_TODAS });
     assert.deepEqual(r.erros, [], f);
     assert.equal(carregar(f).id + '.json', f, 'nome do arquivo = id');
   }

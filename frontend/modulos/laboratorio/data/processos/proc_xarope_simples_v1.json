@@ -304,8 +304,8 @@
       "errosComuns": [
         {
           "gatilho": {
-            "grandeza": "tempC",
-            "recipiente": "bequer_250",
+            "grandeza": "leitura",
+            "evento": "aquecimento",
             "op": ">",
             "valor": 85
           },

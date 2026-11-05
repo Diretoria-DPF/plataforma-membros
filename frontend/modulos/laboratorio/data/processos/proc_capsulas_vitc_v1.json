@@ -1,0 +1,667 @@
+{
+  "id": "proc_capsulas_vitc_v1",
+  "versao": 1,
+  "titulo": "Cápsulas de ácido ascórbico 100 mg",
+  "categoria": "farmacotecnica",
+  "nivel": 3,
+  "nivel_conteudo": "completo",
+  "restricao": null,
+  "revisado_por": null,
+  "forma": "capsula",
+  "setor": "farmacotecnica",
+  "conferencia": {
+    "estado": "pendente",
+    "nota": "[NV] Valores numéricos, faixas de critério, tolerâncias e citações de norma a conferir com a fonte primária (edição e artigo vigentes) antes de publicar."
+  },
+  "duracaoSimuladaMin": 120,
+  "via": "oral",
+  "objetivos": [
+    "Aplicar o fator de correção pelo teor do insumo",
+    "Misturar por diluição geométrica",
+    "Escolher a cápsula pelo volume do pó",
+    "Fazer peso médio, uniformidade, desintegração e dissolução"
+  ],
+  "fontesOficiais": [
+    {
+      "tipo": "Formulário Nacional",
+      "citacao": "Formulário Nacional da Farmacopeia Brasileira (ANVISA), edição vigente: cápsulas"
+    },
+    {
+      "tipo": "Farmacopeia Brasileira",
+      "citacao": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais: peso médio, uniformidade de doses unitárias, desintegração e dissolução"
+    },
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 67/2007 (ANVISA)"
+    }
+  ],
+  "formulacao": {
+    "base": "para 30 cápsulas",
+    "itens": [
+      {
+        "especie": "AcidoAscorbico_s",
+        "funcao": "ativo",
+        "quantidade": {
+          "valor": 100,
+          "unidade": "mg por cápsula"
+        }
+      },
+      {
+        "especie": "Lactose_s",
+        "funcao": "diluente",
+        "quantidade": {
+          "valor": 100,
+          "unidade": "mg por cápsula",
+          "qsp": true
+        }
+      }
+    ]
+  },
+  "cq": [
+    {
+      "ensaio": "peso médio",
+      "criterio": "limite individual ±10 % para menos de 300 mg"
+    },
+    {
+      "ensaio": "uniformidade de conteúdo",
+      "criterio": "valor de aceitação até 15,0"
+    },
+    {
+      "ensaio": "desintegração",
+      "criterio": "até 45 minutos"
+    },
+    {
+      "ensaio": "dissolução",
+      "criterio": "Q = 80 % em 30 minutos"
+    }
+  ],
+  "referencias": [
+    {
+      "titulo": "Farmacopeia Brasileira (edição vigente), métodos gerais",
+      "nota": "[NV] conferir número do método e critérios"
+    },
+    {
+      "titulo": "RDC nº 67/2007 (ANVISA)",
+      "nota": "[NV] conferir vigência e alterações"
+    }
+  ],
+  "recipientes": [
+    {
+      "id": "gral",
+      "tipo": "bequer",
+      "capMl": 250
+    }
+  ],
+  "materiais": {
+    "especies": [
+      {
+        "id": "AcidoAscorbico_s",
+        "papel": "ativo",
+        "quantidade": {
+          "valor": 3.33,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Lactose_s",
+        "papel": "diluente",
+        "quantidade": {
+          "valor": 3.27,
+          "unidade": "g"
+        }
+      }
+    ],
+    "vidraria": [
+      "gral",
+      "pistilo"
+    ],
+    "equipamentos": [
+      "balanca_analitica",
+      "encapsulador"
+    ]
+  },
+  "seguranca": {
+    "epi": [
+      "jaleco",
+      "luvas_nitrila",
+      "oculos",
+      "mascara",
+      "touca"
+    ],
+    "capela": false,
+    "riscos": [
+      "poeira fina"
+    ],
+    "residuos": [
+      {
+        "tipo": "po_inerte",
+        "destino": "pia"
+      }
+    ]
+  },
+  "etapas": [
+    {
+      "id": "e1",
+      "titulo": "Paramentação",
+      "oQueEstaAcontecendo": "Você veste os equipamentos de proteção antes de abrir qualquer frasco.",
+      "porQue": "O equipamento protege você de respingos e o produto de contaminação por contato.",
+      "preCondicoes": [],
+      "acao": {
+        "operacao": "paramentar",
+        "parametros": {
+          "epi": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos",
+            "mascara",
+            "touca"
+          ],
+          "capela": false
+        },
+        "alvoUI": "painelSeguranca"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "epi",
+          "op": "contem",
+          "valor": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos",
+            "mascara",
+            "touca"
+          ],
+          "mensagemSeFalhar": "Falta equipamento de proteção: jaleco, luvas_nitrila, oculos, mascara, touca.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "titulo": "Calcular a massa do ativo e do diluente",
+      "oQueEstaAcontecendo": "Você calcula quanto pesar de ácido ascórbico (com fator de correção pelo teor) e de lactose para 30 cápsulas de 100 mg, com 10 % de excesso para perdas.",
+      "porQue": "A matéria-prima não é 100 % pura: com teor de 99 %, pesa-se 100/99 do que a dose pede. O excesso cobre o pó que fica no gral e no encapsulador.",
+      "calculoPrevio": {
+        "pergunta": "Quantos gramas de ácido ascórbico (teor 99 %) para 30 cápsulas de 100 mg, com 10 % de excesso?",
+        "formula": "m = n × dose × (100/teor) × 1,10",
+        "resposta": 3.33,
+        "tolerancia": 0.03,
+        "unidade": "g"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e1"
+        }
+      ],
+      "acao": {
+        "operacao": "tarar",
+        "parametros": {
+          "recipiente": "gral"
+        },
+        "alvoUI": "balancaTara"
+      },
+      "verificacoes": []
+    },
+    {
+      "id": "e3",
+      "titulo": "Pesar ativo e diluente",
+      "oQueEstaAcontecendo": "Na balança, você pesa 3,33 g de ácido ascórbico e 3,27 g de lactose no gral, com tara entre os componentes.",
+      "porQue": "O total de 6,60 g dá 30 cápsulas de 200 mg com 10 % de excesso. O diluente completa a massa de cada cápsula.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e2"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "gral"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "AcidoAscorbico_s",
+            "massaG": 3.33,
+            "recipiente": "gral"
+          },
+          "alvoUI": "reagente:AcidoAscorbico_s"
+        },
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "gral"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Lactose_s",
+            "massaG": 3.27,
+            "recipiente": "gral"
+          },
+          "alvoUI": "reagente:Lactose_s"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "gral",
+          "especie": "AcidoAscorbico_s",
+          "op": "entre",
+          "valor": [
+            3.3,
+            3.36
+          ],
+          "mensagemSeFalhar": "Massa fora de 3.33 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "gral",
+          "especie": "Lactose_s",
+          "op": "entre",
+          "valor": [
+            3.24,
+            3.3
+          ],
+          "mensagemSeFalhar": "Massa fora de 3.27 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "titulo": "Misturar por diluição geométrica",
+      "oQueEstaAcontecendo": "Você mistura o ativo com uma parte igual de lactose e vai juntando o restante em porções crescentes, por 8 minutos.",
+      "porQue": "Misturar tudo de uma vez deixa regiões ricas e pobres em ativo. A diluição geométrica dá uma mistura uniforme e doses iguais entre as cápsulas.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e3"
+        }
+      ],
+      "acao": {
+        "operacao": "misturar",
+        "parametros": {
+          "recipiente": "gral",
+          "tecnica": "diluicao_geometrica",
+          "tempoMin": 8
+        },
+        "alvoUI": "btnMisturar"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "gral",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "mistura_sem_diluicao_geometrica"
+          },
+          "consequencia": "mistura_sem_diluicao_geometrica",
+          "explicacao": "Misturar de uma vez deixa o componente minoritário mal distribuído e as cápsulas saem com doses diferentes.",
+          "correcao": "Misture porções iguais e vá dobrando a quantidade de diluente."
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "titulo": "Escolher a cápsula e encapsular",
+      "oQueEstaAcontecendo": "Pela densidade aparente do pó, você escolhe a cápsula nº 2 e enche 30 unidades com 200 mg cada, com compactação leve.",
+      "porQue": "O volume do pó (massa ÷ densidade aparente) precisa caber na cápsula. Cápsula pequena não comporta a dose; cápsula grande fica vazia e pouco regular.",
+      "calculoPrevio": {
+        "pergunta": "Qual o volume (mL) ocupado por 200 mg de pó com densidade aparente de 0,65 g/mL?",
+        "formula": "V = m ÷ densidade aparente",
+        "resposta": 0.31,
+        "tolerancia": 0.02,
+        "unidade": "mL"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e4"
+        }
+      ],
+      "acao": {
+        "operacao": "encapsular",
+        "parametros": {
+          "origem": "gral",
+          "capsula": "n2",
+          "quantidade": 30,
+          "massaPorCapsulaMg": 200,
+          "especieAtiva": "AcidoAscorbico_s",
+          "doseMg": 100,
+          "tecnica": "encapsulador",
+          "compactacao": "leve",
+          "destino": "capsulas"
+        },
+        "alvoUI": "btnEncapsular"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "capsula_pequena",
+          "mensagemSeFalhar": "A cápsula escolhida não comporta a dose: use um tamanho maior.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "capsula_pequena"
+          },
+          "consequencia": "dose_menor_que_a_prescrita",
+          "explicacao": "Com a cápsula pequena, o enchimento é limitado pelo volume e cada cápsula leva menos que a dose.",
+          "correcao": "Calcule o volume do pó e escolha a menor cápsula que o comporta."
+        }
+      ]
+    },
+    {
+      "id": "e6",
+      "titulo": "Peso médio",
+      "oQueEstaAcontecendo": "Você pesa 20 cápsulas, calcula o peso médio e confere cada unidade contra o limite individual.",
+      "porQue": "Peso desigual indica enchimento irregular e doses diferentes. Para cápsulas de menos de 300 mg o limite individual é de ±10 % do peso médio.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e5"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "peso_medio",
+            "recipiente": "capsulas",
+            "pesoTeoricoMg": 200,
+            "tolMediaPct": 5
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_peso_medio_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e7",
+      "titulo": "Uniformidade de conteúdo",
+      "oQueEstaAcontecendo": "O teor de ácido ascórbico de 10 cápsulas é medido e o valor de aceitação é calculado.",
+      "porQue": "Mesmo com peso uniforme, a dose varia se a mistura não for homogênea. O valor de aceitação combina o desvio da média e a dispersão.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e6"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "uniformidade",
+            "recipiente": "capsulas",
+            "unidades": 10
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_uniformidade_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e8",
+      "titulo": "Desintegração",
+      "oQueEstaAcontecendo": "Seis cápsulas ficam em água a 37 °C no aparelho de desintegração e você anota quando a última abre.",
+      "porQue": "Compactação excessiva atrasa a abertura da cápsula e a liberação do ativo.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e7"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "desintegracao",
+            "recipiente": "capsulas",
+            "porCompactacao": {
+              "leve": 8,
+              "moderada": 14,
+              "forte": 52
+            },
+            "limiteMin": 45
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_desintegracao_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e9",
+      "titulo": "Dissolução (didática)",
+      "oQueEstaAcontecendo": "Seis cápsulas dissolvem em meio aquoso por 30 minutos e se mede o percentual liberado, com os estágios S1, S2 e S3 quando preciso.",
+      "porQue": "A dissolução mostra quanto do ativo fica disponível para absorção. O critério em estágios dá chance de repetir com mais unidades antes de reprovar.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e8"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "dissolucao",
+            "recipiente": "capsulas",
+            "porCompactacao": {
+              "leve": 96,
+              "moderada": 88,
+              "forte": 62
+            },
+            "QPct": 80,
+            "tempoMin": 30
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_dissolucao_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e10",
+      "titulo": "Rotular",
+      "oQueEstaAcontecendo": "Você preenche o rótulo com os dados do produto, do lote e do responsável, e as advertências aplicáveis.",
+      "porQue": "Sem rótulo completo o produto não pode ser identificado, rastreado nem usado com segurança.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e9"
+        }
+      ],
+      "acao": {
+        "operacao": "rotular",
+        "parametros": {
+          "recipiente": "capsulas",
+          "campos": {
+            "lote": "LAB-003",
+            "fabricacao": "data da prática",
+            "validade": "conforme o procedimento da bancada",
+            "responsavel": "turma",
+            "produto": "Ácido ascórbico 100 mg cápsulas",
+            "concentracao": "100 mg por cápsula",
+            "conservacao": "Guardar ao abrigo da luz e da umidade",
+            "quantidade": "30 cápsulas"
+          },
+          "camposObrigatorios": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "quantidade",
+            "conservacao"
+          ]
+        },
+        "alvoUI": "painelRotulo"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "rotuloCompleto",
+          "recipiente": "capsulas",
+          "campos": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "quantidade",
+            "conservacao"
+          ],
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Rótulo incompleto: preencha todos os campos obrigatórios.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e11",
+      "titulo": "Descarte e limpeza",
+      "oQueEstaAcontecendo": "O pó que sobrou no gral é descartado e a vidraria é lavada.",
+      "porQue": "A sobra é de baixo risco, mas segue o destino indicado no procedimento do laboratório.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e10"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "gral",
+            "destino": "pia"
+          },
+          "alvoUI": "painelDescarte"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "residuoConforme",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Destino de descarte inadequado para este resíduo.",
+          "consequencia": "nao_conforme"
+        }
+      ]
+    }
+  ],
+  "resultadoEsperado": {
+    "produto": "AcidoAscorbico_s",
+    "criterios": [
+      {
+        "descricao": "Rótulo completo",
+        "grandeza": "rotuloCompleto",
+        "recipiente": "capsulas",
+        "campos": [
+          "produto",
+          "concentracao",
+          "lote",
+          "fabricacao",
+          "validade",
+          "responsavel",
+          "quantidade",
+          "conservacao"
+        ],
+        "op": "==",
+        "valor": true
+      },
+      {
+        "descricao": "Massa de ativo nas cápsulas entre 2,9 e 3,3 g",
+        "grandeza": "massa",
+        "recipiente": "capsulas",
+        "especie": "AcidoAscorbico_s",
+        "op": "entre",
+        "valor": [
+          2.9,
+          3.3
+        ]
+      }
+    ]
+  }
+}

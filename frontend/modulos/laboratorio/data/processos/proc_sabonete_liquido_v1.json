@@ -1,0 +1,883 @@
+{
+  "id": "proc_sabonete_liquido_v1",
+  "versao": 1,
+  "titulo": "Sabonete líquido com ajuste de pH e viscosidade",
+  "categoria": "farmacotecnica",
+  "nivel": 3,
+  "nivel_conteudo": "completo",
+  "restricao": null,
+  "revisado_por": null,
+  "forma": "sabonete_liquido",
+  "setor": "cosmetico",
+  "conferencia": {
+    "estado": "pendente",
+    "nota": "[NV] Valores numéricos, faixas de critério, tolerâncias e citações de norma a conferir com a fonte primária (edição e artigo vigentes) antes de publicar."
+  },
+  "duracaoSimuladaMin": 80,
+  "via": "topica",
+  "objetivos": [
+    "Preparar uma base tensoativa sem formar espuma",
+    "Ajustar o pH com ácido cítrico",
+    "Entender a curva do sal na viscosidade",
+    "Rotular com a lista de ingredientes"
+  ],
+  "fontesOficiais": [
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 48/2013 (ANVISA): boas práticas de fabricação de produtos de higiene pessoal, cosméticos e perfumes"
+    },
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 67/2007 (ANVISA), como referência de boas práticas de manipulação"
+    }
+  ],
+  "formulacao": {
+    "base": "para 400 g",
+    "itens": [
+      {
+        "especie": "LaurilEterSulfatoNa_l",
+        "funcao": "tensoativo",
+        "quantidade": {
+          "valor": 120,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "CocoamidopropilBetaina_l",
+        "funcao": "tensoativo anfótero",
+        "quantidade": {
+          "valor": 24,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "NaCl_s",
+        "funcao": "espessante",
+        "quantidade": {
+          "valor": 4,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "Fenoxietanol_l",
+        "funcao": "conservante",
+        "quantidade": {
+          "valor": 2.8,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "Fragrancia_l",
+        "funcao": "fragrância",
+        "quantidade": {
+          "valor": 1,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "AcidoCitrico_s",
+        "funcao": "ajuste de pH",
+        "quantidade": {
+          "valor": 0.8,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "H2O_l",
+        "funcao": "veículo",
+        "quantidade": {
+          "valor": 400,
+          "unidade": "g",
+          "qsp": true
+        }
+      }
+    ]
+  },
+  "cq": [
+    {
+      "ensaio": "pH",
+      "criterio": "entre 5,5 e 7,0"
+    },
+    {
+      "ensaio": "viscosidade",
+      "criterio": "entre 1.500 e 5.000 mPa·s"
+    },
+    {
+      "ensaio": "limite microbiano (conceitual)",
+      "criterio": "preparação tópica"
+    }
+  ],
+  "referencias": [
+    {
+      "titulo": "RDC nº 48/2013 (ANVISA), boas práticas de fabricação de cosméticos",
+      "nota": "[NV] conferir título e vigência"
+    },
+    {
+      "titulo": "RDC nº 67/2007 (ANVISA)",
+      "nota": "[NV] conferir vigência e alterações"
+    }
+  ],
+  "recipientes": [
+    {
+      "id": "bequer_g",
+      "tipo": "bequer",
+      "capMl": 600
+    },
+    {
+      "id": "frasco_500",
+      "tipo": "frasco",
+      "capMl": 520
+    }
+  ],
+  "materiais": {
+    "especies": [
+      {
+        "id": "LaurilEterSulfatoNa_l",
+        "papel": "tensoativo",
+        "quantidade": {
+          "valor": 120,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "CocoamidopropilBetaina_l",
+        "papel": "tensoativo",
+        "quantidade": {
+          "valor": 24,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "NaCl_s",
+        "papel": "espessante",
+        "quantidade": {
+          "valor": 4,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Fenoxietanol_l",
+        "papel": "conservante",
+        "quantidade": {
+          "valor": 2.8,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Fragrancia_l",
+        "papel": "fragrância",
+        "quantidade": {
+          "valor": 1,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "AcidoCitrico_s",
+        "papel": "ajuste de pH",
+        "quantidade": {
+          "valor": 0.8,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "H2O_l",
+        "papel": "veículo",
+        "quantidade": {
+          "valor": 400,
+          "unidade": "g"
+        }
+      }
+    ],
+    "vidraria": [
+      "bequer_g",
+      "frasco_500"
+    ],
+    "equipamentos": [
+      "balanca_analitica",
+      "agitador",
+      "phmetro",
+      "viscosimetro"
+    ]
+  },
+  "seguranca": {
+    "epi": [
+      "jaleco",
+      "luvas_nitrila",
+      "oculos"
+    ],
+    "capela": false,
+    "riscos": [
+      "irritante para os olhos"
+    ],
+    "residuos": [
+      {
+        "tipo": "solucao_tensoativa",
+        "destino": "neutralizar_e_pia"
+      }
+    ]
+  },
+  "etapas": [
+    {
+      "id": "e1",
+      "titulo": "Paramentação",
+      "oQueEstaAcontecendo": "Você veste os equipamentos de proteção antes de abrir qualquer frasco.",
+      "porQue": "Tensoativos irritam olhos e pele: óculos e luvas evitam contato durante a pesagem e a mistura.",
+      "preCondicoes": [],
+      "acao": {
+        "operacao": "paramentar",
+        "parametros": {
+          "epi": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos"
+          ],
+          "capela": false
+        },
+        "alvoUI": "painelSeguranca"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "epi",
+          "op": "contem",
+          "valor": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos"
+          ],
+          "mensagemSeFalhar": "Falta equipamento de proteção: jaleco, luvas_nitrila, oculos.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "titulo": "Pesar os tensoativos",
+      "oQueEstaAcontecendo": "No béquer, você pesa 120,00 g de lauril éter sulfato de sódio e 24,00 g de betaína, com tara entre os componentes.",
+      "porQue": "O tensoativo aniônico limpa e faz espuma; o anfótero reduz a irritação e ajuda a espessar.",
+      "calculoPrevio": {
+        "pergunta": "Quantos gramas de ácido cítrico para 0,20 % p/p em 400 g de sabonete?",
+        "formula": "m = C(% p/p) × massa final / 100",
+        "resposta": 0.8,
+        "tolerancia": 0.02,
+        "unidade": "g"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e1"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "LaurilEterSulfatoNa_l",
+            "massaG": 120,
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "reagente:LaurilEterSulfatoNa_l"
+        },
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "CocoamidopropilBetaina_l",
+            "massaG": 24,
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "reagente:CocoamidopropilBetaina_l"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_g",
+          "especie": "LaurilEterSulfatoNa_l",
+          "op": "entre",
+          "valor": [
+            119.95,
+            120.05
+          ],
+          "mensagemSeFalhar": "Massa fora de 120 ± 0.05 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_g",
+          "especie": "CocoamidopropilBetaina_l",
+          "op": "entre",
+          "valor": [
+            23.95,
+            24.05
+          ],
+          "mensagemSeFalhar": "Massa fora de 24 ± 0.05 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "titulo": "Pesar os componentes menores",
+      "oQueEstaAcontecendo": "Você pesa 4,00 g de cloreto de sódio, 2,80 g de fenoxietanol, 1,00 g de fragrância e 0,80 g de ácido cítrico.",
+      "porQue": "O sal espessa a mistura de tensoativos; o fenoxietanol conserva o produto aquoso; o ácido cítrico ajusta o pH para a faixa da pele.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e2"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "NaCl_s",
+            "massaG": 4,
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "reagente:NaCl_s"
+        },
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Fenoxietanol_l",
+            "massaG": 2.8,
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "reagente:Fenoxietanol_l"
+        },
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Fragrancia_l",
+            "massaG": 1,
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "reagente:Fragrancia_l"
+        },
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "AcidoCitrico_s",
+            "massaG": 0.8,
+            "recipiente": "bequer_g"
+          },
+          "alvoUI": "reagente:AcidoCitrico_s"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_g",
+          "especie": "NaCl_s",
+          "op": "entre",
+          "valor": [
+            3.97,
+            4.03
+          ],
+          "mensagemSeFalhar": "Massa fora de 4 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_g",
+          "especie": "Fenoxietanol_l",
+          "op": "entre",
+          "valor": [
+            2.77,
+            2.83
+          ],
+          "mensagemSeFalhar": "Massa fora de 2.8 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_g",
+          "especie": "Fragrancia_l",
+          "op": "entre",
+          "valor": [
+            0.97,
+            1.03
+          ],
+          "mensagemSeFalhar": "Massa fora de 1 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_g",
+          "especie": "AcidoCitrico_s",
+          "op": "entre",
+          "valor": [
+            0.77,
+            0.83
+          ],
+          "mensagemSeFalhar": "Massa fora de 0.8 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "titulo": "Adicionar água e dissolver",
+      "oQueEstaAcontecendo": "A água purificada completa a massa de 400,00 g, e o sal e o ácido dissolvem sob agitação suave, sem formar espuma.",
+      "porQue": "Agitar com força cria espuma e incorpora ar. Sal e ácido precisam estar dissolvidos para o pH e a viscosidade saírem corretos.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e3"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "completarMassa",
+          "parametros": {
+            "recipiente": "bequer_g",
+            "especie": "H2O_l",
+            "massaFinalG": 400
+          },
+          "alvoUI": "btnCompletarMassa"
+        },
+        {
+          "operacao": "dissolver",
+          "parametros": {
+            "recipiente": "bequer_g",
+            "agitacao": true,
+            "tempoMin": 15
+          },
+          "alvoUI": "btnAgitar"
+        },
+        {
+          "operacao": "misturar",
+          "parametros": {
+            "recipiente": "bequer_g",
+            "tecnica": "agitacao_mecanica",
+            "tempoMin": 10
+          },
+          "alvoUI": "btnMisturar"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massaSolido",
+          "recipiente": "bequer_g",
+          "op": "<=",
+          "valor": 0.02,
+          "mensagemSeFalhar": "Ainda há sólidos sem dissolver: continue agitando.",
+          "consequencia": "aguardar"
+        },
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "bequer_g",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "titulo": "pH",
+      "oQueEstaAcontecendo": "O pHmetro calibrado mede o sabonete.",
+      "porQue": "Sabonete alcalino agride a pele e favorece irritação. O ácido cítrico traz o pH para a faixa de 5,5 a 7,0.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e4"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "calibrar",
+          "parametros": {
+            "tampoes": [
+              4,
+              7
+            ]
+          },
+          "alvoUI": "phmetroCalibrar"
+        },
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "ph",
+            "recipiente": "bequer_g",
+            "faixa": [
+              5.5,
+              7
+            ],
+            "modelo": {
+              "variavel": {
+                "especie": "AcidoCitrico_s",
+                "base": "pp"
+              },
+              "pontos": [
+                [
+                  0,
+                  8.4
+                ],
+                [
+                  0.1,
+                  7.4
+                ],
+                [
+                  0.2,
+                  6.6
+                ],
+                [
+                  0.3,
+                  5.9
+                ],
+                [
+                  0.5,
+                  5
+                ]
+              ]
+            }
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_ph_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e6",
+      "titulo": "Viscosidade",
+      "oQueEstaAcontecendo": "O viscosímetro rotacional lê o torque com um fuso adequado.",
+      "porQue": "Em tensoativos, o sal espessa até um máximo e depois afina a mistura. Pouco sal deixa o sabonete ralo; muito sal também.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e5"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "viscosidade",
+            "recipiente": "bequer_g",
+            "faixa": [
+              1500,
+              5000
+            ],
+            "modelo": {
+              "variavel": {
+                "especie": "NaCl_s",
+                "base": "pp"
+              },
+              "pontos": [
+                [
+                  0,
+                  300
+                ],
+                [
+                  0.5,
+                  1200
+                ],
+                [
+                  1,
+                  3000
+                ],
+                [
+                  1.5,
+                  4500
+                ],
+                [
+                  2,
+                  2500
+                ]
+              ]
+            },
+            "fator": 50
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_viscosidade_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e7",
+      "titulo": "Limite microbiano (conceitual)",
+      "oQueEstaAcontecendo": "Uma amostra vai a contagem de micro-organismos, como ensaio conceitual.",
+      "porQue": "Produto de base aquosa sem conservante cresce micro-organismos; com fenoxietanol e boas práticas, fica dentro do limite.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e6"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "limite_microbiano",
+            "recipiente": "bequer_g",
+            "categoria": "cutaneo"
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_limite_microbiano_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e8",
+      "titulo": "Envasar",
+      "oQueEstaAcontecendo": "O sabonete passa a um frasco de 500 mL.",
+      "porQue": "Envasar logo evita contato prolongado com o ar e com o ambiente.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e7"
+        }
+      ],
+      "acao": {
+        "operacao": "transferir",
+        "parametros": {
+          "origem": "bequer_g",
+          "destino": "frasco_500",
+          "enxague": true
+        },
+        "alvoUI": "btnTransferir"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "frasco_500",
+          "especie": "LaurilEterSulfatoNa_l",
+          "op": "entre",
+          "valor": [
+            119,
+            121
+          ],
+          "mensagemSeFalhar": "Parte do produto ficou no béquer.",
+          "consequencia": "aviso"
+        }
+      ]
+    },
+    {
+      "id": "e9",
+      "titulo": "Rotular",
+      "oQueEstaAcontecendo": "Você preenche o rótulo com os dados do produto, do lote e do responsável, e as advertências aplicáveis.",
+      "porQue": "Sem rótulo completo o produto não pode ser identificado, rastreado nem usado com segurança.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e8"
+        }
+      ],
+      "acao": {
+        "operacao": "rotular",
+        "parametros": {
+          "recipiente": "frasco_500",
+          "campos": {
+            "lote": "LAB-004",
+            "fabricacao": "data da prática",
+            "validade": "conforme o procedimento da bancada",
+            "responsavel": "turma",
+            "produto": "Sabonete líquido",
+            "concentracao": "400 g",
+            "ingredientes": "Água, lauril éter sulfato de sódio, cocoamidopropil betaína, cloreto de sódio, fenoxietanol, fragrância, ácido cítrico",
+            "advertencias": "Evite contato com os olhos. Uso externo."
+          },
+          "camposObrigatorios": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "ingredientes",
+            "advertencias"
+          ]
+        },
+        "alvoUI": "painelRotulo"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "rotuloCompleto",
+          "recipiente": "frasco_500",
+          "campos": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "ingredientes",
+            "advertencias"
+          ],
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Rótulo incompleto: preencha todos os campos obrigatórios.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e10",
+      "titulo": "Descarte e limpeza",
+      "oQueEstaAcontecendo": "Você descarta os restos de cada recipiente no destino correto e lava a vidraria.",
+      "porQue": "O destino do resíduo depende da sua natureza; descarte correto é requisito de segurança e ambiental.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e9"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "bequer_g",
+            "destino": "neutralizar_e_pia"
+          },
+          "alvoUI": "painelDescarte"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "residuoConforme",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Destino de descarte inadequado para este resíduo.",
+          "consequencia": "nao_conforme"
+        }
+      ]
+    }
+  ],
+  "resultadoEsperado": {
+    "produto": "LaurilEterSulfatoNa_l",
+    "criterios": [
+      {
+        "descricao": "Tensoativo aniônico no frasco entre 118 e 121 g",
+        "grandeza": "massa",
+        "recipiente": "frasco_500",
+        "especie": "LaurilEterSulfatoNa_l",
+        "op": "entre",
+        "valor": [
+          118,
+          121
+        ]
+      },
+      {
+        "descricao": "Rótulo completo",
+        "grandeza": "rotuloCompleto",
+        "recipiente": "frasco_500",
+        "campos": [
+          "produto",
+          "concentracao",
+          "lote",
+          "fabricacao",
+          "validade",
+          "responsavel",
+          "ingredientes",
+          "advertencias"
+        ],
+        "op": "==",
+        "valor": true
+      }
+    ]
+  }
+}

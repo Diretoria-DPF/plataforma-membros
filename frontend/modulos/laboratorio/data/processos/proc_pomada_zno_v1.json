@@ -1,0 +1,712 @@
+{
+  "id": "proc_pomada_zno_v1",
+  "versao": 1,
+  "titulo": "Pomada de óxido de zinco a 10 % (p/p)",
+  "categoria": "farmacotecnica",
+  "nivel": 4,
+  "nivel_conteudo": "completo",
+  "restricao": null,
+  "revisado_por": null,
+  "forma": "pomada",
+  "setor": "farmacotecnica",
+  "conferencia": {
+    "estado": "pendente",
+    "nota": "[NV] Valores numéricos, faixas de critério, tolerâncias e citações de norma a conferir com a fonte primária (edição e artigo vigentes) antes de publicar."
+  },
+  "duracaoSimuladaMin": 120,
+  "via": "topica",
+  "objetivos": [
+    "Preparar um semissólido por fusão e levigação",
+    "Completar a massa (q.s.p.) com a base",
+    "Resfriar com agitação para manter o ativo disperso",
+    "Conferir homogeneidade e teor"
+  ],
+  "fontesOficiais": [
+    {
+      "tipo": "Formulário Nacional",
+      "citacao": "Formulário Nacional da Farmacopeia Brasileira (ANVISA), edição vigente: pomadas"
+    },
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 67/2007 (ANVISA)"
+    }
+  ],
+  "formulacao": {
+    "base": "para 100 g",
+    "itens": [
+      {
+        "especie": "OxidoZinco_s",
+        "funcao": "ativo",
+        "quantidade": {
+          "valor": 10,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "Lanolina_s",
+        "funcao": "emoliente",
+        "quantidade": {
+          "valor": 8,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "Vaselina_s",
+        "funcao": "base",
+        "quantidade": {
+          "valor": 82,
+          "unidade": "g",
+          "qsp": true
+        }
+      }
+    ]
+  },
+  "cq": [
+    {
+      "ensaio": "aspecto e homogeneidade",
+      "criterio": "uniforme, sem grânulos"
+    },
+    {
+      "ensaio": "teor de óxido de zinco",
+      "criterio": "95 a 105 % do declarado"
+    },
+    {
+      "ensaio": "limite microbiano (conceitual)",
+      "criterio": "preparação tópica"
+    }
+  ],
+  "referencias": [
+    {
+      "titulo": "Formulário Nacional da Farmacopeia Brasileira (edição vigente)",
+      "nota": "[NV] conferir a monografia e a forma de citação"
+    },
+    {
+      "titulo": "RDC nº 67/2007 (ANVISA)",
+      "nota": "[NV] conferir vigência e alterações"
+    }
+  ],
+  "recipientes": [
+    {
+      "id": "gral",
+      "tipo": "bequer",
+      "capMl": 250
+    },
+    {
+      "id": "pote_100",
+      "tipo": "frasco",
+      "capMl": 150
+    }
+  ],
+  "materiais": {
+    "especies": [
+      {
+        "id": "OxidoZinco_s",
+        "papel": "ativo",
+        "quantidade": {
+          "valor": 10,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Lanolina_s",
+        "papel": "emoliente",
+        "quantidade": {
+          "valor": 8,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Vaselina_s",
+        "papel": "base",
+        "quantidade": {
+          "valor": 82,
+          "unidade": "g"
+        }
+      }
+    ],
+    "vidraria": [
+      "gral",
+      "pistilo",
+      "pote_100"
+    ],
+    "equipamentos": [
+      "balanca_analitica",
+      "banho_maria"
+    ]
+  },
+  "seguranca": {
+    "epi": [
+      "jaleco",
+      "luvas_nitrila",
+      "oculos",
+      "mascara"
+    ],
+    "capela": false,
+    "riscos": [
+      "poeira fina",
+      "superfície quente do banho-maria"
+    ],
+    "residuos": [
+      {
+        "tipo": "pomada_residual",
+        "destino": "solido_quimico"
+      }
+    ]
+  },
+  "etapas": [
+    {
+      "id": "e1",
+      "titulo": "Paramentação",
+      "oQueEstaAcontecendo": "Você veste os equipamentos de proteção antes de abrir qualquer frasco.",
+      "porQue": "O pó fino se espalha no ar: a máscara evita inalação; luvas e jaleco protegem a pele e a base.",
+      "preCondicoes": [],
+      "acao": {
+        "operacao": "paramentar",
+        "parametros": {
+          "epi": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos",
+            "mascara"
+          ],
+          "capela": false
+        },
+        "alvoUI": "painelSeguranca"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "epi",
+          "op": "contem",
+          "valor": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos",
+            "mascara"
+          ],
+          "mensagemSeFalhar": "Falta equipamento de proteção: jaleco, luvas_nitrila, oculos, mascara.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "titulo": "Pesar o ativo e a lanolina",
+      "oQueEstaAcontecendo": "No gral, você pesa 10,00 g de óxido de zinco e 8,00 g de lanolina anidra.",
+      "porQue": "Em % p/p, 10 % são 10 g em cada 100 g de pomada. A lanolina é emoliente e melhora a incorporação do pó.",
+      "calculoPrevio": {
+        "pergunta": "Quantos gramas de óxido de zinco para 100 g de pomada a 10 % p/p?",
+        "formula": "m = C(% p/p) × massa final / 100",
+        "resposta": 10,
+        "tolerancia": 0.05,
+        "unidade": "g"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e1"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "gral"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "OxidoZinco_s",
+            "massaG": 10,
+            "recipiente": "gral"
+          },
+          "alvoUI": "reagente:OxidoZinco_s"
+        },
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "gral"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Lanolina_s",
+            "massaG": 8,
+            "recipiente": "gral"
+          },
+          "alvoUI": "reagente:Lanolina_s"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "gral",
+          "especie": "OxidoZinco_s",
+          "op": "entre",
+          "valor": [
+            9.96,
+            10.04
+          ],
+          "mensagemSeFalhar": "Massa fora de 10 ± 0.04 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "gral",
+          "especie": "Lanolina_s",
+          "op": "entre",
+          "valor": [
+            7.96,
+            8.04
+          ],
+          "mensagemSeFalhar": "Massa fora de 8 ± 0.04 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "titulo": "Completar com vaselina (q.s.p. 100 g)",
+      "oQueEstaAcontecendo": "A balança é tarada e a vaselina sólida é adicionada até a massa total chegar a 100,00 g.",
+      "porQue": "Em semissólidos a base completa a massa (q.s.p.), não o volume. O que faltar para 100 g é vaselina.",
+      "calculoPrevio": {
+        "pergunta": "Quantos gramas de vaselina para completar 100 g depois de 10 g de óxido de zinco e 8 g de lanolina?",
+        "formula": "m = 100 − 10 − 8",
+        "resposta": 82,
+        "tolerancia": 0.2,
+        "unidade": "g"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e2"
+        }
+      ],
+      "acao": {
+        "operacao": "completarMassa",
+        "parametros": {
+          "recipiente": "gral",
+          "especie": "Vaselina_s",
+          "massaFinalG": 100
+        },
+        "alvoUI": "btnCompletarMassa"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "gral",
+          "especie": "Vaselina_s",
+          "op": "entre",
+          "valor": [
+            81.9,
+            82.1
+          ],
+          "mensagemSeFalhar": "A vaselina ficou fora de 82 g: confira as pesagens anteriores.",
+          "consequencia": "aviso"
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "titulo": "Fundir a base",
+      "oQueEstaAcontecendo": "O gral vai ao banho-maria a 70 °C por 10 minutos, até a base ficar fluida.",
+      "porQue": "A base fundida incorpora o pó sem criar grumos. Acima de cerca de 80 °C não há ganho e a lanolina pode escurecer.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e3"
+        }
+      ],
+      "acao": {
+        "operacao": "aquecer",
+        "parametros": {
+          "recipiente": "gral",
+          "fonte": "banho_maria",
+          "alvoC": 70,
+          "tempoMin": 10
+        },
+        "alvoUI": "btnAquecer"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "tempC",
+          "recipiente": "gral",
+          "op": ">=",
+          "valor": 60,
+          "mensagemSeFalhar": "A base ainda não fundiu: continue aquecendo.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "titulo": "Levigar e incorporar o pó",
+      "oQueEstaAcontecendo": "Você tritura o óxido de zinco com a base fundida por 10 minutos, até a pasta ficar uniforme.",
+      "porQue": "A levigação desfaz agregados do pó na base. Pó mal incorporado deixa a pomada áspera e com teor desigual.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e4"
+        }
+      ],
+      "acao": {
+        "operacao": "misturar",
+        "parametros": {
+          "recipiente": "gral",
+          "tecnica": "levigacao",
+          "tempoMin": 10
+        },
+        "alvoUI": "btnMisturar"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "gral",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e6",
+      "titulo": "Esfriar mexendo",
+      "oQueEstaAcontecendo": "A pomada esfria à temperatura ambiente com agitação lenta.",
+      "porQue": "Esfriar parado deixa o pó sedimentar na base ainda fluida.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e5"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "resfriar",
+          "parametros": {
+            "recipiente": "gral",
+            "banho": "ambiente",
+            "tempoMin": 60
+          },
+          "alvoUI": "btnResfriar"
+        },
+        {
+          "operacao": "misturar",
+          "parametros": {
+            "recipiente": "gral",
+            "tecnica": "agitacao_mecanica",
+            "tempoMin": 5
+          },
+          "alvoUI": "btnMisturar"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "tempC",
+          "recipiente": "gral",
+          "op": "<=",
+          "valor": 35,
+          "mensagemSeFalhar": "Ainda quente: espere esfriar antes de envasar.",
+          "consequencia": "aguardar"
+        },
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "gral",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e7",
+      "titulo": "Aspecto e homogeneidade",
+      "oQueEstaAcontecendo": "Você espalha uma amostra em uma lâmina e procura grânulos, listras ou separação.",
+      "porQue": "A homogeneidade mostra que o ativo está distribuído por toda a pomada.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e6"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "homogeneidade",
+            "recipiente": "gral"
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_homogeneidade_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e8",
+      "titulo": "Teor de óxido de zinco",
+      "oQueEstaAcontecendo": "O teor é conferido contra os 10 g por 100 g declarados.",
+      "porQue": "O teor confirma que o ativo foi pesado e incorporado por inteiro.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e7"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "teor_ativo",
+            "recipiente": "gral",
+            "especie": "OxidoZinco_s",
+            "nominal": 10,
+            "unidade": "g",
+            "faixaPct": [
+              95,
+              105
+            ]
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_teor_ativo_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e9",
+      "titulo": "Limite microbiano (conceitual)",
+      "oQueEstaAcontecendo": "Uma amostra vai a contagem de micro-organismos, como ensaio conceitual.",
+      "porQue": "Base anidra não sustenta crescimento, mas luvas e jaleco continuam necessários.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e8"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "limite_microbiano",
+            "recipiente": "gral",
+            "categoria": "cutaneo"
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_limite_microbiano_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e10",
+      "titulo": "Envasar no pote",
+      "oQueEstaAcontecendo": "A pomada passa para um pote de 100 g.",
+      "porQue": "O pote bem fechado evita contaminação e perda do produto.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e9"
+        }
+      ],
+      "acao": {
+        "operacao": "transferir",
+        "parametros": {
+          "origem": "gral",
+          "destino": "pote_100",
+          "enxague": true
+        },
+        "alvoUI": "btnTransferir"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "pote_100",
+          "especie": "OxidoZinco_s",
+          "op": "entre",
+          "valor": [
+            9.7,
+            10.3
+          ],
+          "mensagemSeFalhar": "Parte do óxido de zinco ficou no gral.",
+          "consequencia": "aviso"
+        }
+      ]
+    },
+    {
+      "id": "e11",
+      "titulo": "Rotular",
+      "oQueEstaAcontecendo": "Você preenche o rótulo com os dados do produto, do lote e do responsável, e as advertências aplicáveis.",
+      "porQue": "Sem rótulo completo o produto não pode ser identificado, rastreado nem usado com segurança.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e10"
+        }
+      ],
+      "acao": {
+        "operacao": "rotular",
+        "parametros": {
+          "recipiente": "pote_100",
+          "campos": {
+            "lote": "LAB-004",
+            "fabricacao": "data da prática",
+            "validade": "conforme o procedimento da bancada",
+            "responsavel": "turma",
+            "produto": "Pomada de óxido de zinco",
+            "concentracao": "10 % p/p",
+            "via": "Uso externo",
+            "conservacao": "Guardar bem fechado, em local fresco"
+          },
+          "camposObrigatorios": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "via",
+            "conservacao"
+          ]
+        },
+        "alvoUI": "painelRotulo"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "rotuloCompleto",
+          "recipiente": "pote_100",
+          "campos": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "via",
+            "conservacao"
+          ],
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Rótulo incompleto: preencha todos os campos obrigatórios.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e12",
+      "titulo": "Descarte e limpeza",
+      "oQueEstaAcontecendo": "O resto de pomada no gral vai ao resíduo sólido químico e a vidraria é lavada.",
+      "porQue": "Óxido de zinco é tóxico para organismos aquáticos: não vai para a pia.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e11"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "gral",
+            "destino": "solido_quimico"
+          },
+          "alvoUI": "painelDescarte"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "residuoConforme",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Destino de descarte inadequado para este resíduo.",
+          "consequencia": "nao_conforme"
+        }
+      ]
+    }
+  ],
+  "resultadoEsperado": {
+    "produto": "OxidoZinco_s",
+    "criterios": [
+      {
+        "descricao": "Óxido de zinco no pote entre 9,6 e 10,2 g",
+        "grandeza": "massa",
+        "recipiente": "pote_100",
+        "especie": "OxidoZinco_s",
+        "op": "entre",
+        "valor": [
+          9.6,
+          10.2
+        ]
+      },
+      {
+        "descricao": "Rótulo completo",
+        "grandeza": "rotuloCompleto",
+        "recipiente": "pote_100",
+        "campos": [
+          "produto",
+          "concentracao",
+          "lote",
+          "fabricacao",
+          "validade",
+          "responsavel",
+          "via",
+          "conservacao"
+        ],
+        "op": "==",
+        "valor": true
+      }
+    ]
+  }
+}
