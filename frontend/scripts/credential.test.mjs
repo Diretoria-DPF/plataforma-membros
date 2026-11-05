@@ -98,3 +98,40 @@ test('learning.js não monta mais o QR sozinho: delega ao crachá', () => {
   assert.doesNotMatch(src, /function loadQrLib/);
   assert.match(src, /LaiftCredential/);
 });
+
+// ---- A2: QR rotativo por evento (LAIFT:v3) ----
+const V3 = 'LAIFT:v3:123e4567-e89b-12d3-a456-426614174000.223e4567-e89b-12d3-a456-426614174000.59000000.AbCdEfGhIjKlMnOpQrStUvWx';
+
+test('qrPayloadOf: reconhece o QR rotativo v3 e nunca aceita v3 forjado', () => {
+  assert.deepEqual(Credential.qrPayloadOf({ success: true, qrPayload: V3 }, { email: 'a@b.com' }), { payload: V3, kind: 'v3' });
+  assert.equal(Credential.qrPayloadOf({ success: true, qrPayload: V3.replace('.59000000.', '.x.') }, { email: 'a@b.com' }).kind, 'legacy');
+});
+
+test('pickEvents: em andamento primeiro; publicado só se a pessoa estiver inscrita; máximo de 5', () => {
+  const events = [
+    { id: 'a', status: 'published', isRegistered: false, eventDate: '2026-12-01' },
+    { id: 'b', status: 'published', isRegistered: true, eventDate: '2026-11-20' },
+    { id: 'c', status: 'in_progress', isRegistered: false, eventDate: '2026-11-05' },
+    { id: 'd', status: 'closed', isRegistered: true },
+    null,
+  ];
+  assert.deepEqual(Credential.pickEvents({ success: true, events }).map((e) => e.id), ['c', 'b']);
+  assert.deepEqual(Credential.pickEvents({ success: false }), []);
+  assert.deepEqual(Credential.pickEvents(null), []);
+  const many = Array.from({ length: 9 }, (_, i) => ({ id: 'e' + i, status: 'in_progress' }));
+  assert.equal(Credential.pickEvents({ success: true, events: many }).length, 5);
+});
+
+test('secondsLeft: contagem pela hora do servidor, nunca negativa', () => {
+  assert.equal(Credential.secondsLeft(130_000, 0, 100_000), 30);
+  assert.equal(Credential.secondsLeft(130_000, 5_000, 100_000), 25);
+  assert.equal(Credential.secondsLeft(130_000, 0, 200_000), 0);
+  assert.equal(Credential.secondsLeft(130_500, 0, 100_000), 31);
+});
+
+test('o PNG do crachá rotativo sai sem QR e o texto avisa que o QR muda', () => {
+  const src = read('frontend/credential.js');
+  assert.match(src, /card\.kind === 'v3' \? Promise\.resolve\(null\)/);
+  assert.match(src, /QR Code só na tela/);
+  assert.match(src, /muda a cada 30 segundos/);
+});

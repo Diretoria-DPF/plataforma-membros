@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
   <!-- Identidade, tema e ponte com a Plataforma de Membros (redireciona ao login se aberto fora dela) -->
   <script src="../shared/laift-identity.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +16,7 @@
 
   <link rel="stylesheet" href="../shared/style.css">
   <link rel="stylesheet" href="fiscal.css">
+  <link rel="stylesheet" href="fiscal-gate.css">
 </head>
 <body class="fiscal-page">
 
@@ -48,7 +49,7 @@
           <button id="scannerStop" class="btn btn-outline fiscal-grow hidden" type="button">Parar leitor</button>
         </div>
         <label class="fiscal-sound"><input type="checkbox" id="scanSound"> Som ao ler</label>
-        <p class="fiscal-note">Leia a credencial da pessoa (Perfil ou Início, “Abrir crachá virtual”). A assinatura do QR é conferida no servidor; o leitor continua ligado para o próximo.</p>
+        <p class="fiscal-note">Leia a credencial da pessoa (Perfil ou Início, “Abrir crachá virtual”): o QR do crachá muda a cada 30 segundos e vale só para este evento. A assinatura é conferida no servidor; o leitor continua ligado para o próximo. Sem rede, as leituras ficam guardadas e são enviadas ao reconectar.</p>
       </section>
 
       <section class="fiscal-card" aria-labelledby="fiscalManualTitle">
@@ -90,6 +91,7 @@
        impressa DESTE documento (sem pop-up nem document.write). -->
   <div id="printArea" class="print-area" aria-hidden="true"></div>
 
+  <script src="fiscal-gate.js"></script>
   <script src="fiscal-engine.js"></script>
   <script src="fiscal-page.js"></script>
 </body>
