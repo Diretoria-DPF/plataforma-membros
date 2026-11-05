@@ -5,7 +5,7 @@
  */
 // "Para hoje" unificado (A3): UMA definição dos itens do dia, usada pelo Aprender v2 (learn-v2.js) e pela Início v3
 // (home-v3.js). Primeiro vem a revisão dos erros que vencem hoje (revisao-espacada.js, guardada no aparelho), depois o
-// quiz do dia; cada tela acrescenta o que é dela (simulado e caso clínico no Aprender; evento e votação na Início).
+// quiz do dia e a missão da semana (missao-semana.js, item pronto de LaiftMissao.paraHojeItem); cada tela acrescenta o que é dela (simulado e caso clínico no Aprender; evento e votação na Início).
 // Só funções puras: sem DOM, sem rede, sem armazenamento. Expõe window.LaiftParaHoje; em Node, module.exports.
 (function (root) {
   'use strict';
@@ -37,17 +37,22 @@
     };
   }
 
+  /** Item da missão da semana: o objeto pronto de LaiftMissao.paraHojeItem, ou null (missão fechada ou sem dados). */
+  function missionItem(item) {
+    return item && item.kind === 'missao' && item.title ? item : null;
+  }
+
   /**
-   * Lista do dia. `extras` são os itens próprios da tela (já prontos). Revisão e quiz do dia vêm primeiro; o total
-   * respeita MAX_ITEMS (os extras que sobrarem ficam de fora, o mais importante primeiro).
+   * Lista do dia. `extras` são os itens próprios da tela (já prontos); `mission` é o item da missão da semana.
+   * Ordem: revisão, quiz do dia, missão, extras. O total respeita MAX_ITEMS (os extras que sobrarem ficam de fora).
    */
-  function build(eng, review, extras) {
-    var items = [reviewItem(review), quizItem(eng)].concat(Array.isArray(extras) ? extras : [])
+  function build(eng, review, extras, mission) {
+    var items = [reviewItem(review), quizItem(eng), missionItem(mission)].concat(Array.isArray(extras) ? extras : [])
       .filter(function (item) { return !!item; });
     return items.slice(0, MAX_ITEMS);
   }
 
-  var api = { MAX_ITEMS: MAX_ITEMS, reviewItem: reviewItem, quizItem: quizItem, build: build };
+  var api = { MAX_ITEMS: MAX_ITEMS, reviewItem: reviewItem, quizItem: quizItem, missionItem: missionItem, build: build };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.LaiftParaHoje = api;

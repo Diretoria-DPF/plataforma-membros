@@ -225,3 +225,10 @@ test('fiação: pacote aprender2 sob demanda; learning.js só carrega com a flag
   assert.ok(!ler('index.html').includes('learn-v2'), 'index.html não referencia a tela nova');
   assert.ok(!ler('sw.js').includes('learn-v2'), 'sw.js não pré-cacheia a tela nova');
 });
+
+test('todayItems: a missão da semana entra depois do quiz do dia e antes do simulado', () => {
+  const item = { kind: 'missao', icon: 'star', module: 'farmaco', title: 'Missão da semana', sub: '5 atividades em Farmacologia' };
+  const items = v2.todayItems({ dailyQuizDone: false }, null, item);
+  assert.deepEqual(items.map((i) => i.kind), ['quiz', 'missao', 'simulado', 'caso']);
+  assert.equal(items[1].module, 'farmaco');
+});

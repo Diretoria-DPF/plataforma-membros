@@ -109,11 +109,11 @@
   }
 
   /** A3: "Para hoje" unificado (para-hoje.js): erros a rever e quiz do dia, mais simulado e caso clínico daqui. */
-  function todayItems(eng, review) {
+  function todayItems(eng, review, mission) {
     return paraHojeLib().build(eng, review, [
       { kind: 'simulado', icon: 'clock', title: 'Simulado', sub: 'Pratique em Farmacologia', module: 'farmaco' },
       { kind: 'caso', icon: 'heart', title: 'Caso clínico', sub: 'Casos e plantão na Clínica virtual', module: 'clinica' },
-    ]);
+    ], mission);
   }
 
   /** Erros a rever no aparelho (revisao-espacada.js); sem o módulo ou sem armazenamento, nada vence. */
@@ -349,7 +349,7 @@
     head.id = 'l2-today-title';
     section.appendChild(head);
     var list = el(doc, 'ul', 'l2-today');
-    todayItems(ctx.data.eng, ctx.review).forEach(function (item) {
+    todayItems(ctx.data.eng, ctx.review, ctx.mission && ctx.mission.todayItem).forEach(function (item) {
       var li = el(doc, 'li');
       var row = button(doc, 'l2-row l2-row--' + item.kind, '', todayAction(ctx, item));
       row.setAttribute('data-l2-opener', '');
@@ -377,7 +377,7 @@
     try {
       var who = app && typeof app.getIdentity === 'function' ? app.getIdentity() : null;
       var store = lib.createStore(root.localStorage, function () { return lib.ownerTag(who && who.email); });
-      return { status: store.status(now), achievements: store.achievements() };
+      return { status: store.status(now), achievements: store.achievements(), todayItem: store.paraHojeItem(now) };
     } catch (e) { return null; }
   }
 
@@ -683,8 +683,8 @@
     var slots = ctx.slots;
     setSlot(slots.focus, buildFocus(ctx));
     setSlot(slots.day, buildDay(ctx));
-    setSlot(slots.today, buildToday(ctx));
     ctx.mission = missionData(ctx.app, ctx.now);
+    setSlot(slots.today, buildToday(ctx));
     setSlot(slots.mission, buildMission(ctx));
     setSlot(slots.weak, buildWeak(ctx));
     setSlot(slots.modules, buildModules(ctx));
