@@ -345,7 +345,17 @@ const ClinicEngine = (() => {
     const resolvidos = lerCasosResolvidos();
     const aRever = casosParaRever();
 
-    clinicalCases.forEach((c, index) => {
+    const learnUi = window.ClinicLearnUI;
+    const visiveis = learnUi ? learnUi.filterCases(clinicalCases) : clinicalCases;
+    if (!visiveis.length) {
+      dom.bedsGrid.appendChild(el('div', { className: 'clinic-empty' }, [
+        el('p', { text: learnUi.emptyLevelMessage() }),
+      ]));
+      return;
+    }
+
+    visiveis.forEach((c) => {
+      const index = clinicalCases.indexOf(c);
       const isConcluido = resolvidos.includes(String(c.id));
       const idade = c.paciente && c.paciente.idade !== undefined ? c.paciente.idade : '--';
       const nome = (c.paciente && c.paciente.nome) || 'Paciente';
@@ -358,6 +368,7 @@ const ClinicEngine = (() => {
       const card = el('div', { className: `bed-card ${c.tipo === 'emergencia' ? 'emergency' : 'ambulatory'} ${isConcluido ? 'completed' : ''}` }, [
         el('div', { className: 'bed-header' }, [
           el('span', { className: 'bed-tag', text: c.tipo === 'emergencia' ? '🚨 Emergência' : '🩺 Ambulatório' }),
+          ...(learnUi && learnUi.sensitiveTag(c) ? [el('span', { className: 'bed-tag bed-tag-sensitive', text: learnUi.sensitiveTag(c) })] : []),
           el('span', {
             className: `bed-status ${isConcluido ? 'is-done' : 'is-open'}`,
             text: isConcluido ? '✅ Concluído' : '🟡 Em Aberto',
@@ -673,6 +684,7 @@ const ClinicEngine = (() => {
     resetChat();
     resetResolutionForm();
     if (snap) restorePausedSession(snap);
+    if (window.ClinicLearnUI) window.ClinicLearnUI.onCaseStart(selected, state, !!snap);
     updateClockUI();
     updateMetersUI();
     switchTab('prontuarioTab');
@@ -852,6 +864,7 @@ const ClinicEngine = (() => {
   function handleTimeTick() {
     if (!isCaseActive) return;
     state = Core.tick(state, currentCase && currentCase.taxaDecaimento);
+    if (window.ClinicLearnUI) window.ClinicLearnUI.onTick(state);
     updateClockUI();
     updateMetersUI();
     checkOutcome();
@@ -894,6 +907,7 @@ const ClinicEngine = (() => {
     chatBusy = true;
 
     const studentBubble = appendChatBubble('student', 'Você (Estudante)', text);
+    if (window.ClinicLearnUI) window.ClinicLearnUI.noteQuestion(text, state);
     dom.questionInput.value = '';
     if (dom.sendQuestionBtn) dom.sendQuestionBtn.disabled = true;
 
@@ -1042,6 +1056,7 @@ const ClinicEngine = (() => {
     }
 
     state = Core.applyExam(state, exam);
+    if (window.ClinicLearnUI) window.ClinicLearnUI.noteExam(exam, state);
     updateClockUI();
     updateMetersUI();
     checkOutcome();
@@ -1179,6 +1194,7 @@ const ClinicEngine = (() => {
       }
     }
 
+    if (window.ClinicLearnUI) window.ClinicLearnUI.onResult(result, outcome, { caso: currentCase, exams: requestedExams.slice(), state });
     openModal(dom.preceptorModal, window.closePreceptorModal);
   }
 
@@ -1285,6 +1301,8 @@ const ClinicEngine = (() => {
     renderSemiologyGuide,
     refreshAiQuota,
     getState: () => state,
+    getRequestedExams: () => requestedExams.slice(),
+    getResolvedCases: lerCasosResolvidos,
     isPausedFor: (id) => pausedSessions.has(String(id)),
   };
 })();

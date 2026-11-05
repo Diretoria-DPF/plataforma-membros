@@ -10,6 +10,7 @@
   <title>Clínica Médica Virtual — LAIFT</title>
   <link rel="stylesheet" href="../shared/style.css">
   <link rel="stylesheet" href="../shared/laift-dialog.css">
+  <link rel="stylesheet" href="clinic-aprendizado.css">
   <!-- Fase 3: estilos só dos elementos novos (aviso no chat, cota de IA,
        nota do preceptor). O tema/design da clínica é da Equipe 4. -->
   <style>
@@ -101,6 +102,19 @@
           <p class="acervo-note">Abrir um caso do acervo não consome sua cota de IA.</p>
         </div>
 
+        <!-- Casos por nível e plantão de 5 minutos (clinic-aprendizado-ui.js) -->
+        <div id="learnToolbar" class="learn-toolbar">
+          <label for="levelFilter">Nível dos casos</label>
+          <select id="levelFilter">
+            <option value="todos">Todos os níveis</option>
+            <option value="basico">Básico</option>
+            <option value="intermediario">Intermediário</option>
+            <option value="avancado">Avançado</option>
+          </select>
+          <button id="btnPlantao5" class="btn btn-outline btn-sm" type="button">⏱️ Plantão de 5 minutos</button>
+          <p id="levelHint" class="learn-hint"></p>
+        </div>
+
         <div id="patientBedsGrid" class="beds-grid"></div>
         <div id="communityBedsGrid" class="beds-grid hidden"></div>
       </div>
@@ -109,6 +123,9 @@
       <div id="clinicWorkspaceView" class="clinic-workspace hidden">
         <!-- Faixa fixa do modo simulação (texto definido em clinic-sim.js) -->
         <p id="simBanner" class="sim-banner hidden" role="note"></p>
+        <!-- Nota de gatilho (CLI-12) e relógio do plantão de 5 minutos -->
+        <p id="triggerNote" class="trigger-note hidden" role="note"></p>
+        <p id="plantaoBar" class="plantao-bar hidden" role="timer"></p>
         <div class="patient-monitor">
           <div class="patient-id-badge">
             <button id="btnReturnToBeds" class="btn btn-secondary btn-sm" type="button" title="Voltar ao mapa de leitos">← Leitos</button>
@@ -174,6 +191,18 @@
                   <div class="vital-entry"><span>SatO2:</span> <strong id="vitalSpO2">--%</strong></div>
                   <div class="vital-entry"><span>Escala de Glasgow:</span> <strong id="vitalGlasgow">--</strong></div>
                 </div>
+              </div>
+            </div>
+
+            <div class="learn-panel">
+              <div class="sheet-box">
+                <h4>Linha do tempo do paciente</h4>
+                <ol id="timelineList" class="timeline-list" aria-live="polite"></ol>
+              </div>
+              <div class="sheet-box">
+                <h4>Dicas progressivas</h4>
+                <button id="btnHint" class="btn btn-outline btn-sm" type="button">Pedir dica</button>
+                <p id="hintText" class="hint-text" role="status"></p>
               </div>
             </div>
           </div>
@@ -302,6 +331,7 @@
         <div id="preceptorFeedbackText" class="feedback-quote">...</div>
         <!-- Debrief do modo simulação: os eixos do paciente só são revelados aqui -->
         <div id="simDebrief" class="sim-debrief hidden" aria-live="polite"></div>
+        <div id="competencyDebrief" class="competency-debrief hidden"></div>
       </div>
       <div class="modal-footer">
         <button id="btnClosePreceptor" class="btn btn-primary" type="button">Concluir e Voltar aos Leitos</button>
@@ -318,6 +348,8 @@
   <script src="clinic-sim.js"></script>
   <script src="clinic-modal.js"></script>
   <script src="clinic-core.js"></script>
+  <script src="clinic-aprendizado.js"></script>
+  <script src="clinic-aprendizado-ui.js"></script>
   <script src="clinic-engine.js"></script>
   <script src="clinica-page.js"></script>
 </body>
