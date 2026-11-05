@@ -1,0 +1,199 @@
+{
+  "id": "trilha_v1",
+  "versao": 1,
+  "titulo": "Trilha de missões do Laboratório",
+  "competencias": {
+    "biosseguranca": "Biossegurança e EPI",
+    "pesagem": "Pesagem",
+    "calculo": "Cálculos farmacêuticos",
+    "volumetria": "Técnica volumétrica",
+    "cq": "Controle de qualidade",
+    "farmacotecnica": "Farmacotécnica",
+    "rotulagem": "Rotulagem e rastreabilidade",
+    "residuos": "Resíduos e descarte",
+    "titulacao": "Titulação",
+    "separacao": "Separação e purificação",
+    "sintese": "Síntese e rendimento",
+    "esterilizacao": "Esterilização",
+    "investigacao": "Investigação de desvio"
+  },
+  "niveis": {
+    "0": "Primeiros passos na bancada",
+    "1": "Soluções e diluições",
+    "2": "pH e titulação",
+    "3": "Precipitação e ensaio-limite",
+    "4": "Síntese didática",
+    "5": "Extração",
+    "6": "Formas farmacêuticas",
+    "7": "Teor e uso parenteral",
+    "8": "Investigação de desvio"
+  },
+  "missoes": [
+    {
+      "id": "m1_nacl_09",
+      "nivel": 0,
+      "titulo": "Missão 1: EPI e solução de cloreto de sódio a 0,9 %",
+      "tipo": "processo",
+      "processoRef": "proc_nacl_09_v1",
+      "ajudaPadrao": "completa",
+      "objetivos": [
+        "Vestir o EPI antes de abrir os frascos",
+        "Tarar a balança e pesar a massa calculada para 0,9 % p/v",
+        "Dissolver, transferir com enxágue e completar o volume no balão volumétrico",
+        "Calibrar o pHmetro, medir o pH e calcular a osmolaridade",
+        "Envasar, rotular e descartar o resíduo no destino correto"
+      ],
+      "etapas": {
+        "e1": "biosseguranca",
+        "e2": "pesagem",
+        "e3": "volumetria",
+        "e4": "volumetria",
+        "e5": "volumetria",
+        "e6": "volumetria",
+        "e7": "cq",
+        "e8": "farmacotecnica",
+        "e9": "rotulagem",
+        "e10": "residuos"
+      },
+      "conclusao": "Solução pronta. A osmolaridade ideal fica perto de 308 mOsm/L; a real é um pouco menor porque os íons interagem entre si, e por isso a solução é chamada de quase isotônica.",
+      "requer": []
+    },
+    {
+      "id": "m_diluicao",
+      "nivel": 1,
+      "titulo": "Diluição de solução-estoque",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Aplicar C1V1 = C2V2", "Escolher pipeta ou proveta pela incerteza da medida"],
+      "competencias": ["calculo", "volumetria"]
+    },
+    {
+      "id": "m_ph_tampao",
+      "nivel": 2,
+      "titulo": "pH e tampão acetato",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Diferenciar ácido forte e ácido fraco", "Relacionar pKa e capacidade tamponante", "Calibrar o pHmetro"],
+      "competencias": ["cq", "calculo"]
+    },
+    {
+      "id": "m_padronizacao_naoh",
+      "nivel": 2,
+      "titulo": "Padronização de hidróxido de sódio com biftalato de potássio",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Conduzir uma titulação com indicador", "Calcular o fator de correção"],
+      "competencias": ["titulacao", "calculo"]
+    },
+    {
+      "id": "m_precipitacao",
+      "nivel": 3,
+      "titulo": "Precipitação e filtração",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Usar o produto de solubilidade para prever a precipitação", "Filtrar e secar o sólido", "Descartar resíduo de metal pesado no destino próprio"],
+      "competencias": ["separacao", "residuos"]
+    },
+    {
+      "id": "m_limite_cloretos",
+      "nivel": 3,
+      "titulo": "Ensaio-limite de cloretos",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Entender o ensaio farmacopeico por comparação com padrão"],
+      "competencias": ["cq"]
+    },
+    {
+      "id": "m_sintese_aas",
+      "nivel": 4,
+      "titulo": "Síntese do ácido acetilsalicílico",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Identificar o reagente limitante", "Cristalizar e recristalizar", "Calcular o rendimento e conferir o ponto de fusão"],
+      "competencias": ["sintese", "separacao", "cq"]
+    },
+    {
+      "id": "m_paracetamol_ccd",
+      "nivel": 4,
+      "titulo": "Síntese do paracetamol e cromatografia em camada delgada",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Entender a acetilação seletiva", "Calcular o Rf e avaliar a pureza"],
+      "competencias": ["sintese", "cq"]
+    },
+    {
+      "id": "m_extracao",
+      "nivel": 5,
+      "titulo": "Extração ácido-base",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Relacionar partição e pH", "Usar o funil de separação", "Secar a fase orgânica"],
+      "competencias": ["separacao"]
+    },
+    {
+      "id": "m_xarope",
+      "nivel": 6,
+      "titulo": "Xarope simples",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Relacionar solubilidade e temperatura", "Envasar e rotular uma preparação magistral"],
+      "competencias": ["farmacotecnica", "rotulagem"]
+    },
+    {
+      "id": "m_suspensao",
+      "nivel": 6,
+      "titulo": "Suspensão oral",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Levigar o pó", "Escolher o agente suspensor", "Orientar o uso com a frase agite antes de usar"],
+      "competencias": ["farmacotecnica"]
+    },
+    {
+      "id": "m_pomada",
+      "nivel": 6,
+      "titulo": "Pomada magistral",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Comparar base oleosa e base hidrófila", "Incorporar o ativo com homogeneidade"],
+      "competencias": ["farmacotecnica"]
+    },
+    {
+      "id": "m_doseamento_aas",
+      "nivel": 7,
+      "titulo": "Doseamento de ácido acetilsalicílico por titulação",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Fazer o ensaio de teor", "Comparar com a especificação e tratar resultado fora dela"],
+      "competencias": ["titulacao", "cq"]
+    },
+    {
+      "id": "m_parenteral",
+      "nivel": 7,
+      "titulo": "Solução para uso parenteral (didática)",
+      "tipo": "processo",
+      "processoRef": null,
+      "objetivos": ["Escolher entre filtração esterilizante e autoclave", "Reconhecer ativo termolábil", "Entender o envase asséptico"],
+      "competencias": ["esterilizacao", "farmacotecnica"]
+    },
+    {
+      "id": "m8_desvio_nacl",
+      "nivel": 8,
+      "titulo": "Investigação de desvio: lote de cloreto de sódio a 0,9 % fora da especificação",
+      "tipo": "investigacao",
+      "processoRef": "proc_nacl_09_v1",
+      "objetivos": ["Ler o caderno de um lote fora da especificação", "Achar a etapa que causou o desvio", "Propor a ação corretiva"],
+      "competencias": ["investigacao"],
+      "requer": ["m1_nacl_09"],
+      "cenario": {
+        "enunciado": "O lote LAB-001 saiu com concentração abaixo da especificação. Leia o caderno do lote e indique a etapa que causou o desvio.",
+        "semente": 7,
+        "parametros": { "e5": { "volumeFinalMl": 105 } },
+        "respostas": { "e2": "0,9", "e7": "308" },
+        "etapaCausa": "e5",
+        "explicacao": "No caderno, o volume foi completado a 105,0 mL em vez de 100 mL. A mesma massa de soluto num volume maior deixa a concentração abaixo de 0,9 % p/v.",
+        "acaoCorretiva": "Completar o volume com o menisco tocando a marca do balão, com a solução à temperatura ambiente e o olhar na altura da marca. O lote fora da especificação não é liberado, e o desvio é registrado com a causa e a correção.",
+        "dicaSeErrar": "Compare cada leitura do caderno com o valor que o procedimento pede: massa, volumes e temperatura."
+      }
+    }
+  ]
+}

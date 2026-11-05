@@ -8,6 +8,7 @@
  *
  * Arquivo pequeno, carregado com a página. O motor (~110 KB) e o painel só são baixados quando a
  * pessoa toca em "Processo guiado" (scripts do mesmo domínio, na ordem certa: CSP script-src 'self').
+ * O4: "Trilha de missões" baixa motor + tutor e a trilha (data/trilha), e joga a Missão 1 no motor.
  * Atrás da chave local `labMotor` (desligada por padrão; liga com ?flags=labMotor).
  */
 (function (raiz) {
@@ -19,15 +20,17 @@
     'js/lab-motor-operacoes.js', 'js/lab-motor-condicoes.js', 'js/lab-motor-caderno.js', 'js/lab-motor-processo.js',
     'js/lab-motor-painel.js'
   ]);
+  // O4: tutor, trilha e tela da Missão 1 no motor (baixados depois do motor, só ao abrir a trilha).
+  const ARQUIVOS_TUTOR = Object.freeze(['js/lab-tutor-controles.js', 'js/lab-tutor.js', 'js/lab-trilha.js', 'js/lab-tutor-ui.js']);
+  const TRILHA = 'data/trilha/trilha_v1.json';
   const PROCESSOS = Object.freeze({ proc_nacl_09_v1: 'Solução de cloreto de sódio a 0,9 %' });
   const ID_PROCESSO = /^proc_[a-z0-9_]+$/;
 
-  let carregando = null;
+  const carregando = {};
 
-  /** Insere os scripts do motor em sequência (uma vez só). Resolve quando o último carrega. */
-  function carregarMotor(doc) {
-    if (carregando) return carregando;
-    carregando = ARQUIVOS.reduce((anterior, src) => anterior.then(() => new Promise((ok, falha) => {
+  function carregarLista(doc, nome, lista) {
+    if (carregando[nome]) return carregando[nome];
+    carregando[nome] = lista.reduce((anterior, src) => anterior.then(() => new Promise((ok, falha) => {
       if (doc.querySelector(`script[data-lab-motor="${src}"]`)) return ok();
       const s = doc.createElement('script');
       s.src = src;
@@ -36,8 +39,25 @@
       s.onload = () => ok();
       s.onerror = () => falha(new Error(`não carregou ${src}`));
       doc.head.appendChild(s);
-    })), Promise.resolve()).catch((e) => { carregando = null; throw e; });
-    return carregando;
+    })), Promise.resolve()).catch((e) => { carregando[nome] = null; throw e; });
+    return carregando[nome];
+  }
+
+  /** Insere os scripts do motor em sequência (uma vez só). Resolve quando o último carrega. */
+  function carregarMotor(doc) { return carregarLista(doc, 'motor', ARQUIVOS); }
+
+  /** Motor + tutor, trilha e tela (O4), nessa ordem. */
+  function carregarTutor(doc) { return carregarMotor(doc).then(() => carregarLista(doc, 'tutor', ARQUIVOS_TUTOR)); }
+
+  async function carregarTrilha(buscar) {
+    const r = await buscar(TRILHA, { credentials: 'same-origin' });
+    if (!r.ok) throw new Error(`trilha indisponível (${r.status})`);
+    const trilha = await r.json();
+    const processos = {};
+    for (const m of trilha.missoes || []) {
+      if (m.processoRef && !processos[m.processoRef]) processos[m.processoRef] = await carregarProcesso(buscar, m.processoRef);
+    }
+    return { trilha, processos };
   }
 
   /** Busca o JSON do processo (id da lista fechada). */
@@ -67,7 +87,31 @@
     btn.textContent = 'Processo guiado';
     btn.addEventListener('click', () => abrir(janela, 'proc_nacl_09_v1'));
     cabecalho.appendChild(btn);
+    const trilha = doc.createElement('button');
+    trilha.type = 'button';
+    trilha.id = 'btnTrilha';
+    trilha.className = 'btn btn-play';
+    trilha.textContent = 'Trilha de missões';
+    trilha.addEventListener('click', () => abrirTrilha(janela));
+    cabecalho.appendChild(trilha);
     return true;
+  }
+
+  /** Abre a trilha (O4): a Missão 1 é jogada no motor, no lugar da bancada clássica, só enquanto durar. */
+  async function abrirTrilha(janela) {
+    const doc = janela.document;
+    const btn = doc.getElementById('btnTrilha');
+    if (btn) { btn.disabled = true; btn.textContent = 'Carregando…'; }
+    try {
+      await carregarTutor(doc);
+      const dados = await carregarTrilha(janela.fetch.bind(janela));
+      janela.LabTutorUI.abrirTrilha(janela, dados);
+    } catch (e) {
+      if (janela.console) janela.console.warn('[Laboratório] trilha indisponível:', e.message);
+      if (btn) btn.textContent = 'Trilha indisponível';
+      return;
+    }
+    if (btn) { btn.disabled = false; btn.textContent = 'Trilha de missões'; }
   }
 
   async function abrir(janela, id) {
@@ -86,7 +130,7 @@
     if (btn) { btn.disabled = false; btn.textContent = 'Processo guiado'; }
   }
 
-  const API = { ARQUIVOS, PROCESSOS, carregarMotor, carregarProcesso, flagLigada, iniciar, abrir };
+  const API = { ARQUIVOS, ARQUIVOS_TUTOR, TRILHA, PROCESSOS, carregarMotor, carregarTutor, carregarProcesso, carregarTrilha, flagLigada, iniciar, abrir, abrirTrilha };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   if (raiz) raiz.LabMotorCarregador = API;
   if (raiz && raiz.document && !(typeof module !== 'undefined' && module.exports)) iniciar(raiz);
