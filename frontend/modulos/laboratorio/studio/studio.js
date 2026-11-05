@@ -340,6 +340,18 @@ console.log(
   // soma das ordens, alertas estruturais, fórmula/massa sem RDKit) ficam em
   // chem-core.js, testadas em Node com o RDKit (scripts/estudio-quimica.test.mjs).
   const Core = window.LaiftChemCore;
+
+  /**
+   * Portão da Descoberta (O7): toda edição que gera derivado (substituição, adição,
+   * bioisosterismo) passa por aqui. Sem o módulo ou sem o seed, nega (falha fechada).
+   */
+  async function podeGerarDerivados() {
+    const ui = window.LaiftDescobertaUI;
+    if (!ui) return false;
+    const r = await ui.verificarPermissao(STATE.compostoSelecionado);
+    if (!r.permitido) mostrarNotificacao(r.motivo, 'warning', 6000);
+    return r.permitido;
+  }
   const REACOES_BIOISOSTERISMO = Core.REACOES_BIOISOSTERISMO;
   const SMILES_CORRIGIDOS = window.LaiftSmilesCorrigidos || {};
   // ››› FIM: REACOES_BIOISOSTERISMO — reações SMARTS (chem-core.js).
@@ -1502,6 +1514,7 @@ console.log(
   // ═══════════════════════════════════════════════════════════════════════════
   window.executarSubstituicaoElementar = async function (novoSimbolo) {
     console.log('[EDIT-SUB] ▶ Início substituição:', novoSimbolo);
+    if (!(await podeGerarDerivados())) return;
 
     if (!STATE.atomoAtivoInspecionado) {
       console.warn('[EDIT-SUB] ❌ Nenhum átomo foi clicado antes');
@@ -1612,6 +1625,7 @@ console.log(
 
   window.executarAdicaoAtomo = async function (novoSimbolo) {
     console.log('[EDIT-ADD] ▶ Início adição:', novoSimbolo);
+    if (!(await podeGerarDerivados())) return;
 
     if (!STATE.atomoAtivoInspecionado) {
       console.warn('[EDIT-ADD] ❌ Nenhum átomo foi clicado antes');
@@ -1830,6 +1844,11 @@ console.log(
     const smiles = STATE.compostoSelecionado.smiles;
     const nome = STATE.compostoSelecionado.nome;
     modal.style.display = 'flex';
+    setHtml(body, MSG_VAZIA('Verificando a molécula...'));
+    if (!(await podeGerarDerivados())) {
+      setHtml(body, MSG_VAZIA('A Guia não gera análogos desta molécula. A ficha de estudo segue disponível.'));
+      return;
+    }
     setHtml(body, MSG_VAZIA('Analisando grupos funcionais...'));
 
     // Cada transformação é aplicada de verdade (reação estrutural + sanitização)
@@ -1877,6 +1896,7 @@ console.log(
     const rx = REACOES_BIOISOSTERISMO.find(function (r) { return r.id === idReacao; });
     if (!rx) return;
 
+    if (!(await podeGerarDerivados())) return;
     const sO = STATE.compostoSelecionado.smiles;
     const rdkit = await carregarRDKitSobDemanda();
     if (!rdkit) { mostrarNotificacao('O bioisosterismo exige o RDKit.', 'error'); return; }
@@ -3356,6 +3376,14 @@ console.log(
       }
     }
   });
+
+  // Ponte para descoberta-ui.js (análogos e comparação): só expõe leitura e cálculo.
+  window.LaiftEstudioPonte = {
+    selecionado: function () { return STATE.compostoSelecionado; },
+    carregarRDKit: carregarRDKitSobDemanda,
+    propriedades: calcularPropriedadesMoleculares,
+    notificar: mostrarNotificacao
+  };
 
   // ═══════════════════════════════════════════════════════════════════════════
   // DISPARO DO BOOT
