@@ -207,6 +207,9 @@
 
   let historico = [];
   let timerAdd = null;
+  let passoAdicaoFn = null;
+  let pausadoPorAba = false;
+  let adicaoPausadaPorAba = false;
   let timerLoop = null;
   let qtdRestante = 0;
   let incrAdd = 1;
@@ -1043,6 +1046,8 @@
 
   function resetarLaboratorio() {
     if (timerAdd) { clearInterval(timerAdd); timerAdd = null; }
+    passoAdicaoFn = null;
+    adicaoPausadaPorAba = false;
     const btnAdd = document.getElementById('btnStartAdd');
     if (btnAdd) btnAdd.innerText = '▶ Adicionar';
     window.setModoTermico('ambiente');
@@ -1193,13 +1198,15 @@
       if (modo === 'jato') animarDespejo('jato');
       if (timerAdd) clearInterval(timerAdd);
 
-      timerAdd = setInterval(() => {
+      passoAdicaoFn = () => {
         if (qtdRestante <= 0 || sys.shattered) { window.pararAdicao(); return; }
         if (modo === 'gota') animarDespejo('gota');
         let add = Math.min(incrAdd, qtdRestante);
         qtdRestante -= add;
         processarCarga(reag, add);
-      }, 280 / velocidadeTempo);
+      };
+      if (!pausadoPorAba) timerAdd = setInterval(passoAdicaoFn, 280 / velocidadeTempo);
+      else adicaoPausadaPorAba = true;
     }
 
     atualizarInspecaoMolecular(reag);
@@ -1207,6 +1214,8 @@
 
   function pararAdicao() {
     if (timerAdd) { clearInterval(timerAdd); timerAdd = null; }
+    passoAdicaoFn = null;
+    adicaoPausadaPorAba = false;
     const btn = document.getElementById('btnStartAdd');
     if (btn) btn.innerText = '▶ Adicionar';
     pararAnimacaoJato();
@@ -1502,8 +1511,30 @@
     const btnV = document.getElementById('btnT' + v);
     if (btnV) btnV.classList.add('active-btn');
     clearInterval(timerLoop);
-    timerLoop = setInterval(loopTermico, 200 / velocidadeTempo);
+    timerLoop = pausadoPorAba ? null : setInterval(loopTermico, 200 / velocidadeTempo);
   };
+
+  // Relógio da bancada: com a aba oculta (outra aba, tela bloqueada) a física e a adição
+  // gradual param; ao voltar, retomam de onde estavam, sem acumular tempo.
+  function pausarRelogioBancada() {
+    if (pausadoPorAba) return;
+    pausadoPorAba = true;
+    if (timerLoop) { clearInterval(timerLoop); timerLoop = null; }
+    if (timerAdd) { clearInterval(timerAdd); timerAdd = null; adicaoPausadaPorAba = true; }
+  }
+
+  function retomarRelogioBancada() {
+    if (!pausadoPorAba) return;
+    pausadoPorAba = false;
+    timerLoop = setInterval(loopTermico, 200 / velocidadeTempo);
+    if (adicaoPausadaPorAba && passoAdicaoFn) timerAdd = setInterval(passoAdicaoFn, 280 / velocidadeTempo);
+    adicaoPausadaPorAba = false;
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) pausarRelogioBancada();
+    else retomarRelogioBancada();
+  });
 
   window.toggleAgitador = function() {
     agitadorAtivo = !agitadorAtivo;
@@ -1667,10 +1698,7 @@
         ['C14H14N2O3_s', 'Fenobarbital'],
         ['C17H19NO3_s', 'Morfina'],
         ['C20H22N2O2_s', 'Estricnina'],
-        ['C11H17N3O8_s', 'Tetrodotoxina (TTX)'],
-        ['C4H10FO2P_l', 'Sarin (GB)'],
-        ['C11H26NO2PS_l', 'Agente VX'],
-        ['C4H8Cl2S_l', 'Gás Mostarda (HD)']
+        ['C11H17N3O8_s', 'Tetrodotoxina (TTX)']
       ]],
       ['🔬 Vitaminas & Indicadores', [
         ['C6H8O6_s', 'Ácido Ascórbico (Vitamina C)'],
@@ -2010,7 +2038,8 @@
     if (sel) atualizarInspecaoMolecular(sel);
   }, 150);
 
-  timerLoop = setInterval(loopTermico, 200);
+  if (!document.hidden) timerLoop = setInterval(loopTermico, 200);
+  else pausadoPorAba = true;
   log('Bancada pronta. Escolha um reagente, informe a quantidade e toque em Adicionar.', 'log-info');
 
 })();

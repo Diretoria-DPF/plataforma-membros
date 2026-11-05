@@ -715,7 +715,7 @@ console.log(
   function classificarCategoria(chave, label) {
     const txt = ((chave || '') + ' ' + (label || '')).toLowerCase();
     if (/custom|derivado|editado|análogo|scaffold_/.test(txt)) return 'custom';
-    if (/sarin|vx|estricnina|toxina|mostarda|cianeto|arsênio|fentanil/.test(txt)) return 'toxicos';
+    if (/estricnina|toxina|cianeto|arsênio|fentanil/.test(txt)) return 'toxicos';
     if (/agua|etanol|metanol|acetona|hexano|cloroformio|dmso|thf|tolueno|benzeno/.test(txt)) return 'solventes';
     if (/acido|hidroxido|cloreto|sulfato|nitrato|anidrido|sodio|potassio|carbonato|fosfato/.test(txt)) return 'reagentes';
     return 'farmacos';
