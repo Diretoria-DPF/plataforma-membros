@@ -20,7 +20,12 @@ const lab = path.join(frontend, 'modulos', 'laboratorio');
 const ORCAMENTO = {
   seedBytes: 700 * 1024, // plano do Laboratório v2, seção 4: seed < 700 KB
   dadosBytes: 700 * 1024, // data/*.js somados (seed + bases antigas enquanto coexistirem)
-  scriptsBytes: 450 * 1024, // js/*.js do módulo (sem vendor)
+  // js/*.js do módulo (sem vendor). Subiu de 450 para 465 KB na O8 (desempenho por competência e falas da Guia e do
+  // Preceptor: ~13 KB em 3 arquivos). JUSTIFICATIVA: esses arquivos só são baixados ao abrir a trilha (lista
+  // ARQUIVOS_TUTOR do carregador) e nenhum entra no index.html; o que pesa para a pessoa é a CARGA INICIAL, que
+  // tem teto próprio logo abaixo e NÃO subiu. Próxima onda que precisar de mais: cortar código antes de subir.
+  scriptsBytes: 465 * 1024,
+  cargaInicialBytes: 210 * 1024, // só os <script src="js/..."> do index.html da bancada (hoje ~201 KB)
 };
 
 const tamanho = (rel) => fs.statSync(path.join(lab, rel)).size;
@@ -37,9 +42,19 @@ test('orçamento do Laboratório: dados (seed + bases antigas) cabem em 700 KB',
   assert.ok(n <= ORCAMENTO.dadosBytes, `data/ com ${kb(n)}; teto ${kb(ORCAMENTO.dadosBytes)}`);
 });
 
-test('orçamento do Laboratório: scripts do módulo cabem em 450 KB', () => {
+test('orçamento do Laboratório: scripts do módulo cabem em 465 KB', () => {
   const n = soma('js', '.js');
   assert.ok(n <= ORCAMENTO.scriptsBytes, `js/ com ${kb(n)}; teto ${kb(ORCAMENTO.scriptsBytes)}`);
+});
+
+test('orçamento do Laboratório: a carga inicial (scripts do index.html) não passa de 210 KB e o código sob demanda fica fora dela', () => {
+  const html = fs.readFileSync(path.join(lab, 'index.html'), 'utf8');
+  const iniciais = [...html.matchAll(/<script src="(js\/[^"]+)"/g)].map((m) => m[1]);
+  const n = iniciais.reduce((soma, f) => soma + tamanho(f), 0);
+  assert.ok(n <= ORCAMENTO.cargaInicialBytes, `carga inicial com ${kb(n)}; teto ${kb(ORCAMENTO.cargaInicialBytes)}`);
+  for (const sob of ['lab-boletim', 'lab-boletim-ui', 'lab-contexto', 'lab-tutor', 'lab-trilha', 'lab-tutor-ui']) {
+    assert.ok(!iniciais.includes(`js/${sob}.js`), `${sob}.js deve carregar sob demanda`);
+  }
 });
 
 test('o seed é medido também comprimido (informativo) e fica muito abaixo do teto bruto', () => {

@@ -17,6 +17,21 @@
     "esterilizacao": "Esterilização",
     "investigacao": "Investigação de desvio"
   },
+  "boletim": {
+    "nota": "Rubrica aprovada pelo dono. limiares: razão de acertos (acertos menos pesoDica por dica pedida, sobre as tentativas) a partir da qual a competência recebe o rótulo em_desenvolvimento, proficiente ou dominio; abaixo de proficiente o painel sugere treino. dominio exige dominioSemApoio acertos feitos na Prova. Guardada só no aparelho; sem nota pública e sem ranking.",
+    "pesoDica": 0.25,
+    "dominioSemApoio": 2,
+    "limiares": { "em_desenvolvimento": 0.5, "proficiente": 0.8, "dominio": 0.9 },
+    "rotulos": { "sem_registro": "Sem registro", "iniciando": "Iniciando", "em_desenvolvimento": "Em desenvolvimento", "proficiente": "Proficiente", "dominio": "Domínio" },
+    "grupos": {
+      "seguranca": { "nome": "Segurança e EPI", "fontes": ["biosseguranca", "residuos"], "minimo": 2 },
+      "calculo": { "nome": "Cálculo", "fontes": ["calculo"], "minimo": 2 },
+      "tecnica": { "nome": "Técnica de bancada", "fontes": ["pesagem", "volumetria", "titulacao", "separacao", "sintese", "esterilizacao", "farmacotecnica"], "minimo": 3 },
+      "qualidade": { "nome": "Controle de qualidade", "fontes": ["cq"], "minimo": 2 },
+      "registro": { "nome": "Registro e caderno", "fontes": ["rotulagem"], "minimo": 1 },
+      "desvio": { "nome": "Raciocínio de desvio", "fontes": ["investigacao"], "minimo": 1 }
+    }
+  },
   "niveis": {
     "0": "Primeiros passos na bancada",
     "1": "Soluções e diluições",

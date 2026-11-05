@@ -1508,6 +1508,7 @@
       if (window.LaiftMfa) window.LaiftMfa.load(window.App);
       if (window.LaiftPrivacy) window.LaiftPrivacy.load(window.App, document); // direitos do titular (LGPD)
       if (homeV2On()) withBundle('inicio3', function () { if (window.LaiftHomeV3) window.LaiftHomeV3.mountProfile(window.App, document); }); // Meu desempenho
+      if (homeV2On()) withBundle('desempenho', function () { if (window.LaiftDesempenho) window.LaiftDesempenho.mount(window.App, document); }); // Desempenho por competência (O8)
       if (profileV2On()) mountProfileV2();
       else if (window.LaiftProfileV2) window.LaiftProfileV2.reset(document);
     },

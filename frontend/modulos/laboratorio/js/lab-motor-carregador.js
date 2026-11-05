@@ -24,7 +24,8 @@
     'js/lab-motor-painel.js'
   ]);
   // O4: tutor, trilha e tela da Missão 1 no motor (baixados depois do motor, só ao abrir a trilha).
-  const ARQUIVOS_TUTOR = Object.freeze(['js/lab-tutor-controles.js', 'js/lab-tutor.js', 'js/lab-trilha.js', 'js/lab-tutor-ui.js']);
+  // O8: falas da Guia/Preceptor e desempenho vêm junto (nunca no index.html).
+  const ARQUIVOS_TUTOR = Object.freeze(['js/lab-tutor-controles.js', 'js/lab-tutor.js', 'js/lab-trilha.js', 'js/lab-contexto.js', 'js/lab-boletim.js', 'js/lab-boletim-ui.js', 'js/lab-tutor-ui.js']);
   const TRILHA = 'data/trilha/trilha_v1.json';
   // Lista fechada de processos que a bancada pode buscar (todos com nivel_conteudo 'completo', conferido em teste).
   const PROCESSOS = Object.freeze({
