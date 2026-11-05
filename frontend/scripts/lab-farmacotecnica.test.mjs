@@ -22,7 +22,7 @@ const E = require(path.join(JS, 'lab-motor-estado.js'));
 const O = require(path.join(JS, 'lab-motor-operacoes.js'));
 const P = require(path.join(JS, 'lab-motor-processo.js'));
 const V = require(path.join(JS, 'lab-motor-validador.js'));
-const { ESPECIES } = require(path.join(JS, 'lab-motor-especies-farmaco.js'));
+const { ESPECIES, NOVAS } = require(path.join(JS, 'lab-motor-especies-farmaco.js'));
 
 const ctx = { especies: ESPECIES };
 const aprox = (a, b, tol, msg) => assert.ok(Math.abs(a - b) <= tol, `${msg || ''} obtido ${a}, esperado ${b} ±${tol}`);
@@ -429,7 +429,7 @@ test('erros comuns: home spray bloqueia a água antes da pré-mistura; desinfeta
 
 // ── Regra de conteúdo e peso ────────────────────────────────────────────────
 test('regra de conteúdo: nenhuma espécie nova é restrita, e nenhum processo O5 cita agente de guerra, ilícita ou rota de síntese', () => {
-  for (const [id, e] of Object.entries(ESPECIES)) { assert.equal(e.restricao, null, id); assert.equal(e.nivel_conteudo, 'completo', id); }
+  for (const id of NOVAS) { assert.equal(ESPECIES[id].restricao, null, id); assert.equal(ESPECIES[id].nivel_conteudo, 'completo', id); }
   for (const id of O5_IDS) {
     const p = carregar(id);
     assert.notEqual(p.categoria, 'sintese');
