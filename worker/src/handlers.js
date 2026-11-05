@@ -57,6 +57,7 @@ import * as AssistantFeedbackService from './services/assistantFeedbackService.j
 import * as AssistantModeration from './assistant/moderationGate.js';
 // PR 3.2 (Onda 3) — proxy RCSB/PubChem do modo Moléculas do Atlas 3D
 import * as AtlasMoleculeService from './services/atlasMoleculeService.js';
+import * as LabChemService from './services/labChemService.js';
 import * as AtlasTelemetryService from './services/atlasTelemetryService.js';
 // Biblioteca LAIFT (docs/cortex/CONTRATO-B1.md)
 import * as LibraryService from './services/libraryService.js';
@@ -356,6 +357,8 @@ export const API_REGISTRY = {
   apiAdminLearnAtlasTelemetry: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AtlasTelemetryService.adminStats(sql, identity, asInput(input))),
   apiLearnAtlasPdb: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, () => AtlasMoleculeService.getPdb(asInput(input))),
   apiLearnAtlasPubchem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, () => AtlasMoleculeService.getPubchem(asInput(input))),
+  // Laboratório: PubChem, ChEMBL e ChEBI pelo proxy (atrás da flag lab_chem_proxy_enabled).
+  apiLearnLabChem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LabChemService.lookup(sql, identity, asInput(input))),
   apiAdminLearnReviewCase: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ClinicalService.reviewCase(sql, env, identity, input || {}, cid)),
   // ---- Biblioteca LAIFT (docs/cortex/CONTRATO-B1.md §4). O catálogo público não tem sessão: só o build o consome. ----
   apiLearnLibraryPublicCatalog: (sql, env) => run(sql, () => LibraryService.publicCatalog(sql, env)),
