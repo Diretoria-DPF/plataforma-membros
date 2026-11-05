@@ -2130,6 +2130,7 @@ label {
 .bed-status { font-weight: 700; }
 .bed-status.is-done { color: var(--success); }
 .bed-status.is-open { color: var(--primary-light); }
+.bed-status.is-review { color: var(--warning); }
 .bed-status.is-reviewed { color: var(--laift-info); }
 .bed-tag.is-acervo { background: var(--laift-info-soft); color: var(--laift-info); padding: 2px 8px; border-radius: 999px; text-transform: none; }
 .bed-card.is-acervo { border-top: 4px solid var(--laift-info); }

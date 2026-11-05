@@ -168,7 +168,7 @@ test('LAYERS/SYSTEMS/MODES/SHEET_STATES estão congelados e com o tamanho espera
   assert.equal(Object.isFrozen(SHEET_STATES), true);
   assert.equal(LAYERS.length, 8); // 7 + Fáscias (camada própria)
   assert.equal(SYSTEMS.length, 12);
-  assert.equal(MODES.length, 6);
+  assert.equal(MODES.length, 7); // 6 + Trilhas e desafios (atrás da flag `trilhas`)
   assert.equal(SHEET_STATES.length, 3);
   assert.equal(LAYER_IDS.length, LAYERS.length);
   assert.equal(SYSTEM_IDS.length, SYSTEMS.length);
@@ -191,6 +191,7 @@ test('validadores de id aceitam o válido e rejeitam o inválido', () => {
   assert.equal(isValidSystemId('cardiovascular'), true);
   assert.equal(isValidSystemId('cardiaco'), false);
   assert.equal(isValidModeId('quiz'), true);
+  assert.equal(isValidModeId('trilhas'), true);
   assert.equal(isValidModeId('quizz'), false);
   assert.equal(isValidSheetState('half'), true);
   assert.equal(isValidSheetState('metade'), false);

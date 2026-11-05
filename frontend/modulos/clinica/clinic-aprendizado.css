@@ -1,0 +1,39 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Aprendizado na Clínica (A5): nível, plantão, nota de gatilho, linha do tempo, dicas e debrief por competência. */
+.learn-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 12px; }
+.learn-toolbar label { font-weight: 600; }
+.learn-toolbar select { min-height: 44px; max-width: 100%; }
+.learn-toolbar .btn { min-height: 44px; }
+.learn-hint { flex: 1 1 100%; margin: 0; font-size: 0.78rem; color: var(--gray, #64748b); }
+.bed-tag-sensitive { background: #fef3c7; color: #78350f; border: 1px solid #f59e0b; }
+.trigger-note {
+  margin: 0 0 10px; padding: 10px 12px; border-radius: 8px; background: #fffbeb;
+  border: 1px solid #f59e0b; color: #78350f; font-size: 0.9rem; overflow-wrap: anywhere;
+}
+.plantao-bar {
+  margin: 0 0 10px; padding: 8px 12px; border-radius: 8px; background: #ecfeff;
+  border: 1px solid #67e8f9; color: #164e63; font-weight: 600; text-align: center;
+}
+.learn-panel { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 12px; }
+@media (min-width: 720px) { .learn-panel { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); } }
+.timeline-list { margin: 0; padding-left: 18px; font-size: 0.88rem; overflow-wrap: anywhere; }
+.timeline-list li { margin: 0 0 4px; }
+.timeline-empty { list-style: none; margin-left: -18px; color: var(--gray, #64748b); }
+.timeline-dica { color: #1e3a8a; }
+.hint-text { margin: 8px 0 0; font-size: 0.9rem; overflow-wrap: anywhere; }
+#btnHint { min-height: 44px; }
+.competency-debrief { margin: 12px 0 0; padding: 10px 12px; border-radius: 8px; background: #f8fafc; border: 1px solid #cbd5e1; }
+.competency-debrief h4 { margin: 0 0 6px; }
+.competency-list { margin: 0 0 8px; padding: 0; list-style: none; }
+.competency-item { margin: 0 0 10px; }
+.competency-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 0.9rem; }
+.competency-bar { height: 8px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+.competency-fill { height: 100%; background: #0f766e; }
+.competency-para_treinar .competency-fill { background: #b45309; }
+.competency-em_desenvolvimento .competency-fill { background: #ca8a04; }
+.competency-tip, .competency-next { margin: 4px 0 0; font-size: 0.82rem; color: #334155; overflow-wrap: anywhere; }
+.competency-debrief.hidden, .trigger-note.hidden, .plantao-bar.hidden { display: none; }

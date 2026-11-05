@@ -6,9 +6,8 @@
 // Guia da plataforma: botão flutuante + painel de conversa que orienta e leva até a tela certa. Ela NÃO
 // altera dados: os botões só navegam (abrir tela, módulo de estudo, crachá) e só existem se o destino estiver na
 // lista branca abaixo, IGUAL à do servidor (worker/src/assistant/targets.js; o teste assistant.test.mjs confere).
-// O texto da resposta entra por textContent. A conversa fica só na memória da página (nada vai para o
-// armazenamento do navegador) e some ao sair da conta. Só aparece com a flag chatbot_enabled ligada
-// (apiGetFeatureFlags). Expõe window.LaiftAssistant. A moderação fica em assistant-moderation.js.
+// O texto da resposta entra por textContent. A conversa fica só na memória da página (nada vai ao armazenamento do
+// navegador) e some ao sair da conta. Só com a flag chatbot_enabled (apiGetFeatureFlags). Expõe window.LaiftAssistant.
 (function (root) {
   'use strict';
 
@@ -536,7 +535,8 @@
     if (ui.messages.length) return;
     var out = moodLib().greeting(ui.mood, Math.random);
     ui.mood = out.session;
-    addMessage({ role: 'lia', text: out.text, suggestions: Suggestions.suggestionsFor(!!token(), currentPanel()) });
+    var msg = { role: 'lia', text: out.text, suggestions: Suggestions.suggestionsFor(!!token(), currentPanel()) };
+    addMessage(root.LaiftAssistantNext ? root.LaiftAssistantNext.decorate(msg, ui.app, sanitizeActions) : msg); // A3: + próximo passo
   }
 
   function openPanel() {

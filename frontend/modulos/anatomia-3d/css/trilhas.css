@@ -1,0 +1,33 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Trilhas e desafios (js/modes/trilhas.js) — reaproveita .quiz-card/.quiz-btn/.quiz-feedback de atlas.css. */
+.trilhas-card h3:focus { outline: none; }
+.trilhas-card h3:focus-visible { outline: 3px solid var(--module-accent); outline-offset: 2px; }
+.trilhas-nav { display: flex; flex-wrap: wrap; gap: 8px; }
+.trilhas-acoes { margin-top: 4px; }
+.trilhas-voltar { border-color: var(--laift-border); font-weight: 500; }
+.trilhas-primario { background: var(--module-accent); color: var(--laift-on-accent, #fff); }
+.trilhas-secundario { border-color: var(--laift-border); font-weight: 500; }
+.trilhas-lista, .trilhas-resultado { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.trilhas-opcao {
+  display: flex; flex-direction: column; gap: 4px; width: 100%; min-height: 44px; padding: 10px 12px;
+  text-align: left; cursor: pointer; font: inherit;
+  border-radius: var(--laift-radius-md); border: 1px solid var(--laift-border);
+  background: transparent; color: var(--laift-text);
+}
+.trilhas-opcao:hover { border-color: var(--module-accent); }
+.trilhas-opcao-texto { font-size: 13px; line-height: 1.4; color: var(--laift-muted); }
+.trilhas-opcao-resumo { font-size: 13px; font-weight: 600; color: var(--laift-text); }
+.trilhas-opcoes { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.trilhas-opcoes[hidden], .trilhas-lista-btn[hidden] { display: none; }
+.trilhas-pontos { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+.trilhas-ponto { padding: 2px 8px; border-radius: 999px; font-size: 12px; border: 1px solid var(--laift-border); color: var(--laift-muted); }
+.trilhas-ponto[data-estado="visto"] { color: var(--laift-text); }
+.trilhas-ponto[data-estado="atual"] { border-color: var(--module-accent); color: var(--laift-text); font-weight: 700; }
+.trilhas-resumo { margin: 0; font-size: 14px; line-height: 1.45; color: var(--laift-text); }
+.trilhas-resumo:empty { display: none; }
+.trilhas-placar { margin: 0; font-size: 18px; font-weight: 700; }
+@media (min-width: 560px) { .trilhas-opcoes { grid-template-columns: 1fr 1fr; } }

@@ -36,7 +36,7 @@ import { createSearchBox } from './ui/search-box.js';
 import { createNavigator } from './ui/navigator.js';
 import { groupEntries, sideLabel, contentCandidates } from './ui/structure-groups.js';
 import { mergeLayers } from './ui/content-merge.js';
-import { createInfoCard } from './ui/infocard.js';
+import { createInfoCard, publicSummary } from './ui/infocard.js';
 import { createLayersPanel } from './ui/layers-panel.js';
 import { mountExplode } from './ui/explode-entry.js';
 import { linkLegacy } from './ui/legacy-link.js';
@@ -1012,6 +1012,31 @@ async function boot() {
         return rendererApi.getTier && rendererApi.getTier() === 'low' ? 5 : 20;
       },
       reducedMotion: prefersReducedMotion,
+    })),
+    // Trilhas guiadas, "encontre a estrutura" e desafio diário (flag `trilhas`).
+    trilhas: () => Promise.all([
+      import('./modes/trilhas.js'),
+      fetchJson(`${CONTENT_BASE}sid-aliases.json`).catch(() => ({})),
+    ]).then(([m, aliases]) => m.createTrilhasMode({
+      bus, getLabel: labelFor, search: location.search,
+      loadTrilhas: () => fetchJson(`${CONTENT_BASE}trilhas.json`),
+      loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`),
+      resolveSid: (sid) => (aliases && aliases[sid]) || sid,
+      systemOf: (sid) => {
+        const rec = registry.getBySid(sid);
+        const entry = contentStore.getEntry(sid);
+        return (entry && entry.system) || (rec && rec.system) || null;
+      },
+      groupOf: (sid) => {
+        const group = contentStore.getGroup(sid);
+        return group && Array.isArray(group.sids) ? group.sids : [sid];
+      },
+      prepareCase: prepareQuizCase,
+      getSummary: async (sid) => {
+        const content = await contentStore.getContent(sid);
+        return content ? publicSummary(content.summary_pt) : '';
+      },
+      openFicha: () => window.AtlasShell.setMode('explorar'),
     })),
     fisiologia: () => Promise.all([
       import('./modes/physiology.js'),

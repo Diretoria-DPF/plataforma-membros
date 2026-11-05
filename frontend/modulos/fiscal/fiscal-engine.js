@@ -35,6 +35,8 @@
     lastScan: { text: '', at: 0 },
     searchTimer: null,
     searchSeq: 0,
+    clockOffset: 0, // hora do servidor menos hora do aparelho (o QR rotativo vale pela hora do servidor)
+    queue: null, // fila offline do portão (fiscal-gate.js)
   };
 
   const $ = (id) => document.getElementById(id);
@@ -129,6 +131,7 @@
       return;
     }
     state.events = Array.isArray(res.events) ? res.events : [];
+    if (typeof res.serverTime === 'number') state.clockOffset = res.serverTime - Date.now();
     // Mantém o evento escolhido se ele ainda existir; senão, o primeiro
     // aberto (a Worker já ordena: em andamento, depois publicados).
     if (!currentEvent()) {
@@ -157,11 +160,16 @@
     if (!ev.checkInOpen) { setStatus('O check-in deste evento está fechado.', 'error'); return null; }
 
     setStatus('Registrando presença...', 'loading');
-    const res = await api('apiAdminAttendanceCheckIn', Object.assign({ eventId: ev.id }, input));
+    const body = Object.assign({ eventId: ev.id }, input);
+    if (input.method === 'qr') body.scannedAt = Date.now() + state.clockOffset;
+    const res = await api('apiAdminAttendanceCheckIn', body);
     if (!res.success) {
+      if (input.method === 'qr' && await queueOffline(ev.id, body, res)) return res;
+      showGateResult(res, false);
       setStatus(res.message || 'Não foi possível registrar a presença.', 'error');
       return res;
     }
+    showGateResult(res, false);
     const p = res.participant || {};
     setStatus(res.message || 'Presença registrada.', p.alreadyCheckedIn ? 'warning' : 'success');
     if (!p.alreadyCheckedIn) {
@@ -179,12 +187,67 @@
   }
 
   // =========================================================
+  // 2b. PORTÃO: cartão de resultado e fila offline (fiscal-gate.js)
+  // =========================================================
+
+  function showGateResult(res, queued) {
+    if (!window.LaiftGate) return;
+    window.LaiftGate.showResult(document, $('reader'), window.LaiftGate.resultView(res, queued));
+  }
+
+  /** Sem rede: guarda a leitura (idempotente pelo QR) para reenviar quando a conexão voltar. */
+  async function queueOffline(eventId, body, res) {
+    if (!state.queue || !window.LaiftGate.isTransient(res)) return false;
+    const saved = await state.queue.enqueue(eventId, body.qrPayload, body.scannedAt);
+    if (!saved) return false;
+    showGateResult(null, true);
+    await refreshQueueNote();
+    setStatus('Sem rede: leitura guardada neste aparelho. Ela é enviada sozinha quando a conexão voltar.', 'warning');
+    return true;
+  }
+
+  async function refreshQueueNote() {
+    const note = $('gateQueueNote');
+    if (!note || !state.queue) return;
+    const n = await state.queue.count();
+    note.textContent = n ? n + ' leitura(s) aguardando rede neste aparelho.' : '';
+    note.classList.toggle('hidden', !n);
+  }
+
+  async function flushQueue() {
+    if (!state.queue) return;
+    const out = await state.queue.flush();
+    await refreshQueueNote();
+    if (out.sent || out.dropped) {
+      setStatus('Leituras guardadas enviadas: ' + out.sent + ' registrada(s)' + (out.dropped ? ', ' + out.dropped + ' recusada(s) (QR vencido ou de outro evento)' : '') + '.', out.dropped ? 'warning' : 'success');
+      loadEvents();
+    }
+  }
+
+  function initGate(identity) {
+    if (!window.LaiftGate) return;
+    const tag = identity && identity.profileId ? String(identity.profileId) : 'portao';
+    state.queue = window.LaiftGate.createQueue({
+      backend: window.LaiftGate.createDefaultBackend(window.indexedDB),
+      owner: () => tag,
+      send: (item) => api('apiAdminAttendanceCheckIn', { eventId: item.eventId, method: 'qr', qrPayload: item.qrPayload, scannedAt: item.scannedAt }),
+    });
+    const reader = $('reader');
+    if (reader && !$('gateQueueNote')) {
+      const note = el('p', { id: 'gateQueueNote', className: 'fiscal-note hidden', role: 'status' });
+      reader.parentNode.insertBefore(note, reader);
+    }
+    window.addEventListener('online', flushQueue);
+    refreshQueueNote().then(() => { if (navigator.onLine !== false) flushQueue(); });
+  }
+
+  // =========================================================
   // 3. LEITOR DE QR CODE
   // =========================================================
 
   function parseQr(text) {
     const value = String(text || '').trim();
-    if (value.indexOf('LAIFT:v2:') === 0) return { kind: 'v2', payload: value };
+    if (value.indexOf('LAIFT:v3:') === 0 || value.indexOf('LAIFT:v2:') === 0) return { kind: 'v2', payload: value };
     if (value.indexOf('LAIFT:ID:') === 0) return { kind: 'legacy', identifier: value.slice('LAIFT:ID:'.length) };
     return null;
   }
@@ -578,6 +641,7 @@
     window.addEventListener('pagehide', stopScanner); // libera a câmera ao sair
     renderList('Busque participantes ou veja os inscritos deste evento.');
     updateEventInfo();
+    initGate(window.LaiftIdentity && window.LaiftIdentity.get ? window.LaiftIdentity.get() : null);
     loadEvents();
   }
 

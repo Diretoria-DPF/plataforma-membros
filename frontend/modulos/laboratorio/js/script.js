@@ -138,54 +138,8 @@
   // =========================================================================
   // 4. MOTOR DE BANCO DE DADOS LOCAL (IndexedDB)
   // =========================================================================
-  const DB_CACHE = {
-    db: null,
-    async init() {
-      if (this.db) return this.db;
-      return new Promise((resolve) => {
-        try {
-          if (!window.indexedDB) return resolve(null);
-          const req = indexedDB.open('LAIFT_LocalChem_v2', 1);
-          req.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('moleculas')) db.createObjectStore('moleculas', { keyPath: 'chave' });
-            if (!db.objectStoreNames.contains('respostasIA')) db.createObjectStore('respostasIA', { keyPath: 'pergunta' });
-          };
-          req.onsuccess = (e) => { this.db = e.target.result; resolve(this.db); };
-          req.onerror = () => resolve(null);
-        } catch (err) {
-          resolve(null);
-        }
-      });
-    },
-    async get(storeName, key) {
-      if (!key) return null;
-      const db = await this.init();
-      if (!db) return null;
-      return new Promise((resolve) => {
-        try {
-          const tx = db.transaction(storeName, 'readonly');
-          const req = tx.objectStore(storeName).get(String(key).toLowerCase().trim());
-          req.onsuccess = () => resolve(req.result ? req.result.dados : null);
-          req.onerror = () => resolve(null);
-        } catch (e) { resolve(null); }
-      });
-    },
-    async set(storeName, key, dados) {
-      if (!key || !dados) return;
-      const db = await this.init();
-      if (!db) return;
-      try {
-        const tx = db.transaction(storeName, 'readwrite');
-        tx.objectStore(storeName).put({
-          chave: String(key).toLowerCase().trim(),
-          pergunta: String(key).toLowerCase().trim(),
-          dados: dados,
-          ts: Date.now()
-        });
-      } catch (e) {}
-    }
-  };
+  // Cache local em IndexedDB: js/lab-cache-local.js (extraído na O3, mesmo comportamento).
+  const DB_CACHE = window.LabCacheLocal.criarCacheLocal(window.indexedDB || null);
 
   // =========================================================================
   // 5. ESTADO GLOBAL DO LABORATÓRIO
@@ -207,6 +161,9 @@
 
   let historico = [];
   let timerAdd = null;
+  let passoAdicaoFn = null;
+  let pausadoPorAba = false;
+  let adicaoPausadaPorAba = false;
   let timerLoop = null;
   let qtdRestante = 0;
   let incrAdd = 1;
@@ -216,6 +173,8 @@
   let focoAtivo = false;
   const reagentesAdicionados = new Set();
   const reacoesCatalogadas = new Set();
+  const adicionadoPorReagente = new Map();
+  let missaoConcluida = false;
   let smilesDrawerInstance = null;
   let viewer3D = null;
   let modoVisualizacao = '2D';
@@ -266,23 +225,10 @@
 
   const avisosSemReacao = new Set();
 
-  /** Nome legível de uma espécie para o log e as etiquetas (nunca o id interno). */
-  function rotulo(id) {
-    const info = (typeof LAB_DATABASE !== 'undefined' && LAB_DATABASE.species && LAB_DATABASE.species[id]) || DICIONARIO_MOLECULAR[id] || null;
-    if (info && info.label) return info.label;
-    const NOMES = { H2O_l: 'Água', 'H+': 'H⁺', 'OH-': 'OH⁻', H2_g: 'Hidrogênio (H₂)', CO2_g: 'Dióxido de carbono (CO₂)', Cl2_g: 'Cloro (Cl₂)', CH3COOH: 'Ácido acético', 'CH3COO-': 'Acetato', NH3: 'Amônia', 'NH4+': 'Amônio', Cu_s: 'Cobre', Pb_s: 'Chumbo', BaSO4_s: 'Sulfato de bário' };
-    if (NOMES[id]) return NOMES[id];
-    return String(id).replace(/_s$|_g$|_l$|_aq$/, '')
-      .replace(/_(\d)-$/, (m, n) => ({ 2: '²⁻', 3: '³⁻' }[n] || '⁻'))
-      .replace(/(\d)\+$/, (m, n) => ({ 2: '²⁺', 3: '³⁺' }[n] || '⁺'))
-      .replace(/\+$/, '⁺').replace(/-$/, '⁻');
-  }
-
-  function unidadeDe(id) {
-    const info = (typeof LAB_DATABASE !== 'undefined' && LAB_DATABASE.species && LAB_DATABASE.species[id]) || null;
-    const fase = info && info.phase ? info.phase : String(id).slice(-1);
-    return (fase === 's') ? 'g' : (fase === 'l' || fase === 'q' || fase === 'aq') ? 'mL' : '';
-  }
+  // Nome legível e unidade: js/lab-rotulos.js (extraído na O3, mesmo comportamento).
+  const especiesDaBase = () => (typeof LAB_DATABASE !== 'undefined' && LAB_DATABASE.species) || null;
+  function rotulo(id) { return window.LabRotulos.rotulo(id, especiesDaBase(), DICIONARIO_MOLECULAR); }
+  function unidadeDe(id) { return window.LabRotulos.unidadeDe(id, especiesDaBase()); }
 
   function qtd(chave) { return sys.especies.get(chave) || 0; }
   function adicionarEspecie(chave, mmol) { if (mmol <= 0) return; sys.especies.set(chave, (sys.especies.get(chave) || 0) + mmol); }
@@ -914,14 +860,23 @@
 
   let alertaPressaoEmitido = false;
   let alertaSinteseQuasePronta = false;
+  let dicaAquecerEl = null;
+  let avisoPressaoEl = null;
 
   function verificarAlertasProativosPreceptor() {
     const chatBox = document.getElementById('labChatMessages');
     if (!chatBox) return;
 
+    if (dicaAquecerEl && dicaAquecerEl.isConnected) {
+      const aindaValeA = (sys.especies.get('AcidoSalicilico_s') || 0) > 0 && (sys.especies.get('AnidridoAcetico_l') || 0) > 0 && sys.temp < 50;
+      const num = dicaAquecerEl.querySelector('.dica-temp');
+      if (!aindaValeA) { dicaAquecerEl.remove(); dicaAquecerEl = null; alertaSinteseQuasePronta = false; }
+      else if (num) num.textContent = sys.temp.toFixed(1).replace('.', ',');
+    }
+    if (alertaPressaoEmitido && sys.pressao <= 1.5 && avisoPressaoEl) { avisoPressaoEl.remove(); avisoPressaoEl = null; }
     if (sys.isClosed && sys.pressao > 3.0 && !alertaPressaoEmitido) {
       alertaPressaoEmitido = true;
-      bolhaChat('msg-preceptor', [
+      avisoPressaoEl = bolhaChat('msg-preceptor', [
         '⚠️ ', h('strong', { text: 'Atenção Imediata:' }), ' A pressão interna atingiu ',
         h('strong', { text: `${sys.pressao.toFixed(2)} atm` }),
         '. Reduza o aquecimento ou remova a rolha para evitar estilhaçamento da vidraria!'
@@ -934,10 +889,12 @@
     const temAnidrido = (sys.especies.get('AnidridoAcetico_l') || 0) > 0 || (sys.especies.get('C4H6O3_l') || 0) > 0;
     if (temSalicilico && temAnidrido && sys.temp < 50 && !alertaSinteseQuasePronta) {
       alertaSinteseQuasePronta = true;
-      bolhaChat('msg-preceptor', [
+      dicaAquecerEl = bolhaChat('msg-preceptor', [
         '💡 ', h('strong', { text: 'Dica Farmacotécnica:' }),
-        ` Você reuniu os precursores da Aspirina no vaso, mas a temperatura (${sys.temp.toFixed(1)}°C) está abaixo da energia de ativação necessária. Ligue o aquecedor para atingir `,
-        h('strong', { text: '60°C' }), ' e ative o agitador.'
+        ' Você reuniu os precursores da aspirina no vaso, mas a temperatura (',
+        h('span', { className: 'dica-temp', text: sys.temp.toFixed(1).replace('.', ',') }),
+        ' °C) está abaixo da energia de ativação necessária. Ligue o aquecedor para atingir ',
+        h('strong', { text: '60 °C' }), ' e ative o agitador.'
       ]);
     }
   }
@@ -945,28 +902,12 @@
   // =========================================================================
   // 10. SISTEMA DE MISSÕES E ROTEIROS PRÁTICOS
   // =========================================================================
-  const missoes = [
-    { titulo: "Missão 1: Neutralização Básica", desc: "Neutraliza um ácido forte com uma base forte até pH entre 7,0 e 7,5 (volume de pelo menos 20 mL).", check: () => calcularpH() >= 7.0 && calcularpH() <= 7.5 && sys.vol >= 20 && (qtd('Cl-') + qtd('NO3-') + qtd('SO4_2-') + qtd('ClO4-') > 0) && (qtd('Na+') + qtd('K+') + qtd('Li+') > 0) },
-    { titulo: "Missão 2: Chuva de Ouro", desc: "Forma um precipitado amarelo intenso de Iodeto de Chumbo (PbI₂).", check: () => qtd('PbI2_s') > 0.1 },
-    { titulo: "Missão 3: Libertação de Gás H₂", desc: "Faz um metal sólido reagir com ácido para gerar gás Hidrogénio.", check: () => qtd('H2_g') > 1 },
-    { titulo: "Missão 4: Ponto de Ebulição", desc: "Aquece a água no laboratório até que comece a evaporar ativamente (100°C).", check: () => sys.temp >= 100 && qtd('H2O_l') > 0 },
-    { titulo: "Missão 5: Síntese da Aspirina", desc: "Mistura Ácido Salicílico + Anidrido Acético (1:1 em mol) com H₂SO₄, agitação e 60 a 80°C por 30 minutos simulados.", check: () => reacoesCatalogadas.has('sintese_aspirina') },
-    { titulo: "Missão 6: Chuva de Prata", desc: "Mistura Nitrato de Prata (AgNO₃) com Cloreto (Ex: NaCl ou HCl) para formar AgCl.", check: () => qtd('AgCl_s') > 0.1 },
-    { titulo: "Missão 7: Síntese de Paracetamol", desc: "Mistura 4-Aminofenol + Anidrido Acético sob aquecimento (80 a 100°C) e agitação, por 45 minutos simulados.", check: () => reacoesCatalogadas.has('sintese_paracetamol') },
-    { titulo: "Missão 8: Ambiente Super Ácido", desc: "Cria uma solução altamente corrosiva com pH menor ou igual a 2.0.", check: () => calcularpH() <= 2.0 && sys.vol > 10 },
-    { titulo: "Missão 9: Aroma de Banana (Éster)", desc: "Mistura Ácido Acético com Álcool Isopentílico catalisado por H₂SO₄ sob calor.", check: () => reacoesCatalogadas.has('sintese_aroma_banana') },
-    { titulo: "Missão 10: Efervescência de Carbonato", desc: "Mistura um carbonato (como NaHCO₃ ou CaCO₃) com ácido para liberar CO₂.", check: () => qtd('CO2_g') > 0.5 }
-  ];
-  const CHAVE_MISSOES = 'laift_lab_missoes_v1';
-  function lerMissaoSalva() {
-    try {
-      const n = parseInt(localStorage.getItem(CHAVE_MISSOES), 10);
-      return Number.isInteger(n) && n >= 0 && n <= missoes.length ? n : 0;
-    } catch (e) { return 0; }
-  }
-  function salvarMissao() {
-    try { localStorage.setItem(CHAVE_MISSOES, String(missaoAtual)); } catch (e) { /* armazenamento indisponível: segue sem salvar */ }
-  }
+  // Missões e progresso: js/lab-missoes.js (extraído na O3, mesmo comportamento).
+  const missoes = window.LabMissoes.MISSOES;
+  const leituraMissao = () => window.LabMissoes.leituraDaBancada(sys, calcularpH, reacoesCatalogadas);
+  function armazenamentoLocal() { try { return window.localStorage; } catch (e) { return null; } }
+  function lerMissaoSalva() { return window.LabMissoes.lerProgresso(armazenamentoLocal()); }
+  function salvarMissao() { window.LabMissoes.salvarProgresso(armazenamentoLocal(), missaoAtual); }
   let missaoAtual = lerMissaoSalva();
 
   function atualizarUI_Missao() {
@@ -977,6 +918,7 @@
 
     if (!elTitle || !elDesc || !elStatus) return;
 
+    missaoConcluida = false;
     if (missaoAtual >= missoes.length) {
       elTitle.innerText = "🎉 Mestre Laboratorial!";
       elDesc.innerText = "Concluiu todas as 10 missões com sucesso.";
@@ -993,20 +935,23 @@
     elStatus.style.borderColor = "#ff9800";
     elStatus.style.color = "#ff9800";
     if (btnNext) btnNext.style.display = 'none';
+    guiaAtualizar();
   }
 
   function verificarMissoes() {
     if (missaoAtual >= missoes.length) return;
-    if (missoes[missaoAtual].check()) {
+    if (missoes[missaoAtual].check(leituraMissao())) {
       const badge = document.getElementById('missionStatus');
       if (badge && badge.innerText !== 'Concluída ✅') {
         badge.innerText = 'Concluída ✅';
+        missaoConcluida = true;
         badge.style.borderColor = 'var(--neon-green)';
         badge.style.color = 'var(--neon-green)';
         const btnNext = document.getElementById('btnNextMission');
         if (btnNext) btnNext.style.display = 'block';
         tocarSom('sucesso');
         log('🏆 ' + missoes[missaoAtual].titulo + ' Concluída!', 'log-info');
+        guiaAtualizar();
       }
     }
   }
@@ -1043,6 +988,8 @@
 
   function resetarLaboratorio() {
     if (timerAdd) { clearInterval(timerAdd); timerAdd = null; }
+    passoAdicaoFn = null;
+    adicaoPausadaPorAba = false;
     const btnAdd = document.getElementById('btnStartAdd');
     if (btnAdd) btnAdd.innerText = '▶ Adicionar';
     window.setModoTermico('ambiente');
@@ -1061,6 +1008,7 @@
     historico = [];
     phDataPoints = [];
     reagentesAdicionados.clear();
+    adicionadoPorReagente.clear();
     reacoesCatalogadas.clear();
     sinteseEstado.clear();
     sinteseAviso.clear();
@@ -1193,13 +1141,15 @@
       if (modo === 'jato') animarDespejo('jato');
       if (timerAdd) clearInterval(timerAdd);
 
-      timerAdd = setInterval(() => {
+      passoAdicaoFn = () => {
         if (qtdRestante <= 0 || sys.shattered) { window.pararAdicao(); return; }
         if (modo === 'gota') animarDespejo('gota');
         let add = Math.min(incrAdd, qtdRestante);
         qtdRestante -= add;
         processarCarga(reag, add);
-      }, 280 / velocidadeTempo);
+      };
+      if (!pausadoPorAba) timerAdd = setInterval(passoAdicaoFn, 280 / velocidadeTempo);
+      else adicaoPausadaPorAba = true;
     }
 
     atualizarInspecaoMolecular(reag);
@@ -1207,6 +1157,8 @@
 
   function pararAdicao() {
     if (timerAdd) { clearInterval(timerAdd); timerAdd = null; }
+    passoAdicaoFn = null;
+    adicaoPausadaPorAba = false;
     const btn = document.getElementById('btnStartAdd');
     if (btn) btn.innerText = '▶ Adicionar';
     pararAnimacaoJato();
@@ -1218,6 +1170,7 @@
   function processarCarga(reag, qtdAdd) {
     if (qtdAdd <= 0 || sys.shattered) return;
     reagentesAdicionados.add(reag);
+    adicionadoPorReagente.set(reag, (adicionadoPorReagente.get(reag) || 0) + qtdAdd);
 
     const info = (typeof LAB_DATABASE !== 'undefined' && LAB_DATABASE.species && LAB_DATABASE.species[reag])
       ? LAB_DATABASE.species[reag]
@@ -1243,6 +1196,11 @@
     atualizarUI();
     verificarMissoes();
     registrarPontoPH();
+    guiaAtualizar();
+  }
+
+  function guiaAtualizar() {
+    if (window.LabGuiaUI) window.LabGuiaUI.atualizar();
   }
 
   function atualizarEquilibrio() {
@@ -1347,7 +1305,7 @@
 
   function atualizarUI() {
     const volDisplay = document.getElementById('volDisplay');
-    if (volDisplay) volDisplay.innerText = `${sys.vol.toFixed(1)} / ${sys.maxVol} mL`;
+    if (volDisplay) volDisplay.innerText = `${sys.vol.toFixed(1).replace('.', ',')} / ${sys.maxVol} mL`;
 
     const liq = document.getElementById('liquidLayer');
     if (liq) {
@@ -1406,9 +1364,9 @@
     const hudTemp = document.getElementById('hudTemp');
     const hudPress = document.getElementById('hudPress');
     const hudPH = document.getElementById('hudPH');
-    if (hudTemp) hudTemp.innerText = sys.temp.toFixed(1) + ' °C';
-    if (hudPress) hudPress.innerText = sys.pressao.toFixed(2) + ' atm';
-    if (hudPH) hudPH.innerText = calcularpH().toFixed(2);
+    if (hudTemp) hudTemp.innerText = sys.temp.toFixed(1).replace('.', ',') + ' °C';
+    if (hudPress) hudPress.innerText = sys.pressao.toFixed(2).replace('.', ',') + ' atm';
+    if (hudPH) hudPH.innerText = calcularpH().toFixed(2).replace('.', ',');
 
     const thermoFill = document.getElementById('thermoFill');
     const thermoBulb = document.getElementById('thermoBulb');
@@ -1502,8 +1460,30 @@
     const btnV = document.getElementById('btnT' + v);
     if (btnV) btnV.classList.add('active-btn');
     clearInterval(timerLoop);
-    timerLoop = setInterval(loopTermico, 200 / velocidadeTempo);
+    timerLoop = pausadoPorAba ? null : setInterval(loopTermico, 200 / velocidadeTempo);
   };
+
+  // Relógio da bancada: com a aba oculta (outra aba, tela bloqueada) a física e a adição
+  // gradual param; ao voltar, retomam de onde estavam, sem acumular tempo.
+  function pausarRelogioBancada() {
+    if (pausadoPorAba) return;
+    pausadoPorAba = true;
+    if (timerLoop) { clearInterval(timerLoop); timerLoop = null; }
+    if (timerAdd) { clearInterval(timerAdd); timerAdd = null; adicaoPausadaPorAba = true; }
+  }
+
+  function retomarRelogioBancada() {
+    if (!pausadoPorAba) return;
+    pausadoPorAba = false;
+    timerLoop = setInterval(loopTermico, 200 / velocidadeTempo);
+    if (adicaoPausadaPorAba && passoAdicaoFn) timerAdd = setInterval(passoAdicaoFn, 280 / velocidadeTempo);
+    adicaoPausadaPorAba = false;
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) pausarRelogioBancada();
+    else retomarRelogioBancada();
+  });
 
   window.toggleAgitador = function() {
     agitadorAtivo = !agitadorAtivo;
@@ -1577,6 +1557,7 @@
     }
 
     verificarAlertasProativosPreceptor();
+    guiaAtualizar();
   }
 
   // =========================================================================
@@ -1667,10 +1648,7 @@
         ['C14H14N2O3_s', 'Fenobarbital'],
         ['C17H19NO3_s', 'Morfina'],
         ['C20H22N2O2_s', 'Estricnina'],
-        ['C11H17N3O8_s', 'Tetrodotoxina (TTX)'],
-        ['C4H10FO2P_l', 'Sarin (GB)'],
-        ['C11H26NO2PS_l', 'Agente VX'],
-        ['C4H8Cl2S_l', 'Gás Mostarda (HD)']
+        ['C11H17N3O8_s', 'Tetrodotoxina (TTX)']
       ]],
       ['🔬 Vitaminas & Indicadores', [
         ['C6H8O6_s', 'Ácido Ascórbico (Vitamina C)'],
@@ -1712,58 +1690,14 @@
     el.textContent = u === 'g' ? 'em gramas (g)' : u === 'mL' ? 'em mililitros (mL)' : 'g para sólidos, mL para líquidos';
   }
 
-  // "Comece aqui": monta a síntese da aspirina em 3 passos (proporção 1:1; limitante = ácido salicílico).
-  let passoComece = 0;
-  const TEXTOS_COMECE = [
-    '2,76 g de ácido salicílico = 20 mmol (massa molar 138,12 g/mol). Este é o reagente limitante.',
-    '2 mL de anidrido acético = 21 mmol (densidade 1,08 g/mL; 102,09 g/mol): excesso de 5 %. O ácido sulfúrico só acelera a reação.',
-    'Agitador ligado e 70 °C. Em cerca de 12 s a bancada simula 30 min. Rendimento teórico: 20 mmol = 3,60 g de aspirina; com 85 % de rendimento, cerca de 3,06 g.'
-  ];
-  function selecionarReagente(id) {
-    const radio = document.querySelector('input[name="reagenteSel"][value="' + id + '"]');
-    if (radio) { radio.checked = true; const d = radio.closest('details'); if (d) d.open = true; }
-  }
+  // "Comece aqui": abre a introdução; o roteiro guiado (a pessoa faz, a Guia aponta) mora em lab-guia-ui.js.
   window.comecarAqui = function() {
-    passoComece = 0;
     const modal = document.getElementById('comeceModal');
-    const btn = document.getElementById('btnPassoComece');
-    const txt = document.getElementById('comeceTexto');
-    if (btn) btn.textContent = 'Executar passo 1';
-    if (txt) txt.textContent = 'Toque em "Executar passo" para montar cada etapa na bancada.';
     if (modal) modal.style.display = 'flex';
   };
   window.fecharComece = function() {
     const modal = document.getElementById('comeceModal');
     if (modal) modal.style.display = 'none';
-  };
-  window.passoComeceAqui = function() {
-    initAudio();
-    const txt = document.getElementById('comeceTexto');
-    const btn = document.getElementById('btnPassoComece');
-    if (passoComece === 0) {
-      const vidro = document.getElementById('vidrariaSelect');
-      if (vidro && vidro.value !== 'becker_250') { vidro.value = 'becker_250'; sys.maxVol = 250; }
-      resetarLaboratorio();
-      selecionarReagente('AcidoSalicilico_s');
-      processarCarga('AcidoSalicilico_s', 2.76);
-      log('Passo 1: 2,76 g de ácido salicílico adicionados.', 'log-info');
-    } else if (passoComece === 1) {
-      selecionarReagente('AnidridoAcetico_l');
-      processarCarga('AnidridoAcetico_l', 2);
-      processarCarga('H2SO4_aq', 0.1);
-      log('Passo 2: 2 mL de anidrido acético e 0,1 mL de ácido sulfúrico adicionados.', 'log-info');
-    } else if (passoComece === 2) {
-      if (!agitadorAtivo) window.toggleAgitador();
-      const alvo = document.getElementById('tempAlvo');
-      if (alvo) alvo.value = 70;
-      sys.modoTermico = 'ambiente';
-      window.setModoTermico('termostato');
-      log('Passo 3: agitador ligado e termostato em 70 °C. Acompanhe o progresso da síntese no registro.', 'log-info');
-    }
-    if (txt) txt.textContent = TEXTOS_COMECE[Math.min(passoComece, 2)];
-    passoComece++;
-    if (btn) btn.textContent = passoComece >= 3 ? 'Concluído' : 'Executar passo ' + (passoComece + 1);
-    if (passoComece >= 3) { window.fecharComece(); window.switchRightTab('tabLog'); }
   };
 
   window.proximaMissao = function() { missaoAtual++; salvarMissao(); resetarLaboratorio(); atualizarUI_Missao(); };
@@ -1952,7 +1886,7 @@
     'abrirDossieCompostoAtual', 'fecharDossieLab', 'limparCurvaPH', 'limparRegistro',
     'abrirLivroMissoes', 'fecharLivroMissoes', 'proximaMissao', 'setMobileView',
     'limparChatPreceptor', 'enviarDuvidaLab', 'enviarDuvidaRapida', 'trocarVidraria', 'ajustarPotenciaChama',
-    'comecarAqui', 'passoComeceAqui', 'fecharComece'
+    'comecarAqui', 'fecharComece'
   ]);
 
   // Atalhos do chat: sugestões com data-pergunta (sem onclick) e Enter no campo.
@@ -2003,6 +1937,45 @@
   atualizarUnidadeQuantidade();
   resetarLaboratorio();
   atualizarUI_Missao();
+
+  // Dentro da plataforma o botão "Tela cheia" já existe no cabeçalho dela: aqui seria duplicado.
+  try {
+    if (window.self !== window.top) { const fs = document.getElementById('btnLabFullscreen'); if (fs) fs.hidden = true; }
+  } catch (e) { /* outra origem: mantém o botão */ }
+
+  if (window.LabGuiaUI) {
+    window.LabGuiaUI.iniciar({
+      estado() {
+        const alvo = parseFloat(document.getElementById('tempAlvo').value);
+        const adicionado = {};
+        adicionadoPorReagente.forEach((v, k) => { adicionado[k] = v; });
+        return {
+          selecionado: getSelectedReagent(),
+          qtd: parseFloat(String(document.getElementById('qtdInput').value).replace(',', '.')),
+          adicionado,
+          agitador: agitadorAtivo,
+          modoTermico: sys.modoTermico,
+          tempAlvo: alvo
+        };
+      },
+      missao() {
+        const m = missoes[missaoAtual];
+        return {
+          indice: missaoAtual,
+          total: missoes.length,
+          tituloCurto: m ? m.titulo.replace(/^Missão \d+:\s*/, '') : 'Mestre Laboratorial',
+          descricao: m ? m.desc : 'Você concluiu todas as missões.',
+          concluida: missaoConcluida
+        };
+      },
+      resetar: resetarLaboratorio,
+      avancarMissao() { window.proximaMissao(); },
+      verAndamento() {
+        window.switchRightTab('tabLog');
+        if (window.innerWidth < 640) window.setMobileView('analise');
+      }
+    });
+  }
   initSmilesDrawer();
 
   setTimeout(() => {
@@ -2010,7 +1983,8 @@
     if (sel) atualizarInspecaoMolecular(sel);
   }, 150);
 
-  timerLoop = setInterval(loopTermico, 200);
+  if (!document.hidden) timerLoop = setInterval(loopTermico, 200);
+  else pausadoPorAba = true;
   log('Bancada pronta. Escolha um reagente, informe a quantidade e toque em Adicionar.', 'log-info');
 
 })();

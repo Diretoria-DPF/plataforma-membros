@@ -101,6 +101,50 @@ async function testarNoNavegador() {
     const respondidas = await frame.textContent('#answeredStat');
     check(respondidas.trim() === '1', 'QZ-04: Voltar aos Tópicos preserva o progresso salvo (respondidas: ' + respondidas.trim() + ')');
 
+    // A1: tamanho da sessão (5/10/20/todas), salvo no aparelho; alvos >= 44 px; campos internos não vazam
+    const alvos = await frame.evaluate(() => Array.from(document.querySelectorAll('.size-btn')).map((b) => Math.round(b.getBoundingClientRect().height)));
+    check(alvos.length === 4 && alvos.every((h) => h >= 44), 'A1: 4 botões de tamanho com alvo >= 44 px (' + alvos.join(',') + ')');
+    await frame.click('.size-btn[data-size="5"]');
+    check((await frame.getAttribute('.size-btn[data-size="5"]', 'aria-pressed')) === 'true', 'A1: tamanho 5 marcado (aria-pressed)');
+    const salvo = await frame.evaluate(() => localStorage.getItem('laiftQuizSize:toxicologia'));
+    check(salvo === '5', 'A1: tamanho salvo no aparelho (' + salvo + ')');
+    await frame.click('.topic-btn[data-topic="Praguicidas"]');
+    await frame.click('#startQuiz');
+    await frame.waitForSelector('#quizContainer:not([hidden]) .option');
+    const tam = await frame.evaluate(() => window.LaiftQuiz.state.questions.length);
+    check(tam === 5, 'A1: sessão com 5 questões (' + tam + ')');
+    const vazou = await frame.evaluate(() => /dificuldade|difficulty|reviewedBy|revisado_por/i.test(document.body.innerText));
+    check(!vazou, 'A1: nenhum campo interno aparece na tela');
+
+    // A1: erra de propósito a primeira (escolhe uma alternativa errada) e confere o armazenamento
+    const errou = await frame.evaluate(() => {
+      const st = window.LaiftQuiz.state;
+      const q = st.questions[st.index];
+      const opts = Array.from(document.querySelectorAll('.option'));
+      const idx = opts.findIndex((o) => !o.textContent.includes(q.options[q.correct]));
+      opts[idx].click();
+      return q.id;
+    });
+    await frame.waitForSelector('#explanation.show');
+    const guardado = await frame.evaluate(() => JSON.parse(localStorage.getItem('laiftQuizErrors') || '{}'));
+    check(Object.keys(guardado.items || {}).some((k) => k === 'toxicologia:' + errou), 'A1: o erro ficou guardado no aparelho');
+    const n2 = await frame.evaluate(() => window.LaiftQuiz.state.questions.length);
+    for (let i = 1; i < n2; i++) await frame.click('#nextBtn');
+    await frame.click('#finishBtn');
+    await frame.waitForSelector('.laift-dialog[role="dialog"]');
+    await frame.click('.laift-dialog-btn-primary');
+    await frame.waitForSelector('#resultsContainer:not([hidden])');
+    await frame.click('.home-btn');
+
+    // A1: "Revisar meus erros" monta uma sessão só com as erradas
+    await frame.waitForSelector('#reviewErrorsBtn:not([hidden])');
+    await frame.click('#reviewErrorsBtn');
+    await frame.waitForSelector('#quizContainer:not([hidden]) .option');
+    const rev = await frame.evaluate(() => window.LaiftQuiz.state.questions.map((q) => q.id));
+    check(rev.length >= 1 && rev.includes(errou), 'A1: revisão de erros contém a questão errada (' + rev.join(',') + ')');
+    const ids = await frame.evaluate(() => JSON.parse(localStorage.getItem('laiftQuizErrors')).items);
+    check(rev.every((id) => !!ids['toxicologia:' + id]), 'A1: revisão só tem questões guardadas como erro');
+
     check(violacoes.length === 0, 'quiz-toxico: nenhuma violação de CSP');
     const realErrors = app.errors.filter((e) => !IGNORABLE.test(e));
     check(realErrors.length === 0, 'quiz-toxico: sem erros de JavaScript não tratados' + (realErrors.length ? ': ' + realErrors.join(' | ') : ''));

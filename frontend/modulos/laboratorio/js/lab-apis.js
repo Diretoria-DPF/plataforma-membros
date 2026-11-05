@@ -53,9 +53,54 @@ const ChemicalAPIEngine = {
     return this.TERMOS_INTERNACIONAIS[chave] || termo.trim();
   },
 
+  // PROXY NO WORKER (O2): PubChem, ChEMBL e ChEBI passam por apiLearnLabChem (cache de 7 dias, URL fixa).
+  // Atrás da flag lab_chem_proxy_enabled: com ela desligada o Worker responde { disabled:true } e tudo segue
+  // pelo caminho antigo (direto do navegador). Ligada, CACTUS e Wikidata (fora das fontes permitidas) não são chamados.
+  // Estado: null = ainda não sabemos, true = proxy ativo, false = desligado ou sem ponte (caminho antigo).
+  proxyAtivo: null,
+  PROXY_INDISPONIVEL: Symbol('proxy-indisponivel'),
+
+  /** Resposta do proxy ({ data }) ou null (sem resultado); PROXY_INDISPONIVEL = usar o caminho antigo. */
+  async consultarProxy(provider, input) {
+    if (this.proxyAtivo === false) return this.PROXY_INDISPONIVEL;
+    const api = typeof window !== "undefined" ? window.LaiftApi : null;
+    if (!api || typeof api.call !== "function") { this.proxyAtivo = false; return this.PROXY_INDISPONIVEL; }
+    try {
+      const res = await api.call("apiLearnLabChem", Object.assign({ provider }, input));
+      if (res && res.disabled) { this.proxyAtivo = false; return this.PROXY_INDISPONIVEL; }
+      this.proxyAtivo = true;
+      return res && res.success === true && res.data ? res.data : null;
+    } catch (e) {
+      console.warn(`[ChemicalAPIEngine] Proxy (${provider}) indisponível:`, e.message || e);
+      return this.proxyAtivo === true ? null : this.PROXY_INDISPONIVEL;
+    }
+  },
+
+  // 6. ChEMBL pelo proxy (só existe com o proxy ativo)
+  async fetchChembl(name) {
+    const dados = await this.consultarProxy('chembl', { name: this.normalizarNome(name) });
+    if (dados === this.PROXY_INDISPONIVEL || !dados) return null;
+    return { chemblId: dados.chemblId, maxPhase: dados.maxPhase, alogp: dados.alogp };
+  },
+
   // 1. PUBCHEM PUG-REST: Propriedades Físico-Químicas, Massa e SMILES Canônico
   async fetchPubChem(name) {
     const termoIngles = this.normalizarNome(name);
+    const viaProxy = await this.consultarProxy('pubchem', { name: termoIngles });
+    if (viaProxy !== this.PROXY_INDISPONIVEL) {
+      if (!viaProxy) return null;
+      const massaProxy = parseFloat(viaProxy.MolecularWeight);
+      return {
+        origem: 'PubChem (via Worker)',
+        cid: viaProxy.cid,
+        pubchemCid: viaProxy.cid,
+        formula: viaProxy.MolecularFormula,
+        molarMass: Number.isFinite(massaProxy) ? massaProxy : null,
+        pesoMolecular: Number.isFinite(massaProxy) ? massaProxy : null,
+        smiles: viaProxy.CanonicalSMILES || null,
+        iupac: viaProxy.IUPACName
+      };
+    }
     try {
       // CanonicalSMILES segue aceito como alias na requisição, mas desde 2025 o
       // PubChem devolve a propriedade como ConnectivitySMILES (ou SMILES) — cai
@@ -87,6 +132,7 @@ const ChemicalAPIEngine = {
 
   // 2. CACTUS (NCI/NIH): Motor de Contingência Estrutural Rápida
   async fetchCactus(name, representation = 'smiles') {
+    if (this.proxyAtivo === true) return null; // fonte fora da lista permitida: com o proxy ativo não é chamada
     const termoIngles = this.normalizarNome(name);
     try {
       const url = `https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(termoIngles)}/${representation}`;
@@ -104,6 +150,7 @@ const ChemicalAPIEngine = {
 
   // 3. WIKIDATA SPARQL: Cruzamento de Registros Globais (Nº CAS, ChEMBL ID e CID)
   async fetchWikidata(name) {
+    if (this.proxyAtivo === true) return null; // idem: ChEMBL passa a vir do proxy
     const termoIngles = this.normalizarNome(name);
     try {
       const sparqlQuery = `
@@ -136,6 +183,11 @@ const ChemicalAPIEngine = {
   // 4. ChEBI via EBI Search REST: Papel Biológico e Aplicação Farmacêutica
   async fetchChebiOntology(name) {
     const termoIngles = this.normalizarNome(name);
+    const viaProxy = await this.consultarProxy('chebi', { name: termoIngles });
+    if (viaProxy !== this.PROXY_INDISPONIVEL) {
+      if (!viaProxy) return null;
+      return { chebiId: viaProxy.chebiId, definicao: viaProxy.definicao || 'Sem definição registrada no ChEBI.' };
+    }
     try {
       const url = `https://www.ebi.ac.uk/ebisearch/ws/rest/chebi?query=${encodeURIComponent(termoIngles)}&format=json&fields=name,definition`;
       const res = await this.fetchComTimeout(url, {}, 4000);
@@ -150,7 +202,7 @@ const ChemicalAPIEngine = {
 
       return {
         chebiId: hit.id,
-        definicao: defFormatada || 'Papel farmacológico consolidado em compêndios terapêuticos.'
+        definicao: defFormatada || 'Sem definição registrada no ChEBI.'
       };
     } catch (e) {
       console.warn(`[ChemicalAPIEngine] ChEBI indisponível para "${termoIngles}":`, e.message || e);
@@ -191,17 +243,18 @@ const ChemicalAPIEngine = {
     if (!compoundData) return null;
 
     // Etapa C: Enriquecimento ontológico e catalogação cruzada em paralelo
-    const [wikiInfo, chebiInfo] = await Promise.all([
+    const [wikiInfo, chebiInfo, chemblInfo] = await Promise.all([
       this.fetchWikidata(name),
-      this.fetchChebiOntology(name)
+      this.fetchChebiOntology(name),
+      this.proxyAtivo === true ? this.fetchChembl(name) : Promise.resolve(null)
     ]);
 
     return {
       ...compoundData,
       cas: wikiInfo?.cas || '--',
-      chemblId: wikiInfo?.chemblId || '--',
+      chemblId: wikiInfo?.chemblId || chemblInfo?.chemblId || '--',
       chebiId: chebiInfo?.chebiId || '--',
-      papelBiologico: chebiInfo?.definicao || 'Propriedades biológicas descritas na Farmacopeia Brasileira.'
+      papelBiologico: chebiInfo?.definicao || 'Sem descrição de papel biológico nas fontes consultadas.'
     };
   }
 };

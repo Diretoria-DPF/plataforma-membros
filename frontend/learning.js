@@ -442,6 +442,24 @@
   }
 
   /**
+   * "Revisar erros" (A3): abre o módulo e, no Quiz (Farmacologia e Toxicologia), já com a sessão dos erros guardados
+   * no aparelho. Iframe novo: o módulo lê #revisar-erros; iframe já aberto: chama reviewMyErrors() (que não
+   * interrompe um simulado em andamento). Atlas e Clínica abrem como estão: o aviso de revisão fica dentro deles.
+   */
+  function startReview(id) {
+    var mod = findModule(id);
+    if (!mod) return false;
+    if (id === 'farmaco' || id === 'toxico') {
+      if (!frames[id]) frames[id] = createModuleFrame(mod, mod.path + '#revisar-erros');
+      else {
+        try { frames[id].contentWindow.LaiftQuiz.reviewMyErrors(); } catch (e) { /* ainda carregando ou sem acesso: abre o módulo como está */ }
+      }
+    }
+    openModule(id);
+    return true;
+  }
+
+  /**
    * Volta ao hub. Também chamado pelos módulos via LaiftIdentity.backToHub(). Sem opts.fromHistory, desfaz também a
    * entrada do módulo na pilha do histórico (history.back()), para o Voltar do navegador não reabrir o módulo.
    */
@@ -568,6 +586,7 @@
     loadFiscalPanel: loadFiscalPanel,
     openModule: openModule,
     openFirstQuiz: openFirstQuiz,
+    startReview: startReview,
     openAtlasLink: openAtlasLink,
     closeModule: closeModule,
     activeModule: activeModule,
