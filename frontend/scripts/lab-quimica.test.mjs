@@ -308,3 +308,23 @@ test('LAB-03: correções objetivas (ibuprofeno BHC, dipirona, omeprazol, vidro,
 test('LAB-03: as reações da bancada (LAB_DATABASE.reactions) estão balanceadas', () => {
   for (const rx of LAB.reactions) assert.ok(Q.equacaoBalanceada(rx.equacaoQuimica), rx.id);
 });
+
+test('LAB-03: o Preceptor local só repassa equação balanceada e avisa quando a rota está indisponível', async () => {
+  const fs = require('node:fs');
+  const vm = require('node:vm');
+  const sandbox = { console: { log() {}, warn() {}, error() {} } };
+  sandbox.window = sandbox;
+  sandbox.LabQuimica = Q;
+  sandbox.BANCO_SINTESES_LAIFT = BANCO;
+  vm.createContext(sandbox);
+  vm.runInContext(fs.readFileSync(path.join(lab, 'js/lab-preceptor.js'), 'utf8'), sandbox);
+  const eng = sandbox.LabPreceptorEngine;
+  const rotas = Object.values(eng.ROTAS_SINTESE);
+  assert.ok(rotas.length > 100);
+  for (const r of rotas) assert.ok(!r.equacao || Q.equacaoBalanceada(r.equacao), `${r.nome}: ${r.equacao}`);
+  const resp = await eng.processarMensagem('como sintetizar losartana', { especies: new Map(), temp: 25, vol: 0 }, () => 7, false);
+  assert.match(resp, /ainda não está disponível/);
+  assert.doesNotMatch(resp, /Equação Estequiométrica/);
+  const asp = await eng.processarMensagem('como sintetizar aspirina', { especies: new Map(), temp: 25, vol: 0 }, () => 7, false);
+  assert.match(asp, /C7H6O3 \+ \(CH3CO\)2O → C9H8O4|C7H6O3 \+ \(CH3CO\)2O -> C9H8O4/);
+});

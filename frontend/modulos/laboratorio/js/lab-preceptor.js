@@ -292,8 +292,21 @@ const LabPreceptorEngine = {
     }
   },
 
+  /**
+   * O Preceptor local só repassa equação que fecha o balanço atômico (lab-quimica.js).
+   * Sem o verificador ou com a equação desbalanceada, a equação é omitida.
+   */
+  validarEquacoes() {
+    const Q = typeof window !== 'undefined' ? window.LabQuimica : null;
+    Object.values(this.ROTAS_SINTESE).forEach((rota) => {
+      if (!rota || rota.equacao === undefined || rota.equacao === null) return;
+      if (!Q || !Q.equacaoBalanceada(rota.equacao)) rota.equacao = null;
+    });
+  },
+
   carregarBaseSintesesDinamica() {
     if (typeof window.BANCO_SINTESES_LAIFT === 'undefined' || !Array.isArray(window.BANCO_SINTESES_LAIFT)) {
+      this.validarEquacoes();
       return;
     }
 
@@ -311,7 +324,9 @@ const LabPreceptorEngine = {
         tempMin: item.tempMinima !== undefined ? item.tempMinima : 20,
         tempMax: item.tempMaxima !== undefined ? item.tempMaxima : 100,
         tempoReacao: item.tempoReacao || '--',
-        equacao: item.equacaoQuimica || item.equacao || '--',
+        equacao: item.equacaoQuimica || item.equacao || null,
+        esquema: item.esquema || null,
+        indisponivel: item.indisponivel === true,
         perigos: Array.isArray(item.perigos) ? item.perigos.join(', ') : (item.perigos || 'Manipulação padrão'),
         tipoReacao: item.tipoReacao || 'Síntese química',
         descricao: item.descricao || ''
@@ -322,6 +337,7 @@ const LabPreceptorEngine = {
       if (chaveNormalizada) this.ROTAS_SINTESE[chaveNormalizada] = dadosFormatados;
     });
 
+    this.validarEquacoes();
     console.log(`✅ [Preceptor Farmacêutico] ${Object.keys(this.ROTAS_SINTESE).length} rotas indexadas na Camada 1.`);
   },
 
@@ -456,6 +472,18 @@ ${diag.detalhes}
         const matchTermo = termoComposto.length >= 3 && (nomeNorm.includes(termoComposto) || termoComposto.includes(chaveNorm));
 
         if (matchDireto || matchTermo) {
+          if (rota.indisponivel) {
+            return [
+              `**${rota.nome}**`,
+              '',
+              `A rota de ${rota.nome} ainda não está disponível na bancada: os dados desta síntese estão sendo ajustados e não são apresentados até ficarem consistentes.`,
+              `**Tipo de reação:** ${rota.tipoReacao}`,
+              'Para fazer uma síntese completa agora, use a Aspirina, o Paracetamol, o Salicilato de Metila, a Acetanilida ou o Acetato de Isopentila (aroma de banana).'
+            ].join('\n');
+          }
+          const linhaEquacao = rota.equacao
+            ? `* **Equação Estequiométrica:** \`${rota.equacao}\``
+            : (rota.esquema ? `* **Esquema geral (sem balanço atômico):** \`${rota.esquema}\`` : '* **Equação:** não disponível para esta rota.');
           return `
 **🧪 Rota Farmacotécnica Oficial: ${rota.nome}**
 
@@ -464,7 +492,7 @@ ${diag.detalhes}
 * **Catalisador:** ${rota.catalisador}
 * **Meio / Solvente:** ${rota.solvente || 'Direto'}
 * **Condições Térmicas:** ${rota.tempMin}°C a ${rota.tempMax}°C (${rota.tempoReacao})
-* **Equação Estequiométrica:** \`${rota.equacao}\`
+${linhaEquacao}
 
 **2. Mecanismo & Procedimento Prático:**
 * **Tipo de Reação:** ${rota.tipoReacao}
