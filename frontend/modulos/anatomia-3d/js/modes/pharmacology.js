@@ -232,14 +232,8 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScenario = null
       const title = LaiftDom.html`<div style="font-weight: 600; color: var(--laift-text); margin-bottom: 4px;">${compound.nome}</div>`;
       const mech = LaiftDom.html`<div style="font-size: 0.75rem; color: var(--laift-muted); margin-bottom: 6px;">${compound.mecanismo}</div>`;
 
-      let badge = null;
-      if (compound.review && compound.review.status === 'legacy-unverified') {
-        badge = LaiftDom.html`<span style="display: inline-block; padding: 2px 6px; background: #fbbf24; color: #78350f; border-radius: 2px; font-size: 0.7rem; font-weight: 600;">Rascunho — não revisado</span>`;
-      }
-
       LaiftDom.appendHtml(item, title);
       LaiftDom.appendHtml(item, mech);
-      if (badge) LaiftDom.appendHtml(item, badge);
 
       item.addEventListener('click', () => selectCompound(compound, item));
 
@@ -272,6 +266,11 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScenario = null
       LaiftDom.setHtml(panel, LaiftDom.html`<p class="scenario-unavailable" style="color: var(--laift-muted); font-size: 0.85rem;">Cenário clínico indisponível no momento.</p>`);
     }
     return panel;
+  }
+
+  /** Sem conexão de verdade (navigator.onLine === false); indefinido conta como online. */
+  function isOffline() {
+    return typeof navigator !== 'undefined' && navigator.onLine === false;
   }
 
   async function ensureChartJs() {
@@ -336,8 +335,9 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScenario = null
     const compoundsPanel = createCompoundsPanel();
     const crisisPanel = createCrisisPanel();
 
-    // Fallback text se Chart.js estiver offline
-    if (!chartLoaded && compounds.length > 0) {
+    // Aviso só quando o aparelho está de fato sem conexão: o Chart.js carrega sob
+    // demanda (ao escolher um composto), então "ainda não carregou" não é "offline".
+    if (!chartLoaded && compounds.length > 0 && isOffline()) {
       const fallbackWrap = document.createElement('div');
       LaiftDom.setHtml(fallbackWrap, LaiftDom.html`<div style="padding: 8px; background: var(--laift-warning-soft); border: 1px solid var(--laift-warning); border-radius: 4px; color: var(--laift-text); font-size: 0.8rem; margin-bottom: 12px;">
         <strong>⚠️ Gráfico indisponível sem conexão</strong>

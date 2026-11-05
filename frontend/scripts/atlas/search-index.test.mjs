@@ -15,14 +15,14 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const searchIndexPath = path.resolve(here, '../../modulos/anatomia-3d/js/ui/search-index.js');
 const fixturePath = path.resolve(here, '../../modulos/anatomia-3d/data/atlas/fixtures/index.json');
 
 // Importar funções de busca
-const { normalize, buildSearchIndex, search, levenshtein } = await import(searchIndexPath);
+const { normalize, buildSearchIndex, search, levenshtein } = await import(pathToFileURL(searchIndexPath).href);
 
 // Carregar fixture real
 const fixtureData = JSON.parse(fs.readFileSync(fixturePath, 'utf-8'));

@@ -6,7 +6,10 @@
 import { SYSTEMS } from '../core/contracts.js';
 import { EVENTS } from '../core/bus.js';
 import { groupEntries, sideLabel } from './structure-groups.js';
-import { STATUS_RANK, STATUS_CHIP } from './review-status.js';
+import { STATUS_RANK } from './review-status.js';
+
+/** Ficha com texto próprio (filtro "Fichas completas"). */
+const hasSheet = (it) => it.status === 'r' || it.status === 'e' || it.status === 'l';
 
 const { h, clear } = window.LaiftDom;
 
@@ -55,7 +58,7 @@ export function createNavigator(container, opts) {
     currentSystemId: null,
     items: [],
     currentSid: null,
-    filter: 'all', // 'all' | 'r' | 'e' — chips [Todas] [Revisadas] [Em revisão]
+    filter: 'all', // 'all' | 'c' — chips [Todas] [Fichas completas]
   };
 
   let unsubscribe = null;
@@ -111,18 +114,18 @@ export function createNavigator(container, opts) {
 
     // Filtro por status (PR 3.2, C2): só na lista de estruturas de um sistema.
     const structural = state.breadcrumb.length > 0 && state.items.some((it) => it.sids);
-    const items = structural && state.filter !== 'all' ? state.items.filter((it) => it.status === state.filter) : state.items;
+    const items = structural && state.filter !== 'all' ? state.items.filter(hasSheet) : state.items;
     if (structural) {
-      const count = (f) => (f === 'all' ? state.items.length : state.items.filter((it) => it.status === f).length);
+      const count = (f) => (f === 'all' ? state.items.length : state.items.filter(hasSheet).length);
       const chip = (f, label) => h('button', {
         type: 'button', className: 'atlas-nav-filter-chip', 'aria-pressed': state.filter === f ? 'true' : 'false', dataset: { filter: f },
         text: `${label} (${count(f)})`,
         onClick: () => { state.filter = f; renderContent(); },
       });
-      contentEl.appendChild(h('div', { className: 'atlas-nav-filters', role: 'group', 'aria-label': 'Filtrar por revisão' },
-        [chip('all', 'Todas'), chip('r', 'Revisadas'), chip('e', 'Em revisão')]));
+      contentEl.appendChild(h('div', { className: 'atlas-nav-filters', role: 'group', 'aria-label': 'Filtrar a lista' },
+        [chip('all', 'Todas'), chip('c', 'Fichas completas')]));
       if (!items.length) {
-        contentEl.appendChild(h('p', { className: 'atlas-nav-empty', text: state.filter === 'r' ? 'Nenhuma ficha deste sistema foi revisada pelo conselho ainda.' : 'Nenhuma ficha deste sistema está em revisão.' }));
+        contentEl.appendChild(h('p', { className: 'atlas-nav-empty', text: 'Nenhuma ficha completa neste sistema ainda.' }));
         return;
       }
     }
@@ -146,12 +149,6 @@ export function createNavigator(container, opts) {
       // Nome e subtítulo
       const nameEl = h('span', { className: 'atlas-nav-row-name', text: item.name });
       row.appendChild(nameEl);
-
-      // Selo de revisão (só revisada / em revisão — o resto não ganha marca).
-      if (item.status === 'r' || item.status === 'e') {
-        const c = STATUS_CHIP[item.status];
-        row.appendChild(h('span', { className: `atlas-nav-status atlas-nav-status--${item.status}`, title: c.label, 'aria-label': c.label, text: c.icon }));
-      }
 
       // Lado (E/D)
       const sideText = item.sideText != null ? item.sideText : item.side && ({ R: 'D', r: 'D', L: 'E', l: 'E' }[item.side] || item.side);
@@ -523,7 +520,7 @@ export function createNavigator(container, opts) {
     getPath: () => state.breadcrumb.map((b) => b.label),
     refresh: () => renderContent(),
     /** Filtro de revisão ('all' | 'r' | 'e') — usado pelo chip "Novo" (M4). */
-    setFilter: (f) => { state.filter = ['all', 'r', 'e'].includes(f) ? f : 'all'; renderContent(); },
+    setFilter: (f) => { state.filter = ['all', 'c'].includes(f) ? f : 'all'; renderContent(); },
     dispose,
   };
 }

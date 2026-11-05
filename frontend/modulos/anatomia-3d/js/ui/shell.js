@@ -30,7 +30,7 @@ const TOOLBAR_BUTTONS = [
   { id: 'layers', glyph: '▤', label: 'Camadas', action: 'AtlasShell.toggleLayers', primary: true },
   { id: 'views', glyph: '◐', label: 'Vistas', action: 'AtlasShell.openViewPresetMenu', secondary: true },
   { id: 'isolate', glyph: '◎', label: 'Isolar', action: 'AtlasShell.isolateSelected', primary: true },
-  { id: 'xray', glyph: '☠', label: 'Raio-X', action: 'AtlasShell.toggleXray' },
+  { id: 'xray', glyph: '⧉', label: 'Raio-X', action: 'AtlasShell.toggleXray' },
   { id: 'clip', glyph: '✂', label: 'Corte', action: 'AtlasShell.openClipMenu' },
   { id: 'labels', glyph: 'Aa', label: 'Rótulos', action: 'AtlasShell.toggleLabels', secondary: true },
   { id: 'reset', glyph: '⟲', label: 'Centralizar', action: 'AtlasShell.reset' },

@@ -157,23 +157,13 @@ test('CSS: alvo >= 44px, glifo discreto (cor atenuada), foco visível; JS sem in
   assert.doesNotMatch(SRC, /\.innerHTML|insertAdjacentHTML|eval\(|new Function|document\.write/);
 });
 
-test('integração: quiz, toxicologia e Atlas carregam folha e script; motores usam o selo', () => {
-  const need = [
-    ['modulos/quiz/index.html', 'quiz-engine'],
-    ['modulos/toxicologia/index.html', 'quiz-engine'],
-    ['modulos/anatomia-3d/index.html', null],
-  ];
-  for (const [page, before] of need) {
+test('regra do dono: quiz, toxicologia e Atlas não carregam o selo de revisão (vista pública)', () => {
+  for (const page of ['modulos/quiz/index.html', 'modulos/toxicologia/index.html', 'modulos/anatomia-3d/index.html']) {
     const html = fs.readFileSync(path.join(frontend, page), 'utf8');
-    assert.match(html, /laift-review-seal\.css/, `${page} sem a folha`);
-    assert.match(html, /<script src="\.\.\/shared\/laift-review-seal\.js"><\/script>/, `${page} sem o script`);
-    assert.ok(html.indexOf('laift-dialog.js') < html.indexOf('laift-review-seal.js'), `${page}: dialog antes do selo`);
-    if (before) assert.ok(html.indexOf('laift-review-seal.js') < html.search(new RegExp(`<script src="[^"]*${before}\\.js`)), `${page}: selo antes do motor`);
+    assert.doesNotMatch(html, /laift-review-seal/, page + ' ainda carrega o selo');
   }
-  const engine = fs.readFileSync(path.join(frontend, 'modulos/shared/quiz-engine.js'), 'utf8');
-  assert.match(engine, /LaiftReviewSeal/);
   const card = fs.readFileSync(path.join(frontend, 'modulos/anatomia-3d/js/ui/infocard.js'), 'utf8');
-  assert.match(card, /LaiftReviewSeal/);
+  assert.doesNotMatch(card, /LaiftReviewSeal/);
 });
 
 test('ponte: laift-identity expõe reportContent e o app expõe submitContentReport sobre apiSubmitFeedback', () => {

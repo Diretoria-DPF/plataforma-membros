@@ -7,12 +7,6 @@
 export const STATUS_RANK = Object.freeze({ r: 0, e: 1, l: 2, g: 3 });
 /** Peso extra na busca: revisada > em revisão > demais. */
 export const SEARCH_BOOST = Object.freeze({ r: 12, e: 6 });
-export const STATUS_CHIP = Object.freeze({
-  r: { icon: '✓', label: 'Revisada pelo conselho' },
-  e: { icon: '⏳', label: 'Em revisão editorial' },
-  l: { icon: '○', label: 'Conteúdo antigo' },
-  g: { icon: '○', label: 'Conteúdo gerado' },
-});
 
 /**
  * @param {{ v?: number, r?: string[], e?: string[], l?: string[], g?: string[] }|null} data

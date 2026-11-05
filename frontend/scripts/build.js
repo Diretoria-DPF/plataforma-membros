@@ -106,8 +106,15 @@ fs.copyFileSync(path.join(ROOT, 'static-page.js'), path.join(DIST, 'static-page.
 fs.copyFileSync(path.join(ROOT, 'admin-ai.js'), path.join(DIST, 'admin-ai.js'));
 // Ferramentas de revisão da arte da Guia (preview, Guia Lab) e o README ficam só no repositório (ADR 0003).
 const LIA_REVIEW_ONLY = /[\\/]shared[\\/]lia[\\/](?:preview[^\\/]*|lab[^\\/]*|build-lab[^\\/]*|build-lia-art[^\\/]*|README\.md)$/;
+// Atlas: dev/ (harnesses com innerHTML) e a base antiga bio-database.js não são publicados
+// (build-atlas-excludes.js); ATLAS_KEEP_DEV=1 mantém dev/ só para o e2e `atlas-assets`.
+const { isAtlasUnpublished } = require('./build-atlas-excludes.js');
+const KEEP_ATLAS_DEV = process.env.ATLAS_KEEP_DEV === '1';
 ['modulos', 'vendor', 'icons'].forEach((dir) => {
-  fs.cpSync(path.join(ROOT, dir), path.join(DIST, dir), { recursive: true, filter: (src) => !LIA_REVIEW_ONLY.test(src) });
+  fs.cpSync(path.join(ROOT, dir), path.join(DIST, dir), {
+    recursive: true,
+    filter: (src) => !LIA_REVIEW_ONLY.test(src) && !isAtlasUnpublished(src, { keepDev: KEEP_ATLAS_DEV }),
+  });
 });
 
 // Blog "Conheça a LAIFT": os módulos e o sprite de blog/ vão como estão; blog/conteudo/ (JSON dos posts)
