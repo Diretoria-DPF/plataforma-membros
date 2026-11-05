@@ -60,7 +60,7 @@ const SCREENS = [
     cards: [
       { glyph: '▤', name: 'Camadas', text: 'Ligue e desligue pele, fáscias, músculos, ossos e órgãos.' },
       { glyph: '◎', name: 'Isolar', text: 'Veja só uma estrutura, sem o resto atrapalhar.' },
-      { glyph: '☠', name: 'Raio-X', text: 'Deixe pele e músculos transparentes.' },
+      { glyph: '⧉', name: 'Raio-X', text: 'Deixe pele e músculos transparentes.' },
     ],
   },
   {

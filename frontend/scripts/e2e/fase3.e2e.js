@@ -229,10 +229,25 @@ module.exports = async function fase3() {
     const evalInput = (lastCall(app, 'apiLearnClinicalEvaluate') || { args: [] }).args[1];
     check(evalInput && evalInput.caseSource === 'builtin' && evalInput.answerKey && evalInput.attendance.outcome === 'concluido' && evalInput.attendance.diagnosis.includes('colinérgica'),
       'avaliação envia atendimento e, para caso embutido, o gabarito do cliente');
-    await clinic.click('#btnClosePreceptor');
+    // Esc fecha o resultado do preceptor e volta ao mapa de leitos (CLI-10).
+    check(await clinic.evaluate(() => document.getElementById('preceptorModal').getAttribute('aria-labelledby') === 'preceptorModalTitle'), 'resultado do preceptor tem nome acessível');
+    check(await clinic.evaluate(() => document.getElementById('preceptorModal').contains(document.activeElement)), 'foco vai para dentro do modal do preceptor');
+    await app.page.keyboard.press('Escape');
+    await clinic.waitForSelector('#preceptorModal:not(.active)', { state: 'attached', timeout: 4000 });
+    await clinic.waitForSelector('#clinicDashboardView:not(.hidden)');
+    check(true, 'Esc fecha o resultado do preceptor e volta aos leitos');
+
+    // Guia: Esc fecha e o foco volta ao botão que abriu (CLI-10).
+    await clinic.click('#infoBtn');
+    check(await clinic.evaluate(() => document.getElementById('instructionsModal').contains(document.activeElement)), 'foco entra no guia ao abrir');
+    await app.page.keyboard.press('Tab');
+    await app.page.keyboard.press('Tab');
+    check(await clinic.evaluate(() => document.getElementById('instructionsModal').contains(document.activeElement)), 'Tab não sai do guia (foco preso)');
+    await app.page.keyboard.press('Escape');
+    check(await clinic.evaluate(() => !document.getElementById('instructionsModal').classList.contains('active') && document.activeElement.id === 'infoBtn'), 'Esc fecha o guia e devolve o foco ao botão Guia');
+    check(await clinic.evaluate(() => document.getElementById('chatHistory').getAttribute('aria-live') === 'polite'), 'chat anuncia respostas (aria-live polite)');
 
     // ---- Geração de caso com IA ----
-    await clinic.waitForSelector('#clinicDashboardView:not(.hidden)');
     await clinic.click('#btnGenerateAiCase');
     await waitText(clinic, '#clinicPatientName', 'Gerado');
     check((await clinic.textContent('#clinicPatientName')) === 'Paciente <b>Gerado</b>', 'caso gerado abre no leito, com nome exibido como texto');
@@ -240,7 +255,8 @@ module.exports = async function fase3() {
       'prontuário, guia e exames do caso gerado não criam elementos a partir do conteúdo da IA');
     const genInput = (lastCall(app, 'apiLearnClinicalGenerateCase') || { args: [] }).args[1];
     check(genInput && genInput.topic === 'Intoxicação por organofosforado', 'geração vai para apiLearnClinicalGenerateCase com o tema');
-    check(dialogs.some((m) => m.includes('revisão da diretoria')), 'aviso de que o caso gerado passa por revisão antes do acervo');
+    check(dialogs.some((m) => m.includes('Novo paciente admitido')) && !dialogs.some((m) => /revis/i.test(m)), 'caso gerado abre sem qualquer aviso de revisão (regra do dono)');
+    check(!/revisad|rascunho|✔/i.test(await clinic.textContent('body')), 'tela do leito sem texto de revisado/rascunho');
 
     // ---- Acervo ----
     await clinic.click('#btnReturnToBeds');
@@ -248,6 +264,7 @@ module.exports = async function fase3() {
     await clinic.click('#btnModoAcervo');
     await clinic.waitForSelector('#communityBedsGrid .bed-card', { timeout: 8000 });
     check((await clinic.textContent('#communityBedsGrid h4')).includes('<b>Caso</b> do acervo'), 'acervo lista casos aprovados com texto literal');
+    check(!/revisad|✔/i.test(await clinic.textContent('#communityBedsGrid')), 'cartão do acervo sem selo de revisão');
     check((await clinic.locator('#communityBedsGrid b, #communityBedsGrid img').count()) === 0, 'nenhum elemento criado a partir do acervo');
     await clinic.click('#communityBedsGrid .bed-card button');
     await clinic.click('#tab-fechamento');
@@ -326,6 +343,47 @@ module.exports = async function fase3() {
     await app.close();
   }
 
+  // ======================= Celular 375 px: geometria da clínica (CLI-07) =======================
+  const phone = await startApp({ role: 'member', workerHandlers: workerHandlers({ generateRemaining: 6, generateExceeded: false }), viewport: { width: 375, height: 812 } });
+  try {
+    await phone.context.addInitScript(bridgeStub);
+    await phone.login();
+    const clinic = await phone.openModule('clinica');
+    await clinic.waitForSelector('#patientBedsGrid .bed-card button');
+    await clinic.click('#patientBedsGrid .bed-card button');
+    const geometry = () => clinic.evaluate(() => {
+      const w = document.documentElement.clientWidth;
+      const rightOf = (sel) => Math.max(0, ...[...document.querySelectorAll(sel)].filter((n) => n.offsetParent !== null).map((n) => n.getBoundingClientRect().right));
+      const tabs = [...document.querySelectorAll('.clinic-tab-btn')].map((n) => n.getBoundingClientRect());
+      return {
+        width: w,
+        scrollWidth: document.documentElement.scrollWidth,
+        sheetRight: rightOf('.sheet-box'),
+        tabsMaxRight: Math.max(...tabs.map((r) => r.right)),
+        tabsMinLeft: Math.min(...tabs.map((r) => r.left)),
+        tabsVisible: tabs.every((r) => r.width > 40 && r.height > 20),
+        workspaceRight: document.getElementById('clinicWorkspaceView').getBoundingClientRect().right,
+      };
+    });
+    for (const [tab, pane] of [['#tab-prontuario', '#prontuarioTab'], ['#tab-dialogo', '#dialogoTab'], ['#tab-exames', '#examesTab'], ['#tab-fechamento', '#fechamentoTab']]) {
+      await clinic.click(tab);
+      await clinic.waitForSelector(pane + '.active');
+      const g = await geometry();
+      check(g.scrollWidth <= g.width, `375 px (${tab}): sem rolagem horizontal (${g.scrollWidth} <= ${g.width})`);
+      check(g.sheetRight <= g.width + 0.5, `375 px (${tab}): prontuário cabe na área (${Math.round(g.sheetRight)} <= ${g.width})`);
+      check(g.tabsMaxRight <= g.width + 0.5 && g.tabsMinLeft >= -0.5 && g.tabsVisible, `375 px (${tab}): as 4 abas, inclusive "Diagnóstico & Conduta", cabem na tela`);
+    }
+    // A aba que fecha o caso é alcançável com o toque e o monitor continua visível ao rolar.
+    await clinic.click('#tab-prontuario');
+    await clinic.evaluate(() => { document.querySelector('.clinic-tab-viewport').style.paddingBottom = '2400px'; });
+    await clinic.evaluate(() => window.scrollTo(0, 900));
+    const monitorTop = await clinic.evaluate(() => document.querySelector('.patient-monitor').getBoundingClientRect().top);
+    check(monitorTop >= -1 && monitorTop <= 2, `monitor de sinais fica fixo no topo ao rolar no celular (top = ${Math.round(monitorTop)})`);
+    check(await clinic.evaluate(() => document.querySelectorAll('.patient-monitor [role="progressbar"]').length === 2), 'medidores têm role progressbar');
+  } finally {
+    await phone.close();
+  }
+
   // ======================= Sem ponte: mensagem amigável =======================
   const noBridge = await startApp({ role: 'member' });
   try {
@@ -336,8 +394,8 @@ module.exports = async function fase3() {
       check(true, 'ponte real presente (integração): cenário sem ponte não se aplica');
     } else {
       await clinic.click('#btnModoAcervo');
-      await waitText(clinic, '#communityBedsGrid', 'dentro da plataforma');
-      check(true, 'sem a ponte LaiftApi, a clínica mostra mensagem amigável em vez de quebrar');
+      await waitText(clinic, '#communityBedsGrid', 'indisponível agora');
+      check(true, 'sem a ponte LaiftApi, a clínica mostra aviso claro em vez de quebrar');
     }
   } finally {
     await noBridge.close();

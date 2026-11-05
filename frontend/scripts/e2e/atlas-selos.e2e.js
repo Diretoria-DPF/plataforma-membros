@@ -4,13 +4,13 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * atlas-selos.e2e.js — o aluno vê o que é confiável (PR 3.2, C2) e o boot
- * não baixa fichas (M5).
+ * atlas-selos.e2e.js — o aluno NÃO vê selos nem textos de revisão (regra do dono:
+ * a aprovação é do admin) e o boot não baixa fichas (M5).
  *  - Boot: nenhuma requisição a curated/ ou content/ antes de abrir uma ficha.
- *  - Navegador: chips [Todas] [Revisadas] [Em revisão] com contagem; revisadas
- *    primeiro com ✓; filtro funciona (status injetado no review-status.json
- *    só neste teste — os dados reais ainda não têm onda assinada).
- *  - Ficha gerada: selo "○ Gerado automaticamente".
+ *  - Navegador: chips [Todas] [Fichas completas] com contagem; sem ícones de
+ *    revisão nas linhas; o filtro funciona (status injetado no
+ *    review-status.json só neste teste).
+ *  - Ficha: sem selo ⓘ, sem selo de status e sem texto de revisão ou rascunho.
  */
 const { startApp, check } = require('./harness');
 
@@ -32,9 +32,9 @@ async function runAt(viewport) {
     }, null, { timeout: 60000 });
     check(contentReqs.length === 0, `${label}: boot sem baixar fichas (curated/ e content/ só sob demanda)${contentReqs.length ? ': ' + contentReqs.join(', ') : ''}`);
 
-    // M4: chip "Novo: N fichas revisadas" (2 sids revisados no status injetado).
+    // M4: chip "Novo: N fichas completas" (2 sids no status injetado).
     const chipText = await frame.evaluate(() => (document.querySelector('.atlas-new-reviewed') || {}).textContent || '');
-    check(/Novo: 2 fichas revisadas/.test(chipText), `${label}: chip "${chipText.trim()}" na barra`);
+    check(/Novo: 2 fichas completas/.test(chipText), `${label}: chip "${chipText.trim()}" na barra`);
     if (chipText) {
       await frame.locator('.atlas-new-reviewed').click();
       await frame.waitForTimeout(200);
@@ -47,35 +47,37 @@ async function runAt(viewport) {
       I.navigator.openSystem('urinario');
       await new Promise((r) => setTimeout(r, 300));
       const chips = [...document.querySelectorAll('.atlas-nav-filter-chip')].map((c) => c.textContent.trim());
-      const rows = () => [...document.querySelectorAll('.atlas-nav-row')].map((r) => ({ name: r.querySelector('.atlas-nav-row-name').textContent.trim(), st: (r.querySelector('.atlas-nav-status') || {}).textContent || '' }));
+      const rows = () => [...document.querySelectorAll('.atlas-nav-row')].map((r) => ({ name: r.querySelector('.atlas-nav-row-name').textContent.trim(), st: (r.querySelector('.atlas-nav-status') || {}).textContent || '', txt: r.textContent }));
       const preFilter = (document.querySelector('.atlas-nav-filter-chip[aria-pressed="true"]') || {}).dataset;
       document.querySelector('.atlas-nav-filter-chip[data-filter="all"]').click();
       const all = rows();
-      document.querySelector('.atlas-nav-filter-chip[data-filter="r"]').click();
-      const onlyR = rows();
-      document.querySelector('.atlas-nav-filter-chip[data-filter="e"]').click();
-      const onlyE = rows();
+      document.querySelector('.atlas-nav-filter-chip[data-filter="c"]').click();
+      const onlyC = rows();
       document.querySelector('.atlas-nav-filter-chip[data-filter="all"]').click();
-      return { chips, first: all[0], total: all.length, onlyR, onlyE, preFilter: preFilter && preFilter.filter };
+      return { chips, total: all.length, onlyC, withMarks: all.filter((r) => r.st || /[✓⏳]/.test(r.txt)).length, preFilter: preFilter && preFilter.filter };
     });
-    check(nav.chips.length === 3 && /Revisadas \(1\)/.test(nav.chips[1]) && /Em revisão \(1\)/.test(nav.chips[2]), `${label}: chips com contagem (${nav.chips.join(' · ')})`);
-    check(nav.first && nav.first.st === '✓' && /^Rins?\b/i.test(nav.first.name), `${label}: revisada primeiro, com ✓ (${JSON.stringify(nav.first)})`);
-    check(nav.preFilter === 'r', `${label}: o chip deixou o navegador filtrado em "Revisadas" (${nav.preFilter})`);
-    check(nav.onlyR.length === 1 && nav.onlyE.length === 1 && nav.onlyE[0].st === '⏳', `${label}: filtros Revisadas/Em revisão (${nav.onlyR.length}/${nav.onlyE.length} de ${nav.total})`);
+    check(nav.chips.length === 2 && /^Todas/.test(nav.chips[0]) && /^Fichas completas \(2\)/.test(nav.chips[1]), `${label}: chips com contagem (${nav.chips.join(' · ')})`);
+    check(nav.withMarks === 0, `${label}: nenhuma linha da lista traz ícone de revisão`);
+    check(nav.preFilter === 'c', `${label}: o chip deixou o navegador filtrado em "Fichas completas" (${nav.preFilter})`);
+    check(nav.onlyC.length === 2 && nav.onlyC.length < nav.total, `${label}: filtro Fichas completas (${nav.onlyC.length} de ${nav.total})`);
 
     const card = viewport.width < 600 ? '#atlas-sheet' : '#atlas-inspector';
     await frame.evaluate(() => { const I = window.__atlasInternals; I.bus.emit(I.bus.EVENTS.STRUCTURE_SELECT, { sid: 'za:pulmonary-trunk', source: 'search' }); });
-    await frame.waitForSelector(`${card} .atlas-card-status`, { timeout: 15000 }).catch(() => {});
-    const badge = await frame.evaluate((c) => { const b = document.querySelector(`${c} .atlas-card-status`); return b ? b.textContent.replace(/\s+/g, ' ').trim() : ''; }, card);
-    check(/^○\s*Gerado automaticamente/.test(badge), `${label}: ficha gerada com selo cinza (${badge.slice(0, 60)})`);
+    await frame.waitForSelector(`${card} .atlas-card-tabbar`, { timeout: 15000 }).catch(() => {});
+    const cardInfo = await frame.evaluate((c) => {
+      const root = document.querySelector(c);
+      return { text: root ? root.textContent.replace(/\s+/g, ' ') : '', status: !!(root && root.querySelector('.atlas-card-status')), seal: !!(root && root.querySelector('.laift-review-seal')) };
+    }, card);
+    check(!cardInfo.status && !cardInfo.seal, `${label}: ficha sem selo ⓘ nem selo de status`);
+    check(!/revisad|rascunho|auto-?draft|autom[aá]tic|antigo|por IA|aguardando|sem descri/i.test(cardInfo.text), `${label}: ficha sem texto de revisão (${(cardInfo.text.match(/.{0,30}(revisad|rascunho|auto-?draft|autom[aá]tic|antigo|por IA|aguardando|sem descri).{0,30}/i) || [cardInfo.text.slice(0, 60)])[0]})`);
     check(contentReqs.some((u) => /content\/cardiovascular\.json/.test(u)), `${label}: abrir a ficha baixa só o arquivo do sistema dela`);
-    // M4: Meu estudo mostra o progresso nas revisadas (abriu o rim → 1 de 2).
+    // M4: Meu estudo mostra o progresso nas fichas completas (abriu o rim → 1 de 2).
     await frame.evaluate(() => { const I = window.__atlasInternals; I.bus.emit(I.bus.EVENTS.STRUCTURE_SELECT, { sid: 'za:kidney-l', source: 'search' }); });
     await frame.waitForTimeout(400);
     await frame.evaluate(() => window.AtlasShell.setMode('estudo'));
     await frame.waitForSelector('.study-reviewed', { timeout: 10000 }).catch(() => {});
     const prog = await frame.evaluate(() => (document.querySelector('.study-reviewed-count') || {}).textContent || '');
-    check(/^1 de 2 fichas revisadas/.test(prog), `${label}: Meu estudo com o progresso nas revisadas ("${prog}")`);
+    check(/^1 de 2 fichas completas/.test(prog), `${label}: Meu estudo com o progresso nas fichas completas ("${prog}")`);
 
     // M3: visão sistêmica desligada no padrão (flag systemic, até o teste de papel).
     await frame.evaluate(() => window.AtlasShell.setMode('fisiologia'));

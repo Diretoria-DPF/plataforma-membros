@@ -50,12 +50,16 @@ test('fileNameFor: nome de arquivo seguro, sem acento nem caractere perigoso', (
   assert.equal(Credential.fileNameFor('x'.repeat(200)).length <= 'cracha-laift-'.length + 40 + '.png'.length, true);
 });
 
-test('qrPayloadOf: aceita só a credencial assinada; senão cai no formato provisório pelo e-mail', () => {
+test('qrPayloadOf: aceita só a credencial assinada; senão cai no provisório com identificador opaco (TRA-10)', () => {
   assert.deepEqual(Credential.qrPayloadOf({ success: true, qrPayload: SIGNED }, { email: 'a@b.com' }), { payload: SIGNED, kind: 'v2' });
-  assert.deepEqual(Credential.qrPayloadOf({ success: true, qrPayload: 'LAIFT:v2:forjado' }, { email: 'a@b.com' }), { payload: 'LAIFT:ID:a@b.com', kind: 'legacy' });
-  assert.deepEqual(Credential.qrPayloadOf({ success: false }, { email: 'a@b.com' }), { payload: 'LAIFT:ID:a@b.com', kind: 'legacy' });
-  assert.deepEqual(Credential.qrPayloadOf(null, { email: 'a@b.com' }), { payload: 'LAIFT:ID:a@b.com', kind: 'legacy' });
-  assert.equal(Credential.qrPayloadOf({ success: false }, { email: '' }), null);
+  const identity = { email: 'a@b.com', fullName: 'Ana Souza' };
+  for (const res of [{ success: true, qrPayload: 'LAIFT:v2:forjado' }, { success: false }, null, undefined]) {
+    const out = Credential.qrPayloadOf(res, identity);
+    assert.equal(out.kind, 'legacy');
+    assert.match(out.payload, /^LAIFT:ID:[0-9a-f]{12}$/);
+    assert.ok(!out.payload.includes('@') && !out.payload.includes('a@b.com'), 'o e-mail não vai dentro do QR');
+  }
+  assert.notEqual(Credential.qrPayloadOf(null, identity).payload, Credential.qrPayloadOf(null, identity).payload);
   assert.equal(Credential.qrPayloadOf(undefined, null), null);
 });
 

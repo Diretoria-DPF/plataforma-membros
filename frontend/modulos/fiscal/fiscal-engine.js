@@ -194,6 +194,7 @@
     if (state.scanBusy) return;
     if (decodedText === state.lastScan.text && now - state.lastScan.at < SAME_QR_COOLDOWN_MS) return;
     state.lastScan = { text: decodedText, at: now };
+    readFeedback();
     state.scanBusy = true;
     try {
       const qr = parseQr(decodedText);
@@ -207,7 +208,7 @@
         if (looksLikeEmail) $('manualEmail').value = qr.identifier;
         setStatus(looksLikeEmail
           ? 'Credencial antiga, sem assinatura. Confira a pessoa e confirme em “Presença manual”.'
-          : 'Credencial antiga (sem e-mail). Peça para a pessoa abrir a credencial atualizada na área “Aprender”.', 'warning');
+          : 'Credencial antiga (sem e-mail). Peça para a pessoa abrir a credencial atualizada (Perfil ou Início, “Abrir crachá virtual”).', 'warning');
       } else {
         await checkIn({ method: 'qr', qrPayload: qr.payload });
       }
@@ -216,22 +217,81 @@
     }
   }
 
-  function startScanner() {
+  // Mensagens do leitor, todas em português (TRA-09). Cada causa tem a sua, para o fiscal saber o que fazer.
+  const SCANNER_MESSAGES = {
+    unavailable: 'Leitor de QR indisponível (a biblioteca não carregou). Use a presença manual ou a lista.',
+    noCamera: 'Este aparelho ou navegador não oferece câmera. Use a presença manual ou a lista.',
+    denied: 'A permissão da câmera foi negada. Libere a câmera nas configurações do navegador e toque em “Ler QR Code” de novo.',
+    notFound: 'Nenhuma câmera foi encontrada neste aparelho. Use a presença manual ou a lista.',
+    busy: 'A câmera está em uso por outro aplicativo. Feche-o e toque em “Ler QR Code” de novo.',
+    generic: 'Não foi possível abrir a câmera. Verifique a permissão do navegador e tente de novo.',
+  };
+  const VIBRATE_MS = 80;
+
+  /** Causa do erro da câmera (getUserMedia) -> chave de SCANNER_MESSAGES. */
+  function cameraErrorKind(err) {
+    const name = String((err && err.name) || '');
+    const text = String((err && err.message) || err || '');
+    if (name === 'NotAllowedError' || name === 'SecurityError' || /permission|denied|negad/i.test(text)) return 'denied';
+    if (name === 'NotFoundError' || name === 'OverconstrainedError' || /not found|no camera|requested device/i.test(text)) return 'notFound';
+    if (name === 'NotReadableError' || /in use|could not start video/i.test(text)) return 'busy';
+    return 'generic';
+  }
+
+  /** Vibra ao ler um QR (quando o aparelho permite) e, só se o fiscal ligou “Som ao ler”, toca um bipe curto. */
+  function readFeedback() {
+    try { if (typeof navigator.vibrate === 'function') navigator.vibrate(VIBRATE_MS); } catch (err) { /* sem vibração */ }
+    const toggle = $('scanSound');
+    if (!toggle || !toggle.checked) return;
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+      const osc = ctx.createOscillator();
+      osc.frequency.value = 880;
+      osc.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.12);
+      osc.onended = () => { ctx.close().catch(() => {}); };
+    } catch (err) { /* sem áudio */ }
+  }
+
+  function showScannerOn(on) {
+    $('reader').classList.toggle('hidden', !on);
+    $('scannerStart').classList.toggle('hidden', on);
+    $('scannerStop').classList.toggle('hidden', !on);
+  }
+
+  /** Câmera traseira ligada de uma vez (sem o segundo toque do widget em inglês). */
+  async function startScanner() {
     if (state.scanner) return;
-    if (typeof window.Html5QrcodeScanner !== 'function') {
-      setStatus('Leitor de QR indisponível (a biblioteca não carregou). Use a presença manual ou a lista.', 'error');
+    const Core = window.Html5Qrcode;
+    const Widget = window.Html5QrcodeScanner;
+    if (typeof Core !== 'function' && typeof Widget !== 'function') {
+      setStatus(SCANNER_MESSAGES.unavailable, 'error');
       return;
     }
-    $('reader').classList.remove('hidden');
-    $('scannerStart').classList.add('hidden');
-    $('scannerStop').classList.remove('hidden');
+    if (typeof Core === 'function' && !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+      setStatus(SCANNER_MESSAGES.noCamera, 'error');
+      return;
+    }
+    showScannerOn(true);
+    setStatus('Abrindo a câmera...', 'loading');
     try {
-      state.scanner = new window.Html5QrcodeScanner('reader', { fps: 10, qrbox: { width: 240, height: 240 } }, false);
-      state.scanner.render(onScan, () => {});
+      if (typeof Core === 'function') {
+        const scanner = new Core('reader');
+        state.scanner = scanner;
+        await scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 240, height: 240 } }, onScan, () => {});
+      } else {
+        // Reserva: a biblioteca antiga só traz o widget pronto (textos em inglês).
+        state.scanner = new Widget('reader', { fps: 10, qrbox: { width: 240, height: 240 } }, false);
+        state.scanner.render(onScan, () => {});
+      }
+      setStatus('Câmera ligada. Aponte para o QR Code da credencial.', 'success');
     } catch (err) {
       state.scanner = null;
-      stopScanner();
-      setStatus('Não foi possível abrir a câmera. Verifique a permissão do navegador.', 'error');
+      await stopScanner();
+      setStatus(SCANNER_MESSAGES[cameraErrorKind(err)], 'error');
     }
   }
 
@@ -239,11 +299,10 @@
     const scanner = state.scanner;
     state.scanner = null;
     if (scanner) {
+      try { if (typeof scanner.stop === 'function' && scanner.isScanning) await scanner.stop(); } catch (err) { /* câmera já liberada */ }
       try { await scanner.clear(); } catch (err) { /* câmera já liberada */ }
     }
-    $('reader').classList.add('hidden');
-    $('scannerStart').classList.remove('hidden');
-    $('scannerStop').classList.add('hidden');
+    showScannerOn(false);
   }
 
   // =========================================================

@@ -423,7 +423,7 @@
     reactLia('think');
     var sentWith = token();
     var mine = ++ui.sendId;
-    var payload = turnstileLib().withToken({ message: message, context: { panel: currentPanel() }, history: history }, ui.challenge);
+    var payload = turnstileLib().withToken({ message: message, context: { panel: currentPanel(), module: hint('moduleId') || '' }, history: history }, ui.challenge);
     ui.app.callApi('apiAssistantChat', sentWith, payload).then(function (res) {
       if (mine !== ui.sendId) return; // a conta mudou no meio: a conversa foi zerada e esta resposta não vale
       if (res && res.disabled) { hideLauncher(); return; }

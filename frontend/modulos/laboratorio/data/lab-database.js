@@ -293,7 +293,7 @@ const LAB_DATABASE = {
       smiles: "F",
       iupac: "fluorane",
       pubchemQuery: "Hydrofluoric acid",
-      dissociation: [["H+", 1], ["F-", 1]]
+      dissociation: [["HF", 1]]
     },
     "HBr_aq": {
       label: "Ácido Bromídrico",
@@ -345,7 +345,7 @@ const LAB_DATABASE = {
       smiles: "CC(=O)O",
       iupac: "acetic acid",
       pubchemQuery: "Acetic acid",
-      dissociation: [["H+", 0.1], ["CH3COO-", 0.1]]
+      dissociation: [["CH3COOH", 1]]
     },
     "HCOOH_l": {
       label: "Ácido Fórmico",
@@ -436,7 +436,7 @@ const LAB_DATABASE = {
       smiles: "N",
       iupac: "ammonia",
       pubchemQuery: "Ammonia",
-      dissociation: [["NH4+", 1], ["OH-", 0.1]]
+      dissociation: [["NH3", 1]]
     },
 
     // === PRECURSORES FARMACÊUTICOS & SÍNTESE ===
@@ -619,7 +619,7 @@ const LAB_DATABASE = {
       bp: null,
       fp: 176.0,
       formula: "C12H12N2O3",
-      smiles: "CCC1(CC)C(=O)NC(=O)NC1=O",
+      smiles: "CCC1(C(=O)NC(=O)NC1=O)C2=CC=CC=C2",
       iupac: "5-ethyl-5-phenyl-1,3-diazinane-2,4,6-trione",
       pubchemQuery: "Phenobarbital",
       dissociation: null
@@ -632,7 +632,7 @@ const LAB_DATABASE = {
       bp: null,
       fp: 254.0,
       formula: "C17H19NO3",
-      smiles: "CN1C2CC3=C4C(C1C2)OC5=C4C(=CC(=C5)O)C3",
+      smiles: "CN1CC[C@]23[C@@H]4[C@H]1CC5=C2C(=C(C=C5)O)O[C@H]3[C@H](C=C4)O",
       iupac: "(4R,4aR,7S,7aR,12bS)-3-methyl-2,4,4a,7,7a,13-hexahydro-1H-4,12-methanobenzofuro[3,2-e]isoquinoline-7,9-diol",
       pubchemQuery: "Morphine",
       dissociation: null
@@ -645,7 +645,7 @@ const LAB_DATABASE = {
       bp: null,
       fp: 190.0,
       formula: "C6H8O6",
-      smiles: "OC1C(O)C(O)=C(O)C1=O",
+      smiles: "C([C@@H]([C@@H]1C(=C(C(=O)O1)O)O)O)O",
       iupac: "(2R)-2-[(1S)-1,2-dihydroxyethyl]-3,4-dihydroxy-2H-furan-5-one",
       pubchemQuery: "Ascorbic acid",
       dissociation: null
@@ -673,7 +673,7 @@ const LAB_DATABASE = {
       bp: 298.0,
       fp: -39.0,
       formula: "C11H26NO2PS",
-      smiles: "O=P(CC)(OCC)SC(CN(C)C)C",
+      smiles: "CCOP(=O)(C)SCCN(C(C)C)C(C)C",
       iupac: "O-ethyl S-[2-(diisopropylamino)ethyl] methylphosphonothioate",
       pubchemQuery: "VX",
       dissociation: null
@@ -699,7 +699,7 @@ const LAB_DATABASE = {
       bp: null,
       fp: 284.0,
       formula: "C21H22N2O2",
-      smiles: "C1CC2CC1C13CCN4C1(C2)C(=CC5=CC=CC=C53)COC4=O",
+      smiles: "C1CN2CC3=CCO[C@H]4CC(=O)N5[C@H]6[C@H]4[C@H]3C[C@H]2[C@@]61C7=CC=CC=C75",
       iupac: "strychnine",
       pubchemQuery: "Strychnine",
       dissociation: null
@@ -712,7 +712,7 @@ const LAB_DATABASE = {
       bp: null,
       fp: 225.0,
       formula: "C11H17N3O8",
-      smiles: "O=C1NC(=O)C2=C(N1)C(NC(=O)C2)C3(O)CC4C(OC5C(O)C(O)C(N)CC5O4)C3O",
+      smiles: "C([C@@]1([C@H]2[C@@H]3[C@H](N=C(N[C@@]34[C@@H]([C@@H]1O[C@]([C@H]4O)(O2)O)O)N)O)O)O",
       iupac: "tetrodotoxin",
       pubchemQuery: "Tetrodotoxin",
       dissociation: null
@@ -725,7 +725,7 @@ const LAB_DATABASE = {
       bp: null,
       fp: 221.0,
       formula: "C31H42N2O6",
-      smiles: "CC1=CC(=O)N(C1)C2CCC3C(C2)C4CCC5(C(C4CC3)OC5=O)O",
+      smiles: "CC1=CNC(=C1C(=O)O[C@@H](C)C2=CC[C@@]34[C@@]2(C[C@H]([C@@]56C3=CC[C@H]7[C@@]5(CC[C@](C7)(O6)O)C)O)CN(CCO4)C)C",
       iupac: "batrachotoxin",
       pubchemQuery: "Batrachotoxin",
       dissociation: null
@@ -753,9 +753,18 @@ const LAB_DATABASE = {
       produtoId: "AAS_s",
       reagentesObrigatorios: ["AcidoSalicilico_s", "AnidridoAcetico_l"],
       catalisador: "H2SO4_aq",
-      tempMinima: 58,
+      tempMinima: 60,
+      tempMaxima: 80,
+      tempoReacaoMin: 30,
+      rendimentoPercentual: 85,
       precisaAgitador: true,
       corPrecipitado: "#ffffff",
+      equacaoQuimica: "C7H6O3 + (CH3CO)2O -> C9H8O4 + CH3COOH",
+      estequiometria: {
+        reagentes: [{ id: "AcidoSalicilico_s", coef: 1 }, { id: "AnidridoAcetico_l", coef: 1 }],
+        produto: { id: "AAS_s", coef: 1 },
+        coprodutos: [{ id: "CH3COOH", coef: 1 }]
+      },
       descricao: "Acetilação da hidroxila fenólica do ácido salicílico por catálise ácida com anidrido acético."
     },
     {
@@ -764,9 +773,18 @@ const LAB_DATABASE = {
       produtoId: "Paracetamol_s",
       reagentesObrigatorios: ["pAminofenol_s", "AnidridoAcetico_l"],
       catalisador: null,
-      tempMinima: 55,
+      tempMinima: 80,
+      tempMaxima: 100,
+      tempoReacaoMin: 45,
+      rendimentoPercentual: 90,
       precisaAgitador: true,
       corPrecipitado: "#f8fafc",
+      equacaoQuimica: "C6H7NO + (CH3CO)2O -> C8H9NO2 + CH3COOH",
+      estequiometria: {
+        reagentes: [{ id: "pAminofenol_s", coef: 1 }, { id: "AnidridoAcetico_l", coef: 1 }],
+        produto: { id: "Paracetamol_s", coef: 1 },
+        coprodutos: [{ id: "CH3COOH", coef: 1 }]
+      },
       descricao: "Acilação nucleofílica seletiva do grupamento amino aromático do 4-aminofenol."
     },
     {
@@ -776,8 +794,17 @@ const LAB_DATABASE = {
       reagentesObrigatorios: ["AcidoSalicilico_s", "Metanol_l"],
       catalisador: "H2SO4_aq",
       tempMinima: 65,
+      tempMaxima: 100,
+      tempoReacaoMin: 60,
+      rendimentoPercentual: 70,
       precisaAgitador: false,
       corPrecipitado: null,
+      equacaoQuimica: "C7H6O3 + CH3OH -> C8H8O3 + H2O",
+      estequiometria: {
+        reagentes: [{ id: "AcidoSalicilico_s", coef: 1 }, { id: "Metanol_l", coef: 1 }],
+        produto: { id: "SalicilatoMetila_l", coef: 1 },
+        coprodutos: [{ id: "H2O_l", coef: 1 }]
+      },
       descricao: "Esterificação de Fischer entre ácido salicílico e metanol."
     },
     {
@@ -787,8 +814,17 @@ const LAB_DATABASE = {
       reagentesObrigatorios: ["Anilina_l", "AnidridoAcetico_l"],
       catalisador: null,
       tempMinima: 20,
+      tempMaxima: 100,
+      tempoReacaoMin: 20,
+      rendimentoPercentual: 85,
       precisaAgitador: true,
       corPrecipitado: "#f1f5f9",
+      equacaoQuimica: "C6H7N + (CH3CO)2O -> C8H9NO + CH3COOH",
+      estequiometria: {
+        reagentes: [{ id: "Anilina_l", coef: 1 }, { id: "AnidridoAcetico_l", coef: 1 }],
+        produto: { id: "Acetanilida_s", coef: 1 },
+        coprodutos: [{ id: "CH3COOH", coef: 1 }]
+      },
       descricao: "Acetilação nucleofílica de amina primária aromática formando amida secundária."
     },
     {
@@ -798,8 +834,17 @@ const LAB_DATABASE = {
       reagentesObrigatorios: ["AcidoAcetico_aq", "AlcoolIsopentilico_l"],
       catalisador: "H2SO4_aq",
       tempMinima: 70,
+      tempMaxima: 130,
+      tempoReacaoMin: 60,
+      rendimentoPercentual: 65,
       precisaAgitador: false,
       corPrecipitado: null,
+      equacaoQuimica: "CH3COOH + C5H12O -> C7H14O2 + H2O",
+      estequiometria: {
+        reagentes: [{ id: "AcidoAcetico_aq", chave: "CH3COOH", coef: 1 }, { id: "AlcoolIsopentilico_l", coef: 1 }],
+        produto: { id: "AcetatoIsopentila_l", coef: 1 },
+        coprodutos: [{ id: "H2O_l", coef: 1 }]
+      },
       descricao: "Esterificação com separação de fase orgânica frutal."
     },
     {
@@ -809,9 +854,12 @@ const LAB_DATABASE = {
       reagentesObrigatorios: ["PbNO3_aq", "KI_aq"],
       catalisador: null,
       tempMinima: 15,
+      tempoReacaoMin: 0,
       precisaAgitador: false,
       corPrecipitado: "#facc15",
-      descricao: "Reação de dupla troca com precipitação regida por Ksp (9.8 × 10⁻⁹)."
+      equacaoQuimica: "Pb(NO3)2 + 2KI -> PbI2 + 2KNO3",
+      precipitacaoIonica: true,
+      descricao: "Reação de dupla troca com formação de precipitado amarelo (PbI₂, pouco solúvel em água)."
     }
   ]
 };

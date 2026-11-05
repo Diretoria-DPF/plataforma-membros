@@ -13,13 +13,13 @@
  * de THREE, canvas ou DOM. Segue o estilo de frontend/scripts/atlas/core.test.mjs.
  */
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const engineDir = path.resolve(here, '../../modulos/anatomia-3d/js/engine');
 
-const { projectToScreen, resolveOverlaps, pickLargest, placeLabels } = await import(path.join(engineDir, 'labels.js'));
+const { projectToScreen, resolveOverlaps, pickLargest, placeLabels } = await import(pathToFileURL(path.join(engineDir, 'labels.js')).href);
 
 let failures = 0;
 

@@ -11,12 +11,12 @@
  */
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../../modulos/anatomia-3d/js');
-const { createProgressTracker } = await import(path.join(root, 'ui/progress-bar.js'));
-const { parseFlags, FLAG_DEFAULTS } = await import(path.join(root, 'core/flags.js'));
+const { createProgressTracker } = await import(pathToFileURL(path.join(root, 'ui/progress-bar.js')).href);
+const { parseFlags, FLAG_DEFAULTS } = await import(pathToFileURL(path.join(root, 'core/flags.js')).href);
 
 let failures = 0;
 function test(name, fn) {

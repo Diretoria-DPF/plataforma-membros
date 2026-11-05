@@ -14,15 +14,15 @@
  */
 
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const coreDir = path.resolve(here, '../../modulos/anatomia-3d/js/core');
 const engineDir = path.resolve(here, '../../modulos/anatomia-3d/js/engine');
 
-const { on, emit, EVENTS } = await import(path.join(coreDir, 'bus.js'));
-const { createVisibility } = await import(path.join(engineDir, 'visibility.js'));
+const { on, emit, EVENTS } = await import(pathToFileURL(path.join(coreDir, 'bus.js')).href);
+const { createVisibility } = await import(pathToFileURL(path.join(engineDir, 'visibility.js')).href);
 
 let failures = 0;
 

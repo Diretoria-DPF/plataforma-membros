@@ -332,7 +332,9 @@ async function adminFiscalScenario() {
     check(print.cards === 2 && print.qrs === 2 && print.printed === 1, 'folha de crachás montada no próprio documento, com QR local, e impressão disparada');
     check(print.hostile && print.injectedBold === 0 && print.board === 1, 'crachás montados com DOM seguro (nome como texto; diretoria destacada)');
 
-    // ---- Leitor sem a biblioteca (CDN bloqueada no teste) falha com mensagem, sem quebrar ----
+    // ---- Leitor sem a biblioteca falha com mensagem, sem quebrar ----
+    // O html5-qrcode agora é vendorizado (carrega sempre); a falha é simulada zerando as duas classes na janela do módulo.
+    await frame.evaluate(() => { window.Html5Qrcode = undefined; window.Html5QrcodeScanner = undefined; });
     await tap(frame, '#scannerStart');
     const scanMsg = await frame.evaluate(() => document.getElementById('status').textContent);
     check(/Leitor de QR indisponível/.test(scanMsg), 'leitor indisponível vira mensagem clara ao admin');

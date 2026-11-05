@@ -16,21 +16,30 @@
  * sessão de quem está logado. Este arquivo não usa innerHTML em lugar
  * nenhum, nem para marcação fixa (CSP e o resto do endurecimento da
  * página: Equipe 4, Onda 2).
+ *
+ * As regras puras (tempo, pausa, medidores, contexto enviado) ficam em
+ * clinic-core.js (window.ClinicCore), testadas em
+ * frontend/scripts/clinic-engine.test.mjs. Sem IA ou servidor, a clínica NÃO
+ * simula nada: mostra que a função está indisponível (CLI-06).
  */
 
 const ClinicEngine = (() => {
+  const Core = window.ClinicCore;
+  const UNAVAILABLE_MSG = Core.UNAVAILABLE_MESSAGE;
   let currentCase = null;
-  let vitality = 100;
-  let patience = 100;
-  let elapsedSeconds = 0;
+  // Estado do atendimento (vitalidade, paciência, relógio, pausa): sempre substituído por um novo objeto (clinic-core.js).
+  let state = Core.newState(null);
   let clockInterval = null;
   let isCaseActive = false;
+  let canRetryEvaluation = false;
+  let chatBusy = false;
+  // Atendimentos pausados por leito: o relógio e os medidores ficam parados até a pessoa retomar.
+  const pausedSessions = new Map();
   // Turnos da anamnese no formato do servidor: { role: 'student'|'patient', text }.
   let chatTurns = [];
   let requestedExams = [];
   let caseOutcome = 'EM_ANDAMENTO';
   let activeSemiologyAxis = 'cronologia';
-  let bridgeNoticeShown = false;
   let lastQuota = null;
 
   // Controle de Estado do Acervo Comunitário
@@ -40,11 +49,7 @@ const ClinicEngine = (() => {
   // Limites do servidor (worker/src/constants.js, AI_LIMITS) — conferidos
   // aqui só para a pessoa não perder o que digitou numa recusa previsível.
   const HISTORY_TURNS_SENT = 8;
-  const CONTEXT_MAX_BYTES = 4096;
-  const ANSWER_KEY_MAX_BYTES = 4096;
   const TOPIC_MAX = 200;
-
-  const BRIDGE_MISSING_MSG = 'A clínica precisa estar aberta dentro da plataforma (área "Aprender") para usar a IA e o acervo.';
 
   // Cache centralizado de referências do DOM
   const dom = {};
@@ -60,14 +65,26 @@ const ClinicEngine = (() => {
    */
   async function callLaift(action, input) {
     if (!window.LaiftApi || typeof window.LaiftApi.call !== 'function') {
-      return { success: false, message: BRIDGE_MISSING_MSG, bridgeMissing: true };
+      return { success: false, message: UNAVAILABLE_MSG, bridgeMissing: true };
     }
     try {
       const res = await window.LaiftApi.call(action, input || {});
-      return res && typeof res === 'object' ? res : { success: false, message: 'Resposta inválida do servidor.' };
+      return res && typeof res === 'object' ? res : { success: false, message: UNAVAILABLE_MSG };
     } catch (err) {
-      return { success: false, message: 'Falha de comunicação com a plataforma. Tente novamente.' };
+      return { success: false, message: UNAVAILABLE_MSG };
     }
+  }
+
+  // Modais acessíveis (clinic-modal.js): Esc, foco preso e devolvido. Sem o helper, abre e fecha do jeito simples.
+  function openModal(node, onClose) {
+    if (!node) return;
+    if (window.ClinicModal) { window.ClinicModal.open(node, { onClose }); return; }
+    if (node.classList.contains('modal')) node.classList.add('active'); else node.style.display = 'flex';
+  }
+  function closeModal(node) {
+    if (!node) return;
+    if (window.ClinicModal) { window.ClinicModal.close(node); return; }
+    if (node.classList.contains('modal')) node.classList.remove('active'); else node.style.display = 'none';
   }
 
   // Avisos e confirmações: modal acessível (LaiftDialog, shared/laift-dialog.js); sem ele, cai nos nativos.
@@ -123,31 +140,11 @@ const ClinicEngine = (() => {
     }, [el('p', { text: message })]));
   }
 
-  function byteLength(value) {
-    return new TextEncoder().encode(JSON.stringify(value)).length;
-  }
-
-  /** Corta o campo de texto mais longo até o objeto caber em `maxBytes` (o servidor recusaria). */
-  function fitToBytes(obj, maxBytes) {
-    let guard = 0;
-    while (byteLength(obj) > maxBytes && guard++ < 40) {
-      let longestKey = null;
-      Object.keys(obj).forEach((k) => {
-        if (typeof obj[k] === 'string' && (!longestKey || obj[k].length > obj[longestKey].length)) longestKey = k;
-      });
-      if (!longestKey || obj[longestKey].length < 20) break;
-      obj[longestKey] = obj[longestKey].slice(0, Math.floor(obj[longestKey].length * 0.8));
-    }
-    return obj;
-  }
-
-  function caseSourceOf(c) {
-    return c && (c.caseSource === 'acervo' || c.caseSource === 'ia') ? c.caseSource : 'builtin';
-  }
+  const caseSourceOf = Core.caseSourceOf;
 
   // Modo simulação (clinic-sim.js, ADR 0009): `{ simulation }` só com o modo ligado; senão {} e nada muda no payload.
   function simExtra() {
-    return window.ClinicSim ? window.ClinicSim.extraFor(elapsedSeconds) : {};
+    return window.ClinicSim ? window.ClinicSim.extraFor(state.elapsedSeconds) : {};
   }
 
   function initDomReferences() {
@@ -391,7 +388,7 @@ const ClinicEngine = (() => {
       clearNode(dom.communityBedsGrid);
       dom.communityBedsGrid.appendChild(el('div', { className: 'clinic-empty' }, [
         el('h4', { text: 'Nenhum caso publicado no acervo até o momento.' }),
-        el('p', { text: 'Casos gerados com IA entram aqui depois de revisados pela diretoria.' }),
+        el('p', { text: 'Os casos da Liga aparecerão aqui.' }),
       ]));
       return;
     }
@@ -417,7 +414,6 @@ const ClinicEngine = (() => {
       const card = el('div', { className: 'bed-card ambulatory is-acervo' }, [
         el('div', { className: 'bed-header' }, [
           el('span', { className: 'bed-tag is-acervo', text: `📚 ${tox}` }),
-          el('span', { className: 'bed-status is-reviewed', text: '✔ Revisado' }),
         ]),
         el('h4', { className: 'bed-title is-acervo', text: c.titulo || 'Caso Clínico' }),
         el('div', { className: 'bed-patient' }, ['Paciente: ', el('strong', { text: `${nomePac} (${idadePac})` })]),
@@ -507,7 +503,7 @@ const ClinicEngine = (() => {
     initDomReferences();
     if (!dom.modalRadarEpidemio) return;
 
-    dom.modalRadarEpidemio.style.display = 'flex';
+    openModal(dom.modalRadarEpidemio);
     if (dom.radarTaxaSobrevivencia) dom.radarTaxaSobrevivencia.textContent = '...';
     if (dom.radarTotalAtendimentos) dom.radarTotalAtendimentos.textContent = '...';
     if (dom.radarToxindromesList) dom.radarToxindromesList.textContent = 'Carregando indicadores...';
@@ -543,7 +539,7 @@ const ClinicEngine = (() => {
 
   function fecharRadarEpidemiologico() {
     initDomReferences();
-    if (dom.modalRadarEpidemio) dom.modalRadarEpidemio.style.display = 'none';
+    closeModal(dom.modalRadarEpidemio);
   }
 
   // =========================================================
@@ -565,10 +561,57 @@ const ClinicEngine = (() => {
     startCase(caseIdOrObject);
   }
 
+  function snapshotKey(c) {
+    return String((c && c.id) || '');
+  }
+
+  function savePausedSession() {
+    const key = snapshotKey(currentCase);
+    if (!key) return;
+    pausedSessions.set(key, {
+      state,
+      chatTurns: chatTurns.slice(),
+      requestedExams: requestedExams.slice(),
+      axis: activeSemiologyAxis,
+      chatNodes: dom.chatHistory ? Array.from(dom.chatHistory.childNodes) : [],
+      releasedNodes: dom.releasedExamsList ? Array.from(dom.releasedExamsList.childNodes) : [],
+      diagnosis: dom.studentDiagnosis ? dom.studentDiagnosis.value : '',
+      conduct: dom.studentConduct ? dom.studentConduct.value : '',
+    });
+  }
+
+  function restorePausedSession(snap) {
+    chatTurns = snap.chatTurns.slice();
+    requestedExams = snap.requestedExams.slice();
+    activeSemiologyAxis = snap.axis;
+    if (dom.chatHistory) {
+      clearNode(dom.chatHistory);
+      snap.chatNodes.forEach((n) => dom.chatHistory.appendChild(n));
+    }
+    if (dom.releasedExamsList) {
+      clearNode(dom.releasedExamsList);
+      snap.releasedNodes.forEach((n) => dom.releasedExamsList.appendChild(n));
+    }
+    if (dom.availableExamsList) {
+      Array.from(dom.availableExamsList.querySelectorAll('button')).forEach((b) => {
+        if (snap.requestedExams.includes(b.dataset.examId)) { b.disabled = true; b.textContent = 'Solicitado'; }
+      });
+    }
+    if (dom.studentDiagnosis) dom.studentDiagnosis.value = snap.diagnosis;
+    if (dom.studentConduct) dom.studentConduct.value = snap.conduct;
+    renderSemiologyGuide();
+  }
+
   async function returnToBeds() {
     if (isCaseActive) {
-      if (!(await dialogConfirm('Deseja pausar o atendimento atual e retornar ao mapa de leitos?'))) return;
+      if (chatBusy) {
+        await dialogAlert('Aguarde a resposta do paciente para pausar o atendimento.');
+        return;
+      }
+      if (!(await dialogConfirm('Pausar o atendimento e voltar ao mapa de leitos? O relógio e os medidores ficam parados e você retoma do mesmo ponto.'))) return;
       clearInterval(clockInterval);
+      state = Core.pause(state);
+      savePausedSession();
       isCaseActive = false;
     }
     showBedsDashboard();
@@ -592,16 +635,18 @@ const ClinicEngine = (() => {
       return;
     }
 
+    const snap = pausedSessions.get(snapshotKey(selected));
+    pausedSessions.delete(snapshotKey(selected));
     currentCase = selected;
-    vitality = selected.vitalidadeInicial || 100;
-    patience = selected.pacienciaInicial || 100;
-    elapsedSeconds = 0;
     chatTurns = [];
     requestedExams = [];
     caseOutcome = 'EM_ANDAMENTO';
     isCaseActive = true;
+    canRetryEvaluation = false;
+    chatBusy = false;
     activeSemiologyAxis = 'cronologia';
-    if (window.ClinicSim) window.ClinicSim.onCaseStart(caseSourceOf(selected), selected);
+    state = snap ? Core.resume(snap.state) : Core.newState(selected);
+    if (!snap && window.ClinicSim) window.ClinicSim.onCaseStart(caseSourceOf(selected), selected);
 
     clearInterval(clockInterval);
     renderPatientProfile();
@@ -610,6 +655,8 @@ const ClinicEngine = (() => {
     renderExamsCatalog();
     resetChat();
     resetResolutionForm();
+    if (snap) restorePausedSession(snap);
+    updateClockUI();
     updateMetersUI();
     switchTab('prontuarioTab');
 
@@ -777,93 +824,59 @@ const ClinicEngine = (() => {
     }
   }
 
+  function updateClockUI() {
+    if (dom.timeElapsed) dom.timeElapsed.textContent = Core.formatClock(state.elapsedSeconds);
+  }
+
+  function checkOutcome() {
+    if (state.outcome !== 'EM_ANDAMENTO' && isCaseActive) triggerCriticalOutcome(state.outcome);
+  }
+
   function handleTimeTick() {
     if (!isCaseActive) return;
-
-    elapsedSeconds++;
-    const mins = Math.floor(elapsedSeconds / 60);
-    const secs = elapsedSeconds % 60;
-    if (dom.timeElapsed) {
-      dom.timeElapsed.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
-
-    if (elapsedSeconds > 0 && elapsedSeconds % 60 === 0 && currentCase && currentCase.taxaDecaimento) {
-      applyDecay(
-        currentCase.taxaDecaimento.vitalidadePorMinuto || 1,
-        currentCase.taxaDecaimento.pacienciaPorMinuto || 1
-      );
-    }
+    state = Core.tick(state, currentCase && currentCase.taxaDecaimento);
+    updateClockUI();
+    updateMetersUI();
+    checkOutcome();
   }
 
   function applyDecay(deltaVitality, deltaPatience) {
-    vitality = Math.max(0, vitality - deltaVitality);
-    patience = Math.max(0, patience - deltaPatience);
+    state = Core.applyDecay(state, deltaVitality, deltaPatience);
     updateMetersUI();
+    checkOutcome();
+  }
 
-    if (vitality <= 0) {
-      triggerCriticalOutcome('OBITO');
-    } else if (patience <= 0) {
-      triggerCriticalOutcome('ABANDONO');
+  function setMeter(fill, valueEl, bar, value, levelClass) {
+    const rounded = Math.round(value);
+    if (valueEl) valueEl.textContent = `${rounded}%`;
+    if (fill) {
+      fill.style.width = `${value}%`;
+      fill.className = `meter-fill ${levelClass}`;
     }
+    if (bar) bar.setAttribute('aria-valuenow', String(rounded));
   }
 
   function updateMetersUI() {
-    if (dom.vitalityValue) dom.vitalityValue.textContent = `${Math.round(vitality)}%`;
-    if (dom.vitalityFill) {
-      dom.vitalityFill.style.width = `${vitality}%`;
-      if (vitality > 60) dom.vitalityFill.className = 'meter-fill status-healthy';
-      else if (vitality > 25) dom.vitalityFill.className = 'meter-fill status-warning';
-      else dom.vitalityFill.className = 'meter-fill status-danger';
-    }
-
-    if (dom.patienceValue) dom.patienceValue.textContent = `${Math.round(patience)}%`;
-    if (dom.patienceFill) {
-      dom.patienceFill.style.width = `${patience}%`;
-      if (patience > 50) dom.patienceFill.className = 'meter-fill status-patient';
-      else if (patience > 20) dom.patienceFill.className = 'meter-fill status-warning';
-      else dom.patienceFill.className = 'meter-fill status-danger';
-    }
+    setMeter(dom.vitalityFill, dom.vitalityValue, dom.vitalityFill && dom.vitalityFill.parentNode, state.vitality, Core.vitalityLevel(state.vitality));
+    setMeter(dom.patienceFill, dom.patienceValue, dom.patienceFill && dom.patienceFill.parentNode, state.patience, Core.patienceLevel(state.patience));
   }
 
   // =========================================================
   // 8. ANAMNESE COM O PACIENTE VIRTUAL (apiLearnClinicalChat)
   // =========================================================
 
-  /** Contexto do paciente para casos que vivem no navegador (embutidos/gerados). */
   function buildPatientContext() {
-    const c = currentCase || {};
-    const pac = c.paciente || {};
-    const oculto = c.contextoOculto || {};
-    const examesNomes = requestedExams.map((id) => {
-      const ex = (c.examesDisponiveis || []).find((e) => e.id === id);
-      return ex ? String(ex.nome) : String(id);
-    });
-    return fitToBytes({
-      nome: pac.nome || '',
-      idade: pac.idade !== undefined ? String(pac.idade) : '',
-      profissao: pac.profissao || oculto.pacienteProfissao || '',
-      genero: pac.genero || '',
-      queixaPrincipal: c.queixaPrincipal || '',
-      exposicaoReal: oculto.exposicaoReal || '',
-      sintomas: oculto.sintomas || '',
-      temperamento: oculto.temperamento || '',
-      comportamento: oculto.comportamento || '',
-      regrasFala: oculto.regrasFala || '',
-      nivelConsciencia: oculto.nivelConsciencia || '',
-      sinaisVitais: c.sinaisVitais || {},
-      vitalidadeAtual: Math.round(vitality),
-      pacienciaAtual: Math.round(patience),
-      examesJaLiberados: examesNomes.slice(0, 15),
-    }, CONTEXT_MAX_BYTES - 200);
+    return Core.buildPatientContext(currentCase, requestedExams, state);
   }
 
   async function submitPatientQuestion() {
     if (!dom.questionInput || !isCaseActive || !currentCase) return;
 
     const text = dom.questionInput.value.trim();
-    if (!text) return;
+    if (!text || chatBusy) return;
+    chatBusy = true;
 
-    appendChatBubble('student', 'Você (Estudante)', text);
+    const studentBubble = appendChatBubble('student', 'Você (Estudante)', text);
     dom.questionInput.value = '';
     if (dom.sendQuestionBtn) dom.sendQuestionBtn.disabled = true;
 
@@ -920,11 +933,11 @@ const ClinicEngine = (() => {
     let poolReacoes = reacoesGerais;
     const isExigente = currentCase.contextoOculto && String(currentCase.contextoOculto.temperamento).toLowerCase().includes('exigente');
 
-    if (vitality < 45) {
+    if (state.vitality < 45) {
       poolReacoes = reacoesDorOuFraqueza;
-    } else if (patience < 45 || isExigente) {
+    } else if (state.patience < 45 || isExigente) {
       poolReacoes = reacoesImpacientes;
-    } else if (patience < 70) {
+    } else if (state.patience < 70) {
       poolReacoes = reacoesAnsiosas;
     }
 
@@ -943,33 +956,29 @@ const ClinicEngine = (() => {
 
     const response = await callLaift('apiLearnClinicalChat', payload);
 
-    let falaObtida = '';
-    if (response.success && typeof response.patientReply === 'string' && response.patientReply.trim()) {
-      falaObtida = response.patientReply.trim();
-    } else {
-      // Sem IA (cota esgotada, ponte ausente ou serviço fora): o caso segue
-      // com respostas simuladas localmente, e a pessoa é avisada uma vez.
-      if (response.quotaExceeded) {
-        appendSystemNotice(`${response.message} Até lá, o paciente responde de forma simulada.`);
-      } else if (!bridgeNoticeShown) {
-        bridgeNoticeShown = true;
-        appendSystemNotice(`${response.message || 'IA indisponível.'} O paciente vai responder de forma simulada.`);
-      }
-      falaObtida = gerarRespostaContextualLocal(text);
+    if (typingBubble) typingBubble.remove();
+    chatBusy = false;
+    if (dom.sendQuestionBtn) dom.sendQuestionBtn.disabled = false;
+
+    if (!(response.success && typeof response.patientReply === 'string' && response.patientReply.trim())) {
+      // Sem IA (cota esgotada, ponte ausente ou serviço fora): NADA é inventado. A pergunta não conta, o paciente
+      // não responde e a pessoa vê o motivo; pode repetir a pergunta depois.
+      if (studentBubble) studentBubble.remove();
+      appendSystemNotice(response.quotaExceeded && response.message ? response.message : UNAVAILABLE_MSG);
+      dom.questionInput.value = text;
+      if (response.quotaExceeded) refreshAiQuota();
+      return;
     }
 
-    if (typingBubble) typingBubble.remove();
+    const falaObtida = response.patientReply.trim();
     appendChatBubble('patient', nomePac, falaObtida);
     chatTurns.push({ role: 'student', text: text.slice(0, 500) });
     chatTurns.push({ role: 'patient', text: falaObtida.slice(0, 500) });
 
     if (currentCase.tipo === 'emergencia') {
-      patience = Math.max(0, patience - 1);
+      state = Object.assign({}, state, { patience: Math.max(0, state.patience - 1) });
     }
     updateMetersUI();
-    if (response.quotaExceeded) refreshAiQuota();
-
-    if (dom.sendQuestionBtn) dom.sendQuestionBtn.disabled = false;
     if (dom.chatHistory) dom.chatHistory.scrollTop = dom.chatHistory.scrollHeight;
   }
 
@@ -994,52 +1003,6 @@ const ClinicEngine = (() => {
     dom.chatHistory.scrollTop = dom.chatHistory.scrollHeight;
   }
 
-  function gerarRespostaContextualLocal(pergunta) {
-    const p = pergunta.toLowerCase().trim();
-    const isExigente = currentCase && (
-      (currentCase.contextoOculto && String(currentCase.contextoOculto.temperamento).toLowerCase().includes('exigente')) ||
-      (currentCase.paciente && currentCase.paciente.profissao && String(currentCase.paciente.profissao).toLowerCase().includes('google'))
-    );
-
-    let prefixo = '';
-    if (vitality < 30) {
-      prefixo = '(gemendo com dor intensa, voz fraca) ...ai... doutor(a)... ';
-    } else if (vitality < 60) {
-      prefixo = '(respirando curto e cansado) ...espera um instante... ';
-    }
-
-    if (p.includes('receita') || p.includes('remédio') || p.includes('encaminhamento') || p.includes('antibiótico')) {
-      if (isExigente) {
-        return `${prefixo}É por isso que estou aqui! Já li tudo na internet e sei que preciso da receita logo. Você vai me examinar direito?`;
-      }
-      return `${prefixo}Eu só queria um remédio para parar esse mal-estar, doutor(a)...`;
-    }
-
-    if (p.includes('calma') || p.includes('tranquil') || p.includes('explicar') || p.includes('ajudar')) {
-      patience = Math.min(100, patience + 8);
-      updateMetersUI();
-      return `${prefixo}Tudo bem... me sinto mais seguro ouvindo isso. Pode perguntar.`;
-    }
-
-    if (p.includes('quando') || p.includes('tempo') || p.includes('horas') || p.includes('começou')) {
-      return `${prefixo}Começou faz umas horas. No início era só um enjoo, mas depois foi piorando.`;
-    }
-
-    if (p.includes('tomou') || p.includes('medicamento') || p.includes('comprimido') || p.includes('dose')) {
-      return `${prefixo}Tomei uns comprimidos hoje sem olhar direito a cartela...`;
-    }
-
-    if (p.includes('veneno') || p.includes('produto') || p.includes('química') || p.includes('cheiro')) {
-      return `${prefixo}Eu mexi com uns produtos mais cedo e senti um cheiro bem forte...`;
-    }
-
-    if (p.includes('auscultar') || p.includes('estetoscópio') || p.includes('pulmão')) {
-      return `${prefixo}Pode encostar o aparelho... [Ausculta: achados compatíveis com o quadro descrito no prontuário.]`;
-    }
-
-    return `${prefixo}Estou me sentindo muito mal... me dê alguma coisa para aliviar, por favor...`;
-  }
-
   // =========================================================
   // 9. EXAMES E CONDUTAS CRÍTICAS
   // =========================================================
@@ -1061,8 +1024,10 @@ const ClinicEngine = (() => {
       btn.textContent = 'Solicitado';
     }
 
-    elapsedSeconds += (Number(exam.custoTempoMin) || 5) * 60;
-    applyDecay(Math.abs(Number(exam.impactoVitalidade) || 0), Math.abs(Number(exam.impactoPaciencia) || 0));
+    state = Core.applyExam(state, exam);
+    updateClockUI();
+    updateMetersUI();
+    checkOutcome();
 
     const emptyNotice = dom.releasedExamsList?.querySelector('.empty-state-notice');
     if (emptyNotice) emptyNotice.remove();
@@ -1099,23 +1064,15 @@ const ClinicEngine = (() => {
   // 10. FECHAMENTO & AVALIAÇÃO (apiLearnClinicalEvaluate)
   // =========================================================
 
-  const OUTCOME_TO_SERVER = { EM_ANDAMENTO: 'concluido', OBITO: 'obito', ABANDONO: 'abandono' };
-
-  function answerKeyForServer() {
-    const gab = currentCase && currentCase.gabaritoPreceptor;
-    if (!gab) return undefined;
-    return fitToBytes({
-      diagnostico: String(gab.diagnostico || ''),
-      conduta: String(gab.conduta || ''),
-      palavrasChave: Array.isArray(gab.palavrasChave) ? gab.palavrasChave.slice(0, 12).map(String) : [],
-    }, ANSWER_KEY_MAX_BYTES - 100);
-  }
+  const OUTCOME_TO_SERVER = Core.OUTCOME_TO_SERVER;
 
   async function finalizeClinicalCase() {
-    if (!isCaseActive && caseOutcome === 'EM_ANDAMENTO') return;
+    if (!isCaseActive && caseOutcome === 'EM_ANDAMENTO' && !canRetryEvaluation) return;
     if (!currentCase) return;
+    pausedSessions.delete(snapshotKey(currentCase));
 
     isCaseActive = false;
+    canRetryEvaluation = false;
     clearInterval(clockInterval);
 
     if (dom.submitResolutionBtn) {
@@ -1136,15 +1093,15 @@ const ClinicEngine = (() => {
         conduct,
         examsRequested: requestedExams.slice(0, 30),
         questionsAsked: chatTurns.filter((t) => t.role === 'student').map((t) => t.text.slice(0, 300)).slice(-30),
-        elapsedSeconds,
-        vitality: Math.round(vitality),
+        elapsedSeconds: state.elapsedSeconds,
+        vitality: Math.round(state.vitality),
         outcome,
         toxindrome: currentCase.toxindrome || '',
         agent: currentCase.agentePrincipal || currentCase.agente || '',
       },
     };
     // Casos do acervo: o gabarito é SÓ do servidor (o cliente nem o recebe).
-    if (source !== 'acervo') input.answerKey = answerKeyForServer();
+    if (source !== 'acervo') input.answerKey = Core.answerKeyForServer(currentCase);
     Object.assign(input, simExtra());
 
     const response = await callLaift('apiLearnClinicalEvaluate', input);
@@ -1165,45 +1122,17 @@ const ClinicEngine = (() => {
       return;
     }
 
-    // Sem avaliação do servidor: nota local por palavras-chave (só quando o
-    // gabarito está no navegador), claramente marcada como não registrada.
-    const aviso = response.quotaExceeded
-      ? response.message
-      : (response.message || 'O preceptor com IA está indisponível agora.');
-    if (source === 'acervo' || !currentCase.gabaritoPreceptor) {
-      showPreceptorModal(null, outcome, { note: `${aviso} Tente submeter este caso do acervo novamente mais tarde.` });
+    // Sem avaliação do servidor: NÃO há nota local nem leito "Concluído". Quem ainda está no atendimento pode tentar
+    // de novo; nos desfechos críticos o resultado fica "indisponível" e nada é registrado.
+    const aviso = response.quotaExceeded && response.message ? response.message : UNAVAILABLE_MSG;
+    if (response.quotaExceeded) refreshAiQuota();
+    if (caseOutcome === 'EM_ANDAMENTO') {
+      canRetryEvaluation = true;
+      if (dom.submitResolutionBtn) dom.submitResolutionBtn.disabled = false;
+      await dialogAlert(aviso);
       return;
     }
-    registrarCasoResolvido(currentCase.id);
-    showPreceptorModal(avaliarCondutaLocalmente(diagnosis, conduct, outcome), outcome, {
-      note: `${aviso} Esta é uma avaliação simplificada, feita no seu navegador e não registrada.`,
-    });
-    if (response.quotaExceeded) refreshAiQuota();
-  }
-
-  function avaliarCondutaLocalmente(diagnosis, conduct, outcome) {
-    const gab = (currentCase && currentCase.gabaritoPreceptor) ? currentCase.gabaritoPreceptor : {};
-    const semAcento = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-    const texto = semAcento(diagnosis + ' ' + conduct);
-    const palavras = Array.isArray(gab.palavrasChave) ? gab.palavrasChave : [];
-    const acertos = palavras.filter((p) => texto.includes(semAcento(p))).length;
-
-    const proporcao = palavras.length > 0 ? (acertos / palavras.length) : 0.5;
-    let nota = Math.round(proporcao * 80) + 15;
-    if (outcome === 'obito') nota = Math.min(25, nota);
-    if (outcome === 'abandono') nota = Math.min(40, nota);
-    const acertouDiag = proporcao >= 0.40;
-
-    return {
-      score: Math.min(100, Math.max(10, nota)),
-      verdict: acertouDiag ? 'Hipótese compatível com o gabarito' : 'Hipótese divergente do gabarito',
-      feedback: `O diagnóstico formulado foi ${acertouDiag ? 'compatível com o quadro clínico' : 'divergente do gabarito oficial'}. ${outcome === 'obito' ? 'Atenção imediata à administração de antídotos em quadros toxicológicos críticos.' : 'Aprofunde a correlação semiológica e os protocolos de farmacoterapia de suporte.'}`,
-      strengths: [],
-      improvements: [
-        `Diagnóstico esperado: ${gab.diagnostico || 'não cadastrado'}`,
-        `Conduta recomendada: ${gab.conduta || 'não cadastrada'}`,
-      ],
-    };
+    showPreceptorModal(null, outcome, { note: aviso });
   }
 
   function showPreceptorModal(result, outcome, opts) {
@@ -1211,9 +1140,7 @@ const ClinicEngine = (() => {
     const o = opts || {};
     if (dom.preceptorGrade) dom.preceptorGrade.textContent = result && Number.isFinite(Number(result.score)) ? String(Math.round(Number(result.score))) : '--';
     if (dom.caseOutcomeTitle) {
-      dom.caseOutcomeTitle.textContent = outcome === 'obito'
-        ? 'Desfecho Crítico: Óbito'
-        : outcome === 'abandono' ? 'Desfecho: Abandono da Consulta' : 'Atendimento Finalizado';
+      dom.caseOutcomeTitle.textContent = Core.outcomeTitle(outcome);
     }
     if (dom.caseOutcomeSummary) dom.caseOutcomeSummary.textContent = result ? String(result.verdict || '') : 'Avaliação indisponível.';
 
@@ -1234,7 +1161,7 @@ const ClinicEngine = (() => {
       }
     }
 
-    dom.preceptorModal?.classList.add('active');
+    openModal(dom.preceptorModal, window.closePreceptorModal);
   }
 
   function switchTab(tabId) {
@@ -1242,6 +1169,7 @@ const ClinicEngine = (() => {
       const isActive = btn.dataset.tab === tabId;
       btn.classList.toggle('active', isActive);
       btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      btn.setAttribute('tabindex', isActive ? '0' : '-1');
     });
     dom.tabPanes.forEach((pane) => {
       pane.classList.toggle('active', pane.id === tabId);
@@ -1283,7 +1211,7 @@ const ClinicEngine = (() => {
       const caso = Object.assign({}, res.case, { caseSource: 'ia' });
       if (typeof clinicalCases !== 'undefined' && Array.isArray(clinicalCases)) clinicalCases.unshift(caso);
       await refreshAiQuota();
-      await dialogAlert(`✅ Novo paciente admitido no leito: ${(caso.paciente && caso.paciente.nome) || 'Paciente'} (${caso.titulo || 'Caso Clínico'}).\nO caso foi enviado para revisão da diretoria antes de entrar no Acervo da Liga.`);
+      await dialogAlert(`Novo paciente admitido no leito: ${(caso.paciente && caso.paciente.nome) || 'Paciente'} (${caso.titulo || 'Caso Clínico'}).`);
       openBed(caso);
       return;
     }
@@ -1294,69 +1222,10 @@ const ClinicEngine = (() => {
       return;
     }
 
-    // Falha da IA (ou sem ponte): o plantão não fica parado — gera um caso
-    // simulado localmente, avisando que ele não veio da IA.
+    // Falha da IA ou do servidor: não se inventa caso. Recusa de tema e outros erros do servidor trazem a própria
+    // mensagem (clara); sem ponte ou sem rede, o aviso padrão.
     setGenerateButtonIdle();
-    const casoBackup = gerarCasoLocalContingencia(tema);
-    if (typeof clinicalCases !== 'undefined' && Array.isArray(clinicalCases)) clinicalCases.unshift(casoBackup);
-    await dialogAlert(`${res.message || 'A IA está indisponível agora.'}\n\nUm caso simulado localmente foi admitido no lugar: ${casoBackup.paciente.nome}.`);
-    openBed(casoBackup);
-  }
-
-  function gerarCasoLocalContingencia(tema) {
-    const idUnico = 'caso_local_' + Date.now();
-    const isExigente = tema.toLowerCase().includes('receita') || tema.toLowerCase().includes('antibiótico');
-
-    return {
-      id: idUnico,
-      caseSource: 'builtin',
-      titulo: `Caso Simulado: ${tema}`,
-      tipo: 'emergencia',
-      toxindrome: 'Outra',
-      agentePrincipal: tema,
-      dificuldade: 'Avançado',
-      vitalidadeInicial: 88,
-      pacienciaInicial: isExigente ? 65 : 85,
-      taxaDecaimento: { vitalidadePorMinuto: 2, pacienciaPorMinuto: 1.5 },
-      paciente: {
-        nome: isExigente ? 'Renata Sampaio' : 'Valdir Monteiro',
-        idade: isExigente ? 36 : 51,
-        peso: isExigente ? '62 kg' : '78 kg',
-        profissao: isExigente ? 'Analista de Sistemas' : 'Trabalhador Autônomo',
-        alergias: 'Nega alergias conhecidas'
-      },
-      queixaPrincipal: isExigente
-        ? 'Doutor, eu já pesquisei meus sintomas e tenho certeza que preciso de uma receita de antibiótico logo.'
-        : `Doutor(a)... passei mal depois de lidar com ${tema}... tô com o peito pesado e tontura.`,
-      historicoAdmissao: `Admissão com queixas correlacionadas a ${tema}. Necessidade de esclarecimento clínico imediato.`,
-      sinaisVitais: { pa: '135/85 mmHg', fc: '98 bpm', fr: '20 irpm', temp: '37.1 °C', spo2: '95%', glasgow: '15' },
-      contextoOculto: {
-        exposicaoReal: `Quadro associado a ${tema}.`,
-        sintomas: 'desconforto gástrico, cefaleia e palpitações',
-        temperamento: isExigente ? 'Exigente, questionadora' : 'Preocupado, humilde',
-        nivelConsciencia: 'Lúcido e orientado'
-      },
-      guiaSemiologico: {
-        cronologia: ['Há quantas horas esses sintomas começaram?', 'A dor está piorando ou constante?'],
-        farmacoterapia: ['Quais medicamentos você tomou hoje?', 'Quantos comprimidos e qual a dose?'],
-        exposicao: ['Houve contato com defensivos ou químicos?', 'Ingeriu alimentos ou bebidas suspeitas?'],
-        sinaisAlarme: ['Está sentindo aperto no peito ou falta de ar?', 'Notou visão embaçada ou salivação excessiva?']
-      },
-      perguntasSugeridas: [
-        'Há quanto tempo começaram os sintomas?',
-        'Qual remédio você tomou antes de vir aqui?',
-        'Você sente falta de ar ou suor frio?'
-      ],
-      examesDisponiveis: [
-        { id: 'lab_triagem', nome: 'Painel Bioquímico Geral', custoTempoMin: 12, impactoVitalidade: 0, impactoPaciencia: -1, essencial: true, resultado: `Estresse metabólico compatível com ${tema}.` },
-        { id: 'ecg_12d', nome: 'Eletrocardiograma de 12 Derivações', custoTempoMin: 5, impactoVitalidade: 0, impactoPaciencia: 0, essencial: true, resultado: 'Ritmo sinusal, traçado eletrocardiográfico dentro da normalidade.' }
-      ],
-      gabaritoPreceptor: {
-        diagnostico: `Quadro Clínico e/ou Toxicológico Agudo associado a ${tema}`,
-        conduta: 'Anamnese dirigida, suporte hidroeletrolítico e orientação farmacêutica.',
-        palavrasChave: ['anamnese', 'suporte', tema.toLowerCase().slice(0, 40)]
-      }
-    };
+    await dialogAlert(res.message || UNAVAILABLE_MSG);
   }
 
   // =========================================================
@@ -1396,7 +1265,9 @@ const ClinicEngine = (() => {
     submitPatientQuestion,
     finalizeClinicalCase,
     renderSemiologyGuide,
-    refreshAiQuota
+    refreshAiQuota,
+    getState: () => state,
+    isPausedFor: (id) => pausedSessions.has(String(id)),
   };
 })();
 

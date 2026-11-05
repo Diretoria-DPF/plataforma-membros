@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="laift-always-dark">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
@@ -15,7 +15,7 @@
   <script src="vendor/smiles-drawer-2.1.7/smiles-drawer.min.js" integrity="sha384-7qaH3wakC2tfDmCIw89VkGQ+G9iEvHeVV+GFGveOo/NLBcwW3TtGNHrL7HLDCbCm" crossorigin="anonymous"></script>
   <script src="vendor/3dmol/3Dmol-min.js" integrity="sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d" crossorigin="anonymous"></script>
 
-  <!-- Tokens do design system (a bancada é sempre escura: ver .laift-always-dark) -->
+  <!-- Tokens do design system (a bancada segue o tema da plataforma: data-theme) -->
   <link rel="stylesheet" href="../shared/laift-dialog.css">
   <link rel="stylesheet" href="../shared/laift-tokens.css">
   <link rel="stylesheet" href="style.css">
@@ -43,8 +43,12 @@
         🧬 Estúdio 3D
       </button>
 
-      <button class="manual-btn" id="btnManual" title="Manual e Guia de Bancada" data-action="abrirManual">
-        📖 Guia
+      <button class="manual-btn btn-comece" id="btnComece" title="Monte a primeira reação, a síntese da aspirina, em 3 passos" data-action="comecarAqui">
+        ▶ Comece aqui
+      </button>
+
+      <button class="manual-btn" id="btnManual" title="Roteiro de bancada: como usar o laboratório" data-action="abrirManual">
+        📖 Roteiro
       </button>
     </div>
   </header>
@@ -55,7 +59,7 @@
   <main class="main-grid" id="mainGrid" data-mobile-view="bancada">
 
     <!-- 1. PAINEL ESQUERDO: CONTROLES E REAGENTES -->
-    <aside class="panel panel-controls" id="viewReagentes">
+    <aside class="panel panel-controls" id="viewReagentes" aria-label="Reagentes e controles">
       <div class="panel-header-sticky">
         <h3><span class="icon-dot"></span> Reagentes & Bancada</h3>
       </div>
@@ -78,8 +82,9 @@
 
         <div class="control-group compact-row">
           <div style="flex: 1;">
-            <label for="qtdInput">Quantidade:</label>
-            <input type="number" id="qtdInput" value="10" min="0.1" step="0.5">
+            <label for="qtdInput">Quantidade (<span id="qtdUnidade">escolha um reagente</span>):</label>
+            <input type="number" id="qtdInput" value="10" min="0.1" step="0.5" aria-describedby="qtdAjuda">
+            <small id="qtdAjuda" class="sub-label">g para sólidos; mL para líquidos e soluções.</small>
           </div>
           <div style="flex: 1.4;">
             <label for="modoAdd">Modo:</label>
@@ -109,7 +114,7 @@
         </div>
 
         <div class="control-group compact-row" style="align-items: center;">
-          <input type="number" id="tempAlvo" value="25" style="width: 65px;" title="Temperatura Alvo (°C)">
+          <input type="number" id="tempAlvo" value="25" style="width: 65px;" title="Temperatura alvo (°C)" aria-label="Temperatura alvo em graus Celsius">
           <span class="sub-label">°C Alvo</span>
           <input type="range" id="heatSlider" min="1" max="10" value="5" data-action-input="ajustarPotenciaChama" title="Intensidade da Chama" style="flex: 1;">
         </div>
@@ -189,7 +194,7 @@
     </section>
 
     <!-- 3. PAINEL DIREITO: ABAS DE ANÁLISE -->
-    <aside class="side-panel-right" id="viewAnalise">
+    <aside class="side-panel-right" id="viewAnalise" aria-label="Análise da mistura">
       
       <div class="right-tab-bar" role="tablist" aria-label="Painéis de análise">
         <button class="rtab-btn active" data-tab="tabMol" data-action="switchRightTab" data-arg="tabMol">🔬 Molécula</button>
@@ -206,8 +211,8 @@
             <div class="panel-section-header">
               <h3><span class="icon-dot"></span> Projeção Estrutural</h3>
               <div style="display: flex; gap: 4px;">
-                <button class="btn btn-clear active-btn" id="btnModo2D" style="padding: 2px 7px; font-size: 0.62rem;" data-action="setModoVisualizacao" data-arg="2D">2D</button>
-                <button class="btn btn-clear" id="btnModo3D" style="padding: 2px 7px; font-size: 0.62rem;" data-action="setModoVisualizacao" data-arg="3D">3D WebGL</button>
+                <button class="btn btn-clear active-btn" id="btnModo2D" style="padding: 2px 7px; font-size: 0.75rem;" data-action="setModoVisualizacao" data-arg="2D">2D</button>
+                <button class="btn btn-clear" id="btnModo3D" style="padding: 2px 7px; font-size: 0.75rem;" data-action="setModoVisualizacao" data-arg="3D">3D WebGL</button>
               </div>
             </div>
             
@@ -240,11 +245,11 @@
               <div class="mol-data-row-duo">
                 <div>
                   <span class="data-key">Densidade:</span>
-                  <span id="molDensity" style="font-family: var(--font-mono); font-size: 0.7rem; color: #cbd5e1;">--</span>
+                  <span id="molDensity" style="font-family: var(--font-mono); font-size: 0.75rem; color: #cbd5e1;">--</span>
                 </div>
                 <div>
                   <span class="data-key">P. Ebulição / Fusão:</span>
-                  <span id="molThermic" style="font-family: var(--font-mono); font-size: 0.7rem; color: #cbd5e1;">--</span>
+                  <span id="molThermic" style="font-family: var(--font-mono); font-size: 0.75rem; color: #cbd5e1;">--</span>
                 </div>
               </div>
               <button class="btn btn-clear btn-dossie-full" id="btnDossieLab" data-action="abrirDossieCompostoAtual">
@@ -262,7 +267,7 @@
               <button class="btn btn-clear" data-action="limparCurvaPH">Limpar</button>
             </div>
             <div class="mini-canvas-wrap" style="flex: 1; min-height: 170px;">
-              <canvas id="phCanvas"></canvas>
+              <canvas id="phCanvas" role="img" aria-label="Curva de pH em função do volume adicionado"></canvas>
             </div>
           </div>
         </div>
@@ -290,7 +295,7 @@
             <p id="missionDesc"></p>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
               <span class="badge" id="missionStatus">Pendente</span>
-              <button class="btn btn-play" id="btnNextMission" data-action="proximaMissao" style="display: none; padding: 4px 10px; font-size: 0.7rem;">Avançar ➔</button>
+              <button class="btn btn-play" id="btnNextMission" data-action="proximaMissao" style="display: none; padding: 4px 10px; font-size: 0.75rem;">Avançar ➔</button>
             </div>
           </div>
         </div>
@@ -350,16 +355,31 @@
     <button class="btn btn-reset" style="margin-top: 18px; padding: 10px 24px;" data-action="resetarLaboratorio">Restaurar Bancada</button>
   </div>
 
-  <div class="manual-modal" id="manualModal" role="dialog" aria-modal="true" aria-label="Guia técnico de bancada" style="display: none;">
+  <div class="manual-modal" id="comeceModal" role="dialog" aria-modal="true" aria-labelledby="comeceTitulo" style="display: none;">
     <div class="manual-content">
-      <h3>📖 Guia Técnico de Bancada & Síntese</h3>
+      <h3 id="comeceTitulo">▶ Comece aqui: síntese da aspirina em 3 passos</h3>
+      <p>C₇H₆O₃ + (CH₃CO)₂O → C₉H₈O₄ + CH₃COOH. A proporção é 1:1 em mol. O ácido salicílico (2,76 g = 20 mmol) é o reagente limitante; o anidrido acético (2 mL = 21 mmol) fica ligeiramente em excesso.</p>
+      <ol id="comecePassos">
+        <li id="comecePasso1"><strong>Passo 1.</strong> Pesar 2,76 g de ácido salicílico.</li>
+        <li id="comecePasso2"><strong>Passo 2.</strong> Adicionar 2 mL de anidrido acético e 0,1 mL de ácido sulfúrico (catalisador).</li>
+        <li id="comecePasso3"><strong>Passo 3.</strong> Ligar o agitador e manter 70 °C (faixa de 60 a 80 °C) por cerca de 30 minutos simulados.</li>
+      </ol>
+      <p id="comeceTexto" role="status" aria-live="polite">Toque em "Executar passo" para montar cada etapa na bancada.</p>
+      <button class="close-manual" id="btnPassoComece" data-action="passoComeceAqui">Executar passo 1</button>
+      <button class="close-manual" data-action="fecharComece">Fechar</button>
+    </div>
+  </div>
+
+  <div class="manual-modal" id="manualModal" role="dialog" aria-modal="true" aria-label="Roteiro de bancada" style="display: none;">
+    <div class="manual-content">
+      <h3>📖 Roteiro de Bancada & Síntese</h3>
       <p>Simulador farmacotécnico e físico-químico da LAIFT com inteligência artificial integrada.</p>
       <ul>
         <li><strong>Preceptor com IA:</strong> Pergunte no chat sobre qualquer rota de síntese (Dipirona, Aspirina, Paracetamol, etc.). O preceptor responderá considerando reagentes e mecanismos estequiométricos. Há uma cota diária de perguntas por pessoa.</li>
         <li><strong>Visualização Híbrida 2D/3D:</strong> Alterne entre a fórmula estrutural plana e o modelo tridimensional WebGL manipulável diretamente na aba de Molécula.</li>
         <li><strong>Memória de Aprendizado:</strong> As conformações 3D pesquisadas ficam guardadas no navegador (IndexedDB) e as rotas de síntese mais pedidas ficam em cache no servidor, para resposta imediata.</li>
       </ul>
-      <button class="close-manual" data-action="fecharManual">Fechar Guia</button>
+      <button class="close-manual" data-action="fecharManual">Fechar Roteiro</button>
     </div>
   </div>
 
@@ -397,6 +417,7 @@
   <script src="js/lab-apis.js"></script>
   <script src="js/lab-storage.js"></script>
   <script src="js/lab-preceptor.js"></script>
+  <script src="js/lab-quimica.js"></script>
   <script src="js/script.js"></script>
 </body>
 </html>
