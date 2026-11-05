@@ -88,7 +88,7 @@ describe('QR rotativo: assinatura e verificação', () => {
   });
 
   test('segredo próprio: com ATTENDANCE_QR_SECRET, o QR não vale com a chave derivada do pepper', async () => {
-    const withSecret = makeEnv({ ATTENDANCE_QR_SECRET: 'segredo-proprio-do-qr-com-32-caracteres-ou-mais' });
+    const withSecret = makeEnv({ ATTENDANCE_QR_SECRET: 'portao-' + 'o'.repeat(40) });
     const qr = await AttendanceService.signRotatingQr(withSecret, MEMBER.profileId, EVENT_ID, NOW);
     expect((await AttendanceService.inspectAttendanceQr(withSecret, qr, { eventId: EVENT_ID, nowMs: NOW })).ok).toBe(true);
     expect(await AttendanceService.inspectAttendanceQr(env, qr, { eventId: EVENT_ID, nowMs: NOW }))

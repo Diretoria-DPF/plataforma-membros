@@ -53,7 +53,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 // v2 do crachá impresso segue valendo. O admin liga a flag para encerrar o v2.
 const REQUIRE_ROTATING_FLAG = 'attendance_qr_rotating_only';
 const QR_V3_PREFIX = 'LAIFT:v3:';
-const QR_V3_KEY_DOMAIN = 'laift-attendance-qr-v3';
+const QR_V3_LABEL = 'laift-attendance-qr-v3';
 const QR_WINDOW_SECONDS = 30;
 const QR_WINDOW_MS = QR_WINDOW_SECONDS * 1000;
 const QR_WINDOWS_BEHIND = 2;  // janela atual + 2 anteriores (~90 s no pior caso)
@@ -133,7 +133,7 @@ function windowOf(nowMs) {
 }
 
 async function computeRotatingSignature(env, profileId, eventId, win) {
-  const key = await getQrKey(env.ATTENDANCE_QR_SECRET || env.SESSION_TOKEN_PEPPER, QR_V3_KEY_DOMAIN);
+  const key = await getQrKey(env.ATTENDANCE_QR_SECRET || env.SESSION_TOKEN_PEPPER, QR_V3_LABEL);
   const message = QR_V3_PREFIX + profileId + '.' + eventId + '.' + win;
   const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message));
   return base64url(new Uint8Array(mac).slice(0, QR_SIG_BYTES));
