@@ -352,3 +352,16 @@ test('a revisão é só local: nenhum dos arquivos novos usa a Worker, e o texto
     assert.doesNotMatch(textos, /rascunho|revisad[oa]s? por|por IA|não revisad/i, f);
   });
 });
+
+test('para-hoje: a missão da semana entra depois do quiz e antes dos extras, sem passar de 4 itens', () => {
+  const Missao = require('../modulos/shared/missao-semana.js');
+  const missao = Missao.paraHojeItem(Missao.emptyStore('tag'), Date.parse('2026-11-05T15:00:00Z'));
+  assert.equal(missao.kind, 'missao');
+  const review = { due: 2, next: 'farmaco', modules: [{ id: 'farmaco', name: 'Farmacologia', due: 2 }] };
+  const cheio = ParaHoje.build({ dailyQuizDone: false }, review, [{ kind: 'simulado' }, { kind: 'caso' }], missao);
+  assert.deepEqual(cheio.map((i) => i.kind), ['review', 'quiz', 'missao', 'simulado']);
+  const sem = ParaHoje.build({ dailyQuizDone: false }, null, [{ kind: 'simulado' }], missao);
+  assert.deepEqual(sem.map((i) => i.kind), ['quiz', 'missao', 'simulado']);
+  assert.deepEqual(ParaHoje.build(null, null, [{ kind: 'caso' }], null).map((i) => i.kind), ['caso']);
+  assert.equal(ParaHoje.missionItem({ kind: 'outro', title: 'x' }), null);
+});

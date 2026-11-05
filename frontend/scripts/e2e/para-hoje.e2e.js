@@ -70,10 +70,11 @@ module.exports = async function () {
     await seed(app.page, EMAIL);
     await app.showPanel('panel-learn');
     const itens = await listaDoAprender(app.page);
-    check(itens.length === 4, 'Aprender: revisão, quiz do dia, simulado e caso clínico (' + itens.length + ' itens)');
+    check(itens.length === 4, 'Aprender: revisão, quiz do dia, missão da semana e simulado (' + itens.length + ' itens)');
     check(itens[0].title === 'Revisar 5 erros', 'Aprender: "Revisar 5 erros" é o primeiro item (' + itens[0].title + ')');
     check(/Farmacologia 3/.test(itens[0].sub) && /Atlas 3D 1/.test(itens[0].sub) && /Clínica virtual 1/.test(itens[0].sub), 'Aprender: o detalhe diz quantos erros em cada módulo (' + itens[0].sub + ')');
     check(itens[1].title === 'Quiz do dia', 'Aprender: o quiz do dia vem logo depois');
+    check(itens[2].title === 'Missão da semana', 'Aprender: a missão da semana vem depois do quiz (' + itens[2].title + ')');
 
     // Tocar em "Revisar": abre Farmacologia (mais erros) e a sessão de revisão começa sozinha.
     await app.page.click('#learn-v2 .l2-today li:first-child button');
@@ -101,7 +102,7 @@ module.exports = async function () {
     await app.showPanel('panel-home');
     await app.showPanel('panel-learn');
     const outra = await listaDoAprender(app.page);
-    check(outra.length === 3 && outra.every((i) => !/Revisar/.test(i.title)), 'erros de outra conta no aparelho não aparecem');
+    check(outra.length === 4 && outra.every((i) => !/Revisar/.test(i.title)), 'erros de outra conta no aparelho não aparecem');
     check(app.errors.length === 0, 'sem erros de JavaScript (' + app.errors.join(' | ') + ')');
   } finally { await app.close(); }
 
@@ -134,7 +135,7 @@ module.exports = async function () {
     check((await limpo.page.locator('#lia-log .lia-chip-action').count()) === 0 && !/para rever hoje/.test((await limpo.page.textContent('#lia-log')) || ''), 'sem erros, a Guia não sugere revisão');
     await limpo.showPanel('panel-learn');
     const itens = await listaDoAprender(limpo.page);
-    check(itens.length === 3 && itens[0].title === 'Quiz do dia', 'sem erros, "Para hoje" tem os 3 itens de sempre');
+    check(itens.length === 4 && itens[0].title === 'Quiz do dia' && itens[1].title === 'Missão da semana', 'sem erros, "Para hoje" começa por quiz do dia e missão da semana');
   } finally { await limpo.close(); }
 
   // ---- Início v3: o mesmo item de revisão no topo de "Para hoje" ----
