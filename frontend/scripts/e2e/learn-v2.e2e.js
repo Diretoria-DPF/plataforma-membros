@@ -84,7 +84,7 @@ async function checkContent(page) {
   check((await page.textContent('.l2-focus__title')) === 'Farmacologia', 'o foco traz o último módulo real');
   check((await page.locator('.l2-ring').getAttribute('aria-label')) === '3 de 10 questões hoje', 'anel traz a meta real (3 de 10)');
   check((await page.locator('.l2-week__dot').count()) === 7 && (await page.locator('.l2-week__dot.is-on').count()) === 4, 'sete pontos, quatro acesos pela sequência real');
-  check((await page.locator('.l2-today li').count()) === 3, 'Para hoje: quiz do dia, simulado e caso clínico');
+  check((await page.locator('.l2-today li').count()) === 4, 'Para hoje: quiz do dia, missão da semana, simulado e caso clínico');
   check((await page.locator('.l2-module').count()) === 5, 'cinco módulos');
   check(((await page.textContent('#l2-weak-title')) || '') === 'Para reforçar' && ((await page.textContent('.l2-slot--weak')) || '').includes('Antídotos'), 'Para reforçar traz o tópico fraco real (ENG-06)');
   check(((await page.textContent('.l2-module')) || '').includes('72% de acerto'), 'o aproveitamento do módulo vem das estatísticas reais');
@@ -121,7 +121,7 @@ async function checkSheetAndModule(app) {
 
 async function checkQuizAndContinue(app) {
   const { page } = app;
-  await page.click('.l2-today li:nth-child(2) button');
+  await page.click('.l2-today .l2-row--simulado');
   await page.waitForSelector('#learn-viewer:not(.hidden)');
   check(((await page.textContent('#learn-viewer-title')) || '').includes('Farmacologia'), 'Simulado abre Farmacologia');
   await page.click('#learn-back');

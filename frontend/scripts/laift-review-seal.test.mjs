@@ -157,11 +157,10 @@ test('CSS: alvo >= 44px, glifo discreto (cor atenuada), foco visível; JS sem in
   assert.doesNotMatch(SRC, /\.innerHTML|insertAdjacentHTML|eval\(|new Function|document\.write/);
 });
 
-test('integração: quiz, toxicologia e Atlas carregam folha e script; motores usam o selo', () => {
+test('integração: quiz e toxicologia carregam folha e script; motores usam o selo', () => {
   const need = [
     ['modulos/quiz/index.html', 'quiz-engine'],
     ['modulos/toxicologia/index.html', 'quiz-engine'],
-    ['modulos/anatomia-3d/index.html', null],
   ];
   for (const [page, before] of need) {
     const html = fs.readFileSync(path.join(frontend, page), 'utf8');
@@ -171,9 +170,14 @@ test('integração: quiz, toxicologia e Atlas carregam folha e script; motores u
     if (before) assert.ok(html.indexOf('laift-review-seal.js') < html.search(new RegExp(`<script src="[^"]*${before}\\.js`)), `${page}: selo antes do motor`);
   }
   const engine = fs.readFileSync(path.join(frontend, 'modulos/shared/quiz-engine.js'), 'utf8');
-  assert.match(engine, /LaiftReviewSeal/);
+  // Regra do dono: o público não vê selo nem aviso de revisão nos quizzes; sobra só "Reportar erro".
+  assert.doesNotMatch(engine, /LaiftReviewSeal\.create|whenMissing|laift-review-seal-row/);
+  assert.match(engine, /LaiftReviewSeal\.report/);
+  assert.doesNotMatch(SRC.slice(SRC.indexOf('function report'), SRC.indexOf('function create')), /revisad|\bIA\b|rascunho/);
   const card = fs.readFileSync(path.join(frontend, 'modulos/anatomia-3d/js/ui/infocard.js'), 'utf8');
-  assert.match(card, /LaiftReviewSeal/);
+  // Atlas: sem selo de revisão na ficha (regra do dono).
+  assert.doesNotMatch(card, /LaiftReviewSeal/);
+  assert.doesNotMatch(fs.readFileSync(path.join(frontend, 'modulos/anatomia-3d/index.html'), 'utf8'), /laift-review-seal/);
 });
 
 test('ponte: laift-identity expõe reportContent e o app expõe submitContentReport sobre apiSubmitFeedback', () => {

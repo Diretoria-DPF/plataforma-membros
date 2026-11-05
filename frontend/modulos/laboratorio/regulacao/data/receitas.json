@@ -1,0 +1,128 @@
+{
+  "versao": 1,
+  "casos": [
+    {
+      "id": "rec_01", "titulo": "Notificação azul completa", "receituario": "NRB", "decisao_correta": "dispensar",
+      "contexto": "Pessoa chega ao balcão com a notificação de receita e pede o medicamento.",
+      "campos": [
+        { "id": "tipo", "rotulo": "Modelo apresentado", "valor": "Notificação de Receita B (azul), 2 vias" },
+        { "id": "numeracao", "rotulo": "Numeração do talonário", "valor": "Presente e legível" },
+        { "id": "prescritor", "rotulo": "Prescritor", "valor": "Nome, número de registro no conselho e endereço impressos" },
+        { "id": "paciente", "rotulo": "Paciente", "valor": "Nome completo e endereço completo" },
+        { "id": "medicamento", "rotulo": "Medicamento", "valor": "Medicamento X da lista B1, comprimido de 10 mg (fictício)" },
+        { "id": "quantidade", "rotulo": "Quantidade", "valor": "30 comprimidos, também por extenso, sem rasura" },
+        { "id": "posologia", "rotulo": "Posologia", "valor": "1 comprimido à noite, por 30 dias" },
+        { "id": "data", "rotulo": "Data de emissão", "valor": "Há 5 dias" }
+      ],
+      "explicacao": "Modelo certo para a lista B1, todos os campos presentes, quantidade compatível com a posologia e dentro do prazo. Pode dispensar, reter a via da farmácia, registrar a saída no livro (ou no sistema) e anotar os dados de quem retirou.",
+      "fonte": "Portaria SVS/MS 344/98, capítulos da prescrição e da dispensação; conferir a redação vigente."
+    },
+    {
+      "id": "rec_02", "titulo": "Quantidade rasurada", "receituario": "NRB", "decisao_correta": "recusar",
+      "contexto": "A notificação parece completa, mas o campo da quantidade chama atenção.",
+      "campos": [
+        { "id": "tipo", "rotulo": "Modelo apresentado", "valor": "Notificação de Receita B (azul), 2 vias" },
+        { "id": "numeracao", "rotulo": "Numeração do talonário", "valor": "Presente e legível" },
+        { "id": "prescritor", "rotulo": "Prescritor", "valor": "Nome, número de registro no conselho e endereço impressos" },
+        { "id": "paciente", "rotulo": "Paciente", "valor": "Nome completo e endereço completo" },
+        { "id": "medicamento", "rotulo": "Medicamento", "valor": "Medicamento X da lista B1, comprimido de 10 mg (fictício)" },
+        { "id": "quantidade", "rotulo": "Quantidade", "valor": "Número sobrescrito sobre outro, com tinta diferente", "problema": "Rasura na quantidade: a notificação não pode ser aceita adulterada." },
+        { "id": "posologia", "rotulo": "Posologia", "valor": "1 comprimido à noite" },
+        { "id": "data", "rotulo": "Data de emissão", "valor": "Há 3 dias" }
+      ],
+      "explicacao": "Rasura em campo essencial invalida o documento. A conduta é não dispensar, explicar à pessoa e orientar a procurar o prescritor para uma nova notificação.",
+      "fonte": "Portaria SVS/MS 344/98, capítulo da prescrição (requisitos formais da notificação)."
+    },
+    {
+      "id": "rec_03", "titulo": "Receita branca simples para lista B1", "receituario": "NRB", "decisao_correta": "recusar",
+      "contexto": "O medicamento pedido é de lista B1, e a prescrição veio em receituário comum.",
+      "campos": [
+        { "id": "tipo", "rotulo": "Modelo apresentado", "valor": "Receita simples, folha branca, 1 via", "problema": "Modelo errado: lista B1 exige notificação de receita B (azul)." },
+        { "id": "numeracao", "rotulo": "Numeração do talonário", "valor": "Não se aplica ao papel apresentado", "problema": "Sem numeração oficial de talonário." },
+        { "id": "prescritor", "rotulo": "Prescritor", "valor": "Carimbo com nome e registro" },
+        { "id": "paciente", "rotulo": "Paciente", "valor": "Nome completo" },
+        { "id": "medicamento", "rotulo": "Medicamento", "valor": "Medicamento X da lista B1, comprimido de 10 mg (fictício)" },
+        { "id": "quantidade", "rotulo": "Quantidade", "valor": "30 comprimidos" },
+        { "id": "data", "rotulo": "Data de emissão", "valor": "Há 2 dias" }
+      ],
+      "explicacao": "O receituário precisa corresponder à lista: B1 pede a notificação azul numerada. Receita simples não substitui. Recusar e orientar a pessoa a pedir o documento correto.",
+      "fonte": "Portaria SVS/MS 344/98, capítulo da prescrição (modelo por lista)."
+    },
+    {
+      "id": "rec_04", "titulo": "Notificação amarela vencida", "receituario": "NRA", "decisao_correta": "recusar",
+      "contexto": "Notificação de receita A apresentada para um tratamento contínuo.",
+      "campos": [
+        { "id": "tipo", "rotulo": "Modelo apresentado", "valor": "Notificação de Receita A (amarela), 2 vias" },
+        { "id": "numeracao", "rotulo": "Numeração do talonário", "valor": "Presente e legível" },
+        { "id": "prescritor", "rotulo": "Prescritor", "valor": "Nome, número de registro no conselho e endereço impressos" },
+        { "id": "paciente", "rotulo": "Paciente", "valor": "Nome completo e endereço completo" },
+        { "id": "medicamento", "rotulo": "Medicamento", "valor": "Medicamento Z da lista A1 (fictício)" },
+        { "id": "quantidade", "rotulo": "Quantidade", "valor": "10 ampolas, também por extenso" },
+        { "id": "data", "rotulo": "Data de emissão", "valor": "Há 45 dias", "problema": "Fora do prazo de validade da notificação A." }
+      ],
+      "explicacao": "A validade da notificação A conta a partir da emissão e já passou. Documento vencido não se dispensa: orientar nova prescrição.",
+      "fonte": "Portaria SVS/MS 344/98, capítulo da prescrição (validade da notificação); prazo marcado para conferência na norma vigente."
+    },
+    {
+      "id": "rec_05", "titulo": "Receita de controle especial completa", "receituario": "RCE", "decisao_correta": "dispensar",
+      "contexto": "Receita em duas vias para medicamento da lista C1.",
+      "campos": [
+        { "id": "tipo", "rotulo": "Modelo apresentado", "valor": "Receita de Controle Especial, 2 vias" },
+        { "id": "prescritor", "rotulo": "Prescritor", "valor": "Nome, registro no conselho, endereço e telefone" },
+        { "id": "paciente", "rotulo": "Paciente", "valor": "Nome completo e endereço" },
+        { "id": "medicamento", "rotulo": "Medicamento", "valor": "Medicamento W da lista C1 (fictício)" },
+        { "id": "quantidade", "rotulo": "Quantidade", "valor": "30 comprimidos, por extenso" },
+        { "id": "posologia", "rotulo": "Posologia", "valor": "1 comprimido de manhã, por 30 dias" },
+        { "id": "data", "rotulo": "Data de emissão", "valor": "Há 10 dias" },
+        { "id": "vias", "rotulo": "Vias", "valor": "As duas vias assinadas" }
+      ],
+      "explicacao": "Documento completo e no prazo. A farmácia retém a 1ª via, devolve a 2ª carimbada à pessoa e registra a saída.",
+      "fonte": "Portaria SVS/MS 344/98, capítulo da receita de controle especial."
+    },
+    {
+      "id": "rec_06", "titulo": "Quantidade maior que a posologia", "receituario": "RCE", "decisao_correta": "contatar_prescritor",
+      "contexto": "A receita está formalmente correta, mas os números não fecham.",
+      "campos": [
+        { "id": "tipo", "rotulo": "Modelo apresentado", "valor": "Receita de Controle Especial, 2 vias" },
+        { "id": "prescritor", "rotulo": "Prescritor", "valor": "Nome, registro no conselho, endereço e telefone" },
+        { "id": "paciente", "rotulo": "Paciente", "valor": "Nome completo e endereço" },
+        { "id": "medicamento", "rotulo": "Medicamento", "valor": "Medicamento W da lista C1 (fictício)" },
+        { "id": "quantidade", "rotulo": "Quantidade", "valor": "180 comprimidos, por extenso" },
+        { "id": "posologia", "rotulo": "Posologia", "valor": "1 comprimido ao dia, por 30 dias", "problema": "Quantidade (180) incompatível com a posologia (30) e acima do limite de tratamento." },
+        { "id": "data", "rotulo": "Data de emissão", "valor": "Há 4 dias" }
+      ],
+      "explicacao": "Incoerência entre quantidade e posologia pode ser erro de digitação. A farmácia não decide sozinha: contata o prescritor, registra a confirmação e só então dispensa a quantidade correta.",
+      "fonte": "Portaria SVS/MS 344/98, capítulos da prescrição e da dispensação (limite de quantidade por receita)."
+    },
+    {
+      "id": "rec_07", "titulo": "Prescritor sem identificação", "receituario": "NRB", "decisao_correta": "recusar",
+      "contexto": "Notificação azul numerada, mas o cabeçalho está em branco.",
+      "campos": [
+        { "id": "tipo", "rotulo": "Modelo apresentado", "valor": "Notificação de Receita B (azul), 2 vias" },
+        { "id": "numeracao", "rotulo": "Numeração do talonário", "valor": "Presente e legível" },
+        { "id": "prescritor", "rotulo": "Prescritor", "valor": "Apenas uma rubrica; sem nome, sem registro no conselho", "problema": "Prescritor não identificado: sem nome e sem registro no conselho." },
+        { "id": "paciente", "rotulo": "Paciente", "valor": "Nome completo e endereço completo" },
+        { "id": "medicamento", "rotulo": "Medicamento", "valor": "Medicamento X da lista B1, comprimido de 10 mg (fictício)" },
+        { "id": "quantidade", "rotulo": "Quantidade", "valor": "30 comprimidos, por extenso" },
+        { "id": "data", "rotulo": "Data de emissão", "valor": "Há 1 dia" }
+      ],
+      "explicacao": "Sem identificação do prescritor não há como conferir a autoria nem contatá-lo. Recusar e orientar a pessoa.",
+      "fonte": "Portaria SVS/MS 344/98, capítulo da prescrição (identificação do emitente)."
+    },
+    {
+      "id": "rec_08", "titulo": "Receita de controle especial em uma via", "receituario": "RCE", "decisao_correta": "recusar",
+      "contexto": "Receita para lista C1 com apenas uma via.",
+      "campos": [
+        { "id": "tipo", "rotulo": "Modelo apresentado", "valor": "Receita de Controle Especial, apenas 1 via", "problema": "Faltou a segunda via: a farmácia retém uma e devolve a outra." },
+        { "id": "prescritor", "rotulo": "Prescritor", "valor": "Nome, registro no conselho, endereço e telefone" },
+        { "id": "paciente", "rotulo": "Paciente", "valor": "Nome completo e endereço" },
+        { "id": "medicamento", "rotulo": "Medicamento", "valor": "Medicamento W da lista C1 (fictício)" },
+        { "id": "quantidade", "rotulo": "Quantidade", "valor": "30 comprimidos, por extenso" },
+        { "id": "data", "rotulo": "Data de emissão", "valor": "Há 6 dias" }
+      ],
+      "explicacao": "Com uma via só, a farmácia não consegue reter a sua e devolver a da pessoa. Recusar e orientar a emissão correta.",
+      "fonte": "Portaria SVS/MS 344/98, capítulo da receita de controle especial."
+    }
+  ],
+  "rotulagem_exercicio": { "titulo": "Qual tarja e qual frase?", "instrucao": "Para cada lista, escolha a cor da tarja." }
+}

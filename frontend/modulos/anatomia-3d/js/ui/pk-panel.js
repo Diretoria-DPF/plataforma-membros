@@ -169,7 +169,7 @@ export function renderPkPanel(host, compound, sim, { chart = null } = {}) {
   const panel = DOM.h('section', { id: 'pk-panel', className: 'pk-panel', 'aria-label': `Composto: ${compound.nome || compound.id}`, style: { marginTop: '12px', fontSize: '0.78rem', color: 'var(--laift-text)' } });
   DOM.appendHtml(panel, DOM.html`
     <h3 style="font-size:0.9rem; margin:0 0 6px;">${compound.nome || compound.id}</h3>
-    ${legacy ? DOM.html`<p class="pk-legacy" role="note" style="margin:0 0 6px; padding:6px 8px; border-radius:4px; background:var(--laift-warning-soft); border:1px solid var(--laift-warning);">Rascunho — parâmetros sem fonte verificada (F e PD padrão do modelo). Use só para entender a forma da curva.</p>` : ''}
+    ${legacy ? DOM.html`<p class="pk-legacy" role="note" style="margin:0 0 6px; padding:6px 8px; border-radius:4px; background:var(--laift-warning-soft); border:1px solid var(--laift-warning);">Curva ilustrativa (F e PD padrão do modelo): use para entender a forma da curva, não para calcular doses.</p>` : ''}
   `);
   // M1 (PR 3.2): [PK/PD] [Clínica] [Interações] dentro do composto.
   const { list, panels } = makeTabs(DOM, [{ id: 'pkpd', label: 'PK/PD' }, { id: 'clinica', label: 'Clínica' }, { id: 'interacoes', label: 'Interações' }]);
@@ -206,7 +206,7 @@ export function renderPkPanel(host, compound, sim, { chart = null } = {}) {
     charts.push(lineChart(chart, cpCanvas, { labels, data: sim.cp, label: `Cp (${unit})`, color: '#38bdf8', yTitle: `Cp (${unit})`, extra: extraCp }));
     charts.push(lineChart(chart, eCanvas, { labels, data: sim.e, label: 'Efeito (%)', color: '#f59e0b', yTitle: 'Efeito (% do máximo)', extra: extraE }));
   } else {
-    DOM.appendHtml(pkPanel, DOM.html`<p class="pk-nochart" style="margin:6px 0; color:var(--laift-muted);">Gráfico indisponível sem conexão; os valores acima são calculados no aparelho.</p>`);
+    DOM.appendHtml(pkPanel, DOM.html`<p class="pk-nochart" style="margin:6px 0; color:var(--laift-muted);">Gráfico indisponível no momento; os valores acima são calculados no aparelho.</p>`);
     host.appendChild(panel);
   }
   renderClinica(DOM, clinPanel, compound);

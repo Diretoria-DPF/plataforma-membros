@@ -26,9 +26,28 @@
     if (el) el.classList.add('hidden');
   }
 
+  // Fecha o resultado do preceptor e volta aos leitos. Pelo ClinicModal (botão, Esc): ele chama esta função de novo
+  // já com o modal fechado, e aí segue para o mapa de leitos.
   function closePreceptorModal() {
-    document.getElementById('preceptorModal')?.classList.remove('active');
+    const modal = document.getElementById('preceptorModal');
+    if (modal && window.ClinicModal && window.ClinicModal.isOpen(modal)) {
+      window.ClinicModal.close(modal);
+      return;
+    }
+    modal?.classList.remove('active');
     ClinicEngine.showBedsDashboard();
+  }
+
+  function openGuide() {
+    const modal = document.getElementById('instructionsModal');
+    if (!modal) return;
+    if (window.ClinicModal) window.ClinicModal.open(modal); else modal.classList.add('active');
+  }
+
+  function closeGuide() {
+    const modal = document.getElementById('instructionsModal');
+    if (!modal) return;
+    if (window.ClinicModal) window.ClinicModal.close(modal); else modal.classList.remove('active');
   }
 
   // Usadas pelo clinic-engine.js (typeof showStatus === 'function').
@@ -41,10 +60,11 @@
   }
 
   function init() {
-    on('infoBtn', 'click', () => document.getElementById('instructionsModal')?.classList.add('active'));
-    on('closeModal', 'click', () => document.getElementById('instructionsModal')?.classList.remove('active'));
+    on('infoBtn', 'click', openGuide);
+    on('closeModal', 'click', closeGuide);
+    // Clique no fundo escuro fecha só o guia; o resultado do preceptor fecha pelo botão ou Esc.
     window.addEventListener('click', (e) => {
-      if (e.target.classList && e.target.classList.contains('modal')) e.target.classList.remove('active');
+      if (e.target && e.target.id === 'instructionsModal') closeGuide();
     });
 
     on('btnGenerateAiCase', 'click', () => ClinicEngine.solicitarCasoProcedural());

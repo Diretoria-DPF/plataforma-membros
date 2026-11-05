@@ -4,8 +4,8 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * con01-selo.e2e.js — CON-01: questão sem revisor mostra o selo ⓘ discreto; ao tocar abre o diálogo acessível
- * com a explicação e "Reportar erro", que envia pelo feedback existente (apiSubmitFeedback) sem expor o token.
+ * con01-selo.e2e.js — o público NÃO vê selo nem aviso de revisão nas questões; depois do gabarito há só um item
+ * discreto "Reportar erro nesta questão", que envia pelo feedback existente (apiSubmitFeedback) sem expor o token.
  */
 const { startApp, check } = require('./harness');
 
@@ -22,22 +22,27 @@ async function run() {
     await frame.click('#startQuiz');
     await frame.waitForSelector('#quizContainer:not([hidden]) .option');
 
-    const seals = frame.locator('.laift-review-seal');
-    check(await seals.count() === 1, 'questão sem revisor mostra um único selo ⓘ');
-    const box = await seals.first().boundingBox();
-    check(box && box.width >= 44 && box.height >= 44, 'alvo de toque do selo >= 44px');
-    check(/ainda não revisada por profissional/i.test(await seals.first().getAttribute('aria-label')), 'selo tem nome acessível');
+    check(await frame.locator('.laift-review-seal').count() === 0, 'nenhum selo de revisão na questão');
+    const texto = await frame.evaluate(() => document.getElementById('quizContainer').innerText);
+    check(!/revisad|rascunho|por IA/i.test(texto), 'nenhum texto de revisão visível ao público');
 
-    await seals.first().click();
+    await frame.click('.option >> nth=0');
+    await frame.waitForSelector('#explanation.show');
+    const btn = frame.locator('.quiz-report-btn');
+    check(await btn.count() === 1, 'um único item "Reportar erro" depois do gabarito');
+    const box = await btn.boundingBox();
+    check(box && box.height >= 44, 'alvo de toque do item >= 44px');
+
+    await btn.click();
     await frame.waitForSelector('.laift-dialog[role="dialog"]');
-    check(/não foi revisada por um profissional/.test(await frame.textContent('.laift-dialog-message')), 'toque abre a explicação');
+    check(!/revisad/i.test(await frame.textContent('.laift-dialog-message')), 'diálogo sem texto de revisão');
     await app.page.keyboard.press('Escape');
     check(await frame.locator('.laift-dialog').count() === 0, 'Esc fecha sem enviar');
     check(!app.calls.worker.some((c) => c.action === 'apiSubmitFeedback'), 'nada é enviado ao fechar');
 
-    await seals.first().click();
+    await btn.click();
     await frame.waitForSelector('.laift-dialog[role="dialog"]');
-    await frame.click('.laift-dialog-btn-primary'); // Reportar erro
+    await frame.click('.laift-dialog-btn-primary');
     await frame.waitForFunction(() => /Obrigado/.test((document.querySelector('.laift-dialog-message') || {}).textContent || ''));
     const call = app.calls.worker.find((c) => c.action === 'apiSubmitFeedback');
     check(!!call && call.args[0] === app.ctx.sessionToken, 'Reportar erro usa o feedback existente, com o token anexado só pela plataforma');

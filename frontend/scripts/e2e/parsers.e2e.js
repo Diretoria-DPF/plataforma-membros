@@ -231,6 +231,8 @@ async function testToxicologiaOpenFda() {
 
     // Cenário B: bula só com `warnings_and_cautions` (formato OTC) — cobre o fallback novo desta tarefa.
     mock.setScenario('warnings_and_cautions');
+    // No estudo a resposta é definitiva e retomada do progresso salvo (QZ-03): zera o cenário A para responder de novo.
+    await app.page.evaluate(() => localStorage.removeItem('toxicoQuizProgress'));
     frame = await app.openModule('toxico');
     await frame.click('.topic-btn');
     await frame.click('#startQuiz');

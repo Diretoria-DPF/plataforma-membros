@@ -4,9 +4,12 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Crachá virtual do membro: cartão com nome, papel, "membro desde", QR Code de
-// presença ASSINADO pela Worker (apiLearnGetMyAttendanceQr → LAIFT:v2:<id>.<assinatura>),
-// ampliação do QR para o fiscal ler e "Salvar imagem" (PNG desenhado no próprio
-// navegador). O QR é gerado localmente (vendor/qrcode-generator.js): nada vai a
+// presença ASSINADO pela Worker (apiLearnGetMyAttendanceQr). Com um evento aberto
+// (ou inscrito) o QR é ROTATIVO (LAIFT:v3:<perfil>.<evento>.<janela>.<assinatura>,
+// renovado a cada 30 s, com contagem regressiva); sem evento, o permanente
+// (LAIFT:v2:<id>.<assinatura>) do crachá impresso. Ampliação do QR para o fiscal
+// ler e "Salvar imagem" (PNG desenhado no próprio navegador; no modo rotativo o
+// PNG sai SEM QR, porque ele expira em segundos). O QR é gerado localmente (vendor/qrcode-generator.js): nada vai a
 // serviço de terceiros. Sem a credencial assinada, cai no formato provisório
 // LAIFT:ID:<e-mail> e avisa; o fiscal então só preenche o e-mail para a presença
 // manual, que o admin confirma — nunca registra direto. Nada é guardado no
@@ -18,6 +21,11 @@
   var QR_LIB_SRC = 'vendor/qrcode-generator.js';
   var LOGO_SRC = 'modulos/cracha/laift-marca.png';
   var QR_V2_RE = /^LAIFT:v2:[0-9a-f-]{36}\.[A-Za-z0-9_-]{24}$/;
+  var QR_V3_RE = /^LAIFT:v3:[0-9a-f-]{36}\.[0-9a-f-]{36}\.\d{1,10}\.[A-Za-z0-9_-]{24}$/;
+  var NOTE_ROTATING_SAVE = 'Salvar imagem guarda só o crachá, sem QR: o QR muda a cada 30 segundos e só vale na tela.';
+  var NOTE_RENEW_FAIL = 'Sem conexão para renovar o QR. Tentando de novo...';
+  var RETRY_MS = 5000;
+  var MAX_EVENT_CHOICES = 5;
   var NOTE_OK = 'Apresente na portaria para registrar presença em eventos.';
   var NOTE_LEGACY = 'Credencial provisória: não foi possível obter a credencial assinada agora. Na portaria, a presença será confirmada pelo seu e-mail. Tente abrir de novo mais tarde.';
   var NOTE_LOADING = 'Gerando sua credencial...';
@@ -31,6 +39,8 @@
   var opener = null;
   var current = null; // { kind, name, role, since, qrDataUrl } da credencial aberta
   var pendingSince = ''; // "membro desde" que chegou antes do QR
+  var tickTimer = null; // relógio da contagem regressiva do QR rotativo
+  var rotation = null; // { eventId, title, offset, refreshAt, inFlight } do QR rotativo em exibição
 
   // ---------------------------------------------------------------------------
   // Funções puras
@@ -62,13 +72,43 @@
     return 'cracha-laift-' + (slug || 'membro') + '.png';
   }
 
-  /** Só a credencial assinada vale como v2; sem ela, o formato provisório pelo e-mail (ou null). */
+  /** Eventos para os quais o QR rotativo faz sentido: em andamento, ou publicados em que a pessoa está inscrita. */
+  function pickEvents(res) {
+    if (!res || !res.success || !Array.isArray(res.events)) return [];
+    var list = res.events.filter(function (e) {
+      return e && typeof e.id === 'string' && (e.status === 'in_progress' || (e.isRegistered === true && e.status === 'published'));
+    });
+    list.sort(function (a, b) {
+      if (a.status !== b.status) return a.status === 'in_progress' ? -1 : 1;
+      return String(a.eventDate || '').localeCompare(String(b.eventDate || ''));
+    });
+    return list.slice(0, MAX_EVENT_CHOICES);
+  }
+
+  /** Segundos inteiros até refreshAt (hora do servidor), dado o desvio relógio-do-servidor menos relógio-do-aparelho. */
+  function secondsLeft(refreshAt, offset, nowMs) {
+    return Math.max(0, Math.ceil((refreshAt - (nowMs + offset)) / 1000));
+  }
+
+  /** Só a credencial assinada vale como v2 (permanente) ou v3 (rotativo); sem ela, o formato provisório pelo e-mail (ou null). */
   function qrPayloadOf(res, identity) {
-    if (res && res.success && typeof res.qrPayload === 'string' && QR_V2_RE.test(res.qrPayload)) {
-      return { payload: res.qrPayload, kind: 'v2' };
+    if (res && res.success && typeof res.qrPayload === 'string') {
+      if (QR_V3_RE.test(res.qrPayload)) return { payload: res.qrPayload, kind: 'v3' };
+      if (QR_V2_RE.test(res.qrPayload)) return { payload: res.qrPayload, kind: 'v2' };
     }
-    if (identity && identity.email) return { payload: 'LAIFT:ID:' + identity.email, kind: 'legacy' };
+    // TRA-10: o provisório NÃO leva o e-mail no QR (a imagem pode ser salva e compartilhada). Leva um identificador
+    // opaco, sem relação com a conta; o fiscal lê o formato antigo (LAIFT:ID:<e-mail>) e este, e em nenhum registra.
+    if (identity) return { payload: 'LAIFT:ID:' + opaqueId(), kind: 'legacy' };
     return null;
+  }
+
+  /** Identificador aleatório de 12 caracteres hexadecimais (nada da conta). */
+  function opaqueId() {
+    var bytes = new Uint8Array(6);
+    var cryptoApi = root.crypto;
+    if (cryptoApi && typeof cryptoApi.getRandomValues === 'function') cryptoApi.getRandomValues(bytes);
+    else for (var i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+    return Array.prototype.map.call(bytes, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
   }
 
   // ---------------------------------------------------------------------------
@@ -117,8 +157,17 @@
     }
   }
 
+  function stopRotation(doc) {
+    if (tickTimer) root.clearTimeout(tickTimer);
+    tickTimer = null;
+    rotation = null;
+    var pick = doc && doc.getElementById('learn-credential-event');
+    if (pick && pick.parentNode) pick.parentNode.removeChild(pick);
+  }
+
   function close(doc) {
     requestId += 1; // respostas atrasadas deixam de valer
+    stopRotation(doc);
     var modal = byId(doc, 'modal-learn-credential');
     if (modal) modal.classList.add('hidden');
     setZoom(doc, false);
@@ -215,16 +264,29 @@
     roundRect(ctx, 110, 630, 500, 500, 32);
     ctx.fill();
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(imgs[1], 140, 660, 440, 440);
-
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
     ctx.font = '400 24px system-ui, sans-serif';
-    ctx.fillText('Apresente este QR na portaria do evento', W / 2, 1165);
+    if (imgs[1]) {
+      ctx.drawImage(imgs[1], 140, 660, 440, 440);
+      ctx.fillText('Apresente este QR na portaria do evento', W / 2, 1165);
+    } else {
+      // QR rotativo: não vai para a imagem (expira em segundos e copiá-lo não serviria).
+      ctx.fillStyle = '#08342d';
+      ctx.font = '700 30px system-ui, sans-serif';
+      ctx.fillText('QR Code só na tela', W / 2, 800);
+      ctx.font = '400 24px system-ui, sans-serif';
+      ctx.fillText('Ele muda a cada 30 segundos.', W / 2, 850);
+      ctx.fillText('Abra o crachá na plataforma', W / 2, 890);
+      ctx.fillText('para mostrá-lo na portaria.', W / 2, 925);
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.fillText('Crachá virtual LAIFT', W / 2, 1165);
+    }
   }
 
   function saveImage(doc) {
     var card = current;
-    if (!card || card.kind !== 'v2' || !card.qrDataUrl) return;
+    if (!card || (card.kind !== 'v2' && card.kind !== 'v3')) return;
+    if (card.kind === 'v2' && !card.qrDataUrl) return;
     var W = 720;
     var H = 1200;
     var canvas = doc.createElement('canvas');
@@ -232,7 +294,7 @@
     canvas.height = H;
     var ctx = canvas.getContext('2d');
     if (!ctx) return;
-    Promise.all([loadImage(LOGO_SRC).catch(function () { return null; }), loadImage(card.qrDataUrl)]).then(function (imgs) {
+    Promise.all([loadImage(LOGO_SRC).catch(function () { return null; }), card.kind === 'v3' ? Promise.resolve(null) : loadImage(card.qrDataUrl)]).then(function (imgs) {
       drawCard(ctx, W, H, card, imgs);
 
       canvas.toBlob(function (blob) {
@@ -285,6 +347,7 @@
     opener = doc.activeElement;
     current = null;
     pendingSince = '';
+    stopRotation(doc);
 
     var name = identity.fullName || '';
     var role = roleLabel(identity.role);
@@ -315,28 +378,129 @@
       else pendingSince = since;
     }, function () {});
 
-    Promise.all([app.callLearningApi('apiLearnGetMyAttendanceQr'), loadQrLib(doc)]).then(function (results) {
-      if (id !== requestId) return;
-      var chosen = qrPayloadOf(results[0], identity);
-      if (!chosen) throw new Error('sem-email');
+    var token = (app.getState() && app.getState().sessionToken) || '';
+    var eventsPromise = app.callApi('apiListEvents', token).then(pickEvents, function () { return []; });
+    Promise.all([eventsPromise, loadQrLib(doc)]).then(function (results) {
+      if (id !== requestId) return null;
+      var events = results[0];
       var qrcode = results[1];
       qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
-      var code = qrcode(0, 'M');
-      code.addData(chosen.payload);
-      code.make();
-      var dataUrl = code.createDataURL(8, 4);
-      qr.src = dataUrl;
-      qr.setAttribute('data-qr-kind', chosen.kind);
-      byId(doc, 'learn-credential-note').textContent = chosen.kind === 'v2' ? NOTE_OK : NOTE_LEGACY;
-      current = { kind: chosen.kind, name: name, role: role, since: pendingSince, qrDataUrl: dataUrl };
-      pendingSince = '';
-      byId(doc, 'learn-credential-save').disabled = chosen.kind !== 'v2';
+      if (events.length) {
+        startRotating(app, doc, id, identity, name, role, events, qrcode);
+        return null;
+      }
+      return app.callLearningApi('apiLearnGetMyAttendanceQr').then(function (res) {
+        if (id !== requestId) return;
+        var chosen = qrPayloadOf(res, identity);
+        if (!chosen) throw new Error('sem-email');
+        var dataUrl = drawQr(qrcode, chosen.payload, qr);
+        qr.setAttribute('data-qr-kind', chosen.kind);
+        byId(doc, 'learn-credential-note').textContent = chosen.kind === 'v2' ? NOTE_OK : NOTE_LEGACY;
+        current = { kind: chosen.kind, name: name, role: role, since: pendingSince, qrDataUrl: dataUrl };
+        pendingSince = '';
+        byId(doc, 'learn-credential-save').disabled = chosen.kind !== 'v2';
+      });
     }).catch(function () {
       if (id !== requestId) return;
       // O erro fica no próprio modal: ele abre do Perfil, do Início, da Guia e do
       // onboarding, e um status no painel Aprender ficaria invisível.
       showQrError(doc);
     });
+  }
+
+  function drawQr(qrcode, payload, img) {
+    var code = qrcode(0, 'M');
+    code.addData(payload);
+    code.make();
+    var dataUrl = code.createDataURL(8, 4);
+    img.src = dataUrl;
+    return dataUrl;
+  }
+
+  // ---------------------------------------------------------------------------
+  // QR rotativo: pede o QR do evento, mostra a contagem regressiva (hora do
+  // servidor) e renova sozinho quando a janela acaba.
+  // ---------------------------------------------------------------------------
+  function startRotating(app, doc, id, identity, name, role, events, qrcode) {
+    var qr = byId(doc, 'learn-credential-qr');
+    var note = byId(doc, 'learn-credential-note');
+    var state = { eventId: events[0].id, title: events[0].title || 'Evento', offset: 0, refreshAt: 0, inFlight: false, failed: false };
+    rotation = state;
+    if (events.length > 1) addEventPicker(doc, events, function (ev) {
+      state.eventId = ev.id;
+      state.title = ev.title || 'Evento';
+      state.refreshAt = 0;
+      fetchQr();
+    });
+
+    function paintNote() {
+      var left = secondsLeft(state.refreshAt, state.offset, Date.now());
+      note.textContent = state.failed
+        ? NOTE_RENEW_FAIL
+        : state.title + ': mostre este QR na portaria. Ele muda em ' + left + ' s. ' + NOTE_ROTATING_SAVE;
+    }
+
+    function schedule() {
+      if (tickTimer) root.clearTimeout(tickTimer);
+      tickTimer = root.setTimeout(function () {
+        if (id !== requestId || rotation !== state) return;
+        if (secondsLeft(state.refreshAt, state.offset, Date.now()) <= 0) fetchQr();
+        else { paintNote(); schedule(); }
+      }, 1000);
+    }
+
+    function fetchQr() {
+      if (state.inFlight) return;
+      state.inFlight = true;
+      var wanted = state.eventId;
+      app.callLearningApi('apiLearnGetMyAttendanceQr', { eventId: wanted }).then(function (res) {
+        state.inFlight = false;
+        if (id !== requestId || rotation !== state) return;
+        if (wanted !== state.eventId) { fetchQr(); return; }
+        var chosen = qrPayloadOf(res, null);
+        if (!chosen || chosen.kind !== 'v3' || typeof res.refreshAt !== 'number') throw new Error('rotativo');
+        drawQr(qrcode, chosen.payload, qr);
+        qr.classList.remove('hidden');
+        qr.setAttribute('data-qr-kind', 'v3');
+        state.offset = typeof res.serverTime === 'number' ? res.serverTime - Date.now() : 0;
+        state.refreshAt = res.refreshAt;
+        state.failed = false;
+        current = { kind: 'v3', name: name, role: role, since: current ? current.since : pendingSince, qrDataUrl: '' };
+        pendingSince = '';
+        byId(doc, 'learn-credential-save').disabled = false;
+        paintNote();
+        schedule();
+      }).catch(function () {
+        state.inFlight = false;
+        if (id !== requestId || rotation !== state) return;
+        state.failed = true;
+        state.offset = 0;
+        state.refreshAt = Date.now() + RETRY_MS;
+        paintNote();
+        schedule();
+      });
+    }
+
+    fetchQr();
+  }
+
+  function addEventPicker(doc, events, onChange) {
+    var note = byId(doc, 'learn-credential-note');
+    var select = doc.createElement('select');
+    select.id = 'learn-credential-event';
+    select.className = 'credential-event';
+    select.setAttribute('aria-label', 'Evento da credencial');
+    events.forEach(function (ev) {
+      var opt = doc.createElement('option');
+      opt.value = ev.id;
+      opt.textContent = ev.title || 'Evento';
+      select.appendChild(opt);
+    });
+    select.addEventListener('change', function () {
+      var found = events.filter(function (e) { return e.id === select.value; })[0];
+      if (found) onChange(found);
+    });
+    note.parentNode.insertBefore(select, note);
   }
 
   if (root.document && root.document.addEventListener) {
@@ -352,6 +516,8 @@
     formatMemberSince: formatMemberSince,
     fileNameFor: fileNameFor,
     qrPayloadOf: qrPayloadOf,
+    pickEvents: pickEvents,
+    secondsLeft: secondsLeft,
     open: function (app) { return open(app || root.App, root.document); },
     close: function () { return close(root.document); },
   };

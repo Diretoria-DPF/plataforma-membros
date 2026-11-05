@@ -261,3 +261,5 @@
   --laift-accent: #0066cc;
   --laift-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+.credits-note-list { list-style: none; margin: 0; padding: 0; }

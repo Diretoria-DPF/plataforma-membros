@@ -25,6 +25,11 @@ const { startApp, check } = require('./harness');
 const MODULE_PATH = 'modulos/anatomia-3d';
 
 module.exports = async function atlasAssets() {
+  // dev/ não vai para o dist publicado; sem ATLAS_KEEP_DEV=1 no build o harness não existe.
+  if (!fs.existsSync(path.join(__dirname, '..', '..', 'dist', MODULE_PATH, 'dev', 'assets-harness.html'))) {
+    console.log('atlas-assets: ignorado (dist sem dev/; gere com ATLAS_KEEP_DEV=1 node scripts/build.js)');
+    return;
+  }
   const app = await startApp({ role: 'member' });
   const violations = [];
   await app.context.exposeBinding('__e2eCspReport', (source, v) => violations.push(v));

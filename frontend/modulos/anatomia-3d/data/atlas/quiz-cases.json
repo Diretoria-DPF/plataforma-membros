@@ -2,7 +2,7 @@
   {
     "id": "caso-organofosforado",
     "system": "cardiovascular",
-    "prompt_pt": "Emergência Toxicológica: Síndrome Colinérgica Aguda. Agricultor de 42 anos admitido em coma com miose puntiforme bilateral, sialorreia profusa, broncorreia e bradicardia severa (36 bpm) após pulverização de lavoura.\n\nAponte no modelo 3D o órgão efetor primário onde a Atropina 2 mg IV atuará para reverter o bloqueio vagal e a bradicardia com risco de assistolia.",
+    "prompt_pt": "Emergência Toxicológica: Síndrome Colinérgica Aguda. Agricultor de 42 anos admitido em coma com miose puntiforme bilateral, sialorreia profusa, broncorreia e bradicardia severa (36 bpm) após pulverização de lavoura.\n\nAponte no modelo 3D o órgão efetor primário onde a atropina atuará para reverter o excesso de estímulo vagal (muscarínico) e a bradicardia com risco de assistolia.",
     "difficulty": "medio",
     "correctSid": "za:left-ventricle",
     "correctSids": [
@@ -182,8 +182,6 @@
     "correctSids": [
       "za:kidney-r",
       "za:kidney-l",
-      "za:renal-pelvis-l",
-      "za:renal-pelvis-r",
       "za:vh-f-kidney-capsule-l",
       "za:vh-f-hilum-of-kidney-l",
       "za:vh-f-renal-papilla-l-a",
@@ -226,7 +224,7 @@
   {
     "id": "caso-bhe-neurologia",
     "system": "nervoso",
-    "prompt_pt": "Neurofarmacologia: Barreira Hematoencefálica (BHE). Paciente portador de doença neurodegenerativa necessita de suplementação mineral quelada com ácido L-treônico para otimização sináptica e receptores NMDA.\n\nAponte no modelo 3D o órgão central protegido por junções oclusivas endoteliais contínuas e podócitos de astrócitos.",
+    "prompt_pt": "Neurofarmacologia: Barreira Hematoencefálica (BHE). Paciente com doença neurodegenerativa recebe um fármaco cujo alvo está no sistema nervoso central; para agir, a molécula precisa atravessar a barreira hematoencefálica.\n\nAponte no modelo 3D o órgão protegido por capilares com junções oclusivas entre as células endoteliais, envolvidos pelos pés terminais (prolongamentos) dos astrócitos.",
     "difficulty": "dificil",
     "correctSid": "za:white-matter-of-telencephalon-r",
     "correctSids": [
@@ -438,19 +436,27 @@
       "za:allen-rostral-gyrus-r",
       "za:allen-frontomarginal-gyrus-r",
       "za:allen-frontal-pole-r",
-      "za:allen-perirhinal-gyrus-rostral-part-of-fugt-r"
+      "za:allen-perirhinal-gyrus-rostral-part-of-fugt-r",
+      "za:midbrain-l",
+      "za:midbrain-r",
+      "za:pons-l",
+      "za:pons-r",
+      "za:medulla-oblongata-l",
+      "za:medulla-oblongata-r",
+      "za:tonsil-of-cerebellum-l",
+      "za:tonsil-of-cerebellum-r"
     ],
     "distractorSids": [
-      "za:tonsil-of-cerebellum-r",
-      "za:white-matter-of-spinal-cord",
-      "za:medulla-oblongata-r"
+      "za:liver",
+      "za:stomach",
+      "za:urinary-bladder"
     ],
     "anchors": [
       {
         "sid": "za:white-matter-of-telencephalon-r"
       }
     ],
-    "explanation_pt": "A barreira hematoencefálica protege o encéfalo: o endotélio dos capilares cerebrais tem junções oclusivas contínuas e é envolvido pelos pés dos astrócitos."
+    "explanation_pt": "A barreira hematoencefálica protege o encéfalo: as células endoteliais dos capilares cerebrais têm junções oclusivas contínuas e são envolvidas pelos pés terminais dos astrócitos, o que restringe a passagem de muitas substâncias do sangue para o tecido nervoso."
   },
   {
     "id": "caso-acidez-gastrica",
@@ -477,43 +483,44 @@
   {
     "id": "caso-neuroeixo-espinhal",
     "system": "nervoso",
-    "prompt_pt": "Anestesiologia: Bloqueio Subaracnóideo / Peridural. Durante cirurgia ortopédica em membro inferior, administra-se bupivacaína hiperbárica no espaço subaracnóideo entre as vértebras L3-L4.\n\nAponte no modelo 3D a estrutura condutora central do neuroeixo responsável pela transmissão dos impulsos aferentes e arcos reflexos.",
+    "prompt_pt": "Anestesiologia: Bloqueio Subaracnóideo (raquianestesia). Durante cirurgia ortopédica em membro inferior, injeta-se bupivacaína hiperbárica no espaço subaracnóideo entre as vértebras L3-L4. No adulto, a medula espinal termina por volta de L1-L2; nesse nível, o anestésico banha as raízes nervosas da cauda equina, dentro do saco dural.\n\nAponte no modelo 3D a meninge espinal mais externa, que forma o saco dural e é atravessada pela agulha até o espaço subaracnóideo.",
     "difficulty": "dificil",
-    "correctSid": "za:white-matter-of-spinal-cord",
+    "correctSid": "za:spinal-dura",
     "correctSids": [
-      "za:white-matter-of-spinal-cord",
-      "za:anterior-horn-of-spinal-cord",
-      "za:posterior-horn-of-spinal-cord"
+      "za:spinal-dura"
     ],
     "distractorSids": [
+      "za:white-matter-of-spinal-cord",
       "za:medulla-oblongata-r",
-      "za:tonsil-of-cerebellum-r",
-      "za:white-matter-of-telencephalon-r"
+      "za:tonsil-of-cerebellum-r"
     ],
     "anchors": [
       {
-        "sid": "za:white-matter-of-spinal-cord"
+        "sid": "za:spinal-dura"
       }
     ],
-    "explanation_pt": "A medula espinal conduz os impulsos aferentes e eferentes e integra os arcos reflexos; na raquianestesia em L3–L4, abaixo do cone medular, o anestésico no espaço subaracnóideo bloqueia as raízes que chegam a ela."
+    "explanation_pt": "A dura-máter espinal forma o saco dural, que contém o líquido cerebrospinal e a cauda equina. Em L3-L4, abaixo do cone medular, a agulha atravessa o saco e o anestésico bloqueia as raízes da cauda equina, não a medula espinal."
   },
   {
     "id": "caso-injecao-deltoide",
     "system": "muscular",
-    "prompt_pt": "Vias Parenterais: Administração Intramuscular. Em cenário de anafilaxia alimentar aguda, o protocolo de emergência preconiza a injeção imediata de Adrenalina 0.5 mg por via intramuscular profunda.\n\nAponte no modelo 3D a camada tecidual de músculo esquelético vascularizada ideal para rápida absorção e fluxo capilar fenestrado.",
+    "prompt_pt": "Vias Parenterais: Administração Intramuscular. Em cenário de anafilaxia alimentar aguda, o protocolo de emergência preconiza a injeção imediata de adrenalina por via intramuscular.\n\nAponte no modelo 3D o músculo esquelético vascularizado da face anterolateral da coxa, local indicado para essa injeção por permitir absorção rápida.",
     "difficulty": "medio",
-    "correctSid": "za:acromial-part-of-deltoid-muscle-r",
-    "correctSystem": "muscular",
+    "correctSid": "za:vastus-lateralis-muscle-r",
     "distractorSids": [
+      "za:acromial-part-of-deltoid-muscle-r",
       "za:left-ventricle",
-      "za:stomach",
-      "za:liver"
+      "za:stomach"
     ],
     "anchors": [
       {
-        "sid": "za:acromial-part-of-deltoid-muscle-r"
+        "sid": "za:vastus-lateralis-muscle-r"
       }
     ],
-    "explanation_pt": "O músculo esquelético é muito vascularizado, por isso a adrenalina intramuscular é absorvida rapidamente. Na anafilaxia, o local recomendado é a face anterolateral da coxa (vasto lateral)."
+    "explanation_pt": "Na anafilaxia, a adrenalina é aplicada por via intramuscular na face anterolateral da coxa (músculo vasto lateral): o músculo é bem vascularizado e a absorção é rápida. Os capilares do músculo esquelético são contínuos. A dose segue o protocolo local e o peso do paciente.",
+    "correctSids": [
+      "za:vastus-lateralis-muscle-r",
+      "za:vastus-lateralis-muscle-l"
+    ]
   }
 ]

@@ -97,14 +97,14 @@
           <input type="text" id="studioSearchInput" placeholder="Buscar nome, fórmula, SMILES..." data-action-input="filtrarCompostosStudio" autocomplete="off" spellcheck="false" aria-label="Buscar compostos">
         </div>
 
-        <div class="category-filters-scroll" role="tablist" aria-label="Filtros de categoria">
-          <button type="button" class="category-pill active" data-cat="todas" data-action="filtrarCategoriaStudio" data-arg="todas" role="tab">Todas</button>
-          <button type="button" class="category-pill" data-cat="favoritos" data-action="filtrarCategoriaStudio" data-arg="favoritos" role="tab">⭐ Fav</button>
-          <button type="button" class="category-pill" data-cat="farmacos" data-action="filtrarCategoriaStudio" data-arg="farmacos" role="tab">Fármacos</button>
-          <button type="button" class="category-pill" data-cat="custom" data-action="filtrarCategoriaStudio" data-arg="custom" role="tab">Projetadas</button>
-          <button type="button" class="category-pill" data-cat="reagentes" data-action="filtrarCategoriaStudio" data-arg="reagentes" role="tab">Reagentes</button>
-          <button type="button" class="category-pill" data-cat="solventes" data-action="filtrarCategoriaStudio" data-arg="solventes" role="tab">Solventes</button>
-          <button type="button" class="category-pill" data-cat="toxicos" data-action="filtrarCategoriaStudio" data-arg="toxicos" role="tab">Toxinas</button>
+        <div class="category-filters-scroll" role="group" aria-label="Filtros de categoria">
+          <button type="button" class="category-pill active" data-cat="todas" data-action="filtrarCategoriaStudio" data-arg="todas">Todas</button>
+          <button type="button" class="category-pill" data-cat="favoritos" data-action="filtrarCategoriaStudio" data-arg="favoritos">⭐ Fav</button>
+          <button type="button" class="category-pill" data-cat="farmacos" data-action="filtrarCategoriaStudio" data-arg="farmacos">Fármacos</button>
+          <button type="button" class="category-pill" data-cat="custom" data-action="filtrarCategoriaStudio" data-arg="custom">Projetadas</button>
+          <button type="button" class="category-pill" data-cat="reagentes" data-action="filtrarCategoriaStudio" data-arg="reagentes">Reagentes</button>
+          <button type="button" class="category-pill" data-cat="solventes" data-action="filtrarCategoriaStudio" data-arg="solventes">Solventes</button>
+          <button type="button" class="category-pill" data-cat="toxicos" data-action="filtrarCategoriaStudio" data-arg="toxicos">Toxinas</button>
         </div>
       </div>
 
@@ -134,6 +134,7 @@
         <div class="toolbar-cluster">
           <button aria-label="Tabela Periódica (118 elementos)" class="tool-btn btn-ptable-trigger" data-action="abrirTabelaPeriodica" title="Tabela Periódica (118 elementos)">⚛️</button>
           <button aria-label="Bioisosterismo" class="tool-btn btn-bioisostere-trigger" data-action="abrirPainelBioisosterismo" title="Bioisosterismo">🧬</button>
+          <button aria-label="Análogos e comparação" class="tool-btn btn-bioisostere-trigger" data-action="abrirPainelAnalogos" title="Análogos e comparação">💡</button>
           <button aria-label="Similaridade Tanimoto" class="tool-btn btn-similarity-trigger" data-action="abrirSimilaridade" title="Similaridade Tanimoto">🔎</button>
           <button aria-label="Scaffold de Murcko" class="tool-btn btn-scaffold-trigger" data-action="extrairScaffoldAtual" title="Scaffold de Murcko">🏗️</button>
           <button aria-label="Comparação lado a lado" class="tool-btn btn-compare-trigger" data-action="abrirComparacao" title="Comparação lado a lado">⚖️</button>
@@ -156,9 +157,9 @@
       </nav>
 
       <div class="studio-canvas-stage" id="studioCanvasWrapper">
-        <div id="studioViewer3D" class="viewer-surface-3d" aria-label="Visualização 3D"></div>
+        <div id="studioViewer3D" class="viewer-surface-3d" role="img" aria-label="Visualização 3D da molécula"></div>
 
-        <div id="studioViewer2D" class="viewer-surface-2d" style="display:none;" aria-label="Visualização 2D">
+        <div id="studioViewer2D" class="viewer-surface-2d" style="display:none;" role="img" aria-label="Visualização 2D da molécula">
           <canvas id="studioCanvas2D" width="1000" height="700"></canvas>
         </div>
 
@@ -224,7 +225,7 @@
             <span class="cadd-badge badge-pending" id="badgeLipinski" title="Lipinski">L: --</span>
             <span class="cadd-badge badge-pending" id="badgeVeber" title="Veber">V: --</span>
             <span class="cadd-badge badge-pending" id="badgeGhose" title="Ghose">G: --</span>
-            <span class="cadd-badge badge-pending" id="badgePAINS" title="PAINS">P: --</span>
+            <span class="cadd-badge badge-pending" id="badgeAlertas" title="Alertas estruturais (triagem, não é veredito)">A: --</span>
           </div>
         </div>
 
@@ -253,7 +254,7 @@
 
       <div class="ptable-modal-layout">
         <div class="ptable-grid-column">
-          <div class="ptable-filters-bar" role="tablist" aria-label="Filtros de família">
+          <div class="ptable-filters-bar" role="group" aria-label="Filtros de família">
             <button type="button" class="ptable-pill active" data-cat="todas" data-action="filtrarElementosPTable" data-arg="todas">Todos</button>
             <button type="button" class="ptable-pill" data-cat="nao-metal" data-action="filtrarElementosPTable" data-arg="nao-metal">Não-Metais</button>
             <button type="button" class="ptable-pill" data-cat="halogenio" data-action="filtrarElementosPTable" data-arg="halogenio">Halogênios</button>
@@ -328,6 +329,20 @@
     </div>
   </div>
 
+  <!-- MODAL: ANÁLOGOS E COMPARAÇÃO (O7) -->
+  <div class="cadd-modal" id="analogosModal" style="display:none;" role="dialog" aria-modal="true" aria-label="Análogos e comparação">
+    <div class="cadd-modal-content bioisostere-modal-content">
+      <div class="cadd-modal-header bioisostere-header">
+        <div>
+          <h3>💡 Análogos e comparação</h3>
+          <span class="cadd-subtitle">Ideias para estudo, por reação estrutural</span>
+        </div>
+        <button type="button" class="btn-close-modal" data-action="fecharPainelAnalogos" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="cadd-modal-body bioisostere-body" id="analogosModalBody"></div>
+    </div>
+  </div>
+
   <!-- MODAL: SIMILARIDADE -->
   <div class="cadd-modal" id="similarityModal" style="display:none;" role="dialog" aria-modal="true" aria-label="Similaridade estrutural">
     <div class="cadd-modal-content similarity-modal-content">
@@ -389,7 +404,11 @@
   <!-- ==========================================================================
        8. MOTOR PRINCIPAL
        ========================================================================== -->
+  <script src="chem-core.js"></script>
+  <script src="descoberta-core.js"></script>
+  <script src="smiles-corrigidos.js"></script>
   <script src="studio.js"></script>
+  <script src="descoberta-ui.js"></script>
 
   <!-- ==========================================================================
        9. CONTROLADORES GLOBAIS (sem <script> inline — preparo da CSP)

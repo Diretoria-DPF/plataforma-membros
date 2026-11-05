@@ -14,7 +14,7 @@
  */
 
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -23,14 +23,14 @@ const engineDir = path.resolve(here, '../../modulos/anatomia-3d/js/engine');
 const vendorDir = path.resolve(here, '../../modulos/anatomia-3d/vendor');
 
 // Importa o THREE real
-const THREE = await import(path.join(vendorDir, 'three/three.module.js'));
+const THREE = await import(pathToFileURL(path.join(vendorDir, 'three/three.module.js')).href);
 
 // Importa bus e store reais
-const { on, emit, EVENTS } = await import(path.join(coreDir, 'bus.js'));
-const { get, set } = await import(path.join(coreDir, 'store.js'));
+const { on, emit, EVENTS } = await import(pathToFileURL(path.join(coreDir, 'bus.js')).href);
+const { get, set } = await import(pathToFileURL(path.join(coreDir, 'store.js')).href);
 
 // Importa o módulo a testar
-const { createXrayClip } = await import(path.join(engineDir, 'xray-clip.js'));
+const { createXrayClip } = await import(pathToFileURL(path.join(engineDir, 'xray-clip.js')).href);
 
 // Cria um bus falso compatível (com on/EVENTS)
 const fakeBus = {
