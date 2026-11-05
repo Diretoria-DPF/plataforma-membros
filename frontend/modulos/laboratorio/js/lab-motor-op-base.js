@@ -56,6 +56,12 @@
     return estado.recipientes[id] ? estado : E.comNovoRecipiente(estado, Object.assign({ id }, def));
   }
   function especie(ctx, id) { return E.info(ctx.especies, id); }
+  /** Nome da espécie para o texto (inicial minúscula no meio da frase, exceto siglas). */
+  function nome(ctx, id) {
+    let n = id;
+    try { n = E.info(ctx.especies, id).nome || id; } catch (_) { return id; }
+    return /^[A-ZÀ-Ú][a-zà-ú]/.test(n) ? n.charAt(0).toLowerCase() + n.slice(1) : n;
+  }
 
   function sortearUniforme(estado, a, b) {
     const r = E.sortear(estado);
@@ -160,14 +166,15 @@
     return { estado: fim, resumo, eventos };
   }
 
-  function eventosFisicos(op, lista) {
+  function eventosFisicos(op, lista, ctx) {
+    const n = (id) => (ctx ? nome(ctx, id) : id);
     const textos = {
-      ebulicao: (e) => `Ebulição de ${e.especie} a ${fmt(e.tempC, 1)} °C: a temperatura para no patamar e o líquido evapora.`,
-      refluxo: (e) => `Refluxo: o vapor de ${e.especie} condensa e volta ao frasco a ${fmt(e.tempC, 1)} °C.`,
-      pressao_sobe: (e) => `Frasco fechado acima da ebulição de ${e.especie}: a pressão sobe. Abra ou use condensador.`,
-      cristalizacao: (e) => `Cristalizaram ${fmt(e.g, 3)} g de ${e.especie}: a solubilidade caiu com a temperatura.`,
-      dissolucao: (e) => `Dissolveram ${fmt(e.g, 3)} g de ${e.especie}.`,
-      saturada: (e) => `Solução saturada de ${e.especie}: cabem ${fmt(e.capacidadeG, 2)} g nesta temperatura; o resto fica sólido.`
+      ebulicao: (e) => `Ebulição de ${n(e.especie)} a ${fmt(e.tempC, 1)} °C: a temperatura para no patamar e o líquido evapora.`,
+      refluxo: (e) => `Refluxo: o vapor de ${n(e.especie)} condensa e volta ao frasco a ${fmt(e.tempC, 1)} °C.`,
+      pressao_sobe: (e) => `Frasco fechado acima da ebulição de ${n(e.especie)}: a pressão sobe. Abra ou use condensador.`,
+      cristalizacao: (e) => `Cristalizaram ${fmt(e.g, 3)} g de ${n(e.especie)}: a solubilidade caiu com a temperatura.`,
+      dissolucao: (e) => `Dissolveram ${fmt(e.g, 3)} g de ${n(e.especie)}.`,
+      saturada: (e) => `Solução saturada de ${n(e.especie)}: cabem ${fmt(e.capacidadeG, 2)} g nesta temperatura; o resto fica sólido.`
     };
     return lista.map((e) => {
       const extra = { regra: e.regra, especie: e.especie };
@@ -219,7 +226,7 @@
       const tarada = estado.equipamentos.balanca.recipiente === id && Math.abs(estado.equipamentos.balanca.tara_g - (rec.massaVazio_g + E.massaRecipiente(rec, ctx.especies))) < 1e-6;
       const bruta = depois.massaVazio_g + E.massaRecipiente(depois, ctx.especies);
       const leitura = Math.round((tarada ? bruta - estado.equipamentos.balanca.tara_g : bruta) * 100) / 100;
-      const eventos = [ev('pesagem', 'pesar', `Pesados ${fmt(real, 2)} g de ${espId} em ${id}; a balança mostra ${fmt(leitura, 2)} g.`, {
+      const eventos = [ev('pesagem', 'pesar', `Pesados ${fmt(real, 2)} g de ${nome(ctx, espId)} em ${id}; a balança mostra ${fmt(leitura, 2)} g.`, {
         regra: 'ruido_balanca', especie: espId, recipiente: id, leitura, unidade: 'g', massaRealG: real,
         desvio: tarada ? undefined : { codigo: 'sem_tara', gravidade: 'aviso' }
       })];
@@ -242,7 +249,7 @@
       const u = sortearUniforme(estado, -1, 1);
       const real = vol * (1 + ERRO_VIDRARIA[vidraria] * u.valor);
       const ad = adicionar(u.estado, id, espId, E.mmolDeMassa(e, real * e.densidade), ctx);
-      return { estado: ad.estado, eventos: [ev('volume', 'medirVolume', `Medidos ${fmt(vol, 2)} mL de ${espId} com ${vidraria} (incerteza ±${fmt(ERRO_VIDRARIA[vidraria] * 100, 1)} %).`, { regra: 'erro_vidraria', especie: espId, recipiente: id, leitura: vol, unidade: 'mL', volumeRealMl: real })].concat(ad.eventos) };
+      return { estado: ad.estado, eventos: [ev('volume', 'medirVolume', `Medidos ${fmt(vol, 2)} mL de ${nome(ctx, espId)} com ${vidraria} (incerteza ±${fmt(ERRO_VIDRARIA[vidraria] * 100, 1)} %).`, { regra: 'erro_vidraria', especie: espId, recipiente: id, leitura: vol, unidade: 'mL', volumeRealMl: real })].concat(ad.eventos) };
     }
   };
 
@@ -286,15 +293,22 @@
       const d = rec.solido[sid] * fr;
       liquido = E.somarEspecie(liquido, sid, d);
       solido = E.somarEspecie(solido, sid, -d);
-      extras.push(ev('dissolucao', op, `${sid} sem dado de solubilidade: considerado solúvel.`, { regra: 'solubilidade_sem_dado', especie: sid }));
+      extras.push(ev('dissolucao', op, `${nome(ctx, sid)} sem dado de solubilidade: considerado solúvel.`, { regra: 'solubilidade_sem_dado', especie: sid }));
     }
     const eq = F.equilibrarSolubilidade({ ...rec, liquido, solido }, ctx.especies, { fracaoDissolucao: fr });
     let s = E.comRecipiente(estado, id, () => ({ ...eq.rec, homogeneo: agitacao && fr > 0.99 }));
     s = aplicarTermico(s, id, {}, tempoMin * 60, ctx, { agitacao }).estado;
-    const resto = Object.keys(recipiente(s, id).solido).length;
+    const depois = recipiente(s, id);
+    const resto = Object.keys(depois.solido).length;
+    const dissolvidos = Object.keys(rec.solido).map((sid) => {
+      const gAntes = E.massaDeMmol(especie(ctx, sid), rec.solido[sid]);
+      const gDepois = E.massaDeMmol(especie(ctx, sid), depois.solido[sid] || 0);
+      return gAntes - gDepois > 1e-6 ? `${fmt(gAntes - gDepois, 3)} g de ${nome(ctx, sid)}` : null;
+    }).filter(Boolean);
+    const acao = op === 'agitar' ? 'Homogeneizado' : `${agitacao ? 'Com' : 'Sem'} agitação`;
     return {
       estado: s,
-      eventos: [ev('dissolucao_resumo', op, `${agitacao ? 'Com' : 'Sem'} agitação por ${fmt(tempoMin, 0)} min: ${resto ? 'ainda há sólido no fundo' : 'tudo dissolvido'}.`, { recipiente: id })].concat(extras, eventosFisicos(op, eq.eventos))
+      eventos: [ev('dissolucao_resumo', op, `${acao} por ${fmt(tempoMin, 0)} min: ${dissolvidos.length ? `dissolveram ${dissolvidos.join(' e ')}; ` : ''}${resto ? 'ainda há sólido no fundo' : 'sem sólido no fundo'}.`, { regra: 'solubilidade_interpolada', recipiente: id })].concat(extras, eventosFisicos(op, eq.eventos.filter((e) => e.tipo === 'saturada'), ctx))
     };
   }
 
@@ -322,7 +336,7 @@
     eventos.unshift(ev('aquecimento', op, `${fonte.replace('_', '-')} por ${fmt(tempoMin, 0)} min: ${fmt(rec.tempC, 1)} → ${fmt(T, 1)} °C (máx. ${fmt(r.resumo.tMaxC, 1)} °C)${faixa ? `; ${fmt(r.resumo.tempoNaFaixaS / 60, 1)} min na faixa ${faixa[0]}-${faixa[1]} °C` : ''}.`, {
       regra: 'termica_newton', recipiente: id, leitura: T, unidade: '°C', tMaxC: r.resumo.tMaxC, tempoNaFaixaMin: r.resumo.tempoNaFaixaS / 60, evaporadoG: r.resumo.evaporadoG
     }));
-    return { estado: r.estado, eventos: eventos.concat(eventosFisicos(op, r.eventos)) };
+    return { estado: r.estado, eventos: eventos.concat(eventosFisicos(op, r.eventos, ctx)) };
   }
 
   const aquecer = { id: 'aquecer', titulo: 'Aquecer', regras: ['termica_newton', 'patamar_ebulicao'], aplicar: (s, p, c) => aquecerComum('aquecer', s, p, c) };
@@ -351,7 +365,7 @@
         regra: 'termica_newton', recipiente: id, leitura: T, unidade: '°C',
         desvio: rapido ? { codigo: 'resfriamento_brusco', gravidade: 'aviso' } : undefined
       })];
-      return { estado: r.estado, eventos: eventos.concat(eventosFisicos('resfriar', r.eventos)) };
+      return { estado: r.estado, eventos: eventos.concat(eventosFisicos('resfriar', r.eventos, ctx)) };
     }
   };
 
@@ -373,7 +387,7 @@
       const quente = rec.tempC > 30;
       return {
         estado: ad.estado,
-        eventos: [ev('avolumar', 'avolumar', `Volume completado a ${fmt(alvo, 1)} mL com ${solv}${quente ? ` a ${fmt(rec.tempC, 0)} °C: ao esfriar, o volume diminui` : ''}.`, {
+        eventos: [ev('avolumar', 'avolumar', `Volume completado a ${fmt(alvo, 1)} mL com ${nome(ctx, solv)}${quente ? ` a ${fmt(rec.tempC, 0)} °C: ao esfriar, o volume diminui` : ''}.`, {
           regra: 'erro_vidraria', recipiente: id, leitura: alvo, unidade: 'mL',
           desvio: quente ? { codigo: 'avolumado_quente', gravidade: 'aviso' } : undefined
         })].concat(ad.eventos)
@@ -421,7 +435,7 @@
           regra: 'estequiometria', recipiente: id, leitura: res.progresso, unidade: 'fração', limitante: res.limitante, andamento: res.est, rendimentoPct: rend
         }));
       }
-      return { estado: s, eventos: eventos.concat(eventosFisicos('reagir', eq.eventos)) };
+      return { estado: s, eventos: eventos.concat(eventosFisicos('reagir', eq.eventos, ctx)) };
     }
   };
 
@@ -429,7 +443,7 @@
 
   const API = {
     DT_S, OPERACOES, EPI_VALIDOS, ERRO_VIDRARIA,
-    ajudantes: { ev, num, texto, recipiente, garantirRecipiente, especie, sortearUniforme, transbordo, adicionar, moverFracao, phDoRecipiente, aplicarTermico, eventosFisicos, fmt }
+    ajudantes: { ev, nome, num, texto, recipiente, garantirRecipiente, especie, sortearUniforme, transbordo, adicionar, moverFracao, phDoRecipiente, aplicarTermico, eventosFisicos, fmt }
   };
   if (emNode) module.exports = API;
   if (raiz) raiz.LabMotorOpBase = API;

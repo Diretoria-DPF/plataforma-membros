@@ -14,7 +14,7 @@
   const E = emNode ? require('./lab-motor-estado.js') : raiz.LabMotorEstado;
   const F = emNode ? require('./lab-motor-fisica.js') : raiz.LabMotorFisica;
   const B = emNode ? require('./lab-motor-op-base.js') : raiz.LabMotorOpBase;
-  const { ev, num, texto, recipiente, garantirRecipiente, especie, adicionar, moverFracao, phDoRecipiente, aplicarTermico, eventosFisicos, fmt } = B.ajudantes;
+  const { ev, nome, num, texto, recipiente, garantirRecipiente, especie, adicionar, moverFracao, phDoRecipiente, aplicarTermico, eventosFisicos, fmt } = B.ajudantes;
 
   const RETENCAO = { simples: 0.05, vacuo: 0.02 };
 
@@ -67,7 +67,7 @@
         s = E.comRecipiente(s, destSol, (x) => ({ ...x, solido: r.solido, liquido: E.escalarConteudo(lavagemTotal, ret), organica: {} }));
         s = E.comRecipiente(s, destFil, (x) => ({ ...x, liquido: E.somarConteudos(x.liquido, E.somarConteudos(passa, bolo.organica)) }));
         const perdidoG = antesSolidoG - E.massaConteudo(r.solido, ctx.especies);
-        eventos.push(ev('lavagem', 'filtrar', `Lavagem com ${fmt(volMl, 1)} mL de ${solv} a ${fmt(tempC, 0)} °C: ${fmt(perdidoG, 3)} g de sólido se dissolveram na lavagem.`, {
+        eventos.push(ev('lavagem', 'filtrar', `Lavagem com ${fmt(volMl, 1)} mL de ${nome(ctx, solv)} a ${fmt(tempC, 0)} °C: ${fmt(perdidoG, 3)} g de sólido se dissolveram na lavagem.`, {
           regra: 'solubilidade_interpolada', recipiente: destSol, leitura: perdidoG, unidade: 'g', tempLavagemC: tempC,
           desvio: tempC >= 25 && perdidoG > 0.01 ? { codigo: 'perda_por_dissolucao', gravidade: 'aviso' } : undefined
         }));
@@ -103,11 +103,11 @@
       s = E.com(s, { t: s.t + 30 * 60 });
       const filt = filtrar.aplicar(s, { origem: id, destinoSolido: destCristais, destinoFiltrado: destAgua, tipo: 'vacuo' }, ctx);
       const cristaisG = E.massaConteudo(recipiente(filt.estado, destCristais).solido, ctx.especies);
-      const eventos = [ev('recristalizacao', 'recristalizar', `Dissolvido em ${fmt(volMl, 1)} mL de ${solv} a ${fmt(quente, 0)} °C e resfriado a ${fmt(frio, 0)} °C: ${fmt(cristaisG, 3)} g de cristais.`, {
+      const eventos = [ev('recristalizacao', 'recristalizar', `Dissolvido em ${fmt(volMl, 1)} mL de ${nome(ctx, solv)} a ${fmt(quente, 0)} °C e resfriado a ${fmt(frio, 0)} °C: ${fmt(cristaisG, 3)} g de cristais.`, {
         regra: 'solubilidade_interpolada', recipiente: destCristais, leitura: cristaisG, unidade: 'g', volumeSolventeMl: volMl,
         desvio: naoDissolveuG > 0.02 * totalSolutoG ? { codigo: 'solvente_insuficiente', gravidade: 'aviso' } : undefined
       })];
-      return { estado: filt.estado, eventos: eventos.concat(eventosFisicos('recristalizar', f.eventos)) };
+      return { estado: filt.estado, eventos: eventos.concat(eventosFisicos('recristalizar', f.eventos, ctx)) };
     }
   };
 
@@ -137,10 +137,10 @@
         const d = r1.liquido[x] * fr;
         liquido = E.somarEspecie(liquido, x, -d);
         organica = E.somarEspecie(organica, x, d);
-        partes.push(`${fmt(fr * 100, 0)} % de ${x}`);
+        partes.push(`${fmt(fr * 100, 0)} % de ${nome(ctx, x)}`);
       }
       s = E.comRecipiente(s, id, (r) => ({ ...r, liquido, organica }));
-      const eventos = [ev('extracao', 'extrair', `Extração com ${fmt(volMl, 0)} mL de ${solv} com a fase aquosa em pH ${fmt(pH, 1)}: ${partes.join('; ') || 'nenhum soluto com partição conhecida'} passou à fase orgânica.`, { regra: 'particao_kd', recipiente: id, pH })];
+      const eventos = [ev('extracao', 'extrair', `Extração com ${fmt(volMl, 0)} mL de ${nome(ctx, solv)} com a fase aquosa em pH ${fmt(pH, 1)}: ${partes.join('; ') || 'nenhum soluto com partição conhecida'} passou à fase orgânica.`, { regra: 'particao_kd', recipiente: id, pH })];
       if (p && p.aliviarPressao === false) eventos.push(ev('aviso', 'extrair', 'Agitar o funil sem aliviar a pressão pode estourar a tampa e espirrar solvente.', { recipiente: id, desvio: { codigo: 'pressao_no_funil', gravidade: 'aviso' } }));
       if (p && p.destinoOrganica) {
         const dest = texto(p, 'destinoOrganica');
@@ -169,7 +169,7 @@
         regra: 'patamar_ebulicao', recipiente: destino, leitura: r.resumo.condensadoG, unidade: 'g',
         desvio: seco ? { codigo: 'destilou_ate_secura', gravidade: 'aviso' } : undefined
       })];
-      return { estado: s, eventos: eventos.concat(eventosFisicos('destilar', r.eventos.filter((e) => e.tipo !== 'ebulicao'))) };
+      return { estado: s, eventos: eventos.concat(eventosFisicos('destilar', r.eventos.filter((e) => e.tipo !== 'ebulicao'), ctx)) };
     }
   };
 
@@ -207,7 +207,7 @@
         if (Number.isFinite(e.pf) && tempC >= e.pf - 15 && !/__degradado$/.test(x)) {
           const d = solido[x] * 0.3;
           s = E.comRecipiente(s, id, (r) => ({ ...r, solido: E.somarEspecie(E.somarEspecie(r.solido, x, -d), `${x}__degradado`, d) }));
-          eventos.push(ev('incidente', 'secar', `Estufa a ${fmt(tempC, 0)} °C, perto do ponto de fusão de ${x} (${fmt(e.pf, 0)} °C): parte funde e se decompõe.`, { especie: x, recipiente: id, desvio: { codigo: 'fusao_decomposicao', gravidade: 'nao_conforme' } }));
+          eventos.push(ev('incidente', 'secar', `Estufa a ${fmt(tempC, 0)} °C, perto do ponto de fusão de ${nome(ctx, x)} (${fmt(e.pf, 0)} °C): parte funde e se decompõe.`, { especie: x, recipiente: id, desvio: { codigo: 'fusao_decomposicao', gravidade: 'nao_conforme' } }));
         }
       }
       const restante = E.massaConteudo(recipiente(s, id).liquido, ctx.especies) + E.massaConteudo(recipiente(s, id).organica, ctx.especies);

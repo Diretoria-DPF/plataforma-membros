@@ -15,7 +15,7 @@
   const E = emNode ? require('./lab-motor-estado.js') : raiz.LabMotorEstado;
   const F = emNode ? require('./lab-motor-fisica.js') : raiz.LabMotorFisica;
   const B = emNode ? require('./lab-motor-op-base.js') : raiz.LabMotorOpBase;
-  const { ev, num, texto, recipiente, garantirRecipiente, especie, sortearUniforme, transbordo, moverFracao, phDoRecipiente, fmt } = B.ajudantes;
+  const { ev, nome, num, texto, recipiente, garantirRecipiente, especie, sortearUniforme, transbordo, moverFracao, phDoRecipiente, fmt } = B.ajudantes;
 
   const INDICADORES = { fenolftaleina: { viragem: 8.2, acida: 'incolor', basica: 'rosa' }, nenhum: null };
 
@@ -58,7 +58,7 @@
       const cor = i ? (pH >= i.viragem ? i.basica : i.acida) : null;
       return {
         estado: s,
-        eventos: [ev('titulacao', 'titular', `Adicionados ${fmt(volMl, 2)} mL de ${espId} ${fmt(conc, 3)} mol/L${cor ? `: a solução está ${cor}` : ''}.`, { regra: 'ph_eletroneutralidade', recipiente: id, leitura: volMl, unidade: 'mL', pH, cor })].concat(tb.eventos)
+        eventos: [ev('titulacao', 'titular', `Adicionados ${fmt(volMl, 2)} mL de ${nome(ctx, espId)} ${fmt(conc, 3)} mol/L${cor ? `: a solução está ${cor}` : ''}.`, { regra: 'ph_eletroneutralidade', recipiente: id, leitura: volMl, unidade: 'mL', pH, cor })].concat(tb.eventos)
       };
     }
   };
@@ -122,7 +122,7 @@
       const eluente = texto(p, 'eluente');
       const tabela = (ctx.rf && ctx.rf[eluente]) || {};
       const manchas = F.manchasCCD(fracoesAmostra(recipiente(estado, id), ctx), tabela);
-      const desc = manchas.map((m) => `${m.especie}${m.rf === null ? '' : ` (Rf ${fmt(m.rf, 2)})`}`).join(', ');
+      const desc = manchas.map((m) => `${nome(ctx, m.especie)}${m.rf === null ? '' : ` (Rf ${fmt(m.rf, 2)})`}`).join(', ');
       return { estado, eventos: [ev('ccd', 'ccd', `Placa revelada: ${manchas.length} mancha(s): ${desc || 'nenhuma'}.`, { regra: 'ccd_rf_ilustrativo', recipiente: id, leitura: manchas.length, unidade: 'manchas', manchas })] };
     }
   };
@@ -163,7 +163,7 @@
             const sem = { ...r, [fase]: E.somarEspecie(r[fase], x, -d) };
             return { ...sem, solido: E.somarEspecie(sem.solido, `${x}__degradado`, d) };
           });
-          eventos.push(ev('degradacao', 'esterilizar', `${x} é termolábil: parte se degradou na autoclave. Prefira filtração esterilizante.`, { especie: x, recipiente: id, desvio: { codigo: 'termolabil_autoclavado', gravidade: 'nao_conforme' } }));
+          eventos.push(ev('degradacao', 'esterilizar', `${nome(ctx, x)} é termolábil: parte se degradou na autoclave. Prefira filtração esterilizante.`, { especie: x, recipiente: id, desvio: { codigo: 'termolabil_autoclavado', gravidade: 'nao_conforme' } }));
         }
         s = E.com(s, { t: s.t + tempoMin * 60 });
         eventos.unshift(ev('esterilizacao', 'esterilizar', `Autoclave a ${fmt(tempC, 0)} °C por ${fmt(tempoMin, 0)} min: ${ok ? 'ciclo válido' : 'ciclo insuficiente (mínimo 121 °C por 15 min)'}.`, { regra: 'esterilizacao_parametros', recipiente: id, leitura: ok, desvio: ok ? undefined : { codigo: 'ciclo_insuficiente', gravidade: 'nao_conforme' } }));
