@@ -18,6 +18,10 @@
 import { on, emit, EVENTS } from '../core/bus.js';
 import { get as storeGet, set as storeSet, subscribe } from '../core/store.js';
 import { MODES, isValidModeId } from '../core/contracts.js';
+import { ATLAS_FLAGS } from '../core/flags.js';
+
+// Modos com `flag` só existem com a chave ligada (js/core/flags.js).
+const modeEnabled = (def) => !def.flag || ATLAS_FLAGS[def.flag] === true;
 
 // Glifos do wireframe da própria spec de UX (docs/ATLAS_UX_SPEC.md §18.1) —
 // só decoração (aria-hidden); o rótulo acessível vem do texto/aria-label.
@@ -310,7 +314,7 @@ function buildModeSwitch() {
   const trigger = document.getElementById('atlas-mode-trigger');
   const triggerLabel = document.getElementById('atlas-mode-trigger-label');
   if (!list || !trigger) return;
-  MODES.forEach((mode) => {
+  MODES.filter(modeEnabled).forEach((mode) => {
     list.appendChild(el('button', {
       type: 'button', role: 'option', dataset: { action: 'AtlasShell.setMode', arg: mode.id },
       'aria-selected': String(mode.id === storeGet().mode),
@@ -497,6 +501,7 @@ function installActions() {
     },
     setMode(modeId) {
       if (!isValidModeId(modeId)) return;
+      if (!modeEnabled(MODES.find((m) => m.id === modeId))) return;
       closeModeMenu();
       if (storeGet().mode === modeId) return;
       storeSet({ mode: modeId });

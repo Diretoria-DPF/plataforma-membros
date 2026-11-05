@@ -105,6 +105,8 @@ export const MODES = Object.freeze([
   Object.freeze({ id: 'moleculas', label: 'Moléculas', icon: 'molecule' }),
   Object.freeze({ id: 'quiz', label: 'Quiz', icon: 'check' }),
   Object.freeze({ id: 'estudo', label: 'Meu estudo', icon: 'bookmark' }),
+  // `flag`: o modo só aparece e só abre com a chave ligada em js/core/flags.js.
+  Object.freeze({ id: 'trilhas', label: 'Trilhas e desafios', icon: 'route', flag: 'trilhas' }),
 ]);
 
 /** ids de MODES, na mesma ordem. */
