@@ -1,0 +1,352 @@
+{
+  "id": "proc_cq_titulacao_hcl_v1",
+  "versao": 1,
+  "titulo": "Controle de qualidade: teor de uma solução de HCl 0,1 mol/L por titulação",
+  "categoria": "cq",
+  "nivel": 3,
+  "nivel_conteudo": "completo",
+  "restricao": null,
+  "revisado_por": null,
+  "forma": "reagente_analitico",
+  "setor": "cq",
+  "conferencia": {
+    "estado": "pendente",
+    "nota": "[NV] Valores numéricos, faixas de critério, tolerâncias e citações de norma a conferir com a fonte primária (edição e artigo vigentes) antes de publicar."
+  },
+  "duracaoSimuladaMin": 40,
+  "via": "analise",
+  "objetivos": [
+    "Calcular o volume esperado de titulante",
+    "Titular com indicador e reconhecer o ponto final",
+    "Calcular o teor e comparar com o critério"
+  ],
+  "fontesOficiais": [
+    {
+      "tipo": "Farmacopeia Brasileira",
+      "citacao": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos gerais de análise volumétrica e soluções volumétricas"
+    }
+  ],
+  "formulacao": {
+    "base": "amostra de 20,0 mL",
+    "itens": [
+      {
+        "especie": "HCl_01M_l",
+        "funcao": "amostra de controle de qualidade",
+        "quantidade": {
+          "valor": 20,
+          "unidade": "mL"
+        }
+      }
+    ]
+  },
+  "cq": [
+    {
+      "ensaio": "teor de HCl por titulação",
+      "criterio": "95 a 105 % do valor nominal (0,095 a 0,105 mol/L)"
+    }
+  ],
+  "referencias": [
+    {
+      "titulo": "Farmacopeia Brasileira (edição vigente), análise volumétrica",
+      "nota": "[NV] conferir método e critério"
+    }
+  ],
+  "recipientes": [
+    {
+      "id": "erlenmeyer",
+      "tipo": "erlenmeyer",
+      "capMl": 250
+    }
+  ],
+  "materiais": {
+    "especies": [
+      {
+        "id": "HCl_01M_l",
+        "papel": "amostra",
+        "quantidade": {
+          "valor": 20,
+          "unidade": "mL"
+        }
+      },
+      {
+        "id": "NaOH_s",
+        "papel": "titulante",
+        "quantidade": {
+          "valor": 0.1,
+          "unidade": "mmol"
+        }
+      }
+    ],
+    "vidraria": [
+      "erlenmeyer",
+      "pipeta_volumetrica_20",
+      "bureta_25"
+    ],
+    "equipamentos": [
+      "balanca_analitica"
+    ]
+  },
+  "seguranca": {
+    "epi": [
+      "jaleco",
+      "luvas_nitrila",
+      "oculos"
+    ],
+    "capela": false,
+    "riscos": [
+      "solução ácida e básica diluídas"
+    ],
+    "residuos": [
+      {
+        "tipo": "solucao_neutralizada",
+        "destino": "neutralizar_e_pia"
+      }
+    ]
+  },
+  "etapas": [
+    {
+      "id": "e1",
+      "titulo": "Paramentação",
+      "oQueEstaAcontecendo": "Você veste os equipamentos de proteção antes de abrir qualquer frasco.",
+      "porQue": "Ácidos e bases diluídos ainda irritam os olhos: os óculos são obrigatórios na titulação.",
+      "preCondicoes": [],
+      "acao": {
+        "operacao": "paramentar",
+        "parametros": {
+          "epi": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos"
+          ],
+          "capela": false
+        },
+        "alvoUI": "painelSeguranca"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "epi",
+          "op": "contem",
+          "valor": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos"
+          ],
+          "mensagemSeFalhar": "Falta equipamento de proteção: jaleco, luvas_nitrila, oculos.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "titulo": "Calcular o volume esperado",
+      "oQueEstaAcontecendo": "Antes de titular, você calcula quanto NaOH 0,1 mol/L neutraliza 20,0 mL de HCl 0,1 mol/L.",
+      "porQue": "HCl e NaOH reagem 1:1. Saber o volume esperado evita passar do ponto final.",
+      "calculoPrevio": {
+        "pergunta": "Qual o volume (mL) de NaOH 0,1 mol/L para neutralizar 20,0 mL de HCl 0,1 mol/L?",
+        "formula": "V(NaOH) = C(HCl) × V(HCl) ÷ C(NaOH)",
+        "resposta": 20,
+        "tolerancia": 0.1,
+        "unidade": "mL"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e1"
+        }
+      ],
+      "acao": {
+        "operacao": "tarar",
+        "parametros": {
+          "recipiente": "erlenmeyer"
+        },
+        "alvoUI": "balancaTara"
+      },
+      "verificacoes": []
+    },
+    {
+      "id": "e3",
+      "titulo": "Medir a alíquota",
+      "oQueEstaAcontecendo": "Com a pipeta volumétrica, você transfere 20,0 mL da amostra de HCl para o erlenmeyer.",
+      "porQue": "A pipeta volumétrica dá a exatidão que a proveta não dá, e a alíquota define o resultado.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e2"
+        }
+      ],
+      "acao": {
+        "operacao": "medirVolume",
+        "parametros": {
+          "especie": "HCl_01M_l",
+          "volumeMl": 20,
+          "vidraria": "pipeta",
+          "recipiente": "erlenmeyer"
+        },
+        "alvoUI": "reagente:HCl_01M_l"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "volumeMl",
+          "recipiente": "erlenmeyer",
+          "op": "entre",
+          "valor": [
+            19.9,
+            20.1
+          ],
+          "mensagemSeFalhar": "Alíquota fora de 20,0 ± 0,1 mL.",
+          "consequencia": "aviso"
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "titulo": "Titular rápido até perto do ponto final",
+      "oQueEstaAcontecendo": "Da bureta saem 18,0 mL de NaOH 0,1 mol/L, com fenolftaleína como indicador.",
+      "porQue": "No começo a mudança de pH é lenta; a pessoa pode adicionar volume maior. A solução continua incolor.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e3"
+        }
+      ],
+      "acao": {
+        "operacao": "titular",
+        "parametros": {
+          "recipiente": "erlenmeyer",
+          "titulante": {
+            "especie": "NaOH_s",
+            "concMolL": 0.1
+          },
+          "volumeMl": 18,
+          "indicador": "fenolftaleina"
+        },
+        "alvoUI": "btnTitular"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "pH",
+          "recipiente": "erlenmeyer",
+          "op": "<",
+          "valor": 8.2,
+          "mensagemSeFalhar": "A solução já virou: você passou do ponto final. Refaça a titulação.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "titulo": "Titular gota a gota",
+      "oQueEstaAcontecendo": "Você adiciona 1,9 mL e depois porções de 0,1 mL até a solução ficar rosa e assim permanecer.",
+      "porQue": "Perto do ponto final uma gota muda o pH em várias unidades. Gota a gota evita passar do ponto e perder a exatidão.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e4"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "titular",
+          "parametros": {
+            "recipiente": "erlenmeyer",
+            "titulante": {
+              "especie": "NaOH_s",
+              "concMolL": 0.1
+            },
+            "volumeMl": 1.9,
+            "indicador": "fenolftaleina"
+          },
+          "alvoUI": "btnTitular"
+        },
+        {
+          "operacao": "titular",
+          "parametros": {
+            "recipiente": "erlenmeyer",
+            "titulante": {
+              "especie": "NaOH_s",
+              "concMolL": 0.1
+            },
+            "volumeMl": 0.15,
+            "indicador": "fenolftaleina"
+          },
+          "alvoUI": "btnTitular"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "pH",
+          "recipiente": "erlenmeyer",
+          "op": ">=",
+          "valor": 8.2,
+          "mensagemSeFalhar": "Ainda incolor: adicione mais 0,1 mL e repita.",
+          "consequencia": "aguardar"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "pH",
+            "recipiente": "erlenmeyer",
+            "op": ">",
+            "valor": 10.5
+          },
+          "consequencia": "ponto_final_ultrapassado",
+          "explicacao": "Com pH acima de 10, o excesso de NaOH já passou bastante do ponto final e o resultado fica alto.",
+          "correcao": "Titule gota a gota perto do ponto final e pare ao primeiro rosa persistente."
+        }
+      ]
+    },
+    {
+      "id": "e6",
+      "titulo": "Calcular o resultado e descartar",
+      "oQueEstaAcontecendo": "Com o volume gasto, você calcula a concentração real de HCl e descarta a amostra neutralizada.",
+      "porQue": "C(HCl) = C(NaOH) × V(NaOH) ÷ V(amostra). O resultado de 95 a 105 % do valor nominal indica solução conforme.",
+      "calculoPrevio": {
+        "pergunta": "Se foram gastos 20,0 mL de NaOH 0,100 mol/L para 20,0 mL de amostra, qual a concentração (mol/L) de HCl?",
+        "formula": "C(HCl) = C(NaOH) × V(NaOH) ÷ V(amostra)",
+        "resposta": 0.1,
+        "tolerancia": 0.002,
+        "unidade": "mol/L"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e5"
+        }
+      ],
+      "acao": {
+        "operacao": "descartar",
+        "parametros": {
+          "recipiente": "erlenmeyer",
+          "destino": "neutralizar_e_pia"
+        },
+        "alvoUI": "painelDescarte"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "residuoConforme",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Destino de descarte inadequado.",
+          "consequencia": "nao_conforme"
+        }
+      ]
+    }
+  ],
+  "resultadoEsperado": {
+    "produto": "HCl_01M_l",
+    "criterios": [
+      {
+        "descricao": "Amostra titulada e descartada",
+        "grandeza": "residuoConforme",
+        "op": "==",
+        "valor": true
+      }
+    ]
+  }
+}

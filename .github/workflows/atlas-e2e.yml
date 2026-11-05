@@ -52,7 +52,7 @@ jobs:
       - if: steps.escopo.outputs.run == 'true'
         run: npm ci || npm install
       - if: steps.escopo.outputs.run == 'true'
-        run: npm install --no-save playwright
+        run: npm install --no-save playwright@1.64.1
       - if: steps.escopo.outputs.run == 'true'
         run: npx playwright install --with-deps chromium
       # Unitários do atlas (validador, pk-model, isolamento de pendente/ etc.).
@@ -60,6 +60,9 @@ jobs:
         run: node --test scripts/atlas/*.test.mjs
       - if: steps.escopo.outputs.run == 'true'
         run: node scripts/build.js
+        env:
+          # o e2e atlas-assets usa um harness de dev/, que o build publicado não inclui
+          ATLAS_KEEP_DEV: '1'
       # "atlas" casa por prefixo: roda atlas, atlas-a11y (axe), atlas-assets,
       # atlas-perf (inclui 3G rápido) e atlas-responsive.
       - if: steps.escopo.outputs.run == 'true'

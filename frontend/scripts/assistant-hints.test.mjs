@@ -105,11 +105,13 @@ function ruleOf(css, selector) {
 
 // ---------- Mapas e textos ----------
 
-test('mapa de textos: os seis contextos com o texto exato do plano, congelado', () => {
+test('mapa de textos: os contextos com o texto exato do plano (mais as dicas de Farmacologia e Toxicologia), congelado', () => {
   assert.deepEqual(Hints.HINT_TEXT, {
     events: 'Quer ajuda com sua inscrição?',
     proposals: 'Posso te levar para criar uma proposta.',
     learn: 'Quer sugestão por onde começar a estudar?',
+    pharma: 'Quer rever um mecanismo de ação antes de seguir?',
+    toxic: 'Quer rever os antídotos de um grupo de intoxicações?',
     lab: 'Dúvida sobre vidraria ou preparo?',
     clinic: 'Quer revisar um caso antes?',
     atlas: 'Posso explicar alguma estrutura?',
@@ -118,7 +120,7 @@ test('mapa de textos: os seis contextos com o texto exato do plano, congelado', 
 });
 
 test('cada contexto de dica é um módulo da Guia (lia-states.js), para o react() aceitar', () => {
-  for (const context of Object.keys(Hints.HINT_TEXT)) assert.equal(States.isModule(context), true, context);
+  for (const context of Object.keys(Hints.HINT_TEXT).filter((key) => key !== 'pharma' && key !== 'toxic')) assert.equal(States.isModule(context), true, context);
 });
 
 test('painel → contexto: Eventos, Propostas e Aprender; os demais painéis não têm dica', () => {
@@ -128,6 +130,30 @@ test('painel → contexto: Eventos, Propostas e Aprender; os demais painéis nã
   for (const panel of ['panel-home', 'panel-messages', 'panel-admin-users', '__proto__', 'constructor', '', undefined, null]) {
     assert.equal(Hints.contextForPanel(panel), '', String(panel));
   }
+});
+
+test('TRA-12: Farmacologia e Toxicologia têm dica própria, curta e sem diminutivos', () => {
+  assert.equal(Hints.hintKeyForModule('farmaco'), 'pharma');
+  assert.equal(Hints.hintKeyForModule('toxico'), 'toxic');
+  assert.equal(Hints.hintKeyForModule('lab'), 'lab');
+  for (const key of ['pharma', 'toxic', 'lab', 'clinic', 'atlas']) {
+    const text = Hints.hintFor(key).text;
+    assert.ok(text.length <= 60, key);
+    assert.doesNotMatch(text, /\w+(inh[oa]s?|zinh[oa]s?)/i, key);
+  }
+  assert.notEqual(Hints.hintFor('pharma').text, Hints.hintFor('learn').text);
+  assert.notEqual(Hints.hintFor('pharma').text, Hints.hintFor('toxic').text);
+});
+
+test('TRA-12: a pergunta à Guia leva {panel, module}; o módulo vem do controlador de dicas e é validado', () => {
+  const code = read('frontend/assistant.js');
+  assert.match(code, /context: \{ panel: currentPanel\(\), module: hint\('moduleId'\) \|\| '' \}/);
+  const { hints } = makeHints();
+  assert.equal(hints.moduleId(), '');
+  hints.moduleChanged('lab');
+  assert.equal(hints.moduleId(), 'lab');
+  hints.moduleChanged('');
+  assert.equal(hints.moduleId(), '');
 });
 
 test('módulo → contexto: Laboratório, Clínica e Atlas; Farmacologia e Toxicologia caem em Aprender', () => {
@@ -153,9 +179,9 @@ test('os painéis e os módulos do mapa existem de verdade (index.html e learnin
   for (const panel of ['panel-events', 'panel-proposals', 'panel-learn']) {
     assert.match(html, new RegExp('id="' + panel + '"'));
   }
-  const learning = read('frontend/learning.js');
+  const catalogo = read('frontend/modulos/shared/catalogo.js');
   for (const mod of ['farmaco', 'toxico', 'clinica', 'lab', 'anatomia']) {
-    assert.match(learning, new RegExp("id: '" + mod + "'"));
+    assert.match(catalogo, new RegExp("id: '" + mod + "'"));
   }
 });
 

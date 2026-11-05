@@ -71,21 +71,6 @@
   min-width: 0;
 }
 
-.atlas-card-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--laift-border);
-  color: var(--laift-muted);
-  font-size: 12px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-.atlas-card-status-text { white-space: nowrap; }
-.atlas-card-status--editorial-late { border-color: var(--laift-warning); color: var(--laift-warning); background: var(--laift-warning-soft); }
-.atlas-card-status--reviewed { border-color: var(--module-accent); color: var(--laift-text); }
 .atlas-card-new {
   display: inline-block;
   padding: 2px 8px;
@@ -378,34 +363,25 @@ body[data-peek-v2="false"] .atlas-card-new { display: none; }
   font-size: 12px;
 }
 
-/* ========================================================================
-   Review info (Status de Revisão)
-   ======================================================================== */
-
-.atlas-card-review-info {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--laift-border-strong);
-}
-
-.atlas-card-review-list {
+/* Estrutura sem ficha: fatos neutros e atalho. */
+.atlas-card-facts-list {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: clamp(4px, 1vw, 8px) clamp(10px, 2vw, 16px);
-  margin: 0;
-  padding: 0;
-  font-size: clamp(11px, 2.5vw, 14px);
+  margin: 0 0 12px;
+  font-size: clamp(12px, 2.8vw, 14px);
 }
-
-.atlas-card-review-list > dt {
-  font-weight: 500;
-  color: var(--laift-muted);
-  white-space: nowrap;
-}
-
-.atlas-card-review-list > dd {
-  margin: 0;
+.atlas-card-facts-list > dt { font-weight: 500; color: var(--laift-muted); white-space: nowrap; }
+.atlas-card-facts-list > dd { margin: 0; color: var(--laift-text); }
+.atlas-card-shortcut {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid var(--laift-border);
+  background: var(--laift-surface);
   color: var(--laift-text);
+  font: inherit;
+  cursor: pointer;
 }
 
 /* ========================================================================
@@ -458,11 +434,6 @@ body[data-peek-v2="false"] .atlas-card-new { display: none; }
 
 @media (max-width: 380px) {
   .atlas-card-nav-label { display: none; }
-}
-
-/* Selo de nome traduzido com ajuda de IA, ainda sem revisão (PR 3.1.5). */
-.atlas-card-assisted {
-  border-style: dashed;
 }
 
 /* "Ouvir" o resumo (PR 3.1.10). */

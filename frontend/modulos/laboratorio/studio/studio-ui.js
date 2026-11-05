@@ -44,6 +44,7 @@
     'substituirAtomoClicadoViaTabela', 'abrirModalCADD', 'fecharModalCADD', 'fecharTabelaPeriodica',
     'filtrarElementosPTable', 'fecharDossieChEMBL', 'fecharPainelBioisosterismo', 'fecharSimilaridade',
     'fecharComparacao', 'executarComparacao',
+    'abrirPainelAnalogos', 'fecharPainelAnalogos', 'compararAnalogo', 'abrirAnaloNoTresD',
     // Ações de conteúdo gerado por studio.js (tabela periódica, bioisosterismo...)
     'executarSubstituicaoElementar', 'executarAdicaoAtomo', 'executarTransformacaoBioisosterica',
     'adicionarDerivadoAoCatalogo', 'selecionarSimilarPorId', 'removerBannerInstabilidade'
@@ -107,7 +108,7 @@
     }
 
     if (e.key === 'Escape') {
-      ['periodicTableModal', 'caddModal', 'chemblModal', 'bioisostereModal', 'similarityModal', 'comparisonModal'].forEach(function (id) {
+      ['periodicTableModal', 'caddModal', 'chemblModal', 'bioisostereModal', 'analogosModal', 'similarityModal', 'comparisonModal'].forEach(function (id) {
         var m = doc.getElementById(id);
         if (m && m.style.display !== 'none') m.style.display = 'none';
       });

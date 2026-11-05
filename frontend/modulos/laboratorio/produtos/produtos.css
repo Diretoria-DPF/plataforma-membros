@@ -1,0 +1,37 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+:root { --pr-fundo: #f8fafc; --pr-texto: #0f172a; --pr-suave: #475569; --pr-borda: #cbd5e1; --pr-card: #ffffff; --pr-acento: #1d4ed8; --pr-ok: #166534; --pr-ok-fundo: #dcfce7; --pr-erro: #991b1b; --pr-erro-fundo: #fee2e2; }
+@media (prefers-color-scheme: dark) {
+  :root { --pr-fundo: #0b1220; --pr-texto: #e2e8f0; --pr-suave: #94a3b8; --pr-borda: #334155; --pr-card: #111827; --pr-acento: #93c5fd; --pr-ok: #86efac; --pr-ok-fundo: #14532d; --pr-erro: #fca5a5; --pr-erro-fundo: #450a0a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--pr-fundo); color: var(--pr-texto); line-height: 1.5; }
+.pr-topo, .pr-main { max-width: 900px; margin: 0 auto; padding: 16px; }
+.pr-topo h1 { margin: 8px 0 4px; font-size: 1.5rem; }
+.pr-sub, .pr-fonte, .pr-aviso { color: var(--pr-suave); font-size: 0.9rem; margin: 4px 0; }
+.pr-voltar { color: var(--pr-acento); display: inline-block; min-height: 44px; line-height: 44px; }
+.pr-abas { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+.pr-aba, .pr-btn { min-height: 44px; padding: 8px 14px; border: 1px solid var(--pr-borda); border-radius: 10px; background: var(--pr-card); color: var(--pr-texto); font: inherit; cursor: pointer; text-align: left; }
+.pr-aba[aria-selected="true"], .pr-btn.pr-principal { background: var(--pr-acento); color: var(--pr-fundo); border-color: var(--pr-acento); }
+.pr-aba:focus-visible, .pr-btn:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid var(--pr-acento); outline-offset: 2px; }
+.pr-card { background: var(--pr-card); border: 1px solid var(--pr-borda); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; }
+.pr-card h2, .pr-card h3 { margin: 8px 0 6px; font-size: 1.05rem; }
+.pr-lista { display: grid; gap: 8px; padding: 0; margin: 0 0 12px; list-style: none; }
+.pr-lista-simples { margin: 0 0 8px; padding-left: 20px; }
+.pr-linha { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+.pr-entrada { min-height: 44px; padding: 6px 10px; border: 1px solid var(--pr-borda); border-radius: 8px; background: var(--pr-card); color: var(--pr-texto); font: inherit; width: 9rem; }
+.pr-entrada.pr-larga { width: 100%; }
+.pr-resultado { padding: 10px 12px; border-radius: 10px; margin-top: 10px; }
+.pr-resultado.pr-certo { background: var(--pr-ok-fundo); color: var(--pr-ok); }
+.pr-resultado.pr-errado { background: var(--pr-erro-fundo); color: var(--pr-erro); }
+.pr-tabela { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.pr-tabela th, .pr-tabela td { border-bottom: 1px solid var(--pr-borda); padding: 6px 8px; text-align: left; }
+.pr-tabela .pr-num { text-align: right; font-variant-numeric: tabular-nums; }
+.pr-etapa { border: 1px solid var(--pr-borda); border-radius: 10px; padding: 4px 12px; margin: 0 0 8px; background: var(--pr-card); }
+.pr-etapa summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; }
+.pr-erro { color: var(--pr-erro); }
+@media (max-width: 480px) { .pr-entrada { width: 100%; } }
+@media (prefers-reduced-motion: no-preference) { .pr-aba, .pr-btn { transition: background-color 0.15s; } }

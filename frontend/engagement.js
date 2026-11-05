@@ -21,7 +21,10 @@
 
   /** Módulo da Worker (learning_attempts.module) -> id do cartão em learning.js. */
   var MODULE_IDS = { farmacologia: 'farmaco', toxicologia: 'toxico', clinica: 'clinica', laboratorio: 'lab', anatomia: 'anatomia' };
-  var MODULE_LABELS = { farmaco: 'Farmacologia', toxico: 'Toxicologia', clinica: 'Clínica virtual', lab: 'Laboratório virtual', anatomia: 'Anatomia e farmacocinética' };
+  // Nomes do catálogo único (modulos/shared/catalogo.js); no Node (testes) vem do próprio arquivo.
+  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/shared/catalogo.js') : root.LaiftModules;
+  var MODULE_LABELS = {};
+  CATALOG.MODULES.forEach(function (m) { MODULE_LABELS[m.id] = m.name; });
   var ACTIVITY_LABELS = { quiz_estudo: 'simulado', quiz_prova: 'prova', caso_clinico: 'caso clínico', formulacao: 'formulação', simulacao_pk: 'simulação' };
 
   var dayFormat = typeof Intl !== 'undefined'
@@ -82,10 +85,10 @@
   function streakText(streak) {
     var cur = streak && streak.current ? streak.current : 0;
     var best = streak && streak.best ? streak.best : 0;
-    if (cur > 0 && streak.activeToday) return cur + ' ' + plural(cur, 'dia seguido', 'dias seguidos') + '. Ótimo ritmo!';
-    if (cur > 0) return cur + ' ' + plural(cur, 'dia seguido', 'dias seguidos') + '. Uma questão hoje continua a sequência.';
+    if (cur > 0 && streak.activeToday) return cur + ' ' + plural(cur, 'dia de atividade seguido', 'dias de atividade seguidos') + '. Ótimo ritmo!';
+    if (cur > 0) return cur + ' ' + plural(cur, 'dia de atividade seguido', 'dias de atividade seguidos') + '. Qualquer atividade de estudo hoje continua a sequência.';
     if (best > 1) return 'Que tal recomeçar hoje? Seu recorde é de ' + best + ' dias.';
-    return 'Uma questão hoje começa a sua sequência.';
+    return 'Uma atividade de estudo hoje começa a sua sequência.';
   }
 
   function goalText(goal) {
@@ -287,6 +290,13 @@
     if (root.LaiftLearning && root.LaiftLearning.openModule) root.LaiftLearning.openModule(id);
   }
 
+  /** "Revisar erros" (A3): vai ao Aprender e abre o módulo com mais erros a rever (no Quiz, já com a sessão de revisão). */
+  function openReview(app, id) {
+    app.showPanel('panel-learn');
+    if (root.LaiftLearning && root.LaiftLearning.startReview) root.LaiftLearning.startReview(id);
+    else if (root.LaiftLearning && root.LaiftLearning.openModule) root.LaiftLearning.openModule(id);
+  }
+
   /** "Fazer o primeiro quiz" (ENG-04): vai ao Aprender e abre o simulado de Farmacologia na questão 1. */
   function openFirstQuiz(app) {
     app.showPanel('panel-learn');
@@ -338,7 +348,7 @@
     buildSection: buildSection, isFirstQuizCandidate: isFirstQuizCandidate, openFirstQuiz: openFirstQuiz, buildStrip: buildStrip,
     fetchEngagement: fetchEngagement, assemble: assemble, mountHome: mountHome, refreshHub: refreshHub,
     // Início v3 (home-v3.js) reaproveita estes pedaços para montar o cartão de foco e o resumo do dia.
-    openModule: openModule, saveGoal: saveGoal, MODULE_LABELS: MODULE_LABELS, ACTIVITY_LABELS: ACTIVITY_LABELS,
+    openModule: openModule, openReview: openReview, saveGoal: saveGoal, MODULE_LABELS: MODULE_LABELS, ACTIVITY_LABELS: ACTIVITY_LABELS,
     GOALS: GOALS,
   };
 

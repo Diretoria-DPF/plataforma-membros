@@ -20,6 +20,7 @@ export const FLAG_DEFAULTS = Object.freeze({
   explode: true,      // "Separar peças" (vista explodida), no menu Mais opções (js/ui/explode-entry.js; carregada sob demanda)
   systemic: false,    // "Visão sistêmica" da Fisiologia — desligada até o teste de papel (guia-revisao.md §5)
   quizSetup: true,    // Quiz: escolha de sistema e dificuldade e sorteio de 10 casos (js/modes/quiz-select.js)
+  trilhas: true,      // modo "Trilhas e desafios": trilhas guiadas, "encontre a estrutura" e desafio diário (js/modes/trilhas.js)
   telemetry: false,   // uso anônimo em lote pela ponte (js/core/telemetry.js); ligar depois da migração 014 e do deploy da Worker
   offline: true,      // Service Worker: abre o atlas sem rede depois da 1ª visita (sw.js, js/core/offline.js); desligar remove o SW dos aparelhos
 });

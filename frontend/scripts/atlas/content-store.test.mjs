@@ -10,15 +10,15 @@
  * Roda com: node frontend/scripts/atlas/content-store.test.mjs
  */
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const ui = path.resolve(here, '../../modulos/anatomia-3d/js/ui');
-const { groupEntries, collapseResults, contentCandidates, baseSid } = await import(path.join(ui, 'structure-groups.js'));
-const { buildSearchIndex, search } = await import(path.join(ui, 'search-index.js'));
-const { mergeLayers } = await import(path.join(ui, 'content-merge.js'));
-const { normalizeCompound } = await import(path.resolve(ui, '../modes/pharmacology.js'));
+const { groupEntries, collapseResults, contentCandidates, baseSid } = await import(pathToFileURL(path.join(ui, 'structure-groups.js')).href);
+const { buildSearchIndex, search } = await import(pathToFileURL(path.join(ui, 'search-index.js')).href);
+const { mergeLayers } = await import(pathToFileURL(path.join(ui, 'content-merge.js')).href);
+const { normalizeCompound } = await import(pathToFileURL(path.resolve(ui, '../modes/pharmacology.js')).href);
 
 let failures = 0;
 function test(name, fn) {

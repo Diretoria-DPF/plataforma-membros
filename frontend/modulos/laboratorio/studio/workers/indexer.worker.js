@@ -70,8 +70,8 @@ function classificarCategoria(chave, label) {
   // Compostos editados/derivados sempre vão para 'custom'
   if (/custom|derivado|editado|análogo|scaffold_/.test(txt)) return 'custom';
 
-  // Substâncias controladas, toxinas e agentes de guerra química
-  if (/sarin|vx|estricnina|toxina|mostarda|cianeto|arsênio|arsenio|fentanil/.test(txt)) {
+  // Substâncias controladas e toxinas
+  if (/estricnina|toxina|cianeto|arsênio|arsenio|fentanil/.test(txt)) {
     return 'toxicos';
   }
 

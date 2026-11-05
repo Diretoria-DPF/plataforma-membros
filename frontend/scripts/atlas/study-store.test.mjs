@@ -10,16 +10,16 @@
  * Roda com: node frontend/scripts/atlas/study-store.test.mjs
  */
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const modesDir = path.resolve(here, '../../modulos/anatomia-3d/js/modes');
 const coreDir = path.resolve(here, '../../modulos/anatomia-3d/js/core');
 
-const { createStudyStore } = await import(path.join(modesDir, 'study-store.js'));
-const { attachRecorder } = await import(path.join(modesDir, 'study.js'));
-const { on, emit, EVENTS } = await import(path.join(coreDir, 'bus.js'));
+const { createStudyStore } = await import(pathToFileURL(path.join(modesDir, 'study-store.js')).href);
+const { attachRecorder } = await import(pathToFileURL(path.join(modesDir, 'study.js')).href);
+const { on, emit, EVENTS } = await import(pathToFileURL(path.join(coreDir, 'bus.js')).href);
 
 let failures = 0;
 

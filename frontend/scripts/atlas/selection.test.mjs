@@ -14,7 +14,7 @@
  */
 
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -22,17 +22,11 @@ const engineDir = path.resolve(here, '../../modulos/anatomia-3d/js/engine');
 const coreDir = path.resolve(here, '../../modulos/anatomia-3d/js/core');
 
 // Importa o módulo a testar
-const { createSelection, announce, pulseColor, PULSE_MS } = await import(
-  path.join(engineDir, 'selection.js')
-);
+const { createSelection, announce, pulseColor, PULSE_MS } = await import(pathToFileURL(path.join(engineDir, 'selection.js')).href);
 
 // Importa bus e store reais
-const { on, off, emit, EVENTS } = await import(
-  path.join(coreDir, 'bus.js')
-);
-const { get, set, subscribe } = await import(
-  path.join(coreDir, 'store.js')
-);
+const { on, off, emit, EVENTS } = await import(pathToFileURL(path.join(coreDir, 'bus.js')).href);
+const { get, set, subscribe } = await import(pathToFileURL(path.join(coreDir, 'store.js')).href);
 
 let failures = 0;
 
