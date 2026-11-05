@@ -47,10 +47,18 @@
     return Object.assign({}, base || {}, extra);
   }
 
+  /**
+   * Ações da etapa com os parâmetros da pessoa por cima dos do processo. No modo lista, `{ omitir: true }`
+   * numa posição deixa aquela ação de fora (O4: o tutor usa isso quando a pessoa pula um controle, como pesar
+   * sem tarar, ou quando a ação já foi aplicada numa tentativa anterior que ficou em 'aguardar').
+   */
   function acoesDaEtapa(etapa, override) {
     const lista = Array.isArray(etapa.acao) ? etapa.acao : (etapa.acao ? [etapa.acao] : []);
     const ov = Array.isArray(override) ? override : null;
-    return lista.map((a, i) => ({ operacao: a.operacao, parametros: mesclarParametros(a.parametros, ov ? ov[i] : (i === lista.length - 1 ? override : null)) }));
+    return lista
+      .map((a, i) => ({ a, extra: ov ? ov[i] : (i === lista.length - 1 ? override : null) }))
+      .filter((x) => !(ov && x.extra && x.extra.omitir === true))
+      .map((x) => ({ operacao: x.a.operacao, parametros: mesclarParametros(x.a.parametros, x.extra) }));
   }
 
   function contexto(estado, ctx, sessao, parametros, eventos) { return { estado, especies: ctx.especies, sessao, parametros, eventos }; }

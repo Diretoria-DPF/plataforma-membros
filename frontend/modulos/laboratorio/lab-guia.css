@@ -163,3 +163,81 @@ html[data-theme="light"] .data-val-highlight, html[data-theme="light"] #molName 
 .lab-processo-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
 .lab-processo-acoes .btn, .lab-processo .panel-section-header .btn { min-height: 44px; }
 .lab-processo-caderno ol { margin: 4px 0 0; padding-left: 1.2em; font-size: 0.85rem; }
+
+/* O4 — trilha e Missão 1 no motor (chave labMotor). Enquanto a tela está aberta, a bancada clássica fica oculta. */
+html.lab-motor-ativo #mainGrid,
+html.lab-motor-ativo #mobileNavBar,
+html.lab-motor-ativo #labMarca,
+html.lab-motor-ativo #faixaMissao .faixa-quem,
+html.lab-motor-ativo #faixaMissao .faixa-passo,
+html.lab-motor-ativo #faixaMissao .faixa-progresso,
+html.lab-motor-ativo #faixaMissao .faixa-balao,
+html.lab-motor-ativo #faixaMissao .faixa-acoes { display: none !important; }
+.lab-motor-tela {
+  flex: 1 1 0; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  padding: 10px 16px 24px; display: flex; flex-direction: column; gap: 10px;
+  background: var(--laift-bg, #0b1120); color: var(--laift-text, #e2e8f0);
+}
+.lab-motor-tela h2 { margin: 0; font-size: 1.05rem; }
+.lab-motor-tela h3 { margin: 6px 0 0; font-size: 0.95rem; }
+.lab-motor-tela h4 { margin: 0 0 4px; font-size: 0.9rem; }
+.lab-motor-tela p { margin: 0; line-height: 1.45; overflow-wrap: anywhere; }
+.lab-motor-tela .btn { min-height: 44px; min-width: 44px; }
+.lab-motor-tela .btn[hidden], .lab-motor-tela [hidden] { display: none !important; }
+.lab-motor-tela input[type="text"], .lab-motor-tela select { min-height: 44px; font-size: 1rem; max-width: 100%; box-sizing: border-box; }
+.lab-motor-tela :focus-visible { outline: 3px solid var(--module-accent, #00e5ff); outline-offset: 2px; }
+.lmt-cabecalho { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.lmt-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.lmt-nota { color: var(--laift-muted, #94a3b8); font-size: 0.85rem; }
+.lmt-nivel { border-bottom: 1px solid var(--laift-border, #334155); padding-bottom: 2px; }
+.lmt-cartoes { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 8px; }
+.lmt-cartao { border: 1px solid var(--laift-border, #334155); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; background: var(--laift-surface, #111827); }
+.lmt-cartao[data-estado="em_preparacao"], .lmt-cartao[data-estado="bloqueada"] { opacity: 0.8; }
+.lmt-cartao[data-estado="concluida"] { border-color: #0a7a3f; }
+.lmt-estado { font-size: 0.8rem; font-weight: 700; color: var(--laift-muted, #94a3b8); }
+.lmt-objetivos, .lmt-objetivos-missao ul { margin: 0; padding-left: 1.2em; font-size: 0.85rem; }
+.lmt-grade { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(0, 1fr); gap: 10px; align-items: start; }
+.lmt-tutor, .lmt-estado, .lmt-grupo { border: 1px solid var(--laift-border, #334155); border-radius: 10px; padding: 10px; background: var(--laift-surface, #111827); min-width: 0; }
+.lmt-tutor { display: flex; flex-direction: column; gap: 8px; position: sticky; top: 0; }
+.lmt-progresso { font-weight: 700; }
+.lmt-instrucao { font-weight: 600; padding: 6px 8px; border-left: 4px solid #b45309; background: var(--laift-warning-soft, #fef3c7); color: var(--laift-text, #1f2937); border-radius: 6px; }
+html:not([data-theme="light"]) .lmt-instrucao { background: #2b2210; color: #fde68a; }
+.lmt-porque summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; font-weight: 700; }
+.lmt-calculo { display: flex; flex-direction: column; gap: 4px; }
+.lmt-calculo input { width: 8em; }
+.lmt-dicas { margin: 0; padding-left: 1.2em; font-size: 0.85rem; }
+.lmt-dicas:empty { display: none; }
+.lmt-retorno { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; }
+.lmt-retorno:empty { display: none; }
+.lmt-retorno p { padding: 4px 8px; border-radius: 6px; background: var(--laift-surface-alt, #0f172a); }
+.lmt-retorno[data-tipo="bloqueada"] p:first-child, .lmt-retorno[data-tipo="erro"] p:first-child, .lmt-retorno[data-tipo="fora_de_ordem"] p:first-child { border-left: 4px solid var(--laift-danger, #b91c1c); }
+.lmt-retorno[data-tipo="concluida"] p:first-child { border-left: 4px solid #0a7a3f; }
+.lmt-controles { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.lmt-grupo { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.lmt-grupo > legend { font-weight: 700; padding: 0 4px; }
+.lmt-controle { display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 8px; border: 1px dashed var(--laift-border, #334155); }
+.lmt-controle-nome { font-weight: 700; font-size: 0.85rem; }
+.lmt-marcas { margin: 0; border: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.lmt-marcas legend { font-size: 0.8rem; font-weight: 700; padding: 0; margin-bottom: 2px; }
+.lmt-marca-op { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 0.85rem; }
+.lmt-marca-op input { width: 22px; height: 22px; }
+.lmt-rotulo-campo { display: flex; flex-direction: column; gap: 2px; font-size: 0.8rem; font-weight: 600; }
+.lmt-executar { align-self: flex-start; }
+.lmt-leituras { margin: 6px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; font-size: 0.82rem; }
+.lmt-leituras dt { font-weight: 700; }
+.lmt-leituras dd { margin: 0; overflow-wrap: anywhere; }
+.lmt-caderno ol, .lmt-registros { margin: 4px 0 0; padding-left: 1.4em; font-size: 0.82rem; }
+.lmt-caderno-texto { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.78rem; }
+.lmt-ok { font-weight: 700; color: #4ade80; }
+.lmt-fora { font-weight: 700; color: #fca5a5; }
+html[data-theme="light"] .lmt-ok { color: #065f46; }
+html[data-theme="light"] .lmt-fora { color: #991b1b; }
+.lmt-conclusao { padding: 8px; border-left: 4px solid #0a7a3f; background: var(--laift-surface, #111827); border-radius: 6px; }
+@media (max-width: 1023px) {
+  .lmt-grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .lmt-tutor { grid-column: 1 / -1; position: static; }
+}
+@media (max-width: 639px) {
+  .lab-motor-tela { padding: 8px 16px 24px; }
+  .lmt-grade { grid-template-columns: minmax(0, 1fr); }
+}
