@@ -134,6 +134,7 @@
         <div class="toolbar-cluster">
           <button aria-label="Tabela Periódica (118 elementos)" class="tool-btn btn-ptable-trigger" data-action="abrirTabelaPeriodica" title="Tabela Periódica (118 elementos)">⚛️</button>
           <button aria-label="Bioisosterismo" class="tool-btn btn-bioisostere-trigger" data-action="abrirPainelBioisosterismo" title="Bioisosterismo">🧬</button>
+          <button aria-label="Análogos e comparação" class="tool-btn btn-bioisostere-trigger" data-action="abrirPainelAnalogos" title="Análogos e comparação">💡</button>
           <button aria-label="Similaridade Tanimoto" class="tool-btn btn-similarity-trigger" data-action="abrirSimilaridade" title="Similaridade Tanimoto">🔎</button>
           <button aria-label="Scaffold de Murcko" class="tool-btn btn-scaffold-trigger" data-action="extrairScaffoldAtual" title="Scaffold de Murcko">🏗️</button>
           <button aria-label="Comparação lado a lado" class="tool-btn btn-compare-trigger" data-action="abrirComparacao" title="Comparação lado a lado">⚖️</button>
@@ -328,6 +329,20 @@
     </div>
   </div>
 
+  <!-- MODAL: ANÁLOGOS E COMPARAÇÃO (O7) -->
+  <div class="cadd-modal" id="analogosModal" style="display:none;" role="dialog" aria-modal="true" aria-label="Análogos e comparação">
+    <div class="cadd-modal-content bioisostere-modal-content">
+      <div class="cadd-modal-header bioisostere-header">
+        <div>
+          <h3>💡 Análogos e comparação</h3>
+          <span class="cadd-subtitle">Ideias para estudo, por reação estrutural</span>
+        </div>
+        <button type="button" class="btn-close-modal" data-action="fecharPainelAnalogos" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="cadd-modal-body bioisostere-body" id="analogosModalBody"></div>
+    </div>
+  </div>
+
   <!-- MODAL: SIMILARIDADE -->
   <div class="cadd-modal" id="similarityModal" style="display:none;" role="dialog" aria-modal="true" aria-label="Similaridade estrutural">
     <div class="cadd-modal-content similarity-modal-content">
@@ -390,8 +405,10 @@
        8. MOTOR PRINCIPAL
        ========================================================================== -->
   <script src="chem-core.js"></script>
+  <script src="descoberta-core.js"></script>
   <script src="smiles-corrigidos.js"></script>
   <script src="studio.js"></script>
+  <script src="descoberta-ui.js"></script>
 
   <!-- ==========================================================================
        9. CONTROLADORES GLOBAIS (sem <script> inline — preparo da CSP)

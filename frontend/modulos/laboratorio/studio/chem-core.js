@@ -400,6 +400,27 @@
       reacao: '[NX3;H2;!$(N[C,S,P]=[O,S,N]);!$(N-N):1]>>[N:1]C(=O)C'
     },
     {
+      id: 'cloro_fluor_aromatico', nome: 'Troca de cloro por flúor (aromático)', tag: 'Cl ➔ F',
+      esquema: 'Ar-Cl ➔ Ar-F',
+      descricao: 'O flúor é menor e menos lipofílico que o cloro; a ligação C-F resiste mais à oxidação.',
+      alvoSmarts: 'c[Cl]',
+      reacao: '[c:1][Cl]>>[c:1]F'
+    },
+    {
+      id: 'metila_trifluormetila', nome: 'Metila ➔ trifluormetila', tag: 'Bloqueio metabólico',
+      esquema: 'Ar-CH₃ ➔ Ar-CF₃',
+      descricao: 'Troca um sítio de oxidação benzílica por um grupo estável; aumenta a lipofilicidade.',
+      alvoSmarts: 'c[CH3]',
+      reacao: '[CH3;$(C[c]):1]>>[C:1](F)(F)F'
+    },
+    {
+      id: 'benzeno_piridina', nome: 'Anel aromático ➔ piridina', tag: 'Escalonamento de anel',
+      esquema: 'C-H aromático ➔ N aromático',
+      descricao: 'Troca um CH do anel por nitrogênio; reduz a lipofilicidade e adiciona um aceptor de hidrogênio.',
+      alvoSmarts: '[cH]',
+      reacao: '[cH;r6:1]>>[n:1]'
+    },
+    {
       id: 'fluorizacao_aromatica', nome: 'Fluorização aromática (bloqueio de CYP)', tag: 'H ➔ F',
       esquema: 'Ar-H ➔ Ar-F',
       descricao: 'O flúor imita o hidrogênio no tamanho; o efeito indutivo dificulta a oxidação por CYP450.',
@@ -427,15 +448,12 @@
   }
 
   /**
-   * Aplica uma reação de bioisosterismo ao SMILES por substituição estrutural.
-   * Seguro por construção: só devolve `ok` se houver exatamente UM produto
-   * distinto (sem ambiguidade de sítio), diferente do original e que o RDKit
-   * consiga ler (sanitização). Nos demais casos devolve `ok:false` + motivo
-   * e a interface desativa a sugestão.
+   * Roda a reação sobre o SMILES e devolve os produtos distintos, já
+   * sanitizados (o RDKit precisa conseguir ler cada um). Núcleo comum de
+   * aplicarBioisosterismo (um único sítio) e aplicarBioisosterismoTodos
+   * (vários sítios, para a geração de análogos).
    */
-  function aplicarBioisosterismo(rdkit, smiles, id) {
-    var rx = REACOES_BIOISOSTERISMO.filter(function (r) { return r.id === id; })[0];
-    if (!rx) return { ok: false, motivo: 'Transformação desconhecida.' };
+  function produtosDistintos(rdkit, smiles, rx) {
     if (!rdkit || typeof rdkit.get_rxn !== 'function') return { ok: false, motivo: 'Exige o RDKit.' };
     var principal = extrairPrincipal(smiles);
     if (!principal) return { ok: false, motivo: 'Molécula sem SMILES.' };
@@ -463,17 +481,61 @@
         if (!limpo || limpo === original || limpo.indexOf('.') >= 0) continue;
         if (!vistos[limpo]) { vistos[limpo] = true; distintos.push(limpo); }
       }
-      if (distintos.length === 0) return { ok: false, motivo: 'Grupo não encontrado ou produto inválido.' };
-      if (distintos.length > 1) {
-        return { ok: false, motivo: 'Mais de um sítio possível (' + distintos.length + '); sem escolha segura.' };
-      }
-      var info = analisarSmiles(distintos[0]);
-      return { ok: true, smiles: distintos[0], formula: info ? info.formula : null, massa: info ? info.massa : null };
+      return { ok: true, original: original, distintos: distintos };
     } catch (e) {
       return { ok: false, motivo: 'Falha ao aplicar a reação.' };
     } finally {
       descarte(resultados); descarte(lista); descarte(reacao); descarte(mol);
     }
+  }
+
+  function descreverProduto(smiles) {
+    var info = analisarSmiles(smiles);
+    return { smiles: smiles, formula: info ? info.formula : null, massa: info ? info.massa : null };
+  }
+
+  function acharReacao(id) {
+    return REACOES_BIOISOSTERISMO.filter(function (r) { return r.id === id; })[0] || null;
+  }
+
+  /**
+   * Aplica uma reação de bioisosterismo ao SMILES por substituição estrutural.
+   * Seguro por construção: só devolve `ok` se houver exatamente UM produto
+   * distinto (sem ambiguidade de sítio), diferente do original e que o RDKit
+   * consiga ler (sanitização). Nos demais casos devolve `ok:false` + motivo
+   * e a interface desativa a sugestão.
+   */
+  function aplicarBioisosterismo(rdkit, smiles, id) {
+    var rx = acharReacao(id);
+    if (!rx) return { ok: false, motivo: 'Transformação desconhecida.' };
+    var r = produtosDistintos(rdkit, smiles, rx);
+    if (!r.ok) return r;
+    if (r.distintos.length === 0) return { ok: false, motivo: 'Grupo não encontrado ou produto inválido.' };
+    if (r.distintos.length > 1) {
+      return { ok: false, motivo: 'Mais de um sítio possível (' + r.distintos.length + '); sem escolha segura.' };
+    }
+    var d = descreverProduto(r.distintos[0]);
+    return { ok: true, smiles: d.smiles, formula: d.formula, massa: d.massa };
+  }
+
+  /**
+   * Como aplicarBioisosterismo, mas aceita vários sítios: devolve até `max`
+   * produtos distintos (cada um é uma ideia de análogo para estudo, em um
+   * sítio diferente). `truncado` avisa que havia mais do que o limite.
+   */
+  function aplicarBioisosterismoTodos(rdkit, smiles, id, max) {
+    var rx = acharReacao(id);
+    if (!rx) return { ok: false, motivo: 'Transformação desconhecida.' };
+    var r = produtosDistintos(rdkit, smiles, rx);
+    if (!r.ok) return r;
+    if (r.distintos.length === 0) return { ok: false, motivo: 'Grupo não encontrado ou produto inválido.' };
+    var limite = max > 0 ? max : 4;
+    return {
+      ok: true,
+      produtos: r.distintos.slice(0, limite).map(descreverProduto),
+      truncado: r.distintos.length > limite,
+      total: r.distintos.length
+    };
   }
 
   // ─── Alertas estruturais (LAB-09) ──────────────────────────────────────
@@ -551,6 +613,7 @@
     REACOES_BIOISOSTERISMO: REACOES_BIOISOSTERISMO,
     extrairPrincipal: extrairPrincipal,
     aplicarBioisosterismo: aplicarBioisosterismo,
+    aplicarBioisosterismoTodos: aplicarBioisosterismoTodos,
     ALERTAS_ESTRUTURAIS: ALERTAS_ESTRUTURAIS,
     alertasEstruturais: alertasEstruturais,
     propriedadesSemRDKit: propriedadesSemRDKit
