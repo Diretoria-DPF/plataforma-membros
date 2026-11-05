@@ -158,6 +158,38 @@ export function validarSeed(seed) {
       });
     }
   });
+  // ---- O5: excipientes (misturas e polímeros) e formulações de farmacotécnica, saneantes e cosméticos ----
+  const excip = new Map();
+  (Array.isArray(seed.excipientes) ? seed.excipientes : []).forEach((x) => {
+    const rot = `excipiente ${x && x.id}`;
+    if (!x || !x.id) { erro('excipiente sem id'); return; }
+    if (excip.has(x.id) || alias.has(x.id)) erro(`${rot}: id repetido`);
+    excip.set(x.id, x);
+    if (!x.nome_pt) erro(`${rot}: sem nome`);
+    if (x.nivel_conteudo !== 'completo' || x.restricao) erro(`${rot}: excipiente precisa ser 'completo' e sem restrição`);
+    if (!fontes[x.fonte]) erro(`${rot}: fonte desconhecida`);
+    if (NOMES_GUERRA.test(textoDe(x.id, x.nome_pt)) || NOMES_ILICITAS.test(textoDe(x.id, x.nome_pt))) erro(`${rot}: espécie restrita no catálogo de excipientes`);
+  });
+  const mapa = seed.mapa_ingredientes && typeof seed.mapa_ingredientes === 'object' ? seed.mapa_ingredientes : {};
+  const idsForm = new Set();
+  (Array.isArray(seed.formulacoes) ? seed.formulacoes : []).forEach((f) => {
+    const rot = `formulação ${f && f.id}`;
+    if (!f || !f.id) { erro('formulação sem id'); return; }
+    if (idsForm.has(f.id)) erro(`${rot}: repetida`);
+    idsForm.add(f.id);
+    if (!fontes[f.fonte]) erro(`${rot}: fonte desconhecida`);
+    if (f.nivel_conteudo !== 'completo' || f.restricao) erro(`${rot}: formulação precisa ser 'completo' e sem restrição`);
+    if (!Array.isArray(f.fontes_oficiais) || !f.fontes_oficiais.length || f.fontes_oficiais.some((o) => !o.tipo || !o.citacao)) erro(`${rot}: precisa citar ao menos uma fonte oficial (tipo e citação)`);
+    if (!Array.isArray(f.cq) || !f.cq.length) erro(`${rot}: sem critérios de controle de qualidade`);
+    if (!Array.isArray(f.itens) || !f.itens.length) { erro(`${rot}: sem itens`); return; }
+    f.itens.forEach((i) => {
+      if (!(i.quantidade > 0) || !i.unidade) erro(`${rot}: item ${i.ingrediente} sem quantidade e unidade`);
+      const sub = alias.get(mapa[i.ingrediente] || i.ingrediente);
+      if (!sub && !excip.has(i.ingrediente)) { erro(`${rot}: ingrediente ${i.ingrediente} fora do catálogo`); return; }
+      if (sub && (sub.nivel_conteudo === 'educacional' || RESTRICOES_ABSOLUTAS.includes(sub.restricao))) erro(`${rot}: formulação completa para espécie restrita (${i.ingrediente})`);
+    });
+    if (NOMES_GUERRA.test(textoDe(f.id, f.nome_pt)) || NOMES_ILICITAS.test(textoDe(f.id, f.nome_pt))) erro(`${rot}: formulação completa para espécie restrita (por nome)`);
+  });
   return erros;
 }
 

@@ -5,8 +5,9 @@
  */
 /**
  * LAIFT — registro das operações unitárias do motor (O3).
- * Junta base + separação + análise/acabamento e oferece executar(estado, id, parametros, ctx).
- * Ordem de <script> no navegador: estado, fisica, relogio, calculos, lab-quimica, op-base, op-separacao, op-cq, operacoes.
+ * Junta base + separação + análise/acabamento + farmacotécnica/CQ (O5) e oferece executar(estado, id, parametros, ctx).
+ * Ordem de <script> no navegador: estado, fisica, relogio, calculos, lab-quimica, op-base, op-separacao, op-cq,
+ * lab-farma-calculos, lab-cq, op-farma, operacoes.
  */
 (function (raiz) {
   'use strict';
@@ -15,9 +16,10 @@
   const B = emNode ? require('./lab-motor-op-base.js') : raiz.LabMotorOpBase;
   const S = emNode ? require('./lab-motor-op-separacao.js') : raiz.LabMotorOpSeparacao;
   const Q = emNode ? require('./lab-motor-op-cq.js') : raiz.LabMotorOpCq;
+  const FA = emNode ? require('./lab-motor-op-farma.js') : raiz.LabMotorOpFarma;
   const F = emNode ? require('./lab-motor-fisica.js') : raiz.LabMotorFisica;
 
-  const OPERACOES = Object.freeze(Object.assign({}, B.OPERACOES, S.OPERACOES, Q.OPERACOES));
+  const OPERACOES = Object.freeze(Object.assign({}, B.OPERACOES, S.OPERACOES, Q.OPERACOES, FA.OPERACOES));
 
   function listar() {
     return Object.keys(OPERACOES).map((id) => ({ id, titulo: OPERACOES[id].titulo, regras: OPERACOES[id].regras.map((r) => F.regra(r)) }));

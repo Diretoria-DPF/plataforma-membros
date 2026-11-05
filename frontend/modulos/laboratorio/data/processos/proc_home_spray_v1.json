@@ -1,0 +1,745 @@
+{
+  "id": "proc_home_spray_v1",
+  "versao": 1,
+  "titulo": "Home spray (aromatizador de ambiente)",
+  "categoria": "farmacotecnica",
+  "nivel": 3,
+  "nivel_conteudo": "completo",
+  "restricao": null,
+  "revisado_por": null,
+  "forma": "aromatizador",
+  "setor": "saneante",
+  "conferencia": {
+    "estado": "pendente",
+    "nota": "[NV] Valores numéricos, faixas de critério, tolerâncias e citações de norma a conferir com a fonte primária (edição e artigo vigentes) antes de publicar."
+  },
+  "duracaoSimuladaMin": 60,
+  "via": "ambiente",
+  "objetivos": [
+    "Solubilizar fragrância com tensoativo",
+    "Respeitar a ordem de adição",
+    "Completar a massa (q.s.p.)",
+    "Conferir limpidez, densidade e teor alcoólico"
+  ],
+  "fontesOficiais": [
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 59/2010 (ANVISA): produtos saneantes"
+    },
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 67/2007 (ANVISA), como referência de boas práticas de manipulação"
+    }
+  ],
+  "formulacao": {
+    "base": "para 500 g",
+    "itens": [
+      {
+        "especie": "Fragrancia_l",
+        "funcao": "fragrância",
+        "quantidade": {
+          "valor": 10,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "Polissorbato20_l",
+        "funcao": "solubilizante",
+        "quantidade": {
+          "valor": 15,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "Etanol96_l",
+        "funcao": "solvente",
+        "quantidade": {
+          "valor": 80,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "Fenoxietanol_l",
+        "funcao": "conservante",
+        "quantidade": {
+          "valor": 2.5,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "H2O_l",
+        "funcao": "veículo",
+        "quantidade": {
+          "valor": 500,
+          "unidade": "g",
+          "qsp": true
+        }
+      }
+    ]
+  },
+  "cq": [
+    {
+      "ensaio": "limpidez e aspecto",
+      "criterio": "límpido e uniforme"
+    },
+    {
+      "ensaio": "densidade",
+      "criterio": "entre 0,95 e 0,98 g/mL"
+    },
+    {
+      "ensaio": "teor alcoólico",
+      "criterio": "entre 13 e 17 % p/p"
+    }
+  ],
+  "referencias": [
+    {
+      "titulo": "RDC nº 59/2010 (ANVISA), produtos saneantes",
+      "nota": "[NV] conferir título, vigência e norma que a substituiu"
+    },
+    {
+      "titulo": "RDC nº 67/2007 (ANVISA)",
+      "nota": "[NV] conferir vigência e alterações"
+    }
+  ],
+  "recipientes": [
+    {
+      "id": "bequer_s",
+      "tipo": "bequer",
+      "capMl": 800
+    },
+    {
+      "id": "frasco_500",
+      "tipo": "frasco",
+      "capMl": 520
+    }
+  ],
+  "materiais": {
+    "especies": [
+      {
+        "id": "Fragrancia_l",
+        "papel": "fragrância",
+        "quantidade": {
+          "valor": 10,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Polissorbato20_l",
+        "papel": "solubilizante",
+        "quantidade": {
+          "valor": 15,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Etanol96_l",
+        "papel": "solvente",
+        "quantidade": {
+          "valor": 80,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "Fenoxietanol_l",
+        "papel": "conservante",
+        "quantidade": {
+          "valor": 2.5,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "H2O_l",
+        "papel": "veículo",
+        "quantidade": {
+          "valor": 500,
+          "unidade": "g"
+        }
+      }
+    ],
+    "vidraria": [
+      "bequer_s",
+      "frasco_500"
+    ],
+    "equipamentos": [
+      "balanca_analitica",
+      "agitador"
+    ]
+  },
+  "seguranca": {
+    "epi": [
+      "jaleco",
+      "luvas_nitrila",
+      "oculos"
+    ],
+    "capela": false,
+    "riscos": [
+      "vapor inflamável de etanol"
+    ],
+    "residuos": [
+      {
+        "tipo": "mistura_organica",
+        "destino": "organico_nao_halogenado"
+      }
+    ]
+  },
+  "etapas": [
+    {
+      "id": "e1",
+      "titulo": "Paramentação",
+      "oQueEstaAcontecendo": "Você veste os equipamentos de proteção antes de abrir qualquer frasco.",
+      "porQue": "Fragrâncias e álcool irritam os olhos e a pele; luvas e óculos protegem.",
+      "preCondicoes": [],
+      "acao": {
+        "operacao": "paramentar",
+        "parametros": {
+          "epi": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos"
+          ],
+          "capela": false
+        },
+        "alvoUI": "painelSeguranca"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "epi",
+          "op": "contem",
+          "valor": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos"
+          ],
+          "mensagemSeFalhar": "Falta equipamento de proteção: jaleco, luvas_nitrila, oculos.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "titulo": "Pesar fragrância e solubilizante",
+      "oQueEstaAcontecendo": "No béquer, você pesa 10,00 g de fragrância e 15,00 g de polissorbato 20, com tara entre os componentes.",
+      "porQue": "A fragrância é oleosa e não dissolve em água. O polissorbato 20 forma micelas que a levam para dentro da água; a proporção costuma ser de 1,5 a 2 partes de tensoativo para 1 de fragrância.",
+      "calculoPrevio": {
+        "pergunta": "Qual a razão polissorbato 20 : fragrância usada (15 g para 10 g)?",
+        "formula": "razão = massa de tensoativo ÷ massa de fragrância",
+        "resposta": 1.5,
+        "tolerancia": 0.05,
+        "unidade": "partes"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e1"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_s"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Fragrancia_l",
+            "massaG": 10,
+            "recipiente": "bequer_s"
+          },
+          "alvoUI": "reagente:Fragrancia_l"
+        },
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_s"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Polissorbato20_l",
+            "massaG": 15,
+            "recipiente": "bequer_s"
+          },
+          "alvoUI": "reagente:Polissorbato20_l"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_s",
+          "especie": "Fragrancia_l",
+          "op": "entre",
+          "valor": [
+            9.97,
+            10.03
+          ],
+          "mensagemSeFalhar": "Massa fora de 10 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_s",
+          "especie": "Polissorbato20_l",
+          "op": "entre",
+          "valor": [
+            14.97,
+            15.03
+          ],
+          "mensagemSeFalhar": "Massa fora de 15 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "titulo": "Pré-misturar",
+      "oQueEstaAcontecendo": "A fragrância e o polissorbato se misturam por 5 minutos até ficarem límpidos.",
+      "porQue": "Misturar antes a fragrância com o solubilizante evita que o óleo se separe quando a água entrar.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e2"
+        }
+      ],
+      "acao": {
+        "operacao": "misturar",
+        "parametros": {
+          "recipiente": "bequer_s",
+          "tecnica": "agitacao_mecanica",
+          "tempoMin": 5
+        },
+        "alvoUI": "btnMisturar"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "bequer_s",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "titulo": "Pesar álcool e conservante",
+      "oQueEstaAcontecendo": "Você pesa 80,00 g de álcool etílico 96 °GL e 2,50 g de fenoxietanol.",
+      "porQue": "O álcool ajuda a dispersar e acelera a secagem; o fenoxietanol conserva a fase aquosa.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e3"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_s"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Etanol96_l",
+            "massaG": 80,
+            "recipiente": "bequer_s"
+          },
+          "alvoUI": "reagente:Etanol96_l"
+        },
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_s"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Fenoxietanol_l",
+            "massaG": 2.5,
+            "recipiente": "bequer_s"
+          },
+          "alvoUI": "reagente:Fenoxietanol_l"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_s",
+          "especie": "Etanol96_l",
+          "op": "entre",
+          "valor": [
+            79.95,
+            80.05
+          ],
+          "mensagemSeFalhar": "Massa fora de 80 ± 0.05 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_s",
+          "especie": "Fenoxietanol_l",
+          "op": "entre",
+          "valor": [
+            2.47,
+            2.53
+          ],
+          "mensagemSeFalhar": "Massa fora de 2.5 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "titulo": "Adicionar a água (q.s.p. 500 g)",
+      "oQueEstaAcontecendo": "A balança é tarada e a água purificada completa a massa até 500,00 g, sob agitação suave.",
+      "porQue": "A água entra por último: depois da pré-mistura o produto fica límpido; água primeiro deixa a fragrância turva.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e4"
+        },
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_s",
+          "especie": "Polissorbato20_l",
+          "op": ">=",
+          "valor": 14,
+          "mensagemSeFalhar": "Misture antes a fragrância com o polissorbato 20: sem isso, o óleo não se dispersa na água.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "completarMassa",
+          "parametros": {
+            "recipiente": "bequer_s",
+            "especie": "H2O_l",
+            "massaFinalG": 500
+          },
+          "alvoUI": "btnCompletarMassa"
+        },
+        {
+          "operacao": "misturar",
+          "parametros": {
+            "recipiente": "bequer_s",
+            "tecnica": "agitacao_mecanica",
+            "tempoMin": 10
+          },
+          "alvoUI": "btnMisturar"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "bequer_s",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e6",
+      "titulo": "Limpidez e aspecto",
+      "oQueEstaAcontecendo": "Você observa o produto contra a luz: límpido, sem gotas de óleo nem turvação.",
+      "porQue": "Turvação indica que o solubilizante foi insuficiente ou a ordem de adição estava errada.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e5"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "homogeneidade",
+            "recipiente": "bequer_s"
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_homogeneidade_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e7",
+      "titulo": "Densidade",
+      "oQueEstaAcontecendo": "A densidade é medida com picnômetro.",
+      "porQue": "A densidade confere a composição: valor alto indica pouca fase alcoólica e valor baixo, água a menos.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e6"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "densidade",
+            "recipiente": "bequer_s",
+            "faixa": [
+              0.95,
+              0.98
+            ]
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_densidade_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e8",
+      "titulo": "Teor alcoólico",
+      "oQueEstaAcontecendo": "O teor de etanol é determinado e comparado à faixa de 13 a 17 % p/p.",
+      "porQue": "O teor define a secagem e a segurança contra incêndio durante o uso.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e7"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "teor_alcoolico",
+            "recipiente": "bequer_s",
+            "faixa": [
+              13,
+              17
+            ]
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_teor_alcoolico_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e9",
+      "titulo": "Envasar",
+      "oQueEstaAcontecendo": "O produto passa ao frasco com válvula spray de 500 mL.",
+      "porQue": "Envasar logo evita perda do álcool e da fragrância por evaporação.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e8"
+        }
+      ],
+      "acao": {
+        "operacao": "transferir",
+        "parametros": {
+          "origem": "bequer_s",
+          "destino": "frasco_500",
+          "enxague": true
+        },
+        "alvoUI": "btnTransferir"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "frasco_500",
+          "especie": "Polissorbato20_l",
+          "op": "entre",
+          "valor": [
+            14.5,
+            15.5
+          ],
+          "mensagemSeFalhar": "Parte do produto ficou no béquer.",
+          "consequencia": "aviso"
+        }
+      ]
+    },
+    {
+      "id": "e10",
+      "titulo": "Rotular",
+      "oQueEstaAcontecendo": "Você preenche o rótulo com os dados do produto, do lote e do responsável, e as advertências aplicáveis.",
+      "porQue": "Sem rótulo completo o produto não pode ser identificado, rastreado nem usado com segurança.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e9"
+        }
+      ],
+      "acao": {
+        "operacao": "rotular",
+        "parametros": {
+          "recipiente": "frasco_500",
+          "campos": {
+            "lote": "LAB-004",
+            "fabricacao": "data da prática",
+            "validade": "conforme o procedimento da bancada",
+            "responsavel": "turma",
+            "produto": "Aromatizador de ambiente (home spray)",
+            "concentracao": "500 g",
+            "advertencias": "Inflamável. Não borrife sobre chamas, pessoas ou animais. Manter fora do alcance de crianças."
+          },
+          "camposObrigatorios": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "advertencias"
+          ]
+        },
+        "alvoUI": "painelRotulo"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "rotuloCompleto",
+          "recipiente": "frasco_500",
+          "campos": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "advertencias"
+          ],
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Rótulo incompleto: preencha todos os campos obrigatórios.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e11",
+      "titulo": "Descarte e limpeza",
+      "oQueEstaAcontecendo": "Você descarta os restos de cada recipiente no destino correto e lava a vidraria.",
+      "porQue": "O destino do resíduo depende da sua natureza; descarte correto é requisito de segurança e ambiental.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e10"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "bequer_s",
+            "destino": "organico_nao_halogenado"
+          },
+          "alvoUI": "painelDescarte"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "residuoConforme",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Destino de descarte inadequado para este resíduo.",
+          "consequencia": "nao_conforme"
+        }
+      ]
+    }
+  ],
+  "resultadoEsperado": {
+    "produto": "Polissorbato20_l",
+    "criterios": [
+      {
+        "descricao": "Solubilizante no frasco entre 14,5 e 15,5 g",
+        "grandeza": "massa",
+        "recipiente": "frasco_500",
+        "especie": "Polissorbato20_l",
+        "op": "entre",
+        "valor": [
+          14.5,
+          15.5
+        ]
+      },
+      {
+        "descricao": "Rótulo completo",
+        "grandeza": "rotuloCompleto",
+        "recipiente": "frasco_500",
+        "campos": [
+          "produto",
+          "concentracao",
+          "lote",
+          "fabricacao",
+          "validade",
+          "responsavel",
+          "advertencias"
+        ],
+        "op": "==",
+        "valor": true
+      }
+    ]
+  }
+}
