@@ -1,0 +1,745 @@
+{
+  "id": "proc_xarope_simples_v1",
+  "versao": 1,
+  "titulo": "Xarope simples a 85 % (p/v)",
+  "categoria": "farmacotecnica",
+  "nivel": 2,
+  "nivel_conteudo": "completo",
+  "restricao": null,
+  "revisado_por": null,
+  "forma": "xarope",
+  "setor": "farmacotecnica",
+  "conferencia": {
+    "estado": "pendente",
+    "nota": "[NV] Valores numéricos, faixas de critério, tolerâncias e citações de norma a conferir com a fonte primária (edição e artigo vigentes) antes de publicar."
+  },
+  "duracaoSimuladaMin": 150,
+  "via": "oral",
+  "objetivos": [
+    "Calcular a massa de sacarose para uma concentração em % p/v",
+    "Entender por que soluções concentradas pedem menos água do que o volume final",
+    "Dissolver com calor brando sem caramelizar",
+    "Completar o volume a frio e conferir a densidade",
+    "Rotular conforme a preparação oral"
+  ],
+  "fontesOficiais": [
+    {
+      "tipo": "Formulário Nacional",
+      "citacao": "Formulário Nacional da Farmacopeia Brasileira (ANVISA), edição vigente: formulação de xarope simples"
+    },
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 67/2007 (ANVISA): boas práticas de manipulação de preparações magistrais e oficinais"
+    }
+  ],
+  "formulacao": {
+    "base": "para 100 mL",
+    "itens": [
+      {
+        "especie": "Sacarose_s",
+        "funcao": "ativo / edulcorante",
+        "quantidade": {
+          "valor": 85,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "H2O_l",
+        "funcao": "veículo",
+        "quantidade": {
+          "valor": 100,
+          "unidade": "mL",
+          "qsp": true
+        }
+      }
+    ]
+  },
+  "cq": [
+    {
+      "ensaio": "densidade",
+      "criterio": "entre 1,28 e 1,35 g/mL"
+    },
+    {
+      "ensaio": "teor de sacarose",
+      "criterio": "95 a 105 % do declarado"
+    },
+    {
+      "ensaio": "limite microbiano (conceitual)",
+      "criterio": "preparação oral aquosa"
+    }
+  ],
+  "referencias": [
+    {
+      "titulo": "Formulário Nacional da Farmacopeia Brasileira (edição vigente)",
+      "nota": "[NV] conferir a monografia e a forma de citação"
+    },
+    {
+      "titulo": "RDC nº 67/2007 (ANVISA)",
+      "nota": "[NV] conferir vigência e alterações"
+    }
+  ],
+  "recipientes": [
+    {
+      "id": "bequer_250",
+      "tipo": "bequer",
+      "capMl": 250
+    },
+    {
+      "id": "balao_100",
+      "tipo": "balao_volumetrico",
+      "capMl": 110
+    },
+    {
+      "id": "frasco_150",
+      "tipo": "frasco",
+      "capMl": 150
+    }
+  ],
+  "materiais": {
+    "especies": [
+      {
+        "id": "Sacarose_s",
+        "papel": "ativo",
+        "quantidade": {
+          "valor": 85,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "H2O_l",
+        "papel": "solvente",
+        "quantidade": {
+          "valor": 100,
+          "unidade": "mL"
+        }
+      }
+    ],
+    "vidraria": [
+      "bequer_250",
+      "proveta_100",
+      "balao_volumetrico_100",
+      "frasco_150"
+    ],
+    "equipamentos": [
+      "balanca_analitica",
+      "banho_maria"
+    ]
+  },
+  "seguranca": {
+    "epi": [
+      "jaleco",
+      "luvas_nitrila",
+      "oculos"
+    ],
+    "capela": false,
+    "riscos": [
+      "superfície quente do banho-maria"
+    ],
+    "residuos": [
+      {
+        "tipo": "solucao_acucarada",
+        "destino": "pia"
+      }
+    ]
+  },
+  "etapas": [
+    {
+      "id": "e1",
+      "titulo": "Paramentação",
+      "oQueEstaAcontecendo": "Você veste os equipamentos de proteção antes de abrir qualquer frasco.",
+      "porQue": "O equipamento protege você de respingos e o produto de contaminação por contato.",
+      "preCondicoes": [],
+      "acao": {
+        "operacao": "paramentar",
+        "parametros": {
+          "epi": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos"
+          ],
+          "capela": false
+        },
+        "alvoUI": "painelSeguranca"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "epi",
+          "op": "contem",
+          "valor": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos"
+          ],
+          "mensagemSeFalhar": "Falta equipamento de proteção: jaleco, luvas_nitrila, oculos.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "titulo": "Calcular e pesar a sacarose",
+      "oQueEstaAcontecendo": "Com o béquer tarado na balança, você adiciona sacarose até a leitura de 85,00 g, o que corresponde a 85 g para cada 100 mL de xarope.",
+      "porQue": "Em % p/v, 85 % significa 85 g de soluto em 100 mL de produto final. Soluções concentradas ocupam mais volume que a água usada, por isso a água não é 100 mL.",
+      "calculoPrevio": {
+        "pergunta": "Quantos gramas de sacarose para 100 mL de xarope a 85 % p/v?",
+        "formula": "m = C(%) × V(mL) / 100",
+        "resposta": 85,
+        "tolerancia": 0.5,
+        "unidade": "g"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e1"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_250"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "Sacarose_s",
+            "massaG": 85,
+            "recipiente": "bequer_250"
+          },
+          "alvoUI": "reagente:Sacarose_s"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_250",
+          "especie": "Sacarose_s",
+          "op": "entre",
+          "valor": [
+            84.96,
+            85.04
+          ],
+          "mensagemSeFalhar": "Massa fora de 85 ± 0.04 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "titulo": "Dissolver em água com calor brando",
+      "oQueEstaAcontecendo": "Cerca de 45 mL de água purificada entram no béquer, que vai ao banho-maria a 70 °C com agitação até a sacarose dissolver.",
+      "porQue": "A sacarose tem muito volume específico: 85 g ocupam cerca de 54 mL, então só sobram uns 46 mL de água. O calor brando acelera a dissolução; aquecer demais escurece e inverte a sacarose.",
+      "calculoPrevio": {
+        "pergunta": "Qual o volume aproximado de água (mL) que sobra para dissolver 85 g de sacarose em 100 mL de xarope? (volume específico da sacarose dissolvida: 0,63 mL/g)",
+        "formula": "V(água) = 100 − 85 × 0,63",
+        "resposta": 46.45,
+        "tolerancia": 2,
+        "unidade": "mL"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e2"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "medirVolume",
+          "parametros": {
+            "especie": "H2O_l",
+            "volumeMl": 45,
+            "vidraria": "proveta",
+            "recipiente": "bequer_250"
+          },
+          "alvoUI": "reagente:H2O_l"
+        },
+        {
+          "operacao": "aquecer",
+          "parametros": {
+            "recipiente": "bequer_250",
+            "fonte": "banho_maria",
+            "alvoC": 70,
+            "tempoMin": 8,
+            "agitacao": true
+          },
+          "alvoUI": "btnAquecer"
+        },
+        {
+          "operacao": "dissolver",
+          "parametros": {
+            "recipiente": "bequer_250",
+            "agitacao": true,
+            "tempoMin": 15
+          },
+          "alvoUI": "btnAgitar"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massaSolido",
+          "recipiente": "bequer_250",
+          "especie": "Sacarose_s",
+          "op": "<=",
+          "valor": 0.05,
+          "mensagemSeFalhar": "Ainda há cristais no fundo: continue agitando com calor brando.",
+          "consequencia": "aguardar"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "tempC",
+            "recipiente": "bequer_250",
+            "op": ">",
+            "valor": 85
+          },
+          "consequencia": "caramelizacao_inversao",
+          "explicacao": "Acima de cerca de 85 °C a sacarose começa a inverter e escurecer, e o xarope perde cor e estabilidade.",
+          "correcao": "Use banho-maria a 70 °C e não deixe ferver."
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "titulo": "Esfriar",
+      "oQueEstaAcontecendo": "O béquer descansa até a solução chegar perto da temperatura ambiente.",
+      "porQue": "O balão é calibrado para cerca de 20 a 25 °C; completar o volume a quente dá volume errado depois que esfria.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e3"
+        }
+      ],
+      "acao": {
+        "operacao": "resfriar",
+        "parametros": {
+          "recipiente": "bequer_250",
+          "banho": "ambiente",
+          "tempoMin": 90
+        },
+        "alvoUI": "btnResfriar"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "tempC",
+          "recipiente": "bequer_250",
+          "op": "<=",
+          "valor": 30,
+          "mensagemSeFalhar": "Ainda quente: espere esfriar antes de completar o volume.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "titulo": "Transferir para o balão",
+      "oQueEstaAcontecendo": "A solução passa ao balão volumétrico de 100 mL; o béquer é enxaguado com um pouco de água e o enxágue também vai ao balão.",
+      "porQue": "Sem enxágue, parte do xarope fica na parede do béquer e o teor final fica abaixo do declarado.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e4"
+        }
+      ],
+      "acao": {
+        "operacao": "transferir",
+        "parametros": {
+          "origem": "bequer_250",
+          "destino": "balao_100",
+          "enxague": true
+        },
+        "alvoUI": "btnTransferir"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "balao_100",
+          "especie": "Sacarose_s",
+          "op": "entre",
+          "valor": [
+            84.5,
+            85.5
+          ],
+          "mensagemSeFalhar": "Massa de sacarose no balão abaixo do esperado: houve perda na transferência.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_enxague"
+          },
+          "consequencia": "teor_abaixo",
+          "explicacao": "Cerca de 2 % do xarope ficou no béquer sem enxágue.",
+          "correcao": "Enxágue o béquer com pequenas porções de água e junte ao balão."
+        }
+      ]
+    },
+    {
+      "id": "e6",
+      "titulo": "Completar o volume",
+      "oQueEstaAcontecendo": "Água purificada entra até o menisco tocar a marca de 100 mL, e o balão é invertido para homogeneizar.",
+      "porQue": "O volume final inclui o volume da sacarose dissolvida; completar até a marca fixa a concentração em 85 g por 100 mL.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e5"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "avolumar",
+          "parametros": {
+            "recipiente": "balao_100",
+            "solvente": "H2O_l",
+            "volumeFinalMl": 100
+          },
+          "alvoUI": "btnAvolumar"
+        },
+        {
+          "operacao": "agitar",
+          "parametros": {
+            "recipiente": "balao_100",
+            "tempoMin": 6
+          },
+          "alvoUI": "btnAgitar"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "volumeMl",
+          "recipiente": "balao_100",
+          "op": "entre",
+          "valor": [
+            99.8,
+            100.2
+          ],
+          "mensagemSeFalhar": "O volume passou da marca: a concentração fica abaixo de 85 %.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "balao_100",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Continue invertendo o balão até homogeneizar.",
+          "consequencia": "aguardar"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "avolumado_quente"
+          },
+          "consequencia": "volume_errado_ao_esfriar",
+          "explicacao": "A solução quente ocupa mais volume; ao esfriar, fica abaixo da marca.",
+          "correcao": "Espere chegar à temperatura ambiente antes de completar."
+        }
+      ]
+    },
+    {
+      "id": "e7",
+      "titulo": "Densidade",
+      "oQueEstaAcontecendo": "Você mede a massa de um volume conhecido do xarope e calcula a densidade.",
+      "porQue": "A densidade confirma a concentração de açúcar: valor baixo indica diluição, valor alto indica excesso de açúcar ou perda de água.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e6"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "densidade",
+            "recipiente": "balao_100",
+            "faixa": [
+              1.28,
+              1.35
+            ]
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_densidade_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e8",
+      "titulo": "Teor de sacarose",
+      "oQueEstaAcontecendo": "O teor de sacarose é conferido contra o declarado de 85 g por 100 mL.",
+      "porQue": "O teor mostra se a pesagem, a dissolução e o volume final foram feitos como a fórmula pede.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e7"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "teor_ativo",
+            "recipiente": "balao_100",
+            "especie": "Sacarose_s",
+            "nominal": 85,
+            "unidade": "g/100mL",
+            "faixaPct": [
+              95,
+              105
+            ]
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_teor_ativo_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e9",
+      "titulo": "Limite microbiano (conceitual)",
+      "oQueEstaAcontecendo": "Uma amostra vai a contagem de micro-organismos aeróbios e fungos, como ensaio conceitual.",
+      "porQue": "Preparação oral aquosa pede limite baixo de micro-organismos. Em concentração alta, o açúcar segura a água disponível e dificulta o crescimento.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e8"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "limite_microbiano",
+            "recipiente": "balao_100",
+            "categoria": "oral_aquoso",
+            "autoconservadoSe": {
+              "variavel": {
+                "especie": "Sacarose_s",
+                "base": "pv"
+              },
+              "minimo": 60
+            }
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_limite_microbiano_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e10",
+      "titulo": "Envasar",
+      "oQueEstaAcontecendo": "O xarope vai do balão para um frasco âmbar limpo de 150 mL.",
+      "porQue": "O frasco âmbar protege da luz e o fechamento reduz contaminação e evaporação.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e9"
+        }
+      ],
+      "acao": {
+        "operacao": "envasar",
+        "parametros": {
+          "origem": "balao_100",
+          "frasco": "frasco_150",
+          "volumeMl": 100,
+          "capMl": 150
+        },
+        "alvoUI": "btnEnvasar"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "volumeMl",
+          "recipiente": "frasco_150",
+          "op": ">=",
+          "valor": 98,
+          "mensagemSeFalhar": "Volume envasado menor que o esperado.",
+          "consequencia": "aviso"
+        }
+      ]
+    },
+    {
+      "id": "e11",
+      "titulo": "Rotular",
+      "oQueEstaAcontecendo": "Você preenche o rótulo com os dados do produto, do lote e do responsável, e as advertências aplicáveis.",
+      "porQue": "Sem rótulo completo o produto não pode ser identificado, rastreado nem usado com segurança.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e10"
+        }
+      ],
+      "acao": {
+        "operacao": "rotular",
+        "parametros": {
+          "recipiente": "frasco_150",
+          "campos": {
+            "produto": "Xarope simples",
+            "concentracao": "85 g/100 mL",
+            "lote": "LAB-002",
+            "fabricacao": "data da prática",
+            "validade": "conforme o procedimento da bancada",
+            "responsavel": "turma",
+            "conservacao": "Guardar em local fresco, ao abrigo da luz"
+          },
+          "camposObrigatorios": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "conservacao"
+          ]
+        },
+        "alvoUI": "painelRotulo"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "rotuloCompleto",
+          "recipiente": "frasco_150",
+          "campos": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "conservacao"
+          ],
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Rótulo incompleto: preencha todos os campos obrigatórios.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e12",
+      "titulo": "Descarte e limpeza",
+      "oQueEstaAcontecendo": "Você descarta os restos de cada recipiente no destino correto e lava a vidraria.",
+      "porQue": "O destino do resíduo depende da sua natureza; descarte correto é requisito de segurança e ambiental.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e11"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "bequer_250",
+            "destino": "pia"
+          },
+          "alvoUI": "painelDescarte"
+        },
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "balao_100",
+            "destino": "pia"
+          },
+          "alvoUI": "painelDescarte"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "residuoConforme",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Destino de descarte inadequado para este resíduo.",
+          "consequencia": "nao_conforme"
+        }
+      ]
+    }
+  ],
+  "resultadoEsperado": {
+    "produto": "Sacarose_s",
+    "criterios": [
+      {
+        "descricao": "Concentração entre 84 e 86 g/100 mL",
+        "grandeza": "concentracaoPV",
+        "recipiente": "frasco_150",
+        "especie": "Sacarose_s",
+        "op": "entre",
+        "valor": [
+          84,
+          86
+        ]
+      },
+      {
+        "descricao": "Rótulo completo",
+        "grandeza": "rotuloCompleto",
+        "recipiente": "frasco_150",
+        "campos": [
+          "produto",
+          "concentracao",
+          "lote",
+          "fabricacao",
+          "validade",
+          "responsavel",
+          "conservacao"
+        ],
+        "op": "==",
+        "valor": true
+      }
+    ]
+  }
+}
