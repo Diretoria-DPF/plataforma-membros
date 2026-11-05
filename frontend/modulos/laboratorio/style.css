@@ -107,7 +107,7 @@ input, select, textarea {
   border: 1px solid var(--border-subtle);
   border-radius: 10px;
   padding: 2px 8px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   letter-spacing: 1px;
 }
@@ -158,7 +158,7 @@ input, select, textarea {
 }
 
 .panel h3 {
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1.2px;
   color: var(--neon-cyan);
@@ -205,7 +205,7 @@ input, select, textarea {
 }
 
 .sub-label {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   font-family: var(--font-mono);
   white-space: nowrap;
@@ -270,7 +270,7 @@ input[type="range"] {
 }
 
 label {
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
@@ -305,7 +305,7 @@ label {
   font-weight: 700;
   cursor: pointer;
   text-transform: uppercase;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   letter-spacing: 0.6px;
   transition: var(--transition-smooth);
   min-height: 32px;
@@ -332,7 +332,7 @@ label {
 .btn-time.active-btn { background: var(--neon-cyan); color: #000; box-shadow: 0 0 8px var(--neon-cyan); }
 .btn-reset { background: transparent; border: 1px solid var(--alert-red); color: var(--alert-red); }
 .btn-reset:hover { background: var(--alert-red); color: #fff; }
-.btn-clear { background: transparent; border: 1px solid #546e7a; color: #b0bec5; font-size: 0.58rem; padding: 0.2rem 0.4rem; }
+.btn-clear { background: transparent; border: 1px solid #546e7a; color: #b0bec5; font-size: 0.75rem; padding: 0.2rem 0.4rem; }
 .btn-clear:hover { background: #546e7a; color: #fff; }
 .btn.active-btn { box-shadow: inset 0 0 0 2px #fff, 0 0 10px currentColor; transform: scale(0.97); }
 
@@ -359,7 +359,7 @@ details:last-child {
 summary {
   padding: 5px 8px;
   cursor: pointer;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: #b0bec5;
   user-select: none;
@@ -378,7 +378,7 @@ summary:hover {
   padding: 4px 8px;
   margin: 0;
   cursor: pointer;
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   color: #90a4ae;
   font-weight: 400;
   border-top: 1px dashed #1e293b;
@@ -657,7 +657,7 @@ summary:hover {
 }
 
 .hud-card .hud-label {
-  font-size: 0.56rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -665,7 +665,7 @@ summary:hover {
 
 .press-warning {
   color: #ff9800;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   margin-left: 2px;
   display: none;
 }
@@ -724,7 +724,7 @@ summary:hover {
   bottom: 6px;
   right: 12px;
   font-family: var(--font-mono);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.22);
   letter-spacing: 1.5px;
   z-index: 40;
@@ -743,7 +743,7 @@ summary:hover {
   border: 1px solid rgba(56, 189, 248, 0.4);
   border-radius: 24px;
   padding: 6px 14px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);
@@ -859,7 +859,7 @@ summary:hover {
   color: #94a3b8;
   border-radius: 4px;
   padding: 3px 8px;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
   transition: var(--transition-smooth);
@@ -888,7 +888,7 @@ summary:hover {
 }
 
 .chat-status-badge {
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   padding: 2px 6px;
   border-radius: 10px;
   background: rgba(0, 255, 136, 0.15);
@@ -911,7 +911,7 @@ summary:hover {
   color: #38bdf8;
   padding: 4px 8px;
   border-radius: 12px;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition-smooth);
@@ -953,7 +953,7 @@ summary:hover {
   border: none;
   color: #94a3b8;
   padding: 6px 2px;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 700;
   font-family: var(--font-ui);
   cursor: pointer;
@@ -1026,7 +1026,7 @@ summary:hover {
 
 #molPlaceholder {
   position: absolute;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: #64748b;
   text-align: center;
   padding: 12px;
@@ -1060,7 +1060,7 @@ summary:hover {
 }
 
 .data-key {
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.6px;
   color: var(--text-secondary);
@@ -1075,7 +1075,7 @@ summary:hover {
 
 .data-val-mono {
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   color: #cbd5e1;
   word-break: break-all;
 }
@@ -1084,7 +1084,7 @@ summary:hover {
   width: 100%;
   margin-top: 6px;
   padding: 6px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   text-align: center;
 }
 
@@ -1095,7 +1095,7 @@ summary:hover {
   overscroll-behavior: contain;
   touch-action: pan-y;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   color: #90a4ae;
   background: #020617;
   border-radius: 6px;
@@ -1133,7 +1133,7 @@ canvas {
   display: inline-block;
   padding: 1px 5px;
   border-radius: 4px;
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   font-family: var(--font-mono);
   margin: 1px;
   border: 1px solid;
@@ -1465,7 +1465,7 @@ canvas {
   }
 
   .m-nav-btn span {
-    font-size: 0.62rem;
+    font-size: 0.75rem;
     font-weight: 700;
     font-family: var(--font-ui);
   }
@@ -1496,7 +1496,7 @@ canvas {
   }
 
   .hud-card .hud-label {
-    font-size: 0.52rem;
+    font-size: 0.75rem;
   }
 
   .vessel-beaker, .vessel-flask {
@@ -1604,9 +1604,9 @@ canvas {
    dois temas) e uma borda lateral, para não depender só da cor. */
 .lab-chat-aviso {
   padding: 6px 10px; border-radius: 6px; border-left: 3px solid var(--laift-warning);
-  background: var(--laift-warning-soft); color: var(--laift-text); font-size: 0.72rem; line-height: 1.45;
+  background: var(--laift-warning-soft); color: var(--laift-text); font-size: 0.75rem; line-height: 1.45;
 }
-.chat-error-detail { font-size: 0.72rem; color: var(--laift-danger); }
+.chat-error-detail { font-size: 0.75rem; color: var(--laift-danger); }
 .chat-status-badge[data-state="busy"] { border-color: #38bdf8; color: #38bdf8; }
 .chat-status-badge[data-state="online"] { border-color: #00ff88; color: #4ade80; }
 .chat-status-badge[data-state="error"] { border-color: var(--laift-danger); color: var(--laift-danger); }
@@ -1625,7 +1625,7 @@ button.btn-chat-close {
 .dossie-title { margin-bottom: 8px; color: #38bdf8; font-size: 1.05rem; }
 .dossie-row { margin-bottom: 4px; overflow-wrap: anywhere; }
 .dossie-mono { font-family: var(--font-mono); color: var(--text-secondary); }
-.dossie-smiles { font-family: var(--font-mono); color: #38bdf8; font-size: 0.72rem; word-break: break-all; }
+.dossie-smiles { font-family: var(--font-mono); color: #38bdf8; font-size: 0.75rem; word-break: break-all; }
 .dossie-bio { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-active); line-height: 1.5; }
 .dossie-erro { color: var(--laift-danger); }
 
@@ -1634,7 +1634,7 @@ button.btn-chat-close {
 .mission-done { color: var(--neon-green); }
 .mission-current { color: #ff9800; }
 .mission-locked { color: var(--text-secondary); }
-.mission-status { font-size: 0.7rem; }
+.mission-status { font-size: 0.75rem; }
 .mission-desc { color: #b0bec5; font-size: 0.8rem; }
 
 /* Foco visível em todos os controles da bancada (antes só o hover mudava). */
@@ -1682,7 +1682,7 @@ summary:focus-visible {
   }
   .header-left { min-width: 0; flex: 1; }
   .lab-header h1 {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     letter-spacing: 0.5px;
     line-height: 1.25;
     white-space: nowrap;
@@ -1690,9 +1690,82 @@ summary:focus-visible {
     text-overflow: ellipsis;
   }
   .header-right { gap: 4px; flex-shrink: 0; }
-  .manual-btn { padding: 4px 7px; font-size: 0.72rem; }
+  .manual-btn { padding: 4px 7px; font-size: 0.75rem; }
   .main-grid {
     height: calc(100dvh - 48px - 48px);
     max-height: calc(100dvh - 48px - 48px);
   }
 }
+
+/* =========================================================
+   Acessibilidade e tema (bancada)
+   - segue <html data-theme>; o palco e os visualizadores continuam escuros
+   - alvos de toque >= 44 px e fonte >= 12 px
+   - respeita prefers-reduced-motion
+========================================================= */
+.btn, .manual-btn, .rtab-btn, .m-nav-btn, .close-manual, .btn-chat-action, .btn-chat-close,
+.chat-chip, select, input[type="number"], input[type="text"], summary {
+  min-height: 44px !important;
+}
+.btn, .manual-btn, .rtab-btn, .m-nav-btn, .close-manual { min-width: 44px; }
+.reagent-list label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+.reagent-list input[type="radio"] { width: 22px; height: 22px; flex: 0 0 22px; margin: 0; }
+.lab-header { flex-wrap: wrap; row-gap: 4px; }
+.header-right { flex-wrap: wrap; justify-content: flex-end; }
+#qtdAjuda { display: block; margin-top: 2px; }
+.btn-comece { background: var(--neon-green); color: #000; border-color: transparent; }
+
+html[data-theme="light"] .lab-header,
+html[data-theme="light"] .panel,
+html[data-theme="light"] .panel-controls,
+html[data-theme="light"] .side-panel-right {
+  color: var(--laift-text);
+}
+html[data-theme="light"] .manual-btn {
+  background: var(--laift-surface-alt);
+  color: var(--laift-text);
+  border-color: var(--laift-border-strong);
+}
+html[data-theme="light"] .btn-clear { color: var(--laift-text); border-color: var(--laift-border-strong); }
+html[data-theme="light"] .btn-clear:hover { color: #fff; }
+html[data-theme="light"] .btn-comece { background: #0a7a3f; color: #fff; }
+html[data-theme="light"] .btn-play { background: #0a7a3f; color: #fff; }
+html[data-theme="light"] .btn-fire { background: #c2410c; color: #fff; }
+html[data-theme="light"] .btn-ice { background: #075985; color: #fff; }
+html[data-theme="light"] .btn-stop { background: #b45309; color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+.btn-row, .control-group { flex-shrink: 0; }
+#labChatWidgetBtn, .btn-close-focus { min-height: 44px; }
+
+.lab-header { height: auto !important; min-height: 52px !important; max-height: none !important; padding-top: 4px; padding-bottom: 4px; }
+
+html[data-theme="light"] .lab-header { background: var(--laift-surface); }
+html[data-theme="light"] .lab-header h1 { color: var(--laift-text); }
+html[data-theme="light"] select,
+html[data-theme="light"] input[type="number"],
+html[data-theme="light"] input[type="text"] {
+  background: var(--laift-surface-alt);
+  color: var(--laift-text);
+  border-color: var(--laift-border-strong);
+}
+html[data-theme="light"] .reagent-catalog { background: var(--laift-surface-alt); border-color: var(--laift-border); }
+html[data-theme="light"] details { border-bottom-color: var(--laift-border); color: var(--laift-text); }
+html[data-theme="light"] summary { background: var(--laift-surface); color: var(--laift-text); }
+html[data-theme="light"] summary:hover { background: var(--laift-surface-alt); color: var(--laift-text); }
+html[data-theme="light"] .reagent-list label { color: var(--laift-text); }
+html[data-theme="light"] .sub-label, html[data-theme="light"] label { color: var(--laift-muted); }

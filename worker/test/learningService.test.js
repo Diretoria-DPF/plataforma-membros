@@ -291,6 +291,7 @@ describe('ENG-06 — desempenho por tópico', () => {
     ['soma acima do total do simulado', [{ topic: 'A', correct: 1, total: 8 }, { topic: 'B', correct: 1, total: 8 }]],
     ['acertos por tópico acima dos acertos do simulado', [{ topic: 'A', correct: 9, total: 9 }]],
     ['tópico gigante', [{ topic: 'x'.repeat(81), correct: 1, total: 2 }]],
+    ['tópico só com questões em branco (total 0)', [{ topic: 'A', correct: 0, total: 0 }]],
   ];
   test.each(invalidStats)('recusa topicStats inválido: %s', async (_nome, topicStats) => {
     const sql = makeSql();

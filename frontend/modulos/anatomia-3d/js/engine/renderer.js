@@ -80,6 +80,8 @@ export function createRenderer({ container, bus, env = {}, store } = {}) {
   renderer.domElement.style.width = '100%';
   renderer.domElement.style.height = '100%';
   renderer.domElement.style.touchAction = 'none';
+  // Nome acessível do canvas (o <main> já descreve os atalhos de teclado).
+  if (renderer.domElement.setAttribute) renderer.domElement.setAttribute('aria-label', 'Modelo 3D do corpo humano');
   container.appendChild(renderer.domElement);
 
   // ---- Contexto WebGL perdido (aba em segundo plano no celular, driver

@@ -14,7 +14,7 @@
  */
 
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
 
@@ -22,8 +22,8 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const modesDir = path.resolve(here, '../../modulos/anatomia-3d/js/modes');
 const dataDir = path.resolve(here, '../../modulos/anatomia-3d/data/atlas');
 
-const { resolvePath, samplePath, buildTimeline } = await import(path.join(modesDir, 'path-anim.js'));
-const { animationTiming, buildSystemGraph } = await import(path.join(modesDir, 'physiology.js'));
+const { resolvePath, samplePath, buildTimeline } = await import(pathToFileURL(path.join(modesDir, 'path-anim.js')).href);
+const { animationTiming, buildSystemGraph } = await import(pathToFileURL(path.join(modesDir, 'physiology.js')).href);
 
 let failures = 0;
 

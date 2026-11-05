@@ -36,7 +36,7 @@ import { createSearchBox } from './ui/search-box.js';
 import { createNavigator } from './ui/navigator.js';
 import { groupEntries, sideLabel, contentCandidates } from './ui/structure-groups.js';
 import { mergeLayers } from './ui/content-merge.js';
-import { createInfoCard } from './ui/infocard.js';
+import { createInfoCard, publicSummary } from './ui/infocard.js';
 import { createLayersPanel } from './ui/layers-panel.js';
 import { mountExplode } from './ui/explode-entry.js';
 import { linkLegacy } from './ui/legacy-link.js';
@@ -78,6 +78,21 @@ const DEFAULT_SYSTEMS = Object.freeze(['esqueletico']);
 // primeiro carregamento e dobravam a espera no 3G.
 const BACKGROUND_SYSTEMS = Object.freeze(['muscular']);
 const BACKGROUND_DELAY_MS = 1500;
+
+/**
+ * Estruturas exibidas num sistema (ficha, navegador) diferente do arquivo de
+ * modelo que contém a malha: a epiglote e a cartilagem tireóidea são do sistema
+ * respiratório, mas as malhas vêm dos modelos digestório e esquelético.
+ */
+const MESH_HOST_SYSTEMS = Object.freeze({
+  'za:epiglottis': Object.freeze(['digestorio']),
+  'za:thyroid-cartilage': Object.freeze(['digestorio', 'esqueletico']),
+});
+
+/** Sistemas a carregar para exibir `sid`: o da entrada mais os que hospedam a malha. */
+export function systemsToLoad(sid, entry) {
+  return [...new Set([entry && entry.system, ...(MESH_HOST_SYSTEMS[sid] || [])].filter(Boolean))];
+}
 
 /** Conexão lenta ou economia de dados (Network Information API, quando existe). */
 export function isConstrainedConnection(nav = (typeof navigator !== 'undefined' ? navigator : {})) {
@@ -696,13 +711,13 @@ async function boot() {
       getStatus: (sids) => reviewStatus.groupStatus(sids),
     });
   }
-  // M4: chip "Novo: N fichas revisadas" → navegador filtrado em "Revisadas".
+  // M4: chip "Novo: N fichas completas" → navegador filtrado em "Fichas completas".
   reviewStatusReady.then(() => mountNewReviewedChip({
     host: document.getElementById('atlas-toolbar'),
     count: reviewStatus.counts.r,
     onOpen: () => {
       if (window.AtlasShell && window.AtlasShell.toggleNavigator) window.AtlasShell.toggleNavigator();
-      if (navigatorApi && navigatorApi.setFilter) navigatorApi.setFilter('r');
+      if (navigatorApi && navigatorApi.setFilter) navigatorApi.setFilter('c');
     },
   }));
 
@@ -838,7 +853,7 @@ async function boot() {
   }
   async function revealAndFocus(sid, { focus = true } = {}) {
     const entry = contentStore.getEntry(sid);
-    if (entry && entry.system && !assetLoader.isLoaded(entry.system)) await loadSystem(entry.system);
+    await Promise.all(systemsToLoad(sid, entry).filter((sys) => !assetLoader.isLoaded(sys)).map((sys) => loadSystem(sys)));
     // Estrutura do órgão detalhado do HRA ("za:vh-*"): carrega esse arquivo também.
     if (entry && entry.system && /^za:vh-/.test(sid) && !assetLoader.isLoaded(entry.system, { variant: 'hra' })) {
       await loadSystem(entry.system, { variant: 'hra' });
@@ -879,7 +894,7 @@ async function boot() {
     const systems = new Set(caso.correctSystem ? [caso.correctSystem] : []);
     for (const sid of sids) {
       const entry = contentStore.getEntry(sid);
-      if (entry && entry.system) systems.add(entry.system);
+      systemsToLoad(sid, entry).forEach((sys) => systems.add(sys));
     }
     await Promise.all([...systems].filter((sys) => !assetLoader.isLoaded(sys)).map(loadSystem));
     const layers = new Set();
@@ -997,6 +1012,31 @@ async function boot() {
         return rendererApi.getTier && rendererApi.getTier() === 'low' ? 5 : 20;
       },
       reducedMotion: prefersReducedMotion,
+    })),
+    // Trilhas guiadas, "encontre a estrutura" e desafio diário (flag `trilhas`).
+    trilhas: () => Promise.all([
+      import('./modes/trilhas.js'),
+      fetchJson(`${CONTENT_BASE}sid-aliases.json`).catch(() => ({})),
+    ]).then(([m, aliases]) => m.createTrilhasMode({
+      bus, getLabel: labelFor, search: location.search,
+      loadTrilhas: () => fetchJson(`${CONTENT_BASE}trilhas.json`),
+      loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`),
+      resolveSid: (sid) => (aliases && aliases[sid]) || sid,
+      systemOf: (sid) => {
+        const rec = registry.getBySid(sid);
+        const entry = contentStore.getEntry(sid);
+        return (entry && entry.system) || (rec && rec.system) || null;
+      },
+      groupOf: (sid) => {
+        const group = contentStore.getGroup(sid);
+        return group && Array.isArray(group.sids) ? group.sids : [sid];
+      },
+      prepareCase: prepareQuizCase,
+      getSummary: async (sid) => {
+        const content = await contentStore.getContent(sid);
+        return content ? publicSummary(content.summary_pt) : '';
+      },
+      openFicha: () => window.AtlasShell.setMode('explorar'),
     })),
     fisiologia: () => Promise.all([
       import('./modes/physiology.js'),

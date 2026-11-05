@@ -214,6 +214,11 @@
 
     // "Fazer o primeiro quiz" (ENG-04): learning.js abre este módulo com #primeiro-quiz e o simulado
     // já começa na questão 1. O ouvinte do motor (init) foi registrado antes e roda primeiro.
+    // "Revisar erros" (A3): learning.js abre este módulo com #revisar-erros e a sessão dos erros guardados começa sozinha.
+    if (window.location.hash === '#revisar-erros') {
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { quiz.reviewMyErrors(); });
+        else quiz.reviewMyErrors();
+    }
     if (window.location.hash === '#primeiro-quiz') {
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { quiz.quickStart(); });
         else quiz.quickStart();

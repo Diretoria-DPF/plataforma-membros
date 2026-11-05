@@ -13,6 +13,7 @@
 //  - destaques: carregado quando a flag highlights_enabled está ligada (Início) ou a tela de gestão abre (app.js);
 //  - entradaV2: carregado quando a flag entrada_v2_enabled está ligada e a pessoa não está logada (app.js);
 //  - inicio3: carregado quando a flag home_v2_enabled está ligada (Início v3 e Meu desempenho no Perfil; app.js);
+//  - desempenho: carregado quando o Perfil abre com a flag home_v2_enabled ligada (cartão "Desempenho"; app.js);
 //  - eventos2: carregado quando a flag events_v2_enabled está ligada e a tela Eventos abre (app.js);
 //  - perfil2: carregado quando a flag profile_v2_enabled está ligada e o Perfil abre (app.js);
 //  - admin2: carregado quando a flag admin_v2_enabled está ligada e um painel administrativo abre (app.js);
@@ -33,6 +34,9 @@
   'use strict';
 
   var BUNDLES = {
+    // Revisão espaçada de erros (A3): guardada no aparelho; usada pelo "Para hoje" do Aprender v2 e da Início v3 e pela
+    // Guia (ver REQUIRES: quem depende dela a carrega antes do próprio pacote).
+    revisao: ['modulos/shared/quiz-errors.js', 'modulos/shared/revisao-espacada.js', 'para-hoje.js'],
     admin: [
       'admin-ai.js', 'admin-moderation.js', 'admin-usage.js', 'selection-admin.js', 'privacy-admin.js',
       'admin-library-extras.js', 'admin-library-publicar.js', 'admin-library-lote.js', 'admin-library.js',
@@ -44,10 +48,12 @@
     mentoria: ['mentoring.js'],
     // Entrada v2 (flag entrada_v2_enabled): tela de abertura de quem não está logado; o CSS é injetado pelo próprio script.
     entradaV2: ['entrada-v2.js'],
+    // Desempenho no Perfil (O8): cartão por competência, só neste aparelho; lê o mesmo armazenamento que a trilha do Laboratório alimenta.
+    desempenho: ['modulos/laboratorio/js/lab-boletim.js', 'desempenho.js'],
     // Início v3: tela nova e navegação responsiva, só com a flag home_v2_enabled ligada (app.js).
     inicio3: ['home-v3.js'],
     // Aprender v2: tela nova do hub, só com a flag learn_v2_enabled ligada (learning.js). O CSS é injetado pelo script.
-    aprender2: ['learn-v2.js'],
+    aprender2: ['modulos/shared/missao-semana.js', 'learn-v2.js'],
     // Eventos v2: tela Eventos nova, só com a flag events_v2_enabled ligada (app.js; docs/eventos-v2.md).
     eventos2: ['events-v2.js'],
     // Perfil v2: reorganiza o Perfil de sempre (cabeçalho, colunas e seções recolhíveis), só com a flag profile_v2_enabled ligada (app.js).
@@ -75,15 +81,22 @@
       'assistant-mood-glue.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia-props.js',
       'modulos/shared/lia/lia-scenes.js', 'modulos/shared/lia/lia.js', 'assistant-feedback.js',
       'assistant-research.js', 'assistant-moderation.js', 'assistant-hints.js', 'assistant-typing.js',
-      'assistant-drag.js', 'assistant-suggestions.js', 'assistant-turnstile.js', 'assistant.js',
+      'assistant-drag.js', 'assistant-suggestions.js', 'assistant-turnstile.js', 'assistant-next.js', 'assistant.js',
     ],
   };
+
+  /** Pacotes que precisam de outro antes de si (carregado por inteiro antes; o mesmo pacote nunca baixa duas vezes). */
+  var REQUIRES = { inicio3: ['revisao'], aprender2: ['revisao'] };
+  /** O mesmo, mas opcional: se o pacote exigido falhar (sem rede), o pedido segue sem ele (a Guia funciona sem a revisão). */
+  var OPTIONAL_REQUIRES = { lia: ['revisao'] };
 
   /** Espera de ociosidade para quem só visita (a Guia sobe depois do load, sem disputar a primeira pintura). */
   var IDLE_TIMEOUT_MS = 3000;
 
   /** Cria um carregador ligado a um documento (a página usa o real; os testes usam um falso). */
-  function createLoader(doc, bundles) {
+  function createLoader(doc, bundles, requires, optionalRequires) {
+    var deps = requires || REQUIRES;
+    var optional = optionalRequires || OPTIONAL_REQUIRES;
     var pending = {};
 
     function inject(src) {
@@ -101,7 +114,10 @@
       var list = bundles[name];
       if (!list) return Promise.reject(new Error('Pacote desconhecido: ' + name));
       if (!pending[name]) {
-        pending[name] = Promise.all(list.map(inject)).then(function () { return name; }, function (err) {
+        var needs = (deps[name] || []).map(load).concat((optional[name] || []).map(function (dep) { return load(dep).catch(function () { return null; }); }));
+        // Sem dependência, os <script> entram na hora (como sempre); com dependência, depois do pacote exigido.
+        var run = needs.length ? Promise.all(needs).then(function () { return Promise.all(list.map(inject)); }) : Promise.all(list.map(inject));
+        pending[name] = run.then(function () { return name; }, function (err) {
           delete pending[name]; // permite tentar de novo (rede voltou)
           throw err;
         });
@@ -121,7 +137,7 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { BUNDLES: BUNDLES, IDLE_TIMEOUT_MS: IDLE_TIMEOUT_MS, createLoader: createLoader, whenIdle: whenIdle };
+    module.exports = { BUNDLES: BUNDLES, REQUIRES: REQUIRES, OPTIONAL_REQUIRES: OPTIONAL_REQUIRES, IDLE_TIMEOUT_MS: IDLE_TIMEOUT_MS, createLoader: createLoader, whenIdle: whenIdle };
     return;
   }
 

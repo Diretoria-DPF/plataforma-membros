@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <!-- CSP do módulo: tudo do próprio domínio, sem script nem estilo inline, sem rede externa. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../shared/laift-identity.js"></script>
+  <title>Balcão de controlados — Laboratório LAIFT</title>
+  <link rel="stylesheet" href="regulacao.css">
+</head>
+<body>
+  <header class="rg-topo">
+    <a class="rg-voltar" href="../index.html">Voltar ao Laboratório</a>
+    <h1>Balcão de controlados</h1>
+    <p class="rg-sub">Receituário, livro de registro, balanço, rotulagem e produção do medicamento, conforme a Portaria SVS/MS 344/98.</p>
+    <p id="rgProgresso" class="rg-progresso" aria-live="polite"></p>
+  </header>
+  <main id="rgRaiz" class="rg-main">
+    <p id="rgCarregando">Carregando...</p>
+  </main>
+  <script src="regulacao-core.js"></script>
+  <script src="regulacao-ui.js"></script>
+</body>
+</html>

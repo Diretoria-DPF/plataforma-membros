@@ -1,0 +1,84 @@
+{
+  "versao": 1,
+  "processo": {
+    "id": "proc_capsulas_lista_b1_v1",
+    "tipo": "forma_farmaceutica",
+    "nivel_conteudo": "completo",
+    "produto_acabado": true,
+    "titulo": "Cápsulas de insumo de lista B1: da ordem de manipulação à escrituração",
+    "resumo": "Processo de farmacotécnica para obter o medicamento (produto acabado) a partir do insumo farmacêutico já adquirido de fornecedor autorizado. Os valores do exemplo são didáticos.",
+    "exemplo": { "n": 60, "dose_mg": 10, "teor_pc": 98, "massa_cap_mg": 200, "gabarito_insumo_mg": 612.24 },
+    "tolerancia_peso_pc": 10,
+    "tolerancia_fonte": "Farmacopeia Brasileira, ensaio de peso médio de cápsulas (citação; conferir a edição vigente e o limite para a faixa de massa).",
+    "nv": true,
+    "lotes_cq": [
+      { "id": "lote_a", "alvo_mg": 200, "pesos_mg": [201, 198, 203, 196, 200, 199, 205, 197, 202, 200] },
+      { "id": "lote_b", "alvo_mg": 200, "pesos_mg": [201, 198, 224, 196, 200, 199, 205, 197, 202, 200] }
+    ],
+    "etapas": [
+      {
+        "id": "e1", "titulo": "Conferir a ordem e a autorização",
+        "o_que_acontece": "O receituário foi retido e conferido, e a ordem de manipulação traz lote, prescritor e quantidade.",
+        "porque": "Sem receituário válido e sem autorização da empresa para a lista, a manipulação não pode começar.",
+        "verificacao": "Tipo de receituário correto para a lista, dados completos, estabelecimento autorizado para manipular a lista.",
+        "erro_comum": "Começar a pesar antes de conferir o receituário e descobrir a falha com o insumo já fora do armário."
+      },
+      {
+        "id": "e2", "titulo": "Calcular a quantidade de insumo",
+        "o_que_acontece": "A dose por cápsula é corrigida pelo teor do insumo informado no laudo do fornecedor.",
+        "porque": "O pó pesado tem pureza menor que 100 %. Sem a correção, cada cápsula leva menos ativo que o prescrito.",
+        "verificacao": "Insumo por cápsula = dose ÷ (teor ÷ 100). Total = n × insumo por cápsula. Excipiente = n × massa da cápsula − insumo.",
+        "erro_comum": "Esquecer a correção pelo teor ou usar o teor de outro lote."
+      },
+      {
+        "id": "e3", "titulo": "Pesar com dupla conferência",
+        "o_que_acontece": "O insumo e o excipiente são pesados em balança calibrada, com segunda pessoa conferindo o valor lido.",
+        "porque": "Pequena massa de ativo tem pouca margem de erro e o insumo é controlado: cada miligrama precisa constar no livro.",
+        "verificacao": "Certificado de calibração em dia, peso mínimo da balança respeitado, valor lido igual ao calculado.",
+        "erro_comum": "Pesar abaixo do peso mínimo da balança, onde a leitura não é confiável."
+      },
+      {
+        "id": "e4", "titulo": "Misturar por diluição geométrica",
+        "o_que_acontece": "O insumo é misturado a uma parte igual de excipiente, e depois se acrescentam porções crescentes até completar a massa.",
+        "porque": "Poucos miligramas de ativo, misturados de uma vez a muito excipiente, ficam desuniformes entre cápsulas.",
+        "verificacao": "Mistura sem manchas, tempo de mistura registrado na ordem.",
+        "erro_comum": "Despejar todo o excipiente de uma vez e encapsular sem homogeneizar."
+      },
+      {
+        "id": "e5", "titulo": "Encapsular",
+        "o_que_acontece": "A mistura é distribuída nas cápsulas de tamanho adequado ao volume do pó.",
+        "porque": "O volume do pó depende da densidade: cápsula pequena demais não fecha e grande demais gera espaço vazio.",
+        "verificacao": "Todas as cápsulas fechadas, sem pó na superfície, quantidade final igual a n.",
+        "erro_comum": "Escolher o tamanho da cápsula pela massa e não pelo volume."
+      },
+      {
+        "id": "e6", "titulo": "Controle de qualidade por peso",
+        "o_que_acontece": "Uma amostra de cápsulas é pesada e comparada ao peso alvo.",
+        "porque": "Peso fora do limite indica enchimento irregular e, portanto, dose irregular.",
+        "verificacao": "Nenhuma unidade fora da tolerância do ensaio; o aspecto das cápsulas é uniforme.",
+        "erro_comum": "Aprovar pela média e ignorar a unidade que passou do limite."
+      },
+      {
+        "id": "e7", "titulo": "Rotular e embalar",
+        "o_que_acontece": "O rótulo recebe nome da pessoa, composição, lote, validade, responsável técnico, tarja e frase da lista.",
+        "porque": "A rotulagem é a última barreira contra erro de uso e a prova de rastreio do lote.",
+        "verificacao": "Tarja e frase conforme a lista; número do lote igual ao da ordem de manipulação.",
+        "erro_comum": "Rótulo de outra lista (tarja vermelha em produto de lista B1)."
+      },
+      {
+        "id": "e8", "titulo": "Lançar a escrituração",
+        "o_que_acontece": "O consumo do insumo, a produção e o saldo vão para o livro, e a dispensação é registrada com o documento de origem.",
+        "porque": "O saldo do livro precisa fechar com o estoque físico em qualquer data; é isso que o balanço confere.",
+        "verificacao": "Saldo corrente igual à contagem; ordem de manipulação arquivada com o receituário retido.",
+        "erro_comum": "Lançar a saída da dispensação e esquecer a saída do insumo usado na manipulação."
+      },
+      {
+        "id": "e9", "titulo": "Guardar e inutilizar sobras",
+        "o_que_acontece": "A sobra de insumo volta ao armário com chave; o rejeito é pesado, registrado e inutilizado com termo.",
+        "porque": "Controlado não tem descarte comum: toda massa sai do saldo com documento.",
+        "verificacao": "Termo assinado e saldo atualizado.",
+        "erro_comum": "Jogar o rejeito no lixo da bancada sem pesar e sem registro."
+      }
+    ]
+  }
+}

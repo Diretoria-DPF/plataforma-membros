@@ -14,15 +14,13 @@
  */
 
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const engineDir = path.resolve(here, '../../modulos/anatomia-3d/js/engine');
 
-const { toNdc, orbitStep } = await import(
-  path.join(engineDir, 'controls.js')
-);
+const { toNdc, orbitStep } = await import(pathToFileURL(path.join(engineDir, 'controls.js')).href);
 
 let failures = 0;
 

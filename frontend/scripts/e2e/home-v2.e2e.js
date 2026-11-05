@@ -193,6 +193,10 @@ async function profileScenario() {
     await page.waitForSelector('#profile-desempenho', { timeout: 8000 });
     check((await page.locator('#profile-desempenho > summary').textContent()).trim() === 'Meu desempenho', 'Perfil tem o bloco "Meu desempenho"');
     check((await page.locator('#profile-desempenho').evaluate((n) => n.open)) === false, 'começa recolhido');
+    await page.waitForSelector('#profile-desempenho-card .desemp-item', { timeout: 8000 });
+    check((await page.locator('#profile-desempenho-card .desemp-item').count()) === 6, 'cartão "Desempenho" com as seis competências do Laboratório');
+    check(/Praticar /.test(await page.locator('#profile-desempenho-card .desemp-sugestao').textContent()), 'cartão sugere o próximo treino');
+    check(/Só você vê/.test(await page.locator('#profile-desempenho-card').textContent()), 'cartão diz que só a própria pessoa vê');
     await page.click('#profile-desempenho > summary');
     await page.waitForSelector('#profile-desempenho-host .home-kpis', { timeout: 8000 });
     check((await page.locator('#profile-desempenho-host .home-kpi').count()) >= 3, 'os números e gráficos antigos moram no Perfil');
@@ -218,6 +222,7 @@ async function flagOffScenario() {
     check((await app.page.locator('link[data-home-v3-css]').count()) === 0, 'o CSS da v3 nem é carregado');
     await app.showPanel('panel-profile');
     check((await app.page.locator('#profile-desempenho').count()) === 0, 'Perfil sem "Meu desempenho"');
+    check((await app.page.locator('#profile-desempenho-card').count()) === 0, 'Perfil sem o cartão "Desempenho" com a flag desligada');
     check(app.errors.length === 0, 'flag desligada: sem erros de JavaScript');
   } finally {
     await app.close();

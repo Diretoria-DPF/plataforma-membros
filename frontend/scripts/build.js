@@ -58,7 +58,7 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 });
 
 // Cargos funcionais (ADR 0010, ROL-03): menu Gestão, data-cap e o painel Cargos.
-['session-view.js', 'orgchart-edit.js', 'roles-ui.js', 'admin-roles.js', 'roles.css', 'highlights.js', 'highlights-manage.js', 'highlights.css', 'whats-new.js', 'mentoring.js', 'mentoring.css', 'home-v3.js', 'home-v3.css', 'profile-v2.js', 'profile-v2.css', 'messages-v2.js', 'messages-v2.css', 'team-v2.js', 'team-v2.css', 'entrada-v2.js', 'entrada-v2.css', 'events-v2.js', 'events-v2.css', 'proposals-v2.js', 'proposals-v2.css', 'tasks-v2.js', 'tasks-v2.css', 'library-v2.js', 'library-v2.css', 'learn-v2.js', 'learn-v2.css', 'admin-v2.js', 'admin-v2.css', 'mentoring-v2.js', 'mentoring-v2.css', 'selection-v2.js', 'selection-v2.css'].forEach((name) => {
+['session-view.js', 'orgchart-edit.js', 'roles-ui.js', 'admin-roles.js', 'roles.css', 'highlights.js', 'highlights-manage.js', 'highlights.css', 'whats-new.js', 'mentoring.js', 'mentoring.css', 'home-v3.js', 'home-v3.css', 'desempenho.js', 'desempenho.css', 'para-hoje.js', 'assistant-next.js', 'profile-v2.js', 'profile-v2.css', 'messages-v2.js', 'messages-v2.css', 'team-v2.js', 'team-v2.css', 'entrada-v2.js', 'entrada-v2.css', 'events-v2.js', 'events-v2.css', 'proposals-v2.js', 'proposals-v2.css', 'tasks-v2.js', 'tasks-v2.css', 'library-v2.js', 'library-v2.css', 'learn-v2.js', 'learn-v2.css', 'admin-v2.js', 'admin-v2.css', 'mentoring-v2.js', 'mentoring-v2.css', 'selection-v2.js', 'selection-v2.css'].forEach((name) => {
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 
@@ -106,8 +106,15 @@ fs.copyFileSync(path.join(ROOT, 'static-page.js'), path.join(DIST, 'static-page.
 fs.copyFileSync(path.join(ROOT, 'admin-ai.js'), path.join(DIST, 'admin-ai.js'));
 // Ferramentas de revisão da arte da Guia (preview, Guia Lab) e o README ficam só no repositório (ADR 0003).
 const LIA_REVIEW_ONLY = /[\\/]shared[\\/]lia[\\/](?:preview[^\\/]*|lab[^\\/]*|build-lab[^\\/]*|build-lia-art[^\\/]*|README\.md)$/;
+// Atlas: dev/ (harnesses com innerHTML) e a base antiga bio-database.js não são publicados
+// (build-atlas-excludes.js); ATLAS_KEEP_DEV=1 mantém dev/ só para o e2e `atlas-assets`.
+const { isAtlasUnpublished } = require('./build-atlas-excludes.js');
+const KEEP_ATLAS_DEV = process.env.ATLAS_KEEP_DEV === '1';
 ['modulos', 'vendor', 'icons'].forEach((dir) => {
-  fs.cpSync(path.join(ROOT, dir), path.join(DIST, dir), { recursive: true, filter: (src) => !LIA_REVIEW_ONLY.test(src) });
+  fs.cpSync(path.join(ROOT, dir), path.join(DIST, dir), {
+    recursive: true,
+    filter: (src) => !LIA_REVIEW_ONLY.test(src) && !isAtlasUnpublished(src, { keepDev: KEEP_ATLAS_DEV }),
+  });
 });
 
 // Blog "Conheça a LAIFT": os módulos e o sprite de blog/ vão como estão; blog/conteudo/ (JSON dos posts)

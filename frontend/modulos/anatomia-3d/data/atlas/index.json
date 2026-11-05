@@ -10360,7 +10360,7 @@
   },
   {
     "sid": "za:thyroid-cartilage",
-    "system": "digestorio",
+    "system": "respiratorio",
     "layer": "visceras",
     "parent": null,
     "region": "desconhecido",
@@ -11663,7 +11663,7 @@
   },
   {
     "sid": "za:epiglottis",
-    "system": "digestorio",
+    "system": "respiratorio",
     "layer": "visceras",
     "parent": null,
     "region": "desconhecido",
@@ -15913,7 +15913,7 @@
   },
   {
     "sid": "za:thyroid-cartilage",
-    "system": "esqueletico",
+    "system": "respiratorio",
     "layer": "esqueleto",
     "parent": null,
     "region": "desconhecido",

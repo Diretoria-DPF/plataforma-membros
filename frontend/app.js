@@ -1508,6 +1508,7 @@
       if (window.LaiftMfa) window.LaiftMfa.load(window.App);
       if (window.LaiftPrivacy) window.LaiftPrivacy.load(window.App, document); // direitos do titular (LGPD)
       if (homeV2On()) withBundle('inicio3', function () { if (window.LaiftHomeV3) window.LaiftHomeV3.mountProfile(window.App, document); }); // Meu desempenho
+      if (homeV2On()) withBundle('desempenho', function () { if (window.LaiftDesempenho) window.LaiftDesempenho.mount(window.App, document); }); // Desempenho por competência (O8)
       if (profileV2On()) mountProfileV2();
       else if (window.LaiftProfileV2) window.LaiftProfileV2.reset(document);
     },
@@ -1587,7 +1588,8 @@
   function showPanel(panelId, opts) {
     showPanelSection(panelId);
     // Botão Voltar do Android (MOB-01): cada troca entra no histórico; o popstate reabre sem empilhar de novo.
-    if (!(opts && opts.fromHistory === true) && window.LaiftPanelHistory) window.LaiftPanelHistory.push(panelId);
+    // No Aprender com um módulo aberto, o estado leva o módulo (TRA-03): voltar fecha o módulo, não sai do Aprender.
+    if (!(opts && opts.fromHistory === true) && window.LaiftPanelHistory) window.LaiftPanelHistory.push(panelId, openLearnModule(panelId));
     syncAdminV2(panelId);
     if (PANEL_LOADERS[panelId]) PANEL_LOADERS[panelId]();
     // Reavalia os indicadores ("!" de votação aberta, contagem de tarefas)
@@ -1598,13 +1600,34 @@
     refreshNavBadges();
   }
 
+  /** Módulo de estudo aberto, se o painel é o Aprender (senão ''). */
+  function openLearnModule(panelId) {
+    var learning = window.LaiftLearning;
+    return panelId === 'panel-learn' && learning && typeof learning.activeModule === 'function' ? learning.activeModule() || '' : '';
+  }
+
+  /** Voltar/avançar do navegador: o módulo do estado abre ou fecha; nunca sobra o visualizador aberto fora do Aprender. */
+  function showFromHistory(panelId, moduleId) {
+    var learning = window.LaiftLearning;
+    if (panelId === 'panel-learn' && learning) {
+      if (moduleId) {
+        showPanel(panelId, { fromHistory: true });
+        learning.openModule(moduleId, { fromHistory: true });
+        return;
+      }
+      if (learning.activeModule()) { learning.closeModule({ fromHistory: true }); return; }
+    }
+    showPanel(panelId, { fromHistory: true });
+  }
+
   window.addEventListener('popstate', function (event) {
     if (!window.LaiftPanelHistory) return;
     window.LaiftPanelHistory.onPopState(event, {
       loggedIn: !!state.sessionToken,
       current: currentPanelId,
+      currentModule: openLearnModule(currentPanelId),
       canOpen: function (id) { return getVisiblePanelOrder().indexOf(id) !== -1; },
-    }, function (id) { showPanel(id, { fromHistory: true }); });
+    }, showFromHistory);
   });
 
   // ===========================================================================

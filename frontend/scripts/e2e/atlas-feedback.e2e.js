@@ -83,7 +83,7 @@ module.exports = async function atlasFeedback() {
       while (Date.now() - t0 < 10000) {
         const sheet = document.getElementById('atlas-sheet');
         const name = sheet.querySelector('.atlas-card-name');
-        if (name && sheet.querySelector('.atlas-card-status, .atlas-card-tabbar')) break;
+        if (name && sheet.querySelector('.atlas-card-tabbar')) break;
         await new Promise((r) => setTimeout(r, 100));
       }
       // 2ª renderização (com o conteúdo) e foco: espera o foco chegar (ou 3 s)

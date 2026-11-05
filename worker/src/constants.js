@@ -672,7 +672,7 @@ export const SIM_MESSAGES = {
   caseNotReady: 'Este caso ainda não foi liberado para simulação.',
   sourceNotAllowed: 'Casos gerados na sessão não podem ser usados na simulação.',
   reviewIncomplete: 'A revisão clínica está incompleta: confirme os 4 itens da lista de conferência.',
-  reviewSameAuthor: 'O revisor clínico precisa ser outra pessoa, diferente de quem criou o caso.',
+  reviewSameAuthor: 'Quem criou o caso não pode aprová-lo. Peça a outra pessoa com permissão de revisão.',
   reviewNoProfile: 'Este caso não tem perfil de simulação; a lista de conferência não se aplica.',
   // Fala do paciente quando o guardrail de saída troca a resposta: continua no personagem (nunca expõe regra nem aviso).
   patientFallback: 'Hum... não sei explicar direito. Pode me perguntar de outro jeito?',

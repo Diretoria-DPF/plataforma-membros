@@ -31,7 +31,7 @@ const clinicalCases = [
     id: "caso_tox_01",
     caseSource: "builtin",
     toxindrome: "Colinérgica",
-    agentePrincipal: "Organofosforado (metamidofós)",
+    agentePrincipal: "Inseticida organofosforado",
     jornadaId: "jornada_emergencia_tox",
     ordemTrilha: 1,
     titulo: "Insuficiência Respiratória Aguda na Lavoura",
@@ -66,7 +66,7 @@ const clinicalCases = [
       nome: "Agenor Silveira",
       idade: 52,
       pacienteProfissao: "Trabalhador rural na roça de milho",
-      exposicaoReal: "Pulverização de inseticida organofosforado (Metamidofós/Paration) sem EPI adequado há cerca de 2 horas. A mangueira da bomba costal furou, molhando as costas e encharcando a camisa de algodão por tempo prolongado.",
+      exposicaoReal: "Pulverização de inseticida organofosforado (produto sem identificação legível no rótulo) sem EPI adequado há cerca de 2 horas. A mangueira da bomba costal furou, molhando as costas e encharcando a camisa de algodão por tempo prolongado.",
       sintomas: "muita falta de ar como se estivesse afogando, peito apertado parecendo um nó, boca cheia de baba grossa, visão escura, dor de cabeça, cólica na barriga e músculos pulando sozinhos",
       comportamento: "Muito assustado, voz trêmula e embargada por secreções, confuso devido à falta de oxigênio, com medo de morrer.",
       regrasFala: "Fale em tom leigo e desesperado. Descreva a salivação como 'baba que não para', o peito como 'chiando parecendo chaleira' e os espasmos como 'carne pulando parecendo bicho andando por baixo'."
@@ -80,12 +80,12 @@ const clinicalCases = [
     examesDisponiveis: [
       {
         id: "colinesterase",
-        nome: "Atividade da Colinesterase Plasmática e Eritrocitária",
+        nome: "Atividade da Colinesterase Plasmática",
         custoTempoMin: 10,
         impactoVitalidade: 0,
         impactoPaciencia: -2,
         essencial: true,
-        resultado: "Colinesterase Plasmática: 980 U/L (Referência: 4.650 a 10.440 U/L). Inibição severa (>80%) compatível com síndrome colinérgica aguda."
+        resultado: "Atividade da colinesterase plasmática muito abaixo do limite inferior de referência do método do laboratório (os valores de referência variam conforme o método). Redução acentuada, compatível com exposição a inibidor de colinesterase."
       },
       {
         id: "gasometria",
@@ -121,12 +121,12 @@ const clinicalCases = [
         impactoVitalidade: -10,
         impactoPaciencia: -15,
         essencial: false,
-        resultado: "Ausência de hemorragias agudas, desvios de linha média ou lesões expansivas. Exame sem relevância diagnóstica imediata que atrasou conduta crítica."
+        resultado: "Ausência de hemorragias agudas, desvios de linha média ou lesões expansivas."
       }
     ],
     gabaritoPreceptor: {
       diagnostico: "Intoxicação exógena aguda grave por inseticida inibidor da acetilcolinesterase (Organofosforado) manifestando Síndrome Colinérgica (efeitos muscarínicos e nicotínicos preponderantes).",
-      conduta: "Desobstrução imediata de vias aéreas com aspiração de secreções e oxigenoterapia de alto fluxo; Administração endovenosa imediata de ATROPINA (1 a 2 mg a cada 5-10 minutos) titulada até a cessação da broncorreia e roncos pulmonares (atropinização); Remoção imediata de roupas contaminadas e lavagem dérmica vigorosa com água corrente e sabão; Avaliação precoce do uso de PRALIDOXIMA (reativador de colinesterase) antes do envelhecimento enzimático.",
+      conduta: "Desobstrução imediata de vias aéreas com aspiração de secreções, oxigenoterapia e suporte ventilatório conforme a necessidade; Administração endovenosa de ATROPINA em doses repetidas e tituladas pela resposta clínica (redução da broncorreia e das secreções, melhora da frequência cardíaca e da pressão arterial), com esquema e doses conforme o protocolo do serviço e a orientação do CIATox; Remoção imediata de roupas contaminadas e lavagem dérmica vigorosa com água corrente e sabão, com proteção da equipe; Benzodiazepínico se houver convulsão; Avaliação do uso de PRALIDOXIMA (reativador de colinesterase), cujo benefício é discutido na literatura, conforme indicação e disponibilidade no protocolo local; Cautela com bloqueadores neuromusculares como a succinilcolina.",
       palavrasChave: ["atropina", "organofosforado", "colinergica", "descontaminacao", "oxigenio", "pralidoxima", "broncorreia"]
     }
   },
@@ -210,7 +210,7 @@ const clinicalCases = [
         impactoVitalidade: 0,
         impactoPaciencia: 0,
         essencial: true,
-        resultado: "Creatinina Sérica: 2.4 mg/dL (Basal: 0.8 mg/dL) | Ureia: 82 mg/dL | Potássio Sérico: 5.6 mEq/L (Hipercalemia leve). Configura Lesão Renal Aguda KDIGO 2."
+        resultado: "Creatinina Sérica: 2.4 mg/dL (Basal: 0.8 mg/dL) | Ureia: 82 mg/dL | Potássio Sérico: 5.6 mEq/L (Hipercalemia leve). Creatinina 3,0 vezes a basal: Lesão Renal Aguda KDIGO estágio 3."
       },
       {
         id: "transaminases",
@@ -228,12 +228,12 @@ const clinicalCases = [
         impactoVitalidade: 0,
         impactoPaciencia: -12,
         essencial: false,
-        resultado: "Estruturas ósseas íntegras, sem fraturas ou derrames articulares. Exame inútil para avaliação muscular que desgastou a paciente."
+        resultado: "Estruturas ósseas íntegras, sem fraturas ou derrames articulares."
       }
     ],
     gabaritoPreceptor: {
-      diagnostico: "Rabdomiólise grave induzida por interação farmacocinética (inibição enzimática do CYP3A4 pela Claritromicina elevando os níveis séricos de Sinvastatina), complicada com Lesão Renal Aguda nefrotóxica por Mioglobinúria e Hipercalemia.",
-      conduta: "Suspensão imediata da Sinvastatina e da Claritromicina; Internação hospitalar para hidratação venosa vigorosa com Cristaloides (Solução Salina 0,9%) visando débito urinário > 200 mL/h; Alcalinização urinária com bicarbonato de sódio; Monitoramento eletrocardiográfico e dosagem seriada de Potássio; Substituição do antibiótico por opção sem interação com CYP3A4 (ex: Amoxicilina com Clavulanato ou Azitromicina).",
+      diagnostico: "Rabdomiólise grave induzida por interação farmacocinética (inibição enzimática do CYP3A4 pela Claritromicina elevando os níveis séricos de Sinvastatina), complicada com Lesão Renal Aguda (KDIGO estágio 3) por Mioglobinúria e Hipercalemia.",
+      conduta: "Suspensão imediata da Sinvastatina e da Claritromicina; Internação hospitalar para hidratação venosa vigorosa com Cristaloides (Solução Salina 0,9%) visando manter diurese elevada, conforme protocolo; A alcalinização urinária com bicarbonato de sódio é medida controversa, sem benefício comprovado, e só deve ser considerada em indicação específica, com monitorização de pH, cálcio e potássio; Monitoramento eletrocardiográfico e dosagem seriada de Potássio; Substituição do antibiótico por opção sem interação com CYP3A4 (ex: Amoxicilina com Clavulanato ou Azitromicina).",
       palavrasChave: ["sinvastatina", "claritromicina", "cyp3a4", "rabdomiolise", "mioglobina", "hidratacao", "suspensao"]
     }
   },
@@ -330,9 +330,9 @@ const clinicalCases = [
       }
     ],
     gabaritoPreceptor: {
-      diagnostico: "Acidente Ofídico Botrópico Moderado a Grave (envenenamento por Bothrops - Jararaca) com Síndrome Hemorrágica e Coagulopatia de Consumo (sangue incoagulável).",
-      conduta: "Administração intravenosa imediata de SORO ANTIBOTRÓPICO (SAB) - 8 a 12 ampolas diluídas em soro fisiológico em dose única; Hidratação venosa vigorosa para prevenção de lesão renal aguda; Analgesia com analgésicos comuns ou opioides (evitar estritamente AINEs devido à coagulopatia); Elevação do membro acometido; Profilaxia antitetânica; Monitoramento de síndrome compartimental.",
-      palavrasChave: ["antibotropico", "bothrops", "jararaca", "incoagulavel", "hidratacao", "fibrinogenio", "antialgicos"]
+      diagnostico: "Acidente Ofídico Botrópico (envenenamento por Bothrops - Jararaca) com edema progressivo, Síndrome Hemorrágica e Coagulopatia de Consumo (sangue incoagulável); classificar a gravidade (moderada ou grave) pelos critérios do manual do Ministério da Saúde.",
+      conduta: "Administração intravenosa imediata de SORO ANTIBOTRÓPICO (SAB), com o número de ampolas definido pela classificação de gravidade do caso (edema extenso, sangramento e sangue incoagulável) conforme o manual do Ministério da Saúde e a bula vigente, e reavaliação do tempo de coagulação após a soroterapia; Hidratação venosa vigorosa para prevenção de lesão renal aguda; Analgesia com analgésicos comuns ou opioides (evitar estritamente AINEs devido à coagulopatia); Elevação do membro acometido; Profilaxia antitetânica; Monitoramento de síndrome compartimental.",
+      palavrasChave: ["antibotropico", "bothrops", "jararaca", "incoagulavel", "hidratacao", "fibrinogenio", "analgesicos"]
     }
   },
 
@@ -364,8 +364,8 @@ const clinicalCases = [
       alergias: "Nega alergias conhecidas",
       imagem: "🧑"
     },
-    queixaPrincipal: "Tomei três caixas daquele remédio pra dor de cabeça faz umas 4 horas... tô enjoado, vomitando e com medo do que vai acontecer.",
-    historicoAdmissao: "Trazido por amigos da faculdade após encontrar cartelas vazias no quarto. Confessa ingestão voluntária de aproximadamente 30 comprimidos de Paracetamol 750 mg (total de 22,5 g) há cerca de 4 horas em contexto de desespero emocional.",
+    queixaPrincipal: "Tomei muitos comprimidos daquele remédio pra dor de cabeça faz umas 4 horas... tô enjoado, vomitando e com medo do que vai acontecer.",
+    historicoAdmissao: "Trazido por amigos da faculdade após encontrar cartelas vazias no quarto. Refere ingestão voluntária de quantidade elevada de Paracetamol, sem saber precisar o número de comprimidos, há cerca de 4 horas, em contexto de sofrimento emocional.",
     sinaisVitais: {
       pa: "115/75 mmHg",
       fc: "82 bpm",
@@ -378,10 +378,10 @@ const clinicalCases = [
       nome: "Lucas",
       idade: 22,
       pacienteProfissao: "Estudante de engenharia",
-      exposicaoReal: "Ingestão aguda maciça de 22,5 g de Paracetamol (362 mg/kg). A dose satura as vias de sulfatação e glicuronidação, gerando acúmulo de NAPQI mediado pelo CYP2E1 que depletará toda a glutationa hepática em 8 a 12 horas.",
+      exposicaoReal: "Ingestão aguda de quantidade de Paracetamol muito acima do limiar tóxico (acima de 150 mg/kg). A dose satura as vias de sulfatação e glicuronidação, gerando acúmulo de NAPQI mediado pelo CYP2E1, que esgota a glutationa hepática e leva à lesão hepatocelular.",
       sintomas: "enjoo forte na boca do estômago, sensação de estômago embrulhado, suor frio e tremedeira nas mãos",
       comportamento: "Choroso, arrependido, com vergonha do ato, colaborativo com as respostas médicas.",
-      regrasFala: "Diga que tomou muitos comprimidos de paracetamol de 750mg há cerca de 4 horas. Relate náuseas e vômitos claros, mas negue dor forte por enquanto."
+      regrasFala: "Diga que tomou muitos comprimidos de paracetamol há cerca de 4 horas e que perdeu a conta de quantos. Relate náuseas e vômitos claros, mas negue dor forte por enquanto."
     },
     perguntasSugeridas: [
       "Quantos comprimidos e de qual dosagem exatamente você ingeriu?",
@@ -397,7 +397,7 @@ const clinicalCases = [
         impactoVitalidade: 0,
         impactoPaciencia: 1,
         essencial: true,
-        resultado: "Concentração sérica de Paracetamol (4 horas pós-ingestão): 220 µg/mL. Acima da linha de tratamento no Nomograma de Rumack-Matthew, indicando risco iminente de hepatotoxicidade fulminante."
+        resultado: "Concentração sérica de Paracetamol (4 horas pós-ingestão): 220 µg/mL. Acima da linha de tratamento no Nomograma de Rumack-Matthew, indicando alto risco de hepatotoxicidade."
       },
       {
         id: "transaminases_hepatites",
@@ -424,12 +424,12 @@ const clinicalCases = [
         impactoVitalidade: -5,
         impactoPaciencia: -15,
         essencial: false,
-        resultado: "Mucosa gástrica com discreto eritema antral. Ausência de bezoares ou sangramentos. Procedimento invasivo desnecessário que atrasou a infusão do antídoto."
+        resultado: "Mucosa gástrica com discreto eritema antral. Ausência de bezoares ou sangramentos."
       }
     ],
     gabaritoPreceptor: {
-      diagnostico: "Intoxicação Exógena Aguda Grave por Paracetamol (Acetaminofeno) em dose tóxica (> 150 mg/kg), com risco crítico de Hepatite Tóxica Fulminante e necrose centrolobular.",
-      conduta: "Início imediato do antídoto específico N-ACETILCISTEÍNA (NAC) por via intravenosa (Protocolo de 21 horas: ataque de 150 mg/kg em 1 hora, seguido de 50 mg/kg em 4 horas e 100 mg/kg em 16 horas); Como a ingestão ocorreu há cerca de 4 horas, realizar Carvão Ativado em dose única (1 g/kg); Monitoramento de transaminases, função renal e coagulograma a cada 12 horas; Avaliação psiquiátrica de suporte após estabilização clínica.",
+      diagnostico: "Intoxicação Exógena Aguda por Paracetamol (Acetaminofeno) em dose tóxica (> 150 mg/kg), com alto risco de hepatotoxicidade e necrose centrolobular.",
+      conduta: "Início imediato do antídoto específico N-ACETILCISTEÍNA (NAC), sem aguardar exames de função hepática, em esquema de infusão prolongada com doses e velocidades conforme o protocolo do serviço e a orientação do CIATox; Carvão ativado apenas se indicado pela janela de tempo desde a ingestão (benefício maior na primeira hora), pelo risco de aspiração (vômitos, rebaixamento da consciência) e por coingestões, sem nunca atrasar a NAC; Monitoramento seriado de transaminases, função renal e coagulograma; Notificação compulsória e contato com o CIATox; Avaliação do risco de suicídio com vigilância contínua e avaliação psiquiátrica e psicossocial após a estabilização clínica.",
       palavrasChave: ["acetilcisteina", "nac", "paracetamol", "rumack", "hepatotoxicidade", "carvao"]
     }
   }
