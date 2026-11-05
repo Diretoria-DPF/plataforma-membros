@@ -15,7 +15,7 @@ import { SYSTEMS, LAYERS } from '../core/contracts.js';
  * @returns {Object} Interface da ficha: {render, setTab, clear, getTab}
  */
 /** Texto padrão de rascunho automático: nunca é mostrado ao público (a ficha fica sem resumo). */
-const PLACEHOLDER_SUMMARY = /^s*resumo ainda n[ãa]o redigido/i;
+const PLACEHOLDER_SUMMARY = /^\s*resumo ainda n[ãa]o redigido/i;
 
 /** Resumo apresentável ao público, ou '' quando não há texto útil. */
 export function publicSummary(text) {

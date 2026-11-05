@@ -162,5 +162,22 @@ test('epiglote e cartilagem tireóidea ficam no sistema respiratório (sem dupli
   }
 });
 
+// ------------------------------------------------------------ créditos -----
+console.log('créditos (ATL-05)');
+
+test('Créditos citam as licenças NC e a sem informação, sem afirmar uma só licença para tudo', () => {
+  const src = fs.readFileSync(path.resolve(here, '../../modulos/anatomia-3d/js/ui/credits.js'), 'utf8');
+  for (const must of ['CC BY-NC 4.0', 'CC BY-NC-SA 4.0', 'não informa a licença', 'CC BY-SA 2.1', 'CC BY 4.0', 'Lissie Cowley', 'Universidade de Dundee']) {
+    assert.ok(src.includes(must), `falta: ${must}`);
+  }
+  assert.ok(!/sob a mesma licença/.test(src));
+});
+
+test('código sem uso fora do dist: css/style.css foi removido e nada o referencia', () => {
+  assert.ok(!fs.existsSync(path.resolve(here, '../../modulos/anatomia-3d/css/style.css')));
+  const html = fs.readFileSync(path.resolve(here, '../../modulos/anatomia-3d/index.html'), 'utf8');
+  assert.ok(!/css\/style\.css/.test(html));
+});
+
 if (failures) { console.error(`\n${failures} falha(s)`); process.exit(1); }
 console.log('\ntodos os testes passaram');

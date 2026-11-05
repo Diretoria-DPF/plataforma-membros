@@ -57,6 +57,23 @@ const LICENSE_LABELS = {
 };
 
 /**
+ * Origem e licença por modelo ou fonte, como declaradas pelos projetos de
+ * origem (License.txt do Z-Anatomy, humanatlas.io). Um item por fonte; sem
+ * generalizar a licença de uma fonte para as demais.
+ */
+const MODEL_NOTICES = Object.freeze([
+  'Z-Anatomy (Lluís Vinent e colaboradores), repositório Models-of-human-anatomy, versão 38649f4: CC BY-SA 4.0, conforme declarado pelo projeto. Os modelos foram convertidos para GLB e simplificados (níveis de detalhe) para uso no Atlas.',
+  'Rim e Pelve renal (Lissie Cowley), incluídos no pacote do Z-Anatomy: CC BY-NC 4.0, conforme o License.txt do projeto. Estruturas: Rim esquerdo e direito, Pelve renal esquerda e direita.',
+  'Orelha interna (Universidade de Dundee, Escola de Medicina), incluída no pacote do Z-Anatomy: CC BY-NC-SA 4.0, conforme o License.txt do projeto. Estruturas: Cóclea e Vestíbulo, esquerdos e direitos.',
+  'Nervos cranianos e forames (Universidade de Dundee, CAHID), incluídos no pacote do Z-Anatomy: CC BY 4.0, conforme o License.txt do projeto.',
+  'Cérebro (Brainder e Substância branca, Universidade de Washington), incluídos no pacote do Z-Anatomy: o License.txt do projeto não informa a licença.',
+  'BodyParts3D (The Database Center for Life Science), citado no License.txt do Z-Anatomy: CC BY-SA 2.1 Japão.',
+  'Human Reference Atlas, Biblioteca de Objetos de Referência 3D (humanatlas.io): CC BY 4.0; a autoria de cada arquivo consta na lista de Modelos 3D acima.',
+  'Modelo de reserva (body.glb), usado quando um sistema não carrega: origem registrada como repositório anterior da LAIFT; a licença original não está documentada.',
+  'A correspondência entre objetos dos modelos e as fontes acima é feita pelo nome do objeto; o projeto de origem não registra a procedência por objeto.',
+]);
+
+/**
  * createCredits({manifest, contentSources = []})
  * Retorna {open(), close(), element}
  */
@@ -195,9 +212,11 @@ function createCredits({ manifest, contentSources = [] }) {
   const notesTitle = h('h2', { text: 'Notas' });
   notesSection.appendChild(notesTitle);
 
-  const shareAlikeNote = h('p', { className: 'credits-note' });
-  shareAlikeNote.textContent = 'Modelos derivados do Z-Anatomy são distribuídos sob CC BY-SA 4.0: podem ser reutilizados com atribuição e sob a mesma licença.';
-  notesSection.appendChild(shareAlikeNote);
+  const sourcesList = h('ul', { className: 'credits-note-list' });
+  for (const n of MODEL_NOTICES) {
+    sourcesList.appendChild(h('li', { className: 'credits-note', text: n }));
+  }
+  notesSection.appendChild(sourcesList);
 
   const libNote = h('p', { className: 'credits-note' });
   libNote.textContent = 'Biblioteca 3D: three.js (MIT).';
