@@ -1145,6 +1145,13 @@ console.log(
       return;
     }
 
+    // O1: o RDKit (js + 7,3 MB de wasm) só é pedido quando a pessoa abre o CADD ou usa um recurso que o exige.
+    if (!STATE.RDKitModuleInstance && !STATE.caddSolicitado) {
+      pendente('abrir CADD', 'Os descritores são calculados sob demanda: abra o CADD.');
+      STATE.ultimoDossieCADD = null;
+      return;
+    }
+
     const p = await calcularPropriedadesMoleculares(smiles, molarMass);
     if (!p) {
       pendente('N/A');
@@ -2221,6 +2228,12 @@ console.log(
   };
 
   window.abrirModalCADD = function () {
+    if (!STATE.caddSolicitado && STATE.compostoSelecionado) {
+      STATE.caddSolicitado = true;
+      const c = STATE.compostoSelecionado;
+      avaliarQuimiometriaCompleta(c.smiles, parseFloat(c.molarMass), c.nome).then(window.abrirModalCADD);
+      return;
+    }
     const modal = document.getElementById('caddModal');
     const body = document.getElementById('caddModalBody');
     const title = document.getElementById('caddModalTitle');
