@@ -144,6 +144,7 @@ paths:
                 - "$ref": "#/components/schemas/apiLearnGetMyAttendanceQr"
                 - "$ref": "#/components/schemas/apiLearnGetMyStats"
                 - "$ref": "#/components/schemas/apiLearnGetWeakTopics"
+                - "$ref": "#/components/schemas/apiLearnLabChem"
                 - "$ref": "#/components/schemas/apiLearnLabPreceptor"
                 - "$ref": "#/components/schemas/apiLearnLibraryGetArticle"
                 - "$ref": "#/components/schemas/apiLearnLibraryGetCollection"
@@ -2053,6 +2054,22 @@ components:
             - description: "sessionToken"
           minItems: 0
           maxItems: 1
+    apiLearnLabChem:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnLabChem"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiLearnLabPreceptor:
       type: "object"
       required:

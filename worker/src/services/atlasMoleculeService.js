@@ -26,18 +26,18 @@ export const CACHE_TTL_SECONDS = 7 * 24 * 60 * 60;
 export const UPSTREAM_TIMEOUT_MS = 15000;
 export const UNAVAILABLE_MESSAGE = 'Serviço de moléculas indisponível.';
 export const PUBCHEM_PROPS = ['MolecularFormula', 'MolecularWeight', 'XLogP', 'CanonicalSMILES', 'IUPACName'];
-const PUBCHEM_NAME_RE = /^[\p{L}\p{N}][\p{L}\p{N} ,'()\-]{0,79}$/u;
+export const PUBCHEM_NAME_RE = /^[\p{L}\p{N}][\p{L}\p{N} ,'()\-]{0,79}$/u;
 const CACHE_ORIGIN = 'https://atlas-molecule-cache.internal';
 
-function unavailable() {
+export function unavailable() {
   return { success: false, unavailable: true, message: UNAVAILABLE_MESSAGE };
 }
 
-function defaultCache() {
+export function defaultCache() {
   return typeof caches !== 'undefined' && caches && caches.default ? caches.default : null;
 }
 
-async function cacheGet(cache, key) {
+export async function cacheGet(cache, key) {
   if (!cache) return null;
   try {
     const hit = await cache.match(key);
@@ -47,7 +47,7 @@ async function cacheGet(cache, key) {
   }
 }
 
-async function cachePut(cache, key, payload) {
+export async function cachePut(cache, key, payload) {
   if (!cache) return;
   try {
     await cache.put(key, new Response(JSON.stringify(payload), {
@@ -58,7 +58,7 @@ async function cachePut(cache, key, payload) {
   }
 }
 
-async function fetchWithTimeout(url) {
+export async function fetchWithTimeout(url) {
   const controller = typeof AbortController === 'function' ? new AbortController() : null;
   const timer = setTimeout(() => { if (controller) controller.abort(); }, UPSTREAM_TIMEOUT_MS);
   try {
@@ -69,7 +69,7 @@ async function fetchWithTimeout(url) {
 }
 
 /** Lê o corpo como texto parando em maxBytes (null se passar do limite). */
-async function readTextLimited(res, maxBytes) {
+export async function readTextLimited(res, maxBytes) {
   const declared = Number(res.headers && res.headers.get && res.headers.get('Content-Length'));
   if (Number.isFinite(declared) && declared > maxBytes) return null;
   if (!res.body || typeof res.body.getReader !== 'function') {
