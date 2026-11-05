@@ -74,7 +74,7 @@ test('mensagens positivas: sem culpa por perder a sequência', () => {
   ].join(' | ');
   assert.doesNotMatch(all, /perdeu|perdida|falhou|fracasso|culpa|infelizmente|pena/i);
   assert.match(Eng.streakText({ current: 0, best: 7, activeToday: false }), /recomeçar/);
-  assert.match(Eng.streakText({ current: 1, best: 1, activeToday: true }), /1 dia seguido\./);
+  assert.match(Eng.streakText({ current: 1, best: 1, activeToday: true }), /1 dia de atividade seguido\./);
 });
 
 test('último módulo: o mais recente entre servidor e aparelho; sem nada, nulo', () => {

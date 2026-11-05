@@ -1,0 +1,58 @@
+{
+  "versao": 1,
+  "fonte_geral": "Portaria SVS/MS nº 344, de 12 de maio de 1998 (regulamento técnico sobre substâncias e medicamentos sujeitos a controle especial), e atualizações publicadas pela ANVISA (listas e resoluções).",
+  "aviso": "Confira sempre a redação vigente da norma e as listas atualizadas da ANVISA antes de aplicar qualquer valor na prática.",
+  "listas": [
+    { "id": "A1", "nome": "Lista A1: entorpecentes", "receituario": "NRA", "fonte": "Portaria SVS/MS 344/98, Anexo I (lista A1), e atualizações da ANVISA.", "nv": true },
+    { "id": "A2", "nome": "Lista A2: entorpecentes de uso permitido somente em concentrações especiais", "receituario": "NRA", "fonte": "Portaria SVS/MS 344/98, Anexo I (lista A2), e atualizações da ANVISA.", "nv": true },
+    { "id": "A3", "nome": "Lista A3: psicotrópicos", "receituario": "NRA", "fonte": "Portaria SVS/MS 344/98, Anexo I (lista A3), e atualizações da ANVISA.", "nv": true },
+    { "id": "B1", "nome": "Lista B1: psicotrópicos", "receituario": "NRB", "fonte": "Portaria SVS/MS 344/98, Anexo I (lista B1), e atualizações da ANVISA.", "nv": true },
+    { "id": "B2", "nome": "Lista B2: psicotrópicos anorexígenos", "receituario": "NRB", "fonte": "Portaria SVS/MS 344/98, Anexo I (lista B2), e atualizações da ANVISA.", "nv": true },
+    { "id": "C1", "nome": "Lista C1: outras substâncias sujeitas a controle especial", "receituario": "RCE", "fonte": "Portaria SVS/MS 344/98, Anexo I (lista C1), e atualizações da ANVISA.", "nv": true },
+    { "id": "C5", "nome": "Lista C5: anabolizantes", "receituario": "RCE", "fonte": "Portaria SVS/MS 344/98, Anexo I (lista C5), e atualizações da ANVISA.", "nv": true }
+  ],
+  "receituarios": [
+    {
+      "id": "NRA", "nome": "Notificação de Receita A", "cor": "amarela", "listas": ["A1", "A2", "A3"],
+      "validade_dias": 30, "tratamento_max_dias": 30,
+      "retencao": "A farmácia retém a 1ª via, e a 2ª via fica com a pessoa, conforme a norma vigente.",
+      "fonte": "Portaria SVS/MS 344/98, capítulo da prescrição e da notificação de receita; confirmar prazos e quantidades na redação vigente.", "nv": true
+    },
+    {
+      "id": "NRB", "nome": "Notificação de Receita B", "cor": "azul", "listas": ["B1", "B2"],
+      "validade_dias": 30, "tratamento_max_dias": 60,
+      "retencao": "A farmácia retém a 1ª via, e a 2ª via fica com a pessoa, conforme a norma vigente.",
+      "fonte": "Portaria SVS/MS 344/98, capítulo da prescrição e da notificação de receita; confirmar prazos e quantidades (a lista B2 tem limite próprio) na redação vigente.", "nv": true
+    },
+    {
+      "id": "RCE", "nome": "Receita de Controle Especial", "cor": "branca, em 2 vias", "listas": ["C1", "C5"],
+      "validade_dias": 30, "tratamento_max_dias": 60,
+      "retencao": "A farmácia retém a 1ª via e devolve a 2ª via, carimbada, à pessoa.",
+      "fonte": "Portaria SVS/MS 344/98, capítulo da prescrição e da receita de controle especial; confirmar prazos e quantidades na redação vigente.", "nv": true
+    }
+  ],
+  "escrituracao": [
+    { "id": "esc_livro", "titulo": "Livro de registro específico", "texto": "Cada entrada, saída, perda e ajuste de substância ou medicamento controlado é lançado com data, documento (nota fiscal, receita, termo) e saldo corrente, sem rasura e com identificação de quem lançou.", "fonte": "Portaria SVS/MS 344/98, capítulo da escrituração.", "nv": true },
+    { "id": "esc_digital", "titulo": "Escrituração digital", "texto": "Farmácias e drogarias que dispensam controlados transmitem a movimentação ao sistema nacional de gerenciamento de produtos controlados (SNGPC), nos prazos fixados pela ANVISA.", "fonte": "Normas da ANVISA sobre o SNGPC (resolução vigente); conferir a edição atual.", "nv": true },
+    { "id": "esc_guarda_doc", "titulo": "Guarda dos documentos", "texto": "Notificações de receita retidas, notas fiscais e termos ficam arquivados e à disposição da vigilância sanitária durante o prazo da norma.", "guarda_anos": 2, "fonte": "Portaria SVS/MS 344/98, capítulo da escrituração e da guarda de documentos.", "nv": true }
+  ],
+  "balancos": [
+    { "id": "bal_trimestral", "titulo": "Balanço de medicamentos", "texto": "Resume entradas, saídas, perdas e estoque de cada medicamento controlado no período, e o saldo escriturado precisa bater com a contagem física.", "periodicidade": "trimestral", "fonte": "Portaria SVS/MS 344/98, capítulo dos balanços; formulários e prazos conforme a ANVISA.", "nv": true },
+    { "id": "bal_anual", "titulo": "Balanço de insumos", "texto": "Resume a movimentação anual de substâncias (insumos farmacêuticos) controladas usadas em manipulação.", "periodicidade": "anual", "fonte": "Portaria SVS/MS 344/98, capítulo dos balanços; formulários e prazos conforme a ANVISA.", "nv": true },
+    { "id": "bal_divergencia", "titulo": "Divergência de estoque", "texto": "Se a contagem física difere do saldo do livro, a causa é apurada, o ajuste é lançado com justificativa e a ocorrência é comunicada à vigilância sanitária quando a norma exigir.", "fonte": "Portaria SVS/MS 344/98, capítulos da escrituração e das infrações; conferir a comunicação exigida.", "nv": true }
+  ],
+  "guarda_descarte": [
+    { "id": "gd_guarda", "titulo": "Guarda", "texto": "Controlados ficam em armário ou sala com chave, sob responsabilidade do farmacêutico responsável técnico, separados do estoque comum.", "fonte": "Portaria SVS/MS 344/98, capítulo da guarda.", "nv": true },
+    { "id": "gd_vencidos", "titulo": "Vencidos, avariados e devolvidos", "texto": "Ficam separados e identificados até a inutilização, que é feita com termo assinado, método adequado e comunicação à vigilância sanitária.", "fonte": "Portaria SVS/MS 344/98, capítulo da inutilização; normas da ANVISA sobre resíduos de serviços de saúde.", "nv": true },
+    { "id": "gd_sobras", "titulo": "Sobras e rejeitos de manipulação", "texto": "Sobras de insumo controlado e produto reprovado no controle de qualidade são pesados, registrados no livro e inutilizados com termo, sem descarte comum.", "fonte": "Portaria SVS/MS 344/98, capítulos da escrituração e da inutilização.", "nv": true }
+  ],
+  "rotulagem": [
+    { "id": "rot_A1", "lista": "A1", "tarja": "preta", "frase": "Venda sob prescrição médica. O abuso deste medicamento pode causar dependência.", "fonte": "Portaria SVS/MS 344/98 e normas da ANVISA sobre rotulagem; conferir a frase vigente.", "nv": true },
+    { "id": "rot_A2", "lista": "A2", "tarja": "preta", "frase": "Venda sob prescrição médica. O abuso deste medicamento pode causar dependência.", "fonte": "Portaria SVS/MS 344/98 e normas da ANVISA sobre rotulagem; conferir a frase vigente.", "nv": true },
+    { "id": "rot_A3", "lista": "A3", "tarja": "preta", "frase": "Venda sob prescrição médica. O abuso deste medicamento pode causar dependência.", "fonte": "Portaria SVS/MS 344/98 e normas da ANVISA sobre rotulagem; conferir a frase vigente.", "nv": true },
+    { "id": "rot_B1", "lista": "B1", "tarja": "preta", "frase": "Venda sob prescrição médica. O abuso deste medicamento pode causar dependência.", "fonte": "Portaria SVS/MS 344/98 e normas da ANVISA sobre rotulagem; conferir a frase vigente.", "nv": true },
+    { "id": "rot_B2", "lista": "B2", "tarja": "preta", "frase": "Venda sob prescrição médica. O abuso deste medicamento pode causar dependência.", "fonte": "Portaria SVS/MS 344/98 e normas da ANVISA sobre rotulagem; conferir a frase vigente.", "nv": true },
+    { "id": "rot_C1", "lista": "C1", "tarja": "vermelha", "frase": "Venda sob prescrição médica. Só pode ser vendido com retenção da receita.", "fonte": "Portaria SVS/MS 344/98 e normas da ANVISA sobre rotulagem; conferir a frase vigente.", "nv": true },
+    { "id": "rot_C5", "lista": "C5", "tarja": "vermelha", "frase": "Venda sob prescrição médica. Só pode ser vendido com retenção da receita.", "fonte": "Portaria SVS/MS 344/98 e normas da ANVISA sobre rotulagem; conferir a frase vigente.", "nv": true }
+  ]
+}

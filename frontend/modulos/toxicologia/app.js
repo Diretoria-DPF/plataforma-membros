@@ -146,4 +146,10 @@
         onQuestion: function () { setSourceTag(null); },
         onExplanation: enriquecerComOpenFda,
     });
+
+    // "Revisar erros" (A3): learning.js abre este módulo com #revisar-erros e a sessão dos erros guardados começa sozinha.
+    if (window.location.hash === '#revisar-erros') {
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { window.LaiftQuiz.reviewMyErrors(); });
+        else window.LaiftQuiz.reviewMyErrors();
+    }
 })();

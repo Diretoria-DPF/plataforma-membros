@@ -29,9 +29,9 @@ export function shouldShowNewChip(count, seen) {
 export function mountNewReviewedChip({ host, count, onOpen, storage = globalThis.localStorage }) {
   if (!host || !shouldShowNewChip(count, readSeen(storage))) return null;
   const { h } = window.LaiftDom;
-  const label = `Novo: ${count} ficha${count === 1 ? '' : 's'} revisada${count === 1 ? '' : 's'}`;
+  const label = `Novo: ${count} ficha${count === 1 ? '' : 's'} completa${count === 1 ? '' : 's'}`;
   const chip = h('button', {
-    type: 'button', className: 'atlas-new-reviewed', 'aria-label': `${label} pelo conselho. Abrir no navegador.`, text: `✓ ${label}`,
+    type: 'button', className: 'atlas-new-reviewed', 'aria-label': `${label}. Abrir no navegador.`, text: `✓ ${label}`,
     onClick: () => { writeSeen(storage, count); chip.remove(); onOpen(); },
   });
   host.appendChild(chip);

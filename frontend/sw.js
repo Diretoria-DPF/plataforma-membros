@@ -17,7 +17,7 @@
   'use strict';
 
   var CACHE_PREFIX = 'laift-shell-';
-  var CACHE_NAME = CACHE_PREFIX + 'v32';
+  var CACHE_NAME = CACHE_PREFIX + 'v36';
   // SÓ o shell essencial entra no cache na instalação (MOB-07): o que o index.html carrega de
   // imediato, para a tela inicial abrir offline já na primeira visita. Os pacotes sob demanda
   // (admin e Guia, ver lazy-bundles.js) e os módulos pesados NÃO são pré-cacheados: entram no
@@ -26,7 +26,7 @@
   // Nada de Atlas 3D/WASM aqui. Item ausente é ignorado.
   var PRECACHE = [
     './', 'client-errors.js', 'styles.css', 'ux.css', 'ux-glass.css', 'modulos/shared/charts.css', 'modulos/shared/charts-core.js', 'modulos/shared/charts.js',
-    'home-editorial.css', 'engagement.css', 'engagement.js', 'daily-quiz.js', 'dashboardAdapter.js', 'modulos/shared/lia/lia.css', 'manifest.webmanifest', 'icons/icon-192.png',
+    'home-editorial.css', 'engagement.css', 'engagement.js', 'modulos/shared/catalogo.js', 'daily-quiz.js', 'dashboardAdapter.js', 'modulos/shared/lia/lia.css', 'manifest.webmanifest', 'icons/icon-192.png',
     'app.js', 'shared-states.js', 'pwa.js', 'lazy-bundles.js', 'domain-notice.js', 'learning.js', 'msg-crypto.js', 'messaging.js',
     'home.js', 'mfa.js', 'credential.js', 'assistant-feedback.css', 'assistant-hints.css', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-sources.js',
     'modulos/shared/safe-dom.js', 'ux-v2.js', 'splash.js', 'splash.css', 'modulos/shared/laift-tokens.css', 'modulos/shared/laift-dialog.css', 'blog-novidade.js', 'blog-novidade.css', 'voltar-app.js',

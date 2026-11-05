@@ -9,13 +9,13 @@
  * Roda com: node frontend/scripts/atlas/structure-groups.test.mjs
  */
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const mod = path.resolve(here, '../../modulos/anatomia-3d');
-const { groupEntries, groupKeyOf, sideLabel } = await import(path.join(mod, 'js/ui/structure-groups.js'));
+const { groupEntries, groupKeyOf, sideLabel } = await import(pathToFileURL(path.join(mod, 'js/ui/structure-groups.js')).href);
 
 let failures = 0;
 function test(name, fn) {

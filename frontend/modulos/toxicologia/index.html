@@ -37,12 +37,23 @@
                     </div>
                 </div>
                 <div class="section">
+                    <h3 id="sizeHeading">🔢 TAMANHO DA SESSÃO</h3>
+                    <div class="mode-selector size-selector" role="group" aria-labelledby="sizeHeading">
+                        <button type="button" class="size-btn" data-size="5" aria-pressed="false">5</button>
+                        <button type="button" class="size-btn" data-size="10" aria-pressed="false">10</button>
+                        <button type="button" class="size-btn" data-size="20" aria-pressed="false">20</button>
+                        <button type="button" class="size-btn active" data-size="0" aria-pressed="true">Todas</button>
+                    </div>
+                </div>
+
+                <div class="section">
                     <h3>⚙️ CONTROLES</h3>
                     <div class="control-buttons">
                         <button type="button" class="control-btn" id="startQuiz">🚀 Iniciar Simulado</button>
                         <button type="button" class="control-btn secondary" id="selectAll">✅ Selecionar Todos</button>
                         <button type="button" class="control-btn secondary" id="deselectAll">❌ Limpar Seleção</button>
                         <button type="button" class="control-btn" id="continueBtn" hidden>↪️ Continuar de Onde Parei</button>
+                        <button type="button" class="control-btn" id="reviewErrorsBtn" hidden>🧠 Revisar meus erros</button>
                         <button type="button" class="control-btn danger" id="resetProgressBtn" hidden>🔄 Reiniciar Progresso</button>
                         <p class="quiz-status" id="quizStatus" role="status" aria-live="polite"></p>
                     </div>
@@ -90,10 +101,10 @@
                         <div class="progress-bar" role="progressbar" aria-label="Progresso do simulado" aria-valuemin="1" aria-valuenow="1" aria-valuemax="1"><div class="progress" id="progress"></div></div>
                     </div>
                     <div class="question-container">
-                        <div class="question-text" id="questionText" tabindex="-1" aria-live="polite"></div>
+                        <div class="question-text" id="questionText" tabindex="-1"></div>
                         <div class="options-container" id="optionsContainer" role="group" aria-labelledby="questionText"></div>
 
-                        <div class="explanation" id="explanation" aria-live="polite">
+                        <div class="explanation" id="explanation">
                             <div id="apiDataSourceTag" class="api-tag" hidden>OpenFDA Live Data</div>
                             <h4>📖 Parecer e Raciocínio Clínico:</h4>
                             <p id="explanationText"></p>
@@ -106,7 +117,7 @@
                     </div>
                 </div>
 
-                <div class="results-container" id="resultsContainer" aria-live="polite" hidden></div>
+                <div class="results-container" id="resultsContainer" hidden></div>
             </main>
         </div>
     </div>
@@ -133,6 +144,9 @@
     <script src="../shared/laift-review-seal.js"></script>
     <script src="../shared/quiz-offline-queue.js"></script>
     <script src="../shared/quiz-feedback.js"></script>
+    <script src="../shared/quiz-logic.js"></script>
+    <script src="../shared/quiz-errors.js"></script>
+    <script src="../shared/missao-semana.js"></script>
     <script src="../shared/quiz-engine.js"></script>
     <script src="questions.js"></script>
     <script src="app.js"></script>

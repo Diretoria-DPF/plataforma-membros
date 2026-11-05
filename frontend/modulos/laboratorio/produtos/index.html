@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <!-- CSP do módulo: tudo do próprio domínio, sem script nem estilo inline, sem rede externa. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../shared/laift-identity.js"></script>
+  <title>Produtos e controle de qualidade — Laboratório LAIFT</title>
+  <link rel="stylesheet" href="produtos.css">
+</head>
+<body>
+  <header class="pr-topo">
+    <a class="pr-voltar" href="../index.html">Voltar ao Laboratório</a>
+    <h1>Produtos e controle de qualidade</h1>
+    <p class="pr-sub">Farmacotécnica, saneantes, cosméticos, estéreis e ensaios de qualidade, com a fonte oficial de cada formulação.</p>
+  </header>
+  <main id="prRaiz" class="pr-main">
+    <p>Carregando...</p>
+  </main>
+  <script src="../js/lab-farma-calculos.js"></script>
+  <script src="../js/lab-cq.js"></script>
+  <script src="../js/lab-produtos-registro.js"></script>
+  <script src="produtos.js"></script>
+</body>
+</html>

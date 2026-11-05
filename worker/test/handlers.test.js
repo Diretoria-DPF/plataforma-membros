@@ -34,7 +34,7 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiLearnClinicalEpidemiology', 'apiLearnLabPreceptor', 'apiLearnGetMyAiQuota', 'apiAdminAiHealth',
       'apiAdminLearnListPendingCases', 'apiAdminLearnReviewCase',
       // PR 3.2 (Onda 3) — proxy de moléculas do Atlas 3D
-      'apiLearnAtlasPdb', 'apiLearnAtlasPubchem', 'apiLearnAtlasTelemetry', 'apiAdminLearnAtlasTelemetry',
+      'apiLearnAtlasPdb', 'apiLearnAtlasPubchem', 'apiLearnLabChem', 'apiLearnAtlasTelemetry', 'apiAdminLearnAtlasTelemetry',
     ];
     // Fase 2 — Dados & Presença (aprendizagem e presença)
     expected.push(

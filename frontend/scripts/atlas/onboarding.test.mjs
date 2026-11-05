@@ -11,12 +11,12 @@
  */
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const ui = path.resolve(here, '../../modulos/anatomia-3d/js/ui');
-const O = await import(path.join(ui, 'onboarding.js'));
-const H = await import(path.join(ui, 'hints.js'));
+const O = await import(pathToFileURL(path.join(ui, 'onboarding.js')).href);
+const H = await import(pathToFileURL(path.join(ui, 'hints.js')).href);
 
 let failures = 0;
 function test(name, fn) {

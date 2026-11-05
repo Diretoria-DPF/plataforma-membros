@@ -41,7 +41,20 @@
   var API_MODE = { study: 'estudo', exam: 'prova' };
   var QUEUED_MESSAGE = 'Salvo neste aparelho, será enviado quando houver internet.';
 
+  var Logic = global.LaiftQuizLogic;
+  var SIZE_KEY_PREFIX = 'laiftQuizSize:'; // preferência por módulo (só deste aparelho)
+
   function $(id) { return global.document.getElementById(id); }
+
+  function prefersReducedMotion() {
+    try { return !!(global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; }
+  }
+
+  // QZ-02: traz o alvo para a vista (no celular a barra lateral fica acima do quiz). `block`: 'start' ou 'nearest'.
+  function bringIntoView(target, block) {
+    if (!target || typeof target.scrollIntoView !== 'function') return;
+    try { target.scrollIntoView({ block: block || 'start', behavior: prefersReducedMotion() ? 'auto' : 'smooth' }); } catch (e) { /* navegador sem opções */ }
+  }
 
   function shuffle(list) {
     for (var i = list.length - 1; i > 0; i--) {
@@ -94,6 +107,7 @@
       allCorrect: 'Parabéns! Você acertou todas as questões!',
       studyTimer: 'Modo Estudo',
       reviewTimer: 'Modo Estudo (Revisão)',
+      errorsTimer: 'Revisão dos meus erros',
       performance: null,
     }, cfg.labels || {});
 
@@ -108,15 +122,20 @@
       answered: $('answeredStat'), correct: $('correctStat'), progressStat: $('progressStat'),
       totalStat: $('totalQuestionsStat'), status: $('quizStatus'),
       infoBtn: $('infoBtn'), infoModal: $('instructionsModal'), closeModal: $('closeModal'),
+      reviewErrors: $('reviewErrorsBtn'),
     };
+    var sizeButtons = Array.prototype.slice.call(global.document.querySelectorAll('.size-btn'));
     var modeButtons = Array.prototype.slice.call(global.document.querySelectorAll('.mode-btn'));
 
     var state = {
       bank: [], selected: new Set(), mode: 'study', questions: [], index: 0, answers: [],
       active: false, timeLeft: 0, timer: null, startedAt: 0, renderToken: 0, lastFocusedOption: null,
+      seed: 0, // semente da ordem das alternativas (QZ-01): salva no estudo, nova a cada prova
+      size: 0, // A1: tamanho da sessão (5, 10, 20; 0 = todas as questões dos tópicos)
     };
 
     var queue = createQueue();
+    var errors = createErrors();
 
     function createQueue() {
       var Q = global.LaiftQuizQueue;
@@ -131,37 +150,129 @@
     }
 
     // ------------------------------------------------------------------
-    // Progresso local (mesmo formato de antes: { userAnswers, timestamp },
-    // userAnswers indexado pela posição da questão no banco completo)
+    // A1: erros guardados no aparelho (quiz-errors.js; nada vai ao servidor) e tamanho da sessão.
     // ------------------------------------------------------------------
-    function savedAnswers() {
-      var progress = readJson(cfg.storageKey);
-      return progress && Array.isArray(progress.userAnswers) ? progress.userAnswers : null;
+    function createErrors() {
+      var E = global.LaiftQuizErrors;
+      if (!E) return null;
+      try { return E.createStore(global.localStorage, ownerNow); } catch (e) { return null; }
+    }
+
+    // A6: missão da semana e conquistas pessoais (missao-semana.js; só no aparelho, sem ranking).
+    function createMission() {
+      var M = global.LaiftMissao;
+      if (!M) return null;
+      try { return M.createStore(global.localStorage, ownerNow); } catch (e) { return null; }
+    }
+    var mission = createMission();
+
+    function recordMission(q, correct) {
+      if (!mission || !q) return;
+      try { mission.record({ module: cfg.module, topic: q.topic, correct: correct, now: Date.now() }); } catch (e) { /* conquistas nunca travam o quiz */ }
+    }
+
+    function recordError(q, correct) {
+      recordMission(q, correct);
+      if (!errors || !q) return;
+      errors.record({ module: cfg.module, id: q.id, topic: q.topic, correct: correct, now: Date.now() });
+      refreshReviewButton();
+    }
+
+    /** Questões do banco que o aparelho guardou como erro (o mais recente primeiro). */
+    function errorQuestions() {
+      if (!errors) return [];
+      var byId = {};
+      state.bank.forEach(function (q) { byId[String(q.id)] = q; });
+      return errors.ids(cfg.module).map(function (id) { return byId[String(id)]; }).filter(Boolean);
+    }
+
+    function refreshReviewButton() {
+      if (!el.reviewErrors) return;
+      var n = errorQuestions().length;
+      show(el.reviewErrors, n > 0);
+      el.reviewErrors.textContent = '🧠 Revisar meus erros (' + n + ')';
+    }
+
+    function reviewMyErrors() {
+      if (state.active) return;
+      var questions = errorQuestions();
+      if (!questions.length) { refreshReviewButton(); dialogAlert('Você não tem erros guardados neste aparelho.'); return; }
+      questions = Logic.pickSession(questions, state.size, { seed: Logic.newSeed(), mode: 'study' });
+      setMode('study');
+      setStatus('');
+      begin(questions, new Array(questions.length).fill(null), 0, L.errorsTimer);
+    }
+
+    function setSize(size) {
+      state.size = size === 5 || size === 10 || size === 20 ? size : 0;
+      sizeButtons.forEach(function (btn) {
+        var on = parseInt(btn.dataset.size, 10) === state.size;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    }
+
+    function chooseSize(size) {
+      setSize(size);
+      try { global.localStorage.setItem(SIZE_KEY_PREFIX + cfg.module, String(state.size)); } catch (e) { /* preferência não salva */ }
+    }
+
+    function restoreSize() {
+      try { setSize(parseInt(global.localStorage.getItem(SIZE_KEY_PREFIX + cfg.module), 10) || 0); } catch (e) { setSize(0); }
+    }
+
+    // ------------------------------------------------------------------
+    // Progresso local: { v: 2, byId, seed, owner, timestamp }. As respostas ficam por id da questão (inserir
+    // ou reordenar questões não desloca o progresso) e valem como índice na ORDEM ORIGINAL das alternativas.
+    // O formato antigo ({ userAnswers } por posição) ainda é lido e vira v2 na próxima gravação.
+    // `owner` (hash local do e-mail) impede mostrar o progresso de outra conta no mesmo navegador.
+    // ------------------------------------------------------------------
+    function ownerNow() {
+      var Q = global.LaiftQuizQueue;
+      try {
+        var id = global.LaiftIdentity && global.LaiftIdentity.get();
+        return Q && id && id.email ? Q.ownerTag(id.email) : '';
+      } catch (e) { return ''; }
+    }
+
+    function savedProgress() {
+      var p = Logic.readProgress(readJson(cfg.storageKey), state.bank);
+      var now = ownerNow();
+      if (p.owner && now && p.owner !== now) return Logic.readProgress(null, state.bank);
+      return p;
+    }
+
+    function answerFor(progress, q) {
+      var a = progress.byId[String(q.id)];
+      return a === undefined ? null : a;
+    }
+
+    function persist(progress) {
+      try { global.localStorage.setItem(cfg.storageKey, JSON.stringify(progress)); } catch (e) { /* armazenamento indisponível: o simulado segue sem salvar */ }
     }
 
     function saveProgress() {
       if (state.mode === 'exam') return;
-      // Parte do que já estava salvo: estudar um tópico não apaga o
-      // progresso dos outros (antes o array era recriado só com os filtrados).
-      var all = new Array(state.bank.length).fill(null);
-      var previous = savedAnswers();
-      if (previous) previous.forEach(function (a, i) { if (i < all.length && a !== undefined) all[i] = a; });
-      state.questions.forEach(function (q, i) {
-        var original = bankIndexOf(q);
-        if (original !== -1) all[original] = state.answers[i];
-      });
-      try {
-        global.localStorage.setItem(cfg.storageKey, JSON.stringify({ userAnswers: all, timestamp: new Date().toISOString() }));
-      } catch (e) { /* armazenamento indisponível: o simulado segue sem salvar */ }
+      // Parte do que já estava salvo: estudar um tópico não apaga o progresso dos outros.
+      var previous = savedProgress();
+      var entries = state.questions.map(function (q, i) { return { id: q.id, answer: state.answers[i] }; });
+      persist(Logic.writeProgress(previous, entries, { seed: state.seed, owner: ownerNow() || previous.owner }));
+    }
+
+    /** Refazer: esquece só as respostas destas questões, sem tocar nas dos outros tópicos. */
+    function forgetAnswers(questions) {
+      var previous = savedProgress();
+      var cleaned = Logic.withoutIds(previous, questions.map(function (q) { return q.id; }));
+      persist(Logic.writeProgress(cleaned, [], { seed: state.seed, owner: ownerNow() || previous.owner }));
     }
 
     function clearProgress() {
       try { global.localStorage.removeItem(cfg.storageKey); } catch (e) { /* idem */ }
     }
 
-    function bankIndexOf(q) {
-      for (var i = 0; i < state.bank.length; i++) if (state.bank[i].id === q.id) return i;
-      return -1;
+    function savedAnswerCount(questions) {
+      var progress = savedProgress();
+      return questions.filter(function (q) { return answerFor(progress, q) !== null; }).length;
     }
 
     // ------------------------------------------------------------------
@@ -226,18 +337,20 @@
     }
 
     function updateStats() {
-      var answers = savedAnswers() || [];
+      var progress = savedProgress();
       var answered = 0, correct = 0;
-      answers.forEach(function (a, i) {
-        if (a === null || a === undefined) return;
+      state.bank.forEach(function (q) {
+        var a = answerFor(progress, q);
+        if (a === null) return;
         answered++;
-        if (state.bank[i] && a === state.bank[i].correct) correct++;
+        if (a === q.correct) correct++;
       });
       if (el.answered) el.answered.textContent = answered;
       if (el.correct) el.correct.textContent = correct;
       if (el.progressStat) el.progressStat.textContent = (state.bank.length ? Math.round((answered / state.bank.length) * 100) : 0) + '%';
       show(el.resetBtn, answered > 0);
-      show(el.continueBtn, answers.length > 0 && answered > 0);
+      show(el.continueBtn, answered > 0);
+      refreshReviewButton();
     }
 
     function showScreen(name) {
@@ -284,6 +397,7 @@
       state.index = index;
       state.startedAt = Date.now();
       state.active = true;
+      state.seed = state.mode === 'exam' ? Logic.newSeed() : (savedProgress().seed || Logic.newSeed());
       showScreen('quiz');
       stopTimer();
       if (state.mode === 'exam') {
@@ -295,6 +409,8 @@
       }
       loadQuestion();
       if (el.questionText) el.questionText.focus({ preventScroll: true });
+      bringIntoView(el.quiz, 'start');
+      if (state.questions[0]) announce('Questão ' + (state.index + 1) + ' de ' + state.questions.length + '. ' + state.questions[state.index].question);
     }
 
     function startQuiz() {
@@ -302,16 +418,13 @@
       var questions = state.bank.filter(function (q) { return state.selected.has(q.topic); });
       if (!questions.length) { setStatus(L.noQuestions, 'error'); return; }
       setStatus('');
+      var saved = state.mode === 'study' ? savedProgress() : null;
+      // A1: sessão curta (5/10/20); no estudo, as ainda não respondidas têm preferência.
+      questions = Logic.pickSession(questions, state.size, { seed: Logic.newSeed(), mode: state.mode, answered: saved ? saved.byId : {} });
       if (state.mode === 'exam') shuffle(questions);
       var answers = new Array(questions.length).fill(null);
       // Modo Estudo retoma as respostas já dadas nesses tópicos.
-      var saved = state.mode === 'study' ? savedAnswers() : null;
-      if (saved) {
-        questions.forEach(function (q, i) {
-          var original = bankIndexOf(q);
-          if (original !== -1 && saved[original] !== null && saved[original] !== undefined) answers[i] = saved[original];
-        });
-      }
+      if (saved) questions.forEach(function (q, i) { answers[i] = answerFor(saved, q); });
       begin(questions, answers, 0);
     }
 
@@ -341,10 +454,9 @@
     }
 
     function continueQuiz() {
-      var saved = savedAnswers();
+      var saved = savedProgress();
       var questions = state.bank.slice();
-      var answers = new Array(questions.length).fill(null);
-      if (saved) saved.forEach(function (a, i) { if (i < answers.length && a !== undefined) answers[i] = a; });
+      var answers = questions.map(function (q) { return answerFor(saved, q); });
       var next = answers.indexOf(null);
       setMode('study');
       begin(questions, answers, next === -1 ? 0 : next);
@@ -362,35 +474,50 @@
       });
     }
 
-    function optionButton(text, index) {
+    /** Ordem de exibição das alternativas desta questão (posição exibida -> índice original). */
+    function orderOf(q) {
+      return Logic.optionOrder(state.seed, q.id, q.options.length);
+    }
+
+    // `position` é a posição exibida (letra); `original`, o índice no dado. O gabarito e as respostas usam o original.
+    function optionButton(text, position, original) {
       var answered = state.answers[state.index];
+      var letter = String.fromCharCode(65 + position);
       var btn = LaiftDom.h('button', {
-        type: 'button', className: 'option', 'aria-pressed': answered === index ? 'true' : 'false',
-        dataset: { index: String(index) }, onClick: function () { selectOption(index); },
+        type: 'button', className: 'option', 'aria-pressed': answered === original ? 'true' : 'false',
+        dataset: { index: String(position) }, onClick: function () { selectOption(position); },
       }, [
-        LaiftDom.h('span', { className: 'option-letter', 'aria-hidden': 'true', text: String.fromCharCode(65 + index) }),
+        LaiftDom.h('span', { className: 'option-letter', 'aria-hidden': 'true', text: letter }),
         LaiftDom.h('span', { className: 'option-text', text: text }),
       ]);
-      btn.setAttribute('aria-label', 'Alternativa ' + String.fromCharCode(65 + index) + ': ' + text);
-      if (answered === index) btn.classList.add('selected');
+      btn.setAttribute('aria-label', 'Alternativa ' + letter + ': ' + text);
+      if (answered === original) btn.classList.add('selected');
       return btn;
     }
 
-    // CON-01: selo ⓘ discreto em questão sem revisor (o banco não traz o campo => sem revisor); refeito a cada questão.
-    function renderReviewSeal(q) {
-      var host = el.questionText && el.questionText.parentNode;
-      if (!host) return;
-      var old = host.querySelector('.laift-review-seal-row');
-      if (old) old.parentNode.removeChild(old);
-      if (!global.LaiftReviewSeal) return;
-      var seal = global.LaiftReviewSeal.create(q, {
-        kind: 'questão', module: cfg.module, id: q.id, topic: q.topic, excerpt: q.question,
-      }, { whenMissing: 'unreviewed' });
-      if (!seal) return;
-      var row = global.document.createElement('div');
-      row.className = 'laift-review-seal-row';
-      row.appendChild(seal);
-      host.insertBefore(row, el.options);
+    // Revisão de conteúdo é assunto da gestão: o público não vê selo nem aviso de revisão. Fica só um item discreto
+    // para avisar a diretoria de um erro, no rodapé da explicação (LaiftReviewSeal.report, sem texto de "revisão").
+    function reportContext(q) {
+      return { kind: 'questão', module: cfg.module, id: q.id, topic: q.topic, excerpt: q.question };
+    }
+
+    function ensureReportButton() {
+      if (!el.explanation || el.reportBtn || !global.LaiftReviewSeal || typeof global.LaiftReviewSeal.report !== 'function') return;
+      el.reportBtn = LaiftDom.h('button', {
+        type: 'button', className: 'quiz-report-btn', text: 'Reportar erro nesta questão',
+        onClick: function () { var q = state.questions[state.index]; if (q) global.LaiftReviewSeal.report(reportContext(q)); },
+      });
+      var row = LaiftDom.h('div', { className: 'quiz-report-row' }, [el.reportBtn]);
+      el.explanation.appendChild(row);
+    }
+
+    // Uma única região viva curta (QZ-12): enunciado ao trocar de questão e "Correta/Incorreta" ao responder.
+    function announce(message) {
+      if (!el.announce) {
+        el.announce = LaiftDom.h('p', { className: 'laift-sr-only', role: 'status', 'aria-live': 'polite', id: 'quizAnnounce' });
+        (el.quiz || global.document.body).appendChild(el.announce);
+      }
+      el.announce.textContent = message;
     }
 
     function loadQuestion() {
@@ -406,8 +533,9 @@
       if (el.progress.parentElement) el.progress.parentElement.setAttribute('aria-valuemax', String(state.questions.length));
 
       LaiftDom.clear(el.options);
-      q.options.forEach(function (text, i) { el.options.appendChild(optionButton(text, i)); });
-      renderReviewSeal(q);
+      var order = orderOf(q);
+      order.forEach(function (original, position) { el.options.appendChild(optionButton(q.options[original], position, original)); });
+      ensureReportButton();
 
       el.prev.disabled = state.index === 0;
       var last = state.index === state.questions.length - 1;
@@ -423,11 +551,15 @@
       }
     }
 
-    function selectOption(index) {
+    // `position` é a posição exibida (letra/tecla 1–4); a resposta guardada é o índice original.
+    function selectOption(position) {
       if (!state.active) return;
       var q = state.questions[state.index];
-      if (!q || index < 0 || index >= q.options.length) return;
-      state.answers[state.index] = index;
+      if (!q || position < 0 || position >= q.options.length) return;
+      // QZ-03: no estudo o gabarito aparece na primeira resposta; reresponder mudaria a pontuação enviada.
+      if (!Logic.canAnswer(state.mode, state.answers[state.index])) return;
+      state.answers[state.index] = orderOf(q)[position];
+      if (state.mode === 'study') recordError(q, state.answers[state.index] === q.correct); // prova: registra ao entregar
       saveProgress();
       updateStats();
       state.freshAnswer = true; // só uma resposta nova anima/vibra; navegar entre questões já respondidas, não
@@ -435,20 +567,32 @@
       state.freshAnswer = false;
       // O re-render troca os botões: devolve o foco à alternativa escolhida
       // para quem navega por teclado/leitor de tela não "cair" no topo.
-      var chosen = el.options.querySelector('.option[data-index="' + index + '"]');
+      var chosen = el.options.querySelector('.option[data-index="' + position + '"]');
       if (chosen) chosen.focus({ preventScroll: true });
+      // QZ-02: o feedback e a explicação ficam abaixo das alternativas; no celular saem da tela.
+      if (state.mode === 'study') bringIntoView(el.explanation, 'nearest');
     }
 
     function showExplanation(token) {
       var q = state.questions[state.index];
       var userAnswer = state.answers[state.index];
+      var order = orderOf(q);
       Array.prototype.forEach.call(el.options.querySelectorAll('.option'), function (opt, i) {
+        var original = order[i];
         opt.classList.remove('correct', 'incorrect');
-        if (i === q.correct) opt.classList.add('correct');
-        else if (i === userAnswer && userAnswer !== q.correct) opt.classList.add('incorrect');
+        var label = opt.getAttribute('aria-label') || '';
+        if (original === q.correct) {
+          opt.classList.add('correct');
+          opt.setAttribute('aria-label', label + (original === userAnswer ? ' (sua resposta, correta)' : ' (correta)'));
+        } else if (original === userAnswer) {
+          opt.classList.add('incorrect');
+          opt.setAttribute('aria-label', label + ' (sua resposta, incorreta)');
+        }
+        opt.setAttribute('aria-disabled', 'true'); // QZ-03: resposta definitiva no estudo
       });
+      if (state.freshAnswer) announce(userAnswer === q.correct ? 'Resposta correta.' : 'Resposta incorreta.');
       if (state.freshAnswer && global.LaiftQuizFeedback) {
-        global.LaiftQuizFeedback.respond(global, el.options.querySelector('.option[data-index="' + userAnswer + '"]'));
+        global.LaiftQuizFeedback.respond(global, el.options.querySelector('.option.selected'));
       }
       el.explanationText.textContent = q.explanation || '';
       el.explanation.classList.add('show');
@@ -470,22 +614,32 @@
       if (next < 0 || next >= state.questions.length) return;
       state.index = next;
       loadQuestion();
+      var q = state.questions[state.index];
+      if (q) announce('Questão ' + (state.index + 1) + ' de ' + state.questions.length + '. ' + q.question);
+    }
+
+    // QZ-05: questão em branco não é erro. Pela tela, confirma antes de entregar com branco; o tempo esgotado entrega direto.
+    function requestFinish() {
+      if (!state.active) return;
+      var blank = Logic.scoreAnswers(state.questions, state.answers).blank;
+      if (!blank) { finishQuiz(); return; }
+      if (blank === state.questions.length) { dialogAlert('Responda pelo menos uma questão para ver o resultado.'); return; }
+      dialogConfirm(blank + (blank === 1 ? ' questão ficou em branco' : ' questões ficaram em branco') + '. Elas não contam como erro nem entram no resultado. Finalizar mesmo assim?')
+        .then(function (ok) { if (ok) finishQuiz(); });
     }
 
     function finishQuiz() {
       if (!state.active) return;
       state.active = false;
       stopTimer();
-      var score = 0, topicScores = {}, topicCounts = {};
-      state.questions.forEach(function (q, i) {
-        topicCounts[q.topic] = (topicCounts[q.topic] || 0) + 1;
-        topicScores[q.topic] = topicScores[q.topic] || 0;
-        if (state.answers[i] === q.correct) { score++; topicScores[q.topic]++; }
-      });
+      var r = Logic.scoreAnswers(state.questions, state.answers);
+      if (state.mode === 'exam') {
+        state.questions.forEach(function (q, i) { if (state.answers[i] !== null && state.answers[i] !== undefined) recordError(q, state.answers[i] === q.correct); });
+      }
       var duration = Math.max(1, Math.round((Date.now() - state.startedAt) / 1000));
-      var statusEl = showResults(score, topicScores, topicCounts);
-      var topicStats = Object.keys(topicCounts).map(function (t) { return { topic: t, correct: topicScores[t], total: topicCounts[t] }; });
-      submitAttempt(score, state.questions.length, duration, Object.keys(topicCounts), statusEl, topicStats);
+      var statusEl = showResults(r.correct, r.topicScores, r.topicCounts, r.answered, r.blank);
+      if (!r.answered) { statusEl.textContent = 'Nenhuma questão respondida: nada foi registrado.'; return; }
+      submitAttempt(r.correct, r.answered, duration, Object.keys(r.topicCounts), statusEl, r.topicStats);
     }
 
     /** Envia o resultado à plataforma (Contrato 3: ponte LaiftApi). */
@@ -550,9 +704,9 @@
       return pct >= 70 ? 'good' : pct >= 50 ? 'fair' : 'poor';
     }
 
-    function showResults(score, topicScores, topicCounts) {
+    function showResults(score, topicScores, topicCounts, answered, blank) {
       var h = LaiftDom.h;
-      var total = state.questions.length;
+      var total = answered;
       var pct = total ? (score / total) * 100 : 0;
       LaiftDom.clear(el.results);
       showScreen('results');
@@ -560,7 +714,7 @@
       el.results.appendChild(h('h2', { text: L.resultsTitle, tabIndex: -1 }));
       el.results.appendChild(h('div', { className: 'score-display', text: score + '/' + total }));
       var extra = performanceText(pct);
-      el.results.appendChild(h('div', { className: 'score-text', text: pct.toFixed(1) + '% de aproveitamento.' + (extra ? ' ' + extra : '') }));
+      el.results.appendChild(h('div', { className: 'score-text', text: pct.toFixed(1) + '% de aproveitamento.' + (blank ? ' ' + blank + (blank === 1 ? ' questão em branco não foi contada.' : ' questões em branco não foram contadas.') : '') + (extra && total ? ' ' + extra : '') }));
       var statusEl = h('p', { className: 'quiz-status', role: 'status', 'aria-live': 'polite' });
       el.results.appendChild(statusEl);
 
@@ -587,29 +741,36 @@
         h('button', { type: 'button', className: 'home-btn', text: L.homeLabel, onClick: goHome }),
       ]));
       var title = el.results.querySelector('h2');
-      if (title) title.focus({ preventScroll: false });
+      if (title) { title.focus({ preventScroll: true }); bringIntoView(title, 'start'); }
       return statusEl;
     }
 
     function reviewWrong() {
-      var wrong = state.questions.filter(function (q, i) { return state.answers[i] !== q.correct; });
+      var wrong = state.questions.filter(function (q, i) { return state.answers[i] !== null && state.answers[i] !== undefined && state.answers[i] !== q.correct; });
       if (!wrong.length) { dialogAlert(L.allCorrect); return; }
       setMode('study');
       begin(wrong, new Array(wrong.length).fill(null), 0, L.reviewTimer);
     }
 
+    // QZ-04: refazer só substitui as respostas salvas destas questões, e antes pergunta; voltar não apaga nada.
     function retry() {
-      clearProgress();
-      begin(state.questions, new Array(state.questions.length).fill(null), 0);
-      updateStats();
+      var questions = state.questions;
+      function run() {
+        if (state.mode === 'study') forgetAnswers(questions);
+        begin(questions, new Array(questions.length).fill(null), 0);
+        updateStats();
+      }
+      var saved = state.mode === 'study' ? savedAnswerCount(questions) : 0;
+      if (!saved) { run(); return; }
+      dialogConfirm('Refazer substitui as suas respostas salvas destas ' + saved + ' questões. Continuar?').then(function (ok) { if (ok) run(); });
     }
 
     function goHome() {
-      clearProgress();
       state.answers = [];
       state.selected.clear();
       showScreen('start');
       refreshSidebar();
+      bringIntoView(el.startScreen, 'start');
     }
 
     // ------------------------------------------------------------------
@@ -639,11 +800,13 @@
       if (el.startBtn) el.startBtn.addEventListener('click', startQuiz);
       if (el.continueBtn) el.continueBtn.addEventListener('click', continueQuiz);
       if (el.resetBtn) el.resetBtn.addEventListener('click', resetProgress);
+      if (el.reviewErrors) el.reviewErrors.addEventListener('click', reviewMyErrors);
+      sizeButtons.forEach(function (btn) { btn.addEventListener('click', function () { chooseSize(parseInt(btn.dataset.size, 10)); }); });
       if (el.selectAll) el.selectAll.addEventListener('click', function () { state.selected = new Set(allTopics()); refreshSidebar(); });
       if (el.deselectAll) el.deselectAll.addEventListener('click', function () { state.selected.clear(); refreshSidebar(); });
       el.prev.addEventListener('click', function () { go(-1); });
       el.next.addEventListener('click', function () { go(1); });
-      el.finish.addEventListener('click', finishQuiz);
+      el.finish.addEventListener('click', requestFinish);
       modeButtons.forEach(function (btn) { btn.addEventListener('click', function () { setMode(btn.dataset.mode); }); });
 
       global.document.addEventListener('keydown', function (e) {
@@ -678,6 +841,7 @@
       if (el.totalStat) el.totalStat.textContent = state.bank.length;
       renderTopics();
       setMode('study');
+      restoreSize();
       refreshSidebar();
       flushPending();
     }
@@ -695,6 +859,8 @@
       selectOption: selectOption,
       finishQuiz: finishQuiz,
       setMode: setMode,
+      reviewMyErrors: reviewMyErrors,
+      setSize: chooseSize,
       selectTopics: function (list) { state.selected = new Set(list || allTopics()); refreshSidebar(); },
     };
   }

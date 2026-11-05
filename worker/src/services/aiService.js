@@ -9,8 +9,8 @@
  *  1) Cotas: cota diária por pessoa, por recurso e papel (AI_QUOTAS), mais
  *     o disjuntor global de custo (AI_GLOBAL_DAILY_MAX). Usado também por
  *     clinicalService.js via withQuota().
- *  2) Preceptor do laboratório (apiLearnLabPreceptor), com cache de síntese
- *     que SÓ o servidor grava.
+ *  2) Preceptor do laboratório (apiLearnLabPreceptor), com lista de bloqueio
+ *     determinística antes da IA e sem cache compartilhado no termo de síntese.
  *  3) Consulta da própria cota e saúde do pool de chaves (admin).
  *
  * A identidade sempre vem da sessão (runWithSession); nenhum endpoint aceita
@@ -27,6 +27,7 @@ import * as SemanticCache from '../ai/semanticCache.js';
 import { isMissingTable } from './featureFlagService.js';
 import { resolveModel } from '../ai/config.js';
 import { QuotaExceededError, AiInvalidOutputError, AI_MESSAGES } from '../ai/errors.js';
+import { checkSafety, SAFE_EDUCATIONAL_ANSWER } from '../ai/safetyBlocklist.js';
 import { buildLabMessages, buildLabSynthesisMessages } from '../ai/prompts.js';
 import { cleanText, cleanReply, sanitizeHistory, normalizeSynthTerm, byteLength } from '../ai/validators.js';
 
@@ -56,14 +57,8 @@ const QUOTA_LABELS = {
   agent_curator: 'pedidos ao Curador de Conteúdo',
 };
 
-// 30 dias: uma rota de síntese didática não muda; o cache existe para não
-// gastar tokens de novo com a mesma pergunta de outra pessoa.
-export const LAB_SYNTH_TTL_SECONDS = 30 * 86400;
 // Saúde das chaves: cliques repetidos em 60 s reaproveitam o resultado (sem Groq, sem Neon).
 export const AI_HEALTH_CACHE_TTL_SECONDS = 60;
-export function labSynthCacheKey(term) {
-  return 'ai:lab-synth:' + term;
-}
 
 export function asObject(input) {
   return input && typeof input === 'object' && !Array.isArray(input) ? input : {};
@@ -245,15 +240,14 @@ export async function askLabPreceptor(sql, env, identity, rawInput) {
   const history = sanitizeHistory(input.history, ['student', 'preceptor'], C.AI_LIMITS.HISTORY_MAX_TURNS, C.AI_LIMITS.HISTORY_TURN_MAX);
 
   // Termo inválido (curto, longo, só símbolos) não é erro: a pergunta segue
-  // como dúvida normal, só sem cache compartilhado.
+  // como dúvida normal.
   const term = input.synthesisTerm ? normalizeSynthTerm(input.synthesisTerm, C.AI_LIMITS.SYNTH_TERM_MIN, C.AI_LIMITS.SYNTH_TERM_MAX) : '';
 
-  if (term) {
-    const cached = await getCached(env, labSynthCacheKey(term));
-    if (cached && typeof cached.answer === 'string' && cached.answer) {
-      // Acerto de cache não chama a IA, então não consome cota.
-      return { success: true, answer: cached.answer, cached: true };
-    }
+  // Lista de bloqueio determinística (agentes de guerra, drogas ilícitas): antes de cota, cache
+  // e IA. Olha também o termo bruto, que pode ser invalidado pela normalização acima.
+  const safety = checkSafety({ term: input.synthesisTerm, question });
+  if (safety.blocked) {
+    return { success: true, answer: SAFE_EDUCATIONAL_ANSWER, cached: false, blocked: true };
   }
 
   // Pergunta GENÉRICA (sem termo de síntese, bancada nem histórico) pode usar o
@@ -273,11 +267,6 @@ export async function askLabPreceptor(sql, env, identity, rawInput) {
     );
     const answer = cleanReply(out.content, C.AI_LIMITS.REPLY_MAX);
     if (!answer) throw AiInvalidOutputError(AI_MESSAGES.INVALID_OUTPUT);
-    // Só respostas que terminaram normalmente vão para o cache — uma
-    // resposta cortada pelo max_tokens seria servida cortada por 30 dias.
-    if (term && out.finishReason !== 'length') {
-      await setCached(env, labSynthCacheKey(term), { answer, createdAt: new Date().toISOString() }, LAB_SYNTH_TTL_SECONDS);
-    }
     // `degraded`: o provedor estava fora e a resposta veio de uma pergunta parecida do cache.
     // Nenhum token foi gasto, então a unidade de cota cobrada volta.
     if (out.degraded) await refundQuota(sql, identity, C.AI_FEATURE.LAB_PRECEPTOR);

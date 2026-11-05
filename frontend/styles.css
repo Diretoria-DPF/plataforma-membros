@@ -760,6 +760,18 @@ button.learn-card {
   .learn-viewer.learn-viewer-immersive .learn-viewer-bar { margin-bottom: 4px; }
 }
 
+/* TRA-08 — carregando e erro do módulo (learning.js): cartão por cima do iframe, dentro de #learn-frames. */
+#learn-frames { position: relative; }
+.learn-frame-state {
+  position: absolute; inset: 0; z-index: 2;
+  display: grid; align-content: center; justify-items: center; gap: 14px; padding: 24px; text-align: center;
+  background: var(--bg); border-radius: var(--radius-md);
+}
+.learn-frame-state.hidden { display: none; }
+.learn-frame-state > * { width: 100%; max-width: 420px; }
+.learn-frame-state-text { margin: 0; color: var(--text); font-size: 15px; }
+.learn-frame-retry { width: auto; min-width: 44px; min-height: 44px; }
+
 /* Fase 2 — Dados & Presença: desempenho por módulo e conquistas no hub
    "Aprender" (learning.js) e métricas de aprendizagem no perfil (app.js).
    Só classes novas; acabamento visual fino fica com a Equipe 4. */

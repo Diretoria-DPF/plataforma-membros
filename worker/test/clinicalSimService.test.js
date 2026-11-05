@@ -405,9 +405,11 @@ describe('trava de revisão com o banco de verdade (PGlite + 037)', () => {
     expect((await db.query('SELECT status FROM clinical_cases WHERE id = $1', [id])).rows[0].status).toBe('pending');
   });
 
-  test('caso sem sim_profile segue o fluxo antigo (sem lista, autor pode aprovar) e rejeitar nunca exige lista', async () => {
+  test('caso sem sim_profile: sem lista, mas o autor NÃO aprova o próprio caso (CLI-02); outra pessoa aprova; rejeitar nunca exige lista', async () => {
     const plain = await addCase({ sim: null });
-    await review(plain, AUTHOR);
+    await expect(review(plain, AUTHOR)).rejects.toMatchObject({ name: 'ForbiddenError', message: SIM_MESSAGES.reviewSameAuthor });
+    expect((await db.query('SELECT status FROM clinical_cases WHERE id = $1', [plain])).rows[0].status).toBe('pending');
+    await review(plain, REVIEWER);
     expect((await db.query('SELECT status FROM clinical_cases WHERE id = $1', [plain])).rows[0].status).toBe('approved');
     const sem = await addCase();
     await Clinical.reviewCase(sql, envWith(), identity(REVIEWER), { caseId: sem, decision: 'rejected' }, '00000000-0000-4000-8000-000000000000');
