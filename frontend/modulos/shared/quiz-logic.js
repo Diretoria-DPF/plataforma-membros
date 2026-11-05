@@ -12,6 +12,9 @@
  *   writeProgress(prev, entries, extra)    -> objeto novo para gravar (v2, respostas por id da questão)
  *   scoreAnswers(questions, answers)       -> placar só das respondidas; em branco não é erro (QZ-05)
  *   canAnswer(mode, current)               -> false no modo estudo depois do gabarito (QZ-03)
+ *   validateQuestion(q)                    -> lista de problemas do esquema (A1); vazia = válida
+ *   pickSession(pool, count, opts)         -> sessão de `count` questões (0 = todas), estável por semente (A1)
+ *   INTERNAL_FIELDS                        -> campos só de gestão (dificuldade, fonte, revisor...), nunca exibidos
  *
  * As respostas guardadas são índices na ORDEM ORIGINAL do banco; só a exibição embaralha.
  * Script clássico (global LaiftQuizLogic) e, em Node, module.exports.
@@ -124,7 +127,69 @@
     return current === null || current === undefined;
   }
 
+  // ---- A1: esquema de questão ---------------------------------------------------------------------------
+  // Obrigatórios: id, topic, question, options (>= 2 textos), correct (índice válido). Opcionais, só para a gestão
+  // (nunca exibidos ao público): difficulty 1-3, source, reviewedBy, reviewedAt (AAAA-MM-DD), tags.
+  var INTERNAL_FIELDS = ['difficulty', 'source', 'reviewedBy', 'reviewedAt', 'tags'];
+  var MAX_SOURCE = 300;
+  var MAX_REVIEWER = 120;
+  var MAX_TAGS = 10;
+
+  function isText(v) { return typeof v === 'string' && v.trim().length > 0; }
+
+  function isIsoDate(v) {
+    if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+    var d = new Date(v + 'T00:00:00Z');
+    return !isNaN(d.getTime()) && d.toISOString().slice(0, 10) === v;
+  }
+
+  function validateQuestion(q) {
+    var problems = [];
+    if (!q || typeof q !== 'object') return ['questão ausente'];
+    if (q.id === undefined || q.id === null || q.id === '') problems.push('id ausente');
+    if (!isText(q.topic)) problems.push('topic ausente');
+    if (!isText(q.question)) problems.push('question ausente');
+    if (!Array.isArray(q.options) || q.options.length < 2 || !q.options.every(isText)) problems.push('options inválidas');
+    else if (!isAnswer(q.correct) || q.correct >= q.options.length) problems.push('correct fora das alternativas');
+    if (q.difficulty !== undefined && !(q.difficulty === 1 || q.difficulty === 2 || q.difficulty === 3)) problems.push('difficulty deve ser 1, 2 ou 3');
+    if (q.source !== undefined && (!isText(q.source) || q.source.length > MAX_SOURCE)) problems.push('source inválida');
+    if (q.reviewedBy !== undefined && (!isText(q.reviewedBy) || q.reviewedBy.length > MAX_REVIEWER)) problems.push('reviewedBy inválido');
+    if (q.reviewedAt !== undefined && !isIsoDate(q.reviewedAt)) problems.push('reviewedAt deve ser AAAA-MM-DD');
+    if (q.tags !== undefined && (!Array.isArray(q.tags) || q.tags.length > MAX_TAGS || !q.tags.every(isText))) problems.push('tags inválidas');
+    return problems;
+  }
+
+  // ---- A1: tamanho da sessão -----------------------------------------------------------------------------
+  /**
+   * @param {Array}  pool   questões elegíveis (já filtradas pelos tópicos)
+   * @param {number} count  tamanho desejado; 0 (ou >= pool.length) devolve tudo, na ordem original
+   * @param {object} opts   { seed, mode: 'study'|'exam', answered: { [id]: índice } }
+   * No estudo, as ainda não respondidas vêm antes; dentro de cada grupo a escolha é aleatória por semente.
+   * O resultado mantém a ordem do banco.
+   */
+  function pickSession(pool, count, opts) {
+    var list = (pool || []).slice();
+    if (!count || count <= 0 || count >= list.length) return list;
+    opts = opts || {};
+    var answered = opts.mode === 'exam' ? {} : (opts.answered || {});
+    var rand = mulberry32(hashString('session:' + String((opts.seed || 0) >>> 0)));
+    function shuffled(items) {
+      for (var k = items.length - 1; k > 0; k--) {
+        var j = Math.floor(rand() * (k + 1));
+        var tmp = items[k]; items[k] = items[j]; items[j] = tmp;
+      }
+      return items;
+    }
+    var indexed = list.map(function (q, i) { return { q: q, i: i }; });
+    var fresh = shuffled(indexed.filter(function (e) { return answered[String(e.q.id)] === undefined; }));
+    var seen = shuffled(indexed.filter(function (e) { return answered[String(e.q.id)] !== undefined; }));
+    return fresh.concat(seen).slice(0, count)
+      .sort(function (a, b) { return a.i - b.i; })
+      .map(function (e) { return e.q; });
+  }
+
   var api = {
+    validateQuestion: validateQuestion, pickSession: pickSession, INTERNAL_FIELDS: INTERNAL_FIELDS,
     optionOrder: optionOrder, newSeed: newSeed, readProgress: readProgress, writeProgress: writeProgress,
     withoutIds: withoutIds, scoreAnswers: scoreAnswers, canAnswer: canAnswer, PROGRESS_VERSION: PROGRESS_VERSION,
   };
