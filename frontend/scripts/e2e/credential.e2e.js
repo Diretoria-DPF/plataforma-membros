@@ -97,4 +97,43 @@ module.exports = async function credential() {
   } finally {
     await noProfile.close();
   }
+
+  // ---- QR rotativo (A2): evento em andamento -> LAIFT:v3 com contagem regressiva, renovação e PNG sem QR ----
+  const EV = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+  const PID = '11111111-1111-4111-8111-111111111111';
+  let issued = 0;
+  const rot = await startApp({
+    role: 'member',
+    workerHandlers: {
+      apiGetMyProfile: () => PROFILE,
+      apiListEvents: () => ({ success: true, events: [{ id: EV, title: 'Simpósio LAIFT', status: 'in_progress', isRegistered: true, eventDate: '2026-11-05T12:00:00Z' }] }),
+      apiLearnGetMyAttendanceQr: (args) => {
+        issued += 1;
+        const now = Date.now();
+        return { success: true, rotating: true, eventId: EV, windowSeconds: 30, serverTime: now,
+          refreshAt: now + 2000, qrPayload: 'LAIFT:v3:' + PID + '.' + EV + '.' + (60000000 + issued) + '.AbCdEfGhIjKlMnOpQrStUvWx' };
+      },
+    },
+  });
+  try {
+    await rot.login();
+    await rot.showPanel('panel-profile');
+    await rot.page.click('#btn-profile-credential');
+    await rot.page.waitForFunction(() => document.getElementById('learn-credential-qr').getAttribute('data-qr-kind') === 'v3', null, { timeout: 10000 });
+    check(/Simpósio LAIFT.*muda em \d+ s/.test(await rot.page.textContent('#learn-credential-note')), 'o crachá rotativo mostra o evento e a contagem regressiva');
+    check(/sem QR/.test(await rot.page.textContent('#learn-credential-note')), 'avisa que "Salvar imagem" guarda só o crachá, sem QR');
+    await rot.page.waitForFunction(() => document.getElementById('learn-credential-qr').getAttribute('data-qr-kind') === 'v3', null);
+    const first = await rot.page.getAttribute('#learn-credential-qr', 'src');
+    await rot.page.waitForFunction((src) => document.getElementById('learn-credential-qr').getAttribute('src') !== src, first, { timeout: 10000 });
+    check(issued >= 2, 'o QR é renovado sozinho ao fim da janela (' + issued + ' emissões)');
+    check(await rot.page.locator('#learn-credential-save:not([disabled])').count() === 1, 'salvar imagem fica disponível (sem QR)');
+    const [dl] = await Promise.all([rot.page.waitForEvent('download'), rot.page.click('#learn-credential-save')]);
+    check(dl.suggestedFilename() === 'cracha-laift-ana-teste.png', 'o PNG sem QR baixa com nome seguro');
+    await rot.page.keyboard.press('Escape');
+    const before = issued;
+    await rot.page.waitForTimeout(2600);
+    check(issued === before, 'fechar o crachá para a renovação do QR');
+  } finally {
+    await rot.close();
+  }
 };

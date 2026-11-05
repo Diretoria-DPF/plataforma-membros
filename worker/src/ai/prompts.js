@@ -126,7 +126,7 @@ const CASE_SHAPE = {
   guiaSemiologico: { cronologia: ['2-3 perguntas'], farmacoterapia: ['2-3 perguntas'], exposicao: ['2-3 perguntas'], sinaisAlarme: ['2-3 perguntas'] },
   perguntasSugeridas: ['3-4 perguntas'],
   examesDisponiveis: [{ id: 'identificador_curto', nome: 'nome do exame', custoTempoMin: 'inteiro 3-40', impactoVitalidade: 'inteiro -10 a 0', impactoPaciencia: 'inteiro -15 a 2', essencial: 'true | false', resultado: 'laudo com valores e referência' }],
-  gabaritoPreceptor: { diagnostico: 'diagnóstico completo', conduta: 'conduta completa com doses', palavrasChave: ['5-8 palavras-chave minúsculas sem acento'] },
+  gabaritoPreceptor: { diagnostico: 'diagnóstico completo', conduta: 'conduta completa em texto, SEM números de dose (escreva "conforme protocolo vigente" no lugar)', palavrasChave: ['5-8 palavras-chave minúsculas sem acento'] },
 };
 
 export function buildCaseGenerationMessages({ topic, difficulty }) {

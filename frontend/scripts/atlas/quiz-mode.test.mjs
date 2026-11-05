@@ -16,7 +16,7 @@
  */
 
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
 import Ajv from 'ajv';
@@ -83,9 +83,9 @@ if (typeof window === 'undefined') {
 }
 
 // Importa os módulos
-const { on, emit, EVENTS } = await import(path.join(coreDir, 'bus.js'));
-const { get: storeGet, set: storeSet } = await import(path.join(coreDir, 'store.js'));
-const { scoreFor, isCorrect, mainSid, resolveResume, QUIZ_SEED, createQuizMode } = await import(path.join(modesDir, 'quiz.js'));
+const { on, emit, EVENTS } = await import(pathToFileURL(path.join(coreDir, 'bus.js')).href);
+const { get: storeGet, set: storeSet } = await import(pathToFileURL(path.join(coreDir, 'store.js')).href);
+const { scoreFor, isCorrect, mainSid, resolveResume, QUIZ_SEED, createQuizMode } = await import(pathToFileURL(path.join(modesDir, 'quiz.js')).href);
 
 let failures = 0;
 

@@ -16,7 +16,7 @@
  */
 
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 
@@ -55,7 +55,7 @@ const proteinsJson = JSON.parse(
 );
 
 // Importa filterProteins (módulo ESM)
-const { filterProteins } = await import(modesDir);
+const { filterProteins } = await import(pathToFileURL(modesDir).href);
 
 console.log('proteins.json');
 

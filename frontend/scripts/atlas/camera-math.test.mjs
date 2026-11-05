@@ -13,7 +13,7 @@
  * dependências) e valida todas as exportações com números concretos.
  */
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -28,7 +28,7 @@ const {
   freeRect,
   viewOffsetFor,
   clampDistance
-} = await import(path.join(engineDir, 'camera-math.js'));
+} = await import(pathToFileURL(path.join(engineDir, 'camera-math.js')).href);
 
 let failures = 0;
 

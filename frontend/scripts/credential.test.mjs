@@ -50,12 +50,16 @@ test('fileNameFor: nome de arquivo seguro, sem acento nem caractere perigoso', (
   assert.equal(Credential.fileNameFor('x'.repeat(200)).length <= 'cracha-laift-'.length + 40 + '.png'.length, true);
 });
 
-test('qrPayloadOf: aceita só a credencial assinada; senão cai no formato provisório pelo e-mail', () => {
+test('qrPayloadOf: aceita só a credencial assinada; senão cai no provisório com identificador opaco (TRA-10)', () => {
   assert.deepEqual(Credential.qrPayloadOf({ success: true, qrPayload: SIGNED }, { email: 'a@b.com' }), { payload: SIGNED, kind: 'v2' });
-  assert.deepEqual(Credential.qrPayloadOf({ success: true, qrPayload: 'LAIFT:v2:forjado' }, { email: 'a@b.com' }), { payload: 'LAIFT:ID:a@b.com', kind: 'legacy' });
-  assert.deepEqual(Credential.qrPayloadOf({ success: false }, { email: 'a@b.com' }), { payload: 'LAIFT:ID:a@b.com', kind: 'legacy' });
-  assert.deepEqual(Credential.qrPayloadOf(null, { email: 'a@b.com' }), { payload: 'LAIFT:ID:a@b.com', kind: 'legacy' });
-  assert.equal(Credential.qrPayloadOf({ success: false }, { email: '' }), null);
+  const identity = { email: 'a@b.com', fullName: 'Ana Souza' };
+  for (const res of [{ success: true, qrPayload: 'LAIFT:v2:forjado' }, { success: false }, null, undefined]) {
+    const out = Credential.qrPayloadOf(res, identity);
+    assert.equal(out.kind, 'legacy');
+    assert.match(out.payload, /^LAIFT:ID:[0-9a-f]{12}$/);
+    assert.ok(!out.payload.includes('@') && !out.payload.includes('a@b.com'), 'o e-mail não vai dentro do QR');
+  }
+  assert.notEqual(Credential.qrPayloadOf(null, identity).payload, Credential.qrPayloadOf(null, identity).payload);
   assert.equal(Credential.qrPayloadOf(undefined, null), null);
 });
 
@@ -93,4 +97,41 @@ test('learning.js não monta mais o QR sozinho: delega ao crachá', () => {
   const src = read('frontend/learning.js');
   assert.doesNotMatch(src, /function loadQrLib/);
   assert.match(src, /LaiftCredential/);
+});
+
+// ---- A2: QR rotativo por evento (LAIFT:v3) ----
+const V3 = 'LAIFT:v3:123e4567-e89b-12d3-a456-426614174000.223e4567-e89b-12d3-a456-426614174000.59000000.AbCdEfGhIjKlMnOpQrStUvWx';
+
+test('qrPayloadOf: reconhece o QR rotativo v3 e nunca aceita v3 forjado', () => {
+  assert.deepEqual(Credential.qrPayloadOf({ success: true, qrPayload: V3 }, { email: 'a@b.com' }), { payload: V3, kind: 'v3' });
+  assert.equal(Credential.qrPayloadOf({ success: true, qrPayload: V3.replace('.59000000.', '.x.') }, { email: 'a@b.com' }).kind, 'legacy');
+});
+
+test('pickEvents: em andamento primeiro; publicado só se a pessoa estiver inscrita; máximo de 5', () => {
+  const events = [
+    { id: 'a', status: 'published', isRegistered: false, eventDate: '2026-12-01' },
+    { id: 'b', status: 'published', isRegistered: true, eventDate: '2026-11-20' },
+    { id: 'c', status: 'in_progress', isRegistered: false, eventDate: '2026-11-05' },
+    { id: 'd', status: 'closed', isRegistered: true },
+    null,
+  ];
+  assert.deepEqual(Credential.pickEvents({ success: true, events }).map((e) => e.id), ['c', 'b']);
+  assert.deepEqual(Credential.pickEvents({ success: false }), []);
+  assert.deepEqual(Credential.pickEvents(null), []);
+  const many = Array.from({ length: 9 }, (_, i) => ({ id: 'e' + i, status: 'in_progress' }));
+  assert.equal(Credential.pickEvents({ success: true, events: many }).length, 5);
+});
+
+test('secondsLeft: contagem pela hora do servidor, nunca negativa', () => {
+  assert.equal(Credential.secondsLeft(130_000, 0, 100_000), 30);
+  assert.equal(Credential.secondsLeft(130_000, 5_000, 100_000), 25);
+  assert.equal(Credential.secondsLeft(130_000, 0, 200_000), 0);
+  assert.equal(Credential.secondsLeft(130_500, 0, 100_000), 31);
+});
+
+test('o PNG do crachá rotativo sai sem QR e o texto avisa que o QR muda', () => {
+  const src = read('frontend/credential.js');
+  assert.match(src, /card\.kind === 'v3' \? Promise\.resolve\(null\)/);
+  assert.match(src, /QR Code só na tela/);
+  assert.match(src, /muda a cada 30 segundos/);
 });

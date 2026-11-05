@@ -44,7 +44,7 @@ const BANCO_SINTESES_LAIFT = [
     "id": "sintese_ibuprofeno",
     "nomeComposto": "Ibuprofeno",
     "produtoId": "Ibuprofeno_s",
-    "reagentesObrigatorios": ["Isobutilbenzeno_s", "Cloreto de acetila_l", "CO2_g"],
+    "reagentesObrigatorios": ["Isobutilbenzeno_s", "AnidridoAcetico_l", "H2_g", "CO_g"],
     "catalisador": "AlCl3",
     "solvente": "CH2Cl2_l",
     "tempMinima": 0,
@@ -55,7 +55,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Corrosivo", "Inflamável"],
     "tipoReacao": "Acoplamento + Carboxilação",
-    "equacaoQuimica": "C10H14 + CH3COCl + CO2 -> C13H18O2",
+    "equacaoQuimica": "C10H14 + (CH3CO)2O + H2 + CO -> C13H18O2 + CH3COOH",
     "descricao": "Síntese multi-etapas: acilação de Friedel-Crafts do isobutilbenzeno, seguida de redução e carboxilação catalisada por paládio (processo BHC)."
   },
   {
@@ -73,7 +73,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 82,
     "perigos": ["Irritante"],
     "tipoReacao": "Sulfometilação",
-    "equacaoQuimica": "C11H13N3O + CH2O + NaHSO3 -> C13H16N3NaO4S",
+    "equacaoQuimica": "C12H15N3O + CH2O + NaHSO3 -> C13H16N3NaO4S + H2O",
     "descricao": "Reação da 4-metilaminoantipirina com formaldeído e bissulfito de sódio, seguida de metilação e salificação."
   },
   {
@@ -91,7 +91,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Tóxico"],
     "tipoReacao": "Acoplamento Ullmann + Ciclização",
-    "equacaoQuimica": "C6H5Cl2N + C8H7ClO2 -> C14H10Cl2NNaO2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Acoplamento Ullmann entre 2,6-dicloroanilina e ácido 2-clorofenilacético, seguido de ciclização e neutralização com NaOH."
   },
   {
@@ -109,7 +111,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "Alquilação + Tetrazolação",
-    "equacaoQuimica": "C7H11ClN2 + C14H10Br2N -> C22H23ClN6O",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Alquilação do imidazol, seguida de tetrazolação com azida de sódio e hidrólise para obter losartana."
   },
   {
@@ -127,7 +131,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 78,
     "perigos": ["Irritante"],
     "tipoReacao": "Acoplamento peptídico",
-    "equacaoQuimica": "C5H9NO2 + C6H10O3S -> C9H15NO3S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação da L-prolina com ácido 3-acetiltio-2-metilpropanóico, seguida de hidrólise do grupo tioéster."
   },
   {
@@ -145,7 +151,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Irritante"],
     "tipoReacao": "Síntese de Hantzsch",
-    "equacaoQuimica": "C7H5ClO + C5H8O3 + C5H9NO2 -> C20H25ClN2O5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação multicomponente para formar o anel diidropiridínico do anlodipino."
   },
   {
@@ -181,7 +189,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Condensação",
-    "equacaoQuimica": "C10H12ClNO3 + C8H11N3O3S -> C23H28ClN3O5S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação entre a benzamida e a sulfonilureia em meio básico."
   },
   {
@@ -199,7 +209,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Acilação",
-    "equacaoQuimica": "C8H12N2O3S + C9H9ClNO3 -> C16H19N3O5S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Acilação do 6-APA com cloreto de p-hidroxifenilglicina protegido, seguida de desproteção."
   },
   {
@@ -217,7 +229,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "Oximação + Rearranjo de Beckmann",
-    "equacaoQuimica": "C37H67NO13 -> C38H72N2O12",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Semi-síntese a partir da eritromicina: oximação, rearranjo de Beckmann e redução para formar o anel lactâmico expandido."
   },
   {
@@ -253,7 +267,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Irritante"],
     "tipoReacao": "Acilação enzimática",
-    "equacaoQuimica": "C10H12N2O5S + C8H9ClNO2 -> C16H17N3O4S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Acilação enzimática do 7-ACA com cloreto de fenilglicina, seguida de purificação."
   },
   {
@@ -271,7 +287,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 85,
     "perigos": ["Irritante"],
     "tipoReacao": "Oxidação",
-    "equacaoQuimica": "C17H19N3OS -> C17H19N3O3S",
+    "equacaoQuimica": "C17H19N3O2S + C7H5ClO3 -> C17H19N3O3S + C7H5ClO2",
     "descricao": "Oxidação do tioéter correspondente com ácido meta-cloroperbenzóico para formar o sulfóxido."
   },
   {
@@ -289,7 +305,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Condensação + Oxidação",
-    "equacaoQuimica": "C7H6N2S + C8H9ClNO2 -> C16H15F2N3O4S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação, seguida de oxidação para formar o sulfóxido do pantoprazol."
   },
   {
@@ -307,7 +325,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Irritante"],
     "tipoReacao": "Condensação",
-    "equacaoQuimica": "C10H18N2S + C5H12N4O2S -> C13H22N4O3S·HCl",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação da amina com o nitroeteno diamina, seguida de salificação com HCl."
   },
   {
@@ -325,7 +345,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Alquilação + Oxidação",
-    "equacaoQuimica": "C17H19ClN2 + C2H5ClO -> C21H25ClN2O3·2HCl",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Alquilação da piperazina com cloroetanol, seguida de oxidação do álcool a ácido e salificação."
   },
   {
@@ -343,7 +365,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Condensação",
-    "equacaoQuimica": "C19H15ClN2O + C5H10ClN -> C22H23ClN2O2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação da cetona com 4-cloropiperidina para formar loratadina."
   },
   {
@@ -361,7 +385,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 60,
     "perigos": ["Tóxico", "Oxidante"],
     "tipoReacao": "Fluoração",
-    "equacaoQuimica": "C21H28O5 + F2 -> C22H29FO5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Fluoração da prednisolona na posição 9α com flúor em DMF a baixa temperatura, seguida de metilação."
   },
   {
@@ -379,7 +405,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Tóxico"],
     "tipoReacao": "Desidrogenação",
-    "equacaoQuimica": "C21H30O5 -> C21H26O5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Desidrogenação química da hidrocortisona com dióxido de selênio para introduzir dupla ligação 1,2."
   },
   {
@@ -397,7 +425,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Irritante"],
     "tipoReacao": "Aminação redutiva",
-    "equacaoQuimica": "C9H10O4 + C4H11N -> C13H21NO3·H2SO4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Aminação redutiva da cetona com terc-butilamina na presença de catalisador de paládio."
   },
   {
@@ -415,7 +445,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "Acoplamento + Ciclização",
-    "equacaoQuimica": "C5H10OS + C18H12ClNO2 -> C35H36ClNO3S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Síntese assimétrica multi-etapas envolvendo acoplamento e formação do anel tetraidropirano."
   },
   {
@@ -433,7 +465,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Adição de Michael + Aminação",
-    "equacaoQuimica": "C9H11Cl + C7H5F3O + CH5N -> C17H18F3NO·HCl",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Adição de Michael do fenol ao cloreto, seguida de metilação com metilamina."
   },
   {
@@ -451,7 +485,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Adição + Redução",
-    "equacaoQuimica": "C10H8O + C6H3Cl2Li -> C17H17Cl2N·HCl",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Adição do organolítio à naftalenona, seguida de redução e aminação redutiva."
   },
   {
@@ -469,7 +505,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Reação de Grignard + Ciclização",
-    "equacaoQuimica": "C15H12O + C5H12ClN -> C20H23N·HCl",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Reação de Grignard seguida de ciclização e aminação."
   },
   {
@@ -487,7 +525,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Ciclização",
-    "equacaoQuimica": "C13H10N2O3 + C2H2Cl2O -> C15H10ClN3O3",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação e ciclização para formar o anel benzodiazepínico."
   },
   {
@@ -505,7 +545,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Ciclização",
-    "equacaoQuimica": "C13H10ClNO + C2H2Cl2O + NH3 -> C16H13ClN2O",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Formação do anel benzodiazepínico por condensação e aminação."
   },
   {
@@ -523,7 +565,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Formação de triazol",
-    "equacaoQuimica": "C16H13ClN2O -> C17H13ClN4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Introdução do anel triazol no esqueleto benzodiazepínico."
   },
   {
@@ -541,7 +585,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Alquilação",
-    "equacaoQuimica": "C12H13FN2O + C10H10ClN2O -> C23H27FN4O2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Alquilação da piperidina com o derivado pirimidinônico."
   },
   {
@@ -559,7 +605,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Irritante"],
     "tipoReacao": "Substituição nucleofílica",
-    "equacaoQuimica": "C13H8ClNS + C6H14N2O -> C21H25N3O2S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Substituição do cloro pela piperazina hidroxietilada."
   },
   {
@@ -577,7 +625,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 85,
     "perigos": ["Irritante"],
     "tipoReacao": "Rearranjo de pinacol",
-    "equacaoQuimica": "C14H12O2 + CH4N2O -> C15H11N2NaO2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação de benzoína com ureia em meio básico (síntese de Biltz)."
   },
   {
@@ -595,7 +645,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Muito tóxico"],
     "tipoReacao": "Fosgenação + Aminação",
-    "equacaoQuimica": "C15H12ClN + COCl2 + NH3 -> C15H12N2O",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Reação com fosgênio e amônia para formar o grupo carbamoil."
   },
   {
@@ -613,7 +665,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "Síntese convergente",
-    "equacaoQuimica": "C7H5FO + C6H10O3 + C8H14O3 -> C33H35FN2O5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Síntese de Paal-Knorr para formar anel pirrol, seguida de adição estereosseletiva."
   },
   {
@@ -631,7 +685,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Hidrólise + Esterificação",
-    "equacaoQuimica": "C24H36O5 + C6H12O2 -> C25H38O5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Hidrólise enzimática do grupo 2-metilbutiril e reesterificação com ácido 2,2-dimetilbutírico."
   },
   {
@@ -649,7 +705,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Corrosivo"],
     "tipoReacao": "Clorossulfonação + Aminação",
-    "equacaoQuimica": "C7H7Cl2N + ClSO3H + C5H6N -> C12H11ClN2O5S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Clorossulfonação seguida de aminação com furfurilamina."
   },
   {
@@ -667,7 +725,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Irritante"],
     "tipoReacao": "Ciclização",
-    "equacaoQuimica": "C6H8ClN3O4S2 + CH2O -> C7H8ClN3O4S2",
+    "equacaoQuimica": "C6H8ClN3O4S2 + CH2O -> C7H8ClN3O4S2 + H2O",
     "descricao": "Ciclização da dissulfonamida com formaldeído para formar o anel tiazídico."
   },
   {
@@ -685,7 +743,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Reação de Michael",
-    "equacaoQuimica": "C9H6O3 + C10H10O -> C19H15NaO4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Adição de Michael da 4-hidroxicumarina à benzalacetona em presença de base."
   },
   {
@@ -703,7 +763,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Acoplamento + Ciclização",
-    "equacaoQuimica": "C5H3ClOS + C3H9NO2 + C7H4ClNO3 -> C19H18ClN3O5S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Síntese multi-etapas com formação do anel oxazolidinona."
   },
   {
@@ -721,7 +783,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 60,
     "perigos": ["Inflamável"],
     "tipoReacao": "Etinilação",
-    "equacaoQuimica": "C18H22O2 + C2H2 -> C21H28O2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Etinilação da estrona e rearranjos para obter levonorgestrel."
   },
   {
@@ -739,7 +803,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 85,
     "perigos": ["Irritante"],
     "tipoReacao": "Hidrogenação",
-    "equacaoQuimica": "C9H11NO3 + H2 -> C9H11NO4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Hidrogenação catalítica da L-tirosina para introduzir hidroxila na posição 3,4."
   },
   {
@@ -757,7 +823,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Condensação aldólica + Redução",
-    "equacaoQuimica": "C11H12O3 + C13H17NO -> C24H29NO3·HCl",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação aldólica entre a indanona e o aldeído, seguida de redução."
   },
   {
@@ -775,7 +843,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Irritante"],
     "tipoReacao": "Ciclização + Substituição",
-    "equacaoQuimica": "C7H17NO2 + SOCl2 + C4H9NO -> C13H24N4O3S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Formação do anel oxazolidínico e introdução da morfolina."
   },
   {
@@ -793,7 +863,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 90,
     "perigos": ["Irritante"],
     "tipoReacao": "Esterificação",
-    "equacaoQuimica": "C20H34O5 + C3H8O -> C26H40O5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Esterificação do ácido carboxílico da prostaglandina com isopropanol."
   },
   {
@@ -811,7 +883,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Acetalização",
-    "equacaoQuimica": "C21H28O5 + C4H8O -> C25H34O6",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Formação do acetal 16,17 com butiraldeído."
   },
   {
@@ -829,7 +903,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 85,
     "perigos": ["Irritante"],
     "tipoReacao": "Quaternização",
-    "equacaoQuimica": "C17H21NO4 + CH3Br -> C19H22BrNO4S2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Quaternização do nitrogênio da escopolamina com brometo de metila."
   },
   {
@@ -847,7 +923,8 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 60,
     "perigos": ["Irritante"],
     "tipoReacao": "Despolimerização",
-    "equacaoQuimica": "Polímero -> Fragmentos de baixo peso molecular",
+    "equacaoQuimica": null,
+    "esquema": "Polímero -> Fragmentos de baixo peso molecular",
     "descricao": "Despolimerização química da heparina com ácido nitroso, seguida de fracionamento."
   },
   {
@@ -865,7 +942,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 55,
     "perigos": ["Tóxico"],
     "tipoReacao": "Acoplamento + Hidrólise",
-    "equacaoQuimica": "C7H7NO2 + C7H7BrN6 + C9H15NO4 -> C20H22N8O5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Acoplamento do PABA com a pteridina, seguido de conjugação com glutamato e hidrólise."
   },
   {
@@ -883,7 +962,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 90,
     "perigos": ["Irritante"],
     "tipoReacao": "Desidrogenação enzimática",
-    "equacaoQuimica": "C21H30O5 -> C21H28O5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Desidrogenação microbiológica da hidrocortisona para introduzir dupla ligação 1,2."
   },
   {
@@ -901,7 +982,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Grignard + Aminação redutiva",
-    "equacaoQuimica": "C7H5ClO + C5H4BrN + C2H7N -> C16H19ClN2·C4H4O4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Reação de Grignard entre 2-bromopiridina e 4-clorobenzaldeído, seguida de aminação redutiva com dimetilamina e salificação com ácido maleico."
   },
   {
@@ -919,7 +1002,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "N-desmetilação + Metilação",
-    "equacaoQuimica": "C17H21NO -> C18H25NO",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "N-desmetilação seletiva do 3-metoximorfinana e metilação para obter dextrometorfano."
   },
   {
@@ -937,7 +1022,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 90,
     "perigos": ["Tóxico"],
     "tipoReacao": "Metilação seletiva",
-    "equacaoQuimica": "C17H19NO3 + (CH3O)2SO2 -> C18H21NO3",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Metilação seletiva da hidroxila fenólica da morfina com sulfato de dimetila em meio básico."
   },
   {
@@ -955,7 +1042,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 60,
     "perigos": ["Inflamável"],
     "tipoReacao": "Mannich + Grignard",
-    "equacaoQuimica": "C6H10O + C2H7N + C7H7BrMgO -> C16H25NO2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Reação de Mannich da cicloexanona com dimetilamina, seguida de adição de reagente de Grignard 3-metoxifenil."
   },
   {
@@ -973,7 +1062,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Tóxico"],
     "tipoReacao": "Oxidação + Hidrogenação",
-    "equacaoQuimica": "C19H21NO4 -> C18H21NO4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Oxidação da tebaína com ácido peracético para formar 14-hidroxicodeinona, seguida de hidrogenação catalítica."
   },
   {
@@ -991,7 +1082,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 85,
     "perigos": ["Inflamável"],
     "tipoReacao": "Hidrogenação + Ciclização",
-    "equacaoQuimica": "C10H14N2 + H2 -> C9H17NO2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Hidrogenação das nitrilas e ciclização intramolecular para formar gabapentina."
   },
   {
@@ -1009,7 +1102,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Hidrólise + Descarboxilação",
-    "equacaoQuimica": "C9H13NO3 -> C8H17NO2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Hidrólise básica da glutarimida, descarboxilação e redução para obter pregabalina."
   },
   {
@@ -1027,7 +1122,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Corrosivo"],
     "tipoReacao": "Sulfamatação",
-    "equacaoQuimica": "C12H20O6 + SO2Cl2 + NH3 -> C12H21NO8S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Sulfamatação da diacetona-D-frutose com cloreto de sulfurila e amônia."
   },
   {
@@ -1045,7 +1142,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Condensação + Ciclização",
-    "equacaoQuimica": "C10H5Cl2F3O + CH5N4 -> C9H7Cl2N5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação com aminoguanidina para formar o anel triazínico, seguida de rearranjo."
   },
   {
@@ -1063,7 +1162,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "Alquilação + Substituição",
-    "equacaoQuimica": "C13H9ClO + C3H6Br2 + C5H11N -> C21H23ClFNO2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Alquilação da benzofenona com dibromopropano, seguida de substituição com piperidina."
   },
   {
@@ -1081,7 +1182,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Alquilação",
-    "equacaoQuimica": "C12H8ClNS + C5H12ClN -> C17H19ClN2S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Alquilação do 2-clorofenotiazina com cloreto de 3-cloro-N,N-dimetilpropilamina na presença de amideto de sódio."
   },
   {
@@ -1117,7 +1220,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 60,
     "perigos": ["Tóxico"],
     "tipoReacao": "Hidroxilação microbiana",
-    "equacaoQuimica": "C41H64O13 -> C41H64O14",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Hidroxilação microbiológica da digitoxina na posição 12β por Streptomyces sp."
   },
   {
@@ -1135,7 +1240,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 55,
     "perigos": ["Tóxico"],
     "tipoReacao": "Iodação + Acoplamento",
-    "equacaoQuimica": "C12H14O + I2 + C2H7NO + C7H3I2ClO2 -> C25H29I2NO3",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Iodação do benzofurano, acoplamento com aminoetanol e esterificação com cloreto de diiodo-hidroxibenzoíla."
   },
   {
@@ -1153,7 +1260,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "Alquilação + Redução",
-    "equacaoQuimica": "C10H11NO2 + C10H13BrO2 + C3H9N -> C27H38N2O4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Alquilação da nitrila, seguida de redução e N-alquilação com isopropilamina."
   },
   {
@@ -1171,7 +1280,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 60,
     "perigos": ["Irritante"],
     "tipoReacao": "Condensação + Ciclização",
-    "equacaoQuimica": "C11H14O4 + C13H8ClNO3 + C2H7N -> C22H26N2O4S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação do éster com a benzofenona clorada, ciclização e aminação com dimetilamina."
   },
   {
@@ -1189,7 +1300,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Lactonização + Oxidação",
-    "equacaoQuimica": "C21H30O3 + C2H4OS + H2O2 -> C24H32O4S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Formação do anel lactônico na 17α-hidroxiprogesterona via reação com ácido tioacético e oxidação."
   },
   {
@@ -1207,7 +1320,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "Condensação + Oximação + Rearranjo",
-    "equacaoQuimica": "C21H30O2 + C6H10O4 + NH2OH -> C23H36N2O2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Síntese a partir da progesterona com formação do anel 4-azaesteroidal."
   },
   {
@@ -1225,7 +1340,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "Knoevenagel + Redução + Aminação",
-    "equacaoQuimica": "C8H7ClO2 + C3H3NO2 + C2H7N -> C20H28N2O5S·HCl",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação de Knoevenagel, redução, ciclização e aminação redutiva com etilamina."
   },
   {
@@ -1243,7 +1360,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Acoplamento + Ciclização",
-    "equacaoQuimica": "C9H11NO2 + C5H12N2 + C10H6Cl2N2O -> C22H30N6O4S·C6H8O7",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Acoplamento para formar pirazolopirimidinona; o citrato precipita ao adicionar ácido cítrico."
   },
   {
@@ -1261,7 +1380,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 60,
     "perigos": ["Irritante"],
     "tipoReacao": "Pictet-Spengler + Acilação",
-    "equacaoQuimica": "C12H14N2O2 + C8H6O3 + C2H2Cl2O -> C22H19N3O4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Reação de Pictet-Spengler entre triptofano e piperonal, seguida de acilação e ciclização."
   },
   {
@@ -1279,7 +1400,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Ciclização",
-    "equacaoQuimica": "C5H7NO2 + CH3NO + N2H4 -> C5H4N4O",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Ciclização entre cianoacetato de etila, formamida e hidrazina para formar pirazolopirimidina."
   },
   {
@@ -1297,7 +1420,8 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 50,
     "perigos": ["Muito tóxico"],
     "tipoReacao": "Extração + Purificação",
-    "equacaoQuimica": "C22H25NO6",
+    "equacaoQuimica": null,
+    "esquema": "C22H25NO6",
     "descricao": "Extraída de fontes naturais (Colchicum autumnale) ou sintetizada por rota complexa. A extração e purificação são predominantes."
   },
   {
@@ -1315,7 +1439,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Substituição nucleofílica",
-    "equacaoQuimica": "C9H5Cl2N + C2H7NO + C2H7NO -> C18H26ClN3O·H2SO4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Substituição do cloro por etanolamina, seguida de hidroxietilação e salificação."
   },
   {
@@ -1351,7 +1477,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Corrosivo"],
     "tipoReacao": "Cloração",
-    "equacaoQuimica": "C18H34N2O6S + SOCl2 -> C18H33ClN2O5S",
+    "equacaoQuimica": "C18H34N2O6S + SOCl2 -> C18H33ClN2O5S + SO2 + HCl",
     "descricao": "Cloração seletiva da lincomicina com cloreto de tionila."
   },
   {
@@ -1369,7 +1495,8 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 40,
     "perigos": ["Irritante"],
     "tipoReacao": "Fermentação",
-    "equacaoQuimica": "C66H75Cl2N9O24",
+    "equacaoQuimica": null,
+    "esquema": "C66H75Cl2N9O24",
     "descricao": "Produzida por fermentação de Amycolatopsis orientalis, seguida de purificação cromatográfica."
   },
   {
@@ -1387,7 +1514,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Formação de hidrazona",
-    "equacaoQuimica": "C37H47NO12 + C5H13N3 -> C43H58N4O12",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Semi-síntese a partir da rifamicina SV com 1-amino-4-metilpiperazina."
   },
   {
@@ -1405,7 +1534,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 85,
     "perigos": ["Irritante"],
     "tipoReacao": "Amidólise",
-    "equacaoQuimica": "C6H5NO2 + N2H4 -> C6H7N3O",
+    "equacaoQuimica": "C6H5NO2 + N2H4 -> C6H7N3O + H2O",
     "descricao": "Reação do ácido isonicotínico com hidrazina hidratada em presença de ácido sulfúrico."
   },
   {
@@ -1423,7 +1552,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "Alquilação",
-    "equacaoQuimica": "C4H11NO + C2H4Br2 -> C10H24N2O2",
+    "equacaoQuimica": "2C4H11NO + C2H4Br2 -> C10H24N2O2 + 2HBr",
     "descricao": "Alquilação do 2-aminobutanol com dibromoetano para formar o dímero."
   },
   {
@@ -1441,7 +1570,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Irritante"],
     "tipoReacao": "Amidólise",
-    "equacaoQuimica": "C6H6N2O2 + NH3 -> C5H5N3O",
+    "equacaoQuimica": "C6H6N2O2 + NH3 -> C5H5N3O + CH3OH",
     "descricao": "Amidólise do pirazina-2-carboxilato de metila com amônia."
   },
   {
@@ -1459,7 +1588,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Alquilação + Hidrólise",
-    "equacaoQuimica": "C5H5N5O + C6H10O5 -> C8H11N5O3",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Alquilação da guanina, seguida de hidrólise dos grupos acetato."
   },
   {
@@ -1477,7 +1608,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 50,
     "perigos": ["Tóxico"],
     "tipoReacao": "Síntese multi-etapas",
-    "equacaoQuimica": "C7H10O5 -> C16H28N2O4·H3PO4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Síntese a partir do ácido shiquímico com introdução de grupo amino e formação de anel oxazolidínico."
   },
   {
@@ -1495,7 +1628,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Tóxico"],
     "tipoReacao": "Proteção + Azidação + Desproteção",
-    "equacaoQuimica": "C10H14N2O5 -> C10H13N5O4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Proteção da timidina, substituição por azida e desproteção."
   },
   {
@@ -1513,7 +1648,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Acoplamento de Sonogashira + Ciclização",
-    "equacaoQuimica": "C5H6 + C6H4ClIN + O2 -> C14H9ClF3NO2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Acoplamento entre ciclopropilacetileno e iodoanilina, seguido de ciclização para benzoxazinona."
   },
   {
@@ -1531,7 +1668,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 60,
     "perigos": ["Irritante"],
     "tipoReacao": "Síntese peptídica + Acilação",
-    "equacaoQuimica": "C5H11NO2 + C9H11NO2 + C4H2ClNOS -> C37H48N6O5S2",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Acoplamento de aminoácidos, seguido de acilação com cloreto de tiazol e desproteção."
   },
   {
@@ -1549,7 +1688,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Irritante"],
     "tipoReacao": "Acilação",
-    "equacaoQuimica": "C37H48N6O5S2 + C10H11ClO2 -> C47H58N6O7S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Modificação química do ritonavir por acilação da hidroxila livre."
   },
   {
@@ -1585,7 +1726,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 75,
     "perigos": ["Irritante"],
     "tipoReacao": "Abertura de epóxido",
-    "equacaoQuimica": "C8H9NO2 + C3H5ClO + C3H9N -> C14H22N2O3",
+    "equacaoQuimica": "C8H9NO2 + C3H5ClO + C3H9N -> C14H22N2O3 + HCl",
     "descricao": "Formação do epóxido e abertura com isopropilamina para obter atenolol."
   },
   {
@@ -1603,7 +1744,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 65,
     "perigos": ["Irritante"],
     "tipoReacao": "Acoplamento peptídico",
-    "equacaoQuimica": "C3H7NO2 + C5H9NO2 + C10H9ClO2 -> C20H28N2O5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Acoplamento peptídico e esterificação para obter enalapril."
   },
   {
@@ -1621,7 +1764,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 80,
     "perigos": ["Irritante"],
     "tipoReacao": "Síntese de Hantzsch",
-    "equacaoQuimica": "C7H5NO3 + C5H8O3 + C5H9NO2 -> C17H18N2O6",
+    "equacaoQuimica": "C7H5NO3 + C5H8O3 + C5H9NO2 -> C17H18N2O6 + 2H2O",
     "descricao": "Condensação multicomponente para formar diidropiridina."
   },
   {
@@ -1639,7 +1782,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 60,
     "perigos": ["Irritante"],
     "tipoReacao": "Alquilação + Tetrazolação",
-    "equacaoQuimica": "C5H11NO2 + C14H10Br2N + NaN3 -> C24H29N5O3",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Alquilação da valina, seguida de tetrazolação e hidrólise."
   },
   {
@@ -1657,7 +1802,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 55,
     "perigos": ["Irritante"],
     "tipoReacao": "Condensação + Ciclização",
-    "equacaoQuimica": "C8H7ClO2 + CH5N + C5H4OS -> C16H16ClNO2S·H2SO4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação, ciclização e resolução do enantiômero ativo."
   },
   {
@@ -1675,7 +1822,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 55,
     "perigos": ["Inflamável"],
     "tipoReacao": "Condensação aldólica + Redução",
-    "equacaoQuimica": "C15H16FN3O3S + C10H9F2O2 -> C22H28FN3O6S",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Condensação aldólica, seguida de redução estereosseletiva e hidrólise."
   },
   {
@@ -1693,7 +1842,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 70,
     "perigos": ["Tóxico"],
     "tipoReacao": "Iodação enzimática",
-    "equacaoQuimica": "C9H11NO3 + I2 -> C15H11I4NO4",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Iodação enzimática da L-tirosina para formar tiroxina (T4)."
   },
   {
@@ -1711,7 +1862,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 50,
     "perigos": ["Irritante"],
     "tipoReacao": "Semi-síntese",
-    "equacaoQuimica": "C27H42O3 -> C21H30O5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Semi-síntese a partir de diosgenina com oxidações microbianas para introduzir hidroxilas 11β e 17α."
   },
   {
@@ -1729,7 +1882,9 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 60,
     "perigos": ["Tóxico", "Oxidante"],
     "tipoReacao": "Fluoração",
-    "equacaoQuimica": "C21H28O5 + F2 -> C22H29FO5",
+    "equacaoQuimica": null,
+    "indisponivel": true,
+    "motivoIndisponivel": "Equação do acervo não fecha o balanço atômico e não há correção objetiva com os reagentes listados.",
     "descricao": "Fluoração da prednisolona na posição 9α, seguida de metilação."
   },
   {
@@ -1891,7 +2046,8 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 95,
     "perigos": ["Inflamável"],
     "tipoReacao": "Transesterificação",
-    "equacaoQuimica": "Triglicerídeo + 3CH3OH -> 3Ésteres metílicos + Glicerol",
+    "equacaoQuimica": null,
+    "esquema": "Triglicerídeo + 3CH3OH -> 3Ésteres metílicos + Glicerol",
     "descricao": "Transesterificação de triglicerídeos com metanol em presença de hidróxido de sódio, formando ésteres metílicos e glicerol."
   },
   {
@@ -1909,7 +2065,8 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 85,
     "perigos": ["Corrosivo"],
     "tipoReacao": "Saponificação",
-    "equacaoQuimica": "Triglicerídeo + 3NaOH -> 3Sabão + Glicerol",
+    "equacaoQuimica": null,
+    "esquema": "Triglicerídeo + 3NaOH -> 3Sabão + Glicerol",
     "descricao": "Hidrólise alcalina de triglicerídeos produzindo sais de ácidos graxos (sabão) e glicerol."
   },
   {
@@ -1927,7 +2084,8 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 90,
     "perigos": ["Inflamável"],
     "tipoReacao": "Polimerização por adição",
-    "equacaoQuimica": "nCH2=CH2 -> [-CH2-CH2-]n",
+    "equacaoQuimica": null,
+    "esquema": "nCH2=CH2 -> [-CH2-CH2-]n",
     "descricao": "Polimerização do etileno via catalisadores organometálicos para formar polietileno."
   },
   {
@@ -1945,7 +2103,8 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 95,
     "perigos": ["Irritante"],
     "tipoReacao": "Polimerização interfacial",
-    "equacaoQuimica": "nH2N-(CH2)6-NH2 + nClOC-(CH2)4-COCl -> [-NH-(CH2)6-NH-CO-(CH2)4-CO-]n",
+    "equacaoQuimica": null,
+    "esquema": "nH2N-(CH2)6-NH2 + nClOC-(CH2)4-COCl -> [-NH-(CH2)6-NH-CO-(CH2)4-CO-]n",
     "descricao": "Polimerização interfacial entre diamina e cloreto de diácido, formando filme de nylon na interface."
   },
   {
@@ -1981,7 +2140,7 @@ const BANCO_SINTESES_LAIFT = [
     "rendimentoPercentual": 100,
     "perigos": ["Queimadura"],
     "tipoReacao": "Fusão",
-    "equacaoQuimica": "Na2CO3 + CaCO3 + SiO2 -> Na2O·CaO·6SiO2 + 2CO2",
+    "equacaoQuimica": "Na2CO3 + CaCO3 + 6SiO2 -> Na2O·CaO·6SiO2 + 2CO2",
     "descricao": "Fusão de areia, carbonato de sódio e calcário para formar vidro soda-cal."
 
     }

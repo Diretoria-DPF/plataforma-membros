@@ -31,6 +31,7 @@ import {
   cleanText, cleanReply, byteLength, sanitizeHistory, sanitizePatientContext, contextFromPayload, sanitizeAnswerKey,
   sanitizeAttendance, validateEvaluation, validateGeneratedCase, parseJsonObject, normalizeToxindrome, normalizeDifficulty,
 } from '../ai/validators.js';
+import { screenTopic, screenGeneratedCase } from '../ai/caseGuard.js';
 import { withQuota, asObject } from './aiService.js';
 import * as ClinicalSim from './clinicalSimService.js';
 import { buildSimEvaluationMessages } from '../clinicalSim/prompts.js';
@@ -230,15 +231,24 @@ export async function generateCase(sql, env, identity, rawInput, correlationId) 
   if (topic.length < C.AI_LIMITS.TOPIC_MIN) throw E.ValidationError('Descreva o tema do caso (ex.: intoxicação por paracetamol).');
   if (topic.length > C.AI_LIMITS.TOPIC_MAX) throw E.ValidationError('O tema passou do limite de ' + C.AI_LIMITS.TOPIC_MAX + ' caracteres.');
   const difficulty = normalizeDifficulty(input.difficulty, 'Intermediário');
+  // Tema recusado antes de gastar cota ou chamar o modelo (CLI-04).
+  const screenedTopic = screenTopic(topic);
+  if (!screenedTopic.ok) throw E.ValidationError(screenedTopic.message);
 
   return withQuota(sql, identity, C.AI_FEATURE.GENERATE_CASE, async () => {
     const out = await Orchestrator.complete(sql, env, identity, {
       feature: C.AI_FEATURE.GENERATE_CASE,
-      messages: buildCaseGenerationMessages({ topic, difficulty }),
+      messages: buildCaseGenerationMessages({ topic: screenedTopic.topic, difficulty }),
       profileId: identity.profileId,
     });
-    const generated = validateGeneratedCase(parseJsonObject(out.content), { difficulty });
-    if (!generated) throw AiInvalidOutputError('A IA gerou um caso incompleto desta vez; nada foi salvo. Tente novamente.');
+    const validated = validateGeneratedCase(parseJsonObject(out.content), { difficulty });
+    if (!validated) throw AiInvalidOutputError('A IA gerou um caso incompleto desta vez; nada foi salvo. Tente novamente.');
+    const screened = screenGeneratedCase(validated);
+    if (!screened.ok) {
+      await Logging.logAudit(sql, correlationId, identity.profileId, 'GENERATE_CLINICAL_CASE', 'clinical_case', null, 'failure', { reason: screened.reason });
+      throw AiInvalidOutputError('A IA gerou um caso que não passou na verificação de conteúdo; nada foi salvo. Tente outro tema.');
+    }
+    const generated = screened.case;
 
     const rows = await sql`
       INSERT INTO clinical_cases (title, toxindrome, agent, payload, source, status, created_by)
@@ -409,12 +419,15 @@ async function approveSimCase(sql, identity, caseId, rawChecklist) {
   }
 }
 
+// Quem criou o caso não o aprova (vale para qualquer caso, com ou sem sim_profile, gerado por IA ou não). Rejeitar o
+// próprio caso continua permitido. A regra fica no WHERE para ser atômica.
 async function decideCase(sql, identity, caseId, decision) {
   try {
     return await sql`
       UPDATE clinical_cases
       SET status = ${decision}, reviewed_by = ${identity.profileId}::uuid, reviewed_at = now()
       WHERE id = ${caseId}::uuid AND status = 'pending'
+        AND (${decision}::text <> 'approved' OR created_by IS DISTINCT FROM ${identity.profileId}::uuid)
       RETURNING id
     `;
   } catch (err) {
@@ -423,11 +436,14 @@ async function decideCase(sql, identity, caseId, decision) {
   }
 }
 
-async function explainNoUpdate(sql, caseId, simReview) {
+async function explainNoUpdate(sql, identity, caseId, simReview) {
   const current = simReview
-    ? await sql`SELECT status, (sim_profile IS NOT NULL) AS has_sim FROM clinical_cases WHERE id = ${caseId}::uuid`
-    : await sql`SELECT status FROM clinical_cases WHERE id = ${caseId}::uuid`;
+    ? await sql`SELECT status, created_by, (sim_profile IS NOT NULL) AS has_sim FROM clinical_cases WHERE id = ${caseId}::uuid`
+    : await sql`SELECT status, created_by FROM clinical_cases WHERE id = ${caseId}::uuid`;
   if (!current.length) throw E.NotFoundError('Caso não encontrado.');
+  if (current[0].status === 'pending' && current[0].created_by && String(current[0].created_by) === String(identity.profileId)) {
+    throw E.ForbiddenError(C.SIM_MESSAGES.reviewSameAuthor);
+  }
   if (simReview && current[0].status === 'pending' && !current[0].has_sim) throw E.ValidationError(C.SIM_MESSAGES.reviewNoProfile);
   throw E.ConflictError('Este caso já foi revisado.');
 }
@@ -446,7 +462,7 @@ export async function reviewCase(sql, env, identity, rawInput, correlationId) {
   const rows = simReview
     ? await approveSimCase(sql, identity, caseId, input.checklist)
     : await decideCase(sql, identity, caseId, decision);
-  if (!rows.length) await explainNoUpdate(sql, caseId, simReview);
+  if (!rows.length) await explainNoUpdate(sql, identity, caseId, simReview);
 
   await invalidateCached(env, LIBRARY_CACHE_KEY);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'REVIEW_CLINICAL_CASE', 'clinical_case', caseId, 'success', { decision, clinicalReview: simReview });

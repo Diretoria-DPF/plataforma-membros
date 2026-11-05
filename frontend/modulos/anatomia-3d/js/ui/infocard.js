@@ -5,7 +5,7 @@
  * `{render(entry, content), setTab(id), clear(), getTab()}`.
  */
 
-import { SYSTEMS } from '../core/contracts.js';
+import { SYSTEMS, LAYERS } from '../core/contracts.js';
 
 /**
  * Cria um objeto com os métodos da ficha.
@@ -14,39 +14,23 @@ import { SYSTEMS } from '../core/contracts.js';
  * @param {Function} options.onAction - Callback chamado com {action, sid}
  * @returns {Object} Interface da ficha: {render, setTab, clear, getTab}
  */
-/**
- * Selo de revisão da ficha — um por estado de `content.review.status`
- * (content.schema.json). Nunca "Rascunho": o conteúdo editorial é
- * publicado e revisado depois pelo conselho da LAIFT.
- * @param {{status?: string, by?: string, date?: string, review_requested_at?: string}|undefined} review
- * @param {number} [now]
- * @returns {{kind: string, label: string, tooltip: string}|null}
- */
-export function getStatusLabel(review, now = Date.now()) {
-  if (!review || !review.status) return null;
-  switch (review.status) {
-    case 'editorial': {
-      const asked = review.review_requested_at ? Date.parse(`${review.review_requested_at}T00:00:00Z`) : NaN;
-      const days = Number.isNaN(asked) ? 0 : Math.floor((now - asked) / 86400000);
-      if (days >= 30) {
-        return { kind: 'editorial-late', label: `Aguardando revisão há ${days} dias`, tooltip: 'O conselho editorial da LAIFT ainda não revisou este conteúdo.' };
-      }
-      return { kind: 'editorial', label: 'Em revisão editorial', tooltip: 'O conselho editorial da LAIFT está revisando este conteúdo.' };
-    }
-    case 'legacy-unverified':
-      return { kind: 'legacy', label: 'Conteúdo antigo · sem revisão', tooltip: 'Migrado de base antiga. Sem revisão formal.' };
-    case 'auto-draft':
-      return { kind: 'auto', label: 'Gerado automaticamente · não revisado', tooltip: 'Gerado por script a partir de fontes abertas. Não passe adiante sem conferir.' };
-    case 'reviewed':
-    case 'approved': {
-      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(review.date || '');
-      const date = m ? `${m[3]}/${m[2]}/${m[1]}` : '';
-      const label = review.by ? `Revisado por ${review.by}${date ? ` em ${date}` : ''}` : `Revisado${date ? ` em ${date}` : ''}`;
-      return { kind: 'reviewed', label, tooltip: 'Revisado pelo conselho editorial da LAIFT.' };
-    }
-    default:
-      return null;
-  }
+/** Frase padrão de texto automático ("Resumo ainda não redigido — aguardando…"): nunca é mostrada ao público. */
+const PLACEHOLDER_SENTENCE = /\s*resumo ainda n[ãa]o redigido[^.]*\.?/gi;
+
+/** Resumo apresentável ao público, ou '' quando não há texto útil. */
+export function publicSummary(text) {
+  if (typeof text !== 'string') return '';
+  return text.replace(PLACEHOLDER_SENTENCE, '').trim();
+}
+
+/** Fatos neutros de uma estrutura sem ficha: sistema, camada (localização) e lado. */
+export function plainFacts(entry, { systemLabel = '', layerLabel = '', sideLabel = '' } = {}) {
+  const facts = [];
+  if (systemLabel) facts.push({ label: 'Sistema', value: systemLabel });
+  if (layerLabel) facts.push({ label: 'Localização', value: layerLabel });
+  if (sideLabel) facts.push({ label: 'Lado', value: sideLabel });
+  if (entry && entry.names && entry.names.en && entry.names.en !== entry.names.pt) facts.push({ label: 'Nome em inglês', value: entry.names.en });
+  return facts;
 }
 
 const SIDE_LABEL = { l: 'Esquerdo', L: 'Esquerdo', r: 'Direito', R: 'Direito' };
@@ -61,6 +45,7 @@ export function createInfoCard(container, { onAction = () => {}, tts = false, is
 
   // Mapeamento de system id → label PT
   const systemMap = Object.fromEntries(SYSTEMS.map((s) => [s.id, s.label]));
+  const layerMap = Object.fromEntries(LAYERS.map((l) => [l.id, l.label]));
 
   // "Ouvir a ficha" (PR 3.1.10): speechSynthesis em pt-BR. Some quando o
   // navegador não tem a API; para ao trocar de estrutura ou limpar a ficha.
@@ -152,24 +137,6 @@ export function createInfoCard(container, { onAction = () => {}, tts = false, is
     const name = h('h2', { id: 'organ-name', className: 'atlas-card-name', text: entry.names.pt });
     nameContainer.appendChild(name);
 
-    // Selo de revisão (4 estados — getStatusLabel)
-    const status = getStatusLabel(content && content.review);
-    if (status) {
-      const badge = h('div', {
-        className: `atlas-card-status atlas-card-status--${status.kind}`, title: status.tooltip,
-      }, [
-        h('span', { className: 'atlas-card-status-icon', 'aria-hidden': 'true', text: status.kind === 'reviewed' ? '✓' : status.kind === 'editorial' || status.kind === 'editorial-late' ? '⏳' : '○' }),
-        h('span', { className: 'atlas-card-status-text', text: status.label }),
-        h('span', { className: 'laift-sr-only', text: `. ${status.tooltip}` }),
-      ]);
-      nameContainer.appendChild(badge);
-    }
-    // CON-01: ⓘ com explicação e "Reportar erro" quando a ficha tem dado de revisão e ainda não tem revisor.
-    // Sem `review` no conteúdo o estado é desconhecido: nada é inventado, sem selo.
-    const seal = window.LaiftReviewSeal && window.LaiftReviewSeal.create(content, {
-      kind: 'ficha', module: 'Atlas 3D', id: entry.sid, excerpt: entry.names && entry.names.pt,
-    });
-    if (seal) nameContainer.appendChild(seal);
     if (entry.isNew) {
       nameContainer.appendChild(h('span', { className: 'atlas-card-new', text: 'Novo' }));
     }
@@ -186,14 +153,6 @@ export function createInfoCard(container, { onAction = () => {}, tts = false, is
     }));
     if (SIDE_LABEL[entry.side]) {
       subtitle.appendChild(h('span', { className: 'atlas-card-chip atlas-card-side', text: SIDE_LABEL[entry.side] }));
-    }
-    // Nome traduzido com ajuda de IA e ainda não revisado pelo conselho (PR 3.1.5).
-    if (entry.nameAssisted) {
-      subtitle.appendChild(h('span', {
-        className: 'atlas-card-chip atlas-card-assisted',
-        title: `Tradução assistida, ainda sem revisão do conselho. Nome original: ${entry.names.en}`,
-        text: 'Tradução assistida',
-      }));
     }
     // "Ver mais": no celular, abre a ficha completa (painel em "metade").
     const more = h('button', { type: 'button', className: 'atlas-card-more', text: 'Ver mais' });
@@ -399,10 +358,10 @@ export function createInfoCard(container, { onAction = () => {}, tts = false, is
 
     const section = h('div', { className: 'atlas-card-tab-content' });
 
-    if (!currentContent.summary_pt) {
-      section.appendChild(h('p', { className: 'atlas-card-empty', text: 'Sem descrição ainda.' }));
+    const text = publicSummary(currentContent.summary_pt);
+    if (!text) {
+      section.appendChild(renderFacts());
     } else {
-      const text = currentContent.summary_pt;
       if (speech) {
         const btn = h('button', {
           type: 'button', className: 'atlas-card-listen', 'aria-pressed': 'false',
@@ -415,6 +374,32 @@ export function createInfoCard(container, { onAction = () => {}, tts = false, is
     }
 
     return section;
+  }
+
+  /** Estrutura sem ficha: nome, sistema, localização e atalhos úteis (sem avisos de ausência). */
+  function renderFacts() {
+    const entry = currentEntry;
+    const box = h('div', { className: 'atlas-card-facts' });
+    if (!entry) return box;
+    const facts = plainFacts(entry, {
+      systemLabel: systemMap[entry.system] || entry.system,
+      layerLabel: layerMap[entry.layer] || '',
+      sideLabel: SIDE_LABEL[entry.side] || '',
+    });
+    const dl = h('dl', { className: 'atlas-card-facts-list' });
+    facts.forEach((f) => {
+      dl.appendChild(h('dt', { text: f.label }));
+      dl.appendChild(h('dd', { text: f.value }));
+    });
+    box.appendChild(dl);
+    const shortcuts = h('div', { className: 'atlas-card-shortcuts', role: 'group', 'aria-label': 'Atalhos' });
+    [['focus', 'Ver no corpo']].forEach(([action, label]) => {
+      const btn = h('button', { type: 'button', className: 'atlas-card-shortcut', text: label });
+      btn.addEventListener('click', () => onAction({ action, sid: entry.sid }));
+      shortcuts.appendChild(btn);
+    });
+    box.appendChild(shortcuts);
+    return box;
   }
 
   function renderAnatomia() {
@@ -590,38 +575,6 @@ export function createInfoCard(container, { onAction = () => {}, tts = false, is
 
       sourcesGroup.appendChild(sourcesList);
       section.appendChild(sourcesGroup);
-    }
-
-    // Status de revisão
-    if (currentContent.review) {
-      const reviewGroup = h('div', { className: 'atlas-card-field-group atlas-card-review-info' });
-      reviewGroup.appendChild(h('h4', { className: 'atlas-card-field-label', text: 'Status de Revisão' }));
-
-      const dl = h('dl', { className: 'atlas-card-review-list' });
-
-      if (currentContent.review.status) {
-        const dt1 = h('dt', { text: 'Status' });
-        const dd1 = h('dd', { text: currentContent.review.status });
-        dl.appendChild(dt1);
-        dl.appendChild(dd1);
-      }
-
-      if (currentContent.review.by) {
-        const dt2 = h('dt', { text: 'Revisor' });
-        const dd2 = h('dd', { text: currentContent.review.by });
-        dl.appendChild(dt2);
-        dl.appendChild(dd2);
-      }
-
-      if (currentContent.review.date) {
-        const dt3 = h('dt', { text: 'Data' });
-        const dd3 = h('dd', { text: currentContent.review.date });
-        dl.appendChild(dt3);
-        dl.appendChild(dd3);
-      }
-
-      reviewGroup.appendChild(dl);
-      section.appendChild(reviewGroup);
     }
 
     return section;

@@ -19,6 +19,7 @@ const eq = (actual, expected) => assert.deepStrictEqual(JSON.parse(JSON.stringif
 const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
 const SIM_SRC = read('frontend/modulos/clinica/clinic-sim.js');
 const ENGINE_SRC = read('frontend/modulos/clinica/clinic-engine.js');
+const CORE_SRC = read('frontend/modulos/clinica/clinic-core.js');
 const PATIENTS_SRC = read('frontend/modulos/clinica/patients.js');
 const HTML = read('frontend/modulos/clinica/index.html');
 
@@ -258,6 +259,7 @@ function loadEngine({ quotaResponse }) {
   vm.createContext(sandbox);
   vm.runInContext(PATIENTS_SRC, sandbox, { filename: 'patients.js' });
   vm.runInContext(SIM_SRC, sandbox, { filename: 'clinic-sim.js' });
+  vm.runInContext(CORE_SRC, sandbox, { filename: 'clinic-core.js' });
   vm.runInContext(ENGINE_SRC, sandbox, { filename: 'clinic-engine.js' });
   return { engine: sandbox.window.ClinicEngine, sim: sandbox.window.ClinicSim, document, calls, sandbox };
 }
@@ -309,5 +311,7 @@ test('motor COM aviso mas modo desligado pela pessoa: nada é enviado', async ()
 
 test('a página da clínica carrega o clinic-sim.js antes do motor e tem os 3 pontos de encaixe', () => {
   assert.ok(HTML.indexOf('clinic-sim.js') > -1 && HTML.indexOf('clinic-sim.js') < HTML.indexOf('clinic-engine.js'));
+  const tag = (f) => HTML.indexOf('<script src="' + f + '"');
+  assert.ok(tag('clinic-core.js') > -1 && tag('clinic-core.js') < tag('clinic-engine.js'));
   ['id="simModeBox"', 'id="simBanner"', 'id="simDebrief"'].forEach((marker) => assert.ok(HTML.includes(marker), marker));
 });

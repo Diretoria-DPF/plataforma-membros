@@ -1,0 +1,732 @@
+{
+  "id": "proc_vitc_filtrada_v1",
+  "versao": 1,
+  "titulo": "Solução de ácido ascórbico a 5 % estéril por filtração",
+  "categoria": "farmacotecnica",
+  "nivel": 5,
+  "nivel_conteudo": "completo",
+  "restricao": null,
+  "revisado_por": null,
+  "forma": "solucao_esteril",
+  "setor": "hospitalar",
+  "conferencia": {
+    "estado": "pendente",
+    "nota": "[NV] Valores numéricos, faixas de critério, tolerâncias e citações de norma a conferir com a fonte primária (edição e artigo vigentes) antes de publicar."
+  },
+  "duracaoSimuladaMin": 120,
+  "via": "parenteral",
+  "objetivos": [
+    "Escolher filtração esterilizante para um insumo termolábil",
+    "Envasar com técnica asséptica",
+    "Conferir teor, pH e esterilidade conceitual"
+  ],
+  "fontesOficiais": [
+    {
+      "tipo": "Farmacopeia Brasileira",
+      "citacao": "Farmacopeia Brasileira (ANVISA), edição vigente, métodos de esterilização e ensaio de esterilidade"
+    },
+    {
+      "tipo": "RDC",
+      "citacao": "RDC nº 67/2007 (ANVISA)"
+    }
+  ],
+  "formulacao": {
+    "base": "para 100 mL",
+    "itens": [
+      {
+        "especie": "AcidoAscorbico_s",
+        "funcao": "ativo",
+        "quantidade": {
+          "valor": 5,
+          "unidade": "g"
+        }
+      },
+      {
+        "especie": "H2O_l",
+        "funcao": "veículo",
+        "quantidade": {
+          "valor": 100,
+          "unidade": "mL",
+          "qsp": true
+        }
+      }
+    ]
+  },
+  "cq": [
+    {
+      "ensaio": "esterilidade (conceitual)",
+      "criterio": "sem crescimento"
+    },
+    {
+      "ensaio": "teor de ácido ascórbico",
+      "criterio": "95 a 105 % do declarado"
+    },
+    {
+      "ensaio": "pH",
+      "criterio": "entre 2,0 e 3,5"
+    }
+  ],
+  "referencias": [
+    {
+      "titulo": "Farmacopeia Brasileira (edição vigente), esterilização e esterilidade",
+      "nota": "[NV] conferir método e critério"
+    },
+    {
+      "titulo": "RDC nº 67/2007 (ANVISA)",
+      "nota": "[NV] conferir vigência e alterações"
+    }
+  ],
+  "recipientes": [
+    {
+      "id": "bequer_150",
+      "tipo": "bequer",
+      "capMl": 150
+    },
+    {
+      "id": "balao_100",
+      "tipo": "balao_volumetrico",
+      "capMl": 110
+    },
+    {
+      "id": "frasco_100",
+      "tipo": "frasco",
+      "capMl": 110
+    }
+  ],
+  "materiais": {
+    "especies": [
+      {
+        "id": "AcidoAscorbico_s",
+        "papel": "ativo",
+        "quantidade": {
+          "valor": 5,
+          "unidade": "g"
+        }
+      },
+      {
+        "id": "H2O_l",
+        "papel": "solvente",
+        "quantidade": {
+          "valor": 100,
+          "unidade": "mL"
+        }
+      }
+    ],
+    "vidraria": [
+      "bequer_150",
+      "balao_volumetrico_100",
+      "frasco_100"
+    ],
+    "equipamentos": [
+      "balanca_analitica",
+      "filtro_022",
+      "fluxo_laminar",
+      "phmetro"
+    ]
+  },
+  "seguranca": {
+    "epi": [
+      "jaleco",
+      "luvas_nitrila",
+      "oculos",
+      "mascara",
+      "touca"
+    ],
+    "capela": false,
+    "riscos": [],
+    "residuos": [
+      {
+        "tipo": "solucao_aquosa_diluida",
+        "destino": "pia"
+      }
+    ]
+  },
+  "etapas": [
+    {
+      "id": "e1",
+      "titulo": "Paramentação",
+      "oQueEstaAcontecendo": "Você veste os equipamentos de proteção antes de abrir qualquer frasco.",
+      "porQue": "Em preparação estéril, touca, máscara e luvas reduzem a carga de micro-organismos que a pessoa libera.",
+      "preCondicoes": [],
+      "acao": {
+        "operacao": "paramentar",
+        "parametros": {
+          "epi": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos",
+            "mascara",
+            "touca"
+          ],
+          "capela": false
+        },
+        "alvoUI": "painelSeguranca"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "epi",
+          "op": "contem",
+          "valor": [
+            "jaleco",
+            "luvas_nitrila",
+            "oculos",
+            "mascara",
+            "touca"
+          ],
+          "mensagemSeFalhar": "Falta equipamento de proteção: jaleco, luvas_nitrila, oculos, mascara, touca.",
+          "consequencia": "bloqueia_etapa"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "titulo": "Calcular e pesar o ácido ascórbico",
+      "oQueEstaAcontecendo": "Você pesa 5,00 g de ácido ascórbico para 100 mL de solução a 5 % p/v.",
+      "porQue": "Em % p/v, 5 % são 5 g em cada 100 mL de produto final.",
+      "calculoPrevio": {
+        "pergunta": "Quantos gramas de ácido ascórbico para 100 mL a 5 % p/v?",
+        "formula": "m = C(%) × V(mL) / 100",
+        "resposta": 5,
+        "tolerancia": 0.05,
+        "unidade": "g"
+      },
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e1"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "tarar",
+          "parametros": {
+            "recipiente": "bequer_150"
+          },
+          "alvoUI": "balancaTara"
+        },
+        {
+          "operacao": "pesar",
+          "parametros": {
+            "especie": "AcidoAscorbico_s",
+            "massaG": 5,
+            "recipiente": "bequer_150"
+          },
+          "alvoUI": "reagente:AcidoAscorbico_s"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massa",
+          "recipiente": "bequer_150",
+          "especie": "AcidoAscorbico_s",
+          "op": "entre",
+          "valor": [
+            4.97,
+            5.03
+          ],
+          "mensagemSeFalhar": "Massa fora de 5 ± 0.03 g: ajuste antes de seguir.",
+          "consequencia": "aviso"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_tara"
+          },
+          "consequencia": "massa_registrada_inclui_recipiente",
+          "explicacao": "Sem tara entre os componentes, a leitura soma o que já estava no recipiente e a massa registrada fica errada.",
+          "correcao": "Toque em Tara depois de cada adição, antes de pesar o próximo componente."
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "titulo": "Dissolver",
+      "oQueEstaAcontecendo": "Cerca de 70 mL de água purificada, à temperatura ambiente, dissolvem o ácido ascórbico sob agitação.",
+      "porQue": "O ácido ascórbico oxida e degrada com calor, luz e ar: dissolve-se sem aquecer.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e2"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "medirVolume",
+          "parametros": {
+            "especie": "H2O_l",
+            "volumeMl": 70,
+            "vidraria": "proveta",
+            "recipiente": "bequer_150"
+          },
+          "alvoUI": "reagente:H2O_l"
+        },
+        {
+          "operacao": "dissolver",
+          "parametros": {
+            "recipiente": "bequer_150",
+            "agitacao": true,
+            "tempoMin": 15
+          },
+          "alvoUI": "btnAgitar"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "massaSolido",
+          "recipiente": "bequer_150",
+          "especie": "AcidoAscorbico_s",
+          "op": "<=",
+          "valor": 0.01,
+          "mensagemSeFalhar": "Ainda há cristais: continue agitando, sem aquecer.",
+          "consequencia": "aguardar"
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "titulo": "Transferir e completar o volume",
+      "oQueEstaAcontecendo": "A solução passa ao balão de 100 mL com enxágue e a água completa até a marca.",
+      "porQue": "O volume final fixa a concentração em 5 g por 100 mL.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e3"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "transferir",
+          "parametros": {
+            "origem": "bequer_150",
+            "destino": "balao_100",
+            "enxague": true
+          },
+          "alvoUI": "btnTransferir"
+        },
+        {
+          "operacao": "avolumar",
+          "parametros": {
+            "recipiente": "balao_100",
+            "solvente": "H2O_l",
+            "volumeFinalMl": 100
+          },
+          "alvoUI": "btnAvolumar"
+        },
+        {
+          "operacao": "agitar",
+          "parametros": {
+            "recipiente": "balao_100",
+            "tempoMin": 6
+          },
+          "alvoUI": "btnAgitar"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "volumeMl",
+          "recipiente": "balao_100",
+          "op": "entre",
+          "valor": [
+            99.8,
+            100.2
+          ],
+          "mensagemSeFalhar": "O volume passou da marca.",
+          "consequencia": "aviso"
+        },
+        {
+          "grandeza": "homogeneo",
+          "recipiente": "balao_100",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A mistura ainda não está homogênea: continue misturando.",
+          "consequencia": "aguardar"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "sem_enxague"
+          },
+          "consequencia": "teor_abaixo",
+          "explicacao": "Cerca de 2 % do soluto ficou no béquer sem enxágue.",
+          "correcao": "Enxágue o béquer e junte ao balão."
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "titulo": "Esterilizar por filtração",
+      "oQueEstaAcontecendo": "A solução passa por uma membrana de 0,22 µm e chega estéril ao recipiente.",
+      "porQue": "Autoclavar degrada o ácido ascórbico (é termolábil). A filtração esterilizante retém micro-organismos sem aquecer.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e4"
+        }
+      ],
+      "acao": {
+        "operacao": "esterilizar",
+        "parametros": {
+          "recipiente": "balao_100",
+          "metodo": "filtracao_022",
+          "membranaUm": 0.22
+        },
+        "alvoUI": "btnEsterilizar"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "esteril",
+          "recipiente": "balao_100",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "A membrana usada não esteriliza: use poro de 0,22 µm.",
+          "consequencia": "aguardar"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "termolabil_autoclavado"
+          },
+          "consequencia": "termolabil_autoclavado",
+          "explicacao": "Um termolábil perde teor e escurece na autoclave.",
+          "correcao": "Use filtração por membrana de 0,22 µm."
+        }
+      ]
+    },
+    {
+      "id": "e6",
+      "titulo": "Envasar com técnica asséptica",
+      "oQueEstaAcontecendo": "O volume vai ao frasco âmbar de 100 mL em fluxo laminar, com assepsia.",
+      "porQue": "Sem técnica asséptica o produto estéril se contamina no envase e deixa de ser estéril.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e5"
+        }
+      ],
+      "acao": {
+        "operacao": "envasar",
+        "parametros": {
+          "origem": "balao_100",
+          "frasco": "frasco_100",
+          "volumeMl": 100,
+          "capMl": 110,
+          "assepsia": true
+        },
+        "alvoUI": "btnEnvasar"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "esteril",
+          "recipiente": "frasco_100",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "O frasco perdeu a esterilidade no envase.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": [
+        {
+          "gatilho": {
+            "grandeza": "desvio",
+            "op": "contem",
+            "valor": "perdeu_esterilidade"
+          },
+          "consequencia": "perdeu_esterilidade",
+          "explicacao": "Envasar sem assepsia contamina o produto.",
+          "correcao": "Envase em fluxo laminar, com material estéril."
+        }
+      ]
+    },
+    {
+      "id": "e7",
+      "titulo": "Teste de esterilidade (conceitual)",
+      "oQueEstaAcontecendo": "Uma amostra do lote é incubada em meio de cultura, como ensaio conceitual.",
+      "porQue": "O ensaio confirma que o processo asséptico funcionou naquele lote.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e6"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "esterilidade",
+            "recipiente": "frasco_100"
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_esterilidade_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e8",
+      "titulo": "Teor de ácido ascórbico",
+      "oQueEstaAcontecendo": "O teor é conferido contra o declarado de 5 g por 100 mL.",
+      "porQue": "Perda de teor aponta degradação ou erro de pesagem.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e7"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "teor_ativo",
+            "recipiente": "frasco_100",
+            "especie": "AcidoAscorbico_s",
+            "nominal": 5,
+            "unidade": "g/100mL",
+            "faixaPct": [
+              95,
+              105
+            ]
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_teor_ativo_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e9",
+      "titulo": "pH",
+      "oQueEstaAcontecendo": "O pHmetro calibrado mede uma alíquota.",
+      "porQue": "Solução de ácido ascórbico é ácida; o pH confere a identidade e a concentração.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e8"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "calibrar",
+          "parametros": {
+            "tampoes": [
+              4,
+              7
+            ]
+          },
+          "alvoUI": "phmetroCalibrar"
+        },
+        {
+          "operacao": "ensaioCQ",
+          "parametros": {
+            "teste": "ph",
+            "recipiente": "frasco_100",
+            "faixa": [
+              2,
+              3.5
+            ],
+            "modelo": {
+              "variavel": {
+                "especie": "AcidoAscorbico_s",
+                "base": "pv"
+              },
+              "pontos": [
+                [
+                  0,
+                  6
+                ],
+                [
+                  1,
+                  3.2
+                ],
+                [
+                  5,
+                  2.5
+                ]
+              ]
+            }
+          },
+          "alvoUI": "painelCQ"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "desvio",
+          "op": "naoContem",
+          "valor": "cq_ph_reprovado",
+          "mensagemSeFalhar": "Resultado fora do critério: registre como não conforme e investigue a causa antes de liberar o lote.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e10",
+      "titulo": "Rotular",
+      "oQueEstaAcontecendo": "Você preenche o rótulo com os dados do produto, do lote e do responsável, e as advertências aplicáveis.",
+      "porQue": "Sem rótulo completo o produto não pode ser identificado, rastreado nem usado com segurança.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e9"
+        }
+      ],
+      "acao": {
+        "operacao": "rotular",
+        "parametros": {
+          "recipiente": "frasco_100",
+          "campos": {
+            "lote": "LAB-003",
+            "fabricacao": "data da prática",
+            "validade": "conforme o procedimento da bancada",
+            "responsavel": "turma",
+            "produto": "Solução de ácido ascórbico estéril",
+            "concentracao": "5 % p/v (50 mg/mL)",
+            "conservacao": "Proteger da luz, conservar sob refrigeração"
+          },
+          "camposObrigatorios": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "conservacao"
+          ]
+        },
+        "alvoUI": "painelRotulo"
+      },
+      "verificacoes": [
+        {
+          "grandeza": "rotuloCompleto",
+          "recipiente": "frasco_100",
+          "campos": [
+            "produto",
+            "concentracao",
+            "lote",
+            "fabricacao",
+            "validade",
+            "responsavel",
+            "conservacao"
+          ],
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Rótulo incompleto: preencha todos os campos obrigatórios.",
+          "consequencia": "nao_conforme"
+        }
+      ],
+      "errosComuns": []
+    },
+    {
+      "id": "e11",
+      "titulo": "Descarte e limpeza",
+      "oQueEstaAcontecendo": "Você descarta os restos de cada recipiente no destino correto e lava a vidraria.",
+      "porQue": "O destino do resíduo depende da sua natureza; descarte correto é requisito de segurança e ambiental.",
+      "preCondicoes": [
+        {
+          "grandeza": "etapaConcluida",
+          "op": "==",
+          "valor": "e10"
+        }
+      ],
+      "acao": [
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "bequer_150",
+            "destino": "pia"
+          },
+          "alvoUI": "painelDescarte"
+        },
+        {
+          "operacao": "descartar",
+          "parametros": {
+            "recipiente": "balao_100",
+            "destino": "pia"
+          },
+          "alvoUI": "painelDescarte"
+        }
+      ],
+      "verificacoes": [
+        {
+          "grandeza": "residuoConforme",
+          "op": "==",
+          "valor": true,
+          "mensagemSeFalhar": "Destino de descarte inadequado para este resíduo.",
+          "consequencia": "nao_conforme"
+        }
+      ]
+    }
+  ],
+  "resultadoEsperado": {
+    "produto": "AcidoAscorbico_s",
+    "criterios": [
+      {
+        "descricao": "Concentração entre 4,7 e 5,3 % p/v",
+        "grandeza": "concentracaoPV",
+        "recipiente": "frasco_100",
+        "especie": "AcidoAscorbico_s",
+        "op": "entre",
+        "valor": [
+          4.7,
+          5.3
+        ]
+      },
+      {
+        "descricao": "Frasco estéril",
+        "grandeza": "esteril",
+        "recipiente": "frasco_100",
+        "op": "==",
+        "valor": true
+      },
+      {
+        "descricao": "Rótulo completo",
+        "grandeza": "rotuloCompleto",
+        "recipiente": "frasco_100",
+        "campos": [
+          "produto",
+          "concentracao",
+          "lote",
+          "fabricacao",
+          "validade",
+          "responsavel",
+          "conservacao"
+        ],
+        "op": "==",
+        "valor": true
+      }
+    ]
+  }
+}
