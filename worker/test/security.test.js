@@ -58,6 +58,37 @@ describe('security.js — validação', () => {
   test('isValidLinkedinUrl: rejeita acima de 255 caracteres', () => {
     expect(S.isValidLinkedinUrl('https://linkedin.com/in/' + 'a'.repeat(250))).toBe(false);
   });
+
+  test('normalizeLinkedinUrl: aceita formatos soltos e devolve a URL canônica', () => {
+    expect(S.normalizeLinkedinUrl('')).toBe('');
+    expect(S.normalizeLinkedinUrl('  ')).toBe('');
+    expect(S.normalizeLinkedinUrl('https://www.linkedin.com/in/fulano')).toBe('https://www.linkedin.com/in/fulano');
+    expect(S.normalizeLinkedinUrl('linkedin.com/in/fulano')).toBe('https://www.linkedin.com/in/fulano');
+    expect(S.normalizeLinkedinUrl('www.linkedin.com/in/fulano/?utm=1#x')).toBe('https://www.linkedin.com/in/fulano');
+    expect(S.normalizeLinkedinUrl('br.linkedin.com/in/fulano-silva')).toBe('https://br.linkedin.com/in/fulano-silva');
+    expect(S.normalizeLinkedinUrl('https://linkedin.com/company/laift')).toBe('https://www.linkedin.com/company/laift');
+  });
+
+  test('normalizeLinkedinUrl: rejeita host falso, esquema inseguro e caminho fora de /in e /company', () => {
+    for (const bad of [
+      'https://evil.com/in/fulano', 'https://linkedin.com.evil.com/in/x', 'https://evillinkedin.com/in/x',
+      'http://linkedin.com/in/fulano', 'javascript:alert(1)', 'https://linkedin.com/feed', 'https://linkedin.com/',
+      'https://user:pw@linkedin.com/in/x', 'fulano', 'https://linkedin.com/in/' + 'a'.repeat(250),
+    ]) {
+      expect(S.normalizeLinkedinUrl(bad)).toBeNull();
+    }
+  });
+
+  test('normalizeInstagramHandle: aceita @, usuário puro e URL; rejeita o resto', () => {
+    expect(S.normalizeInstagramHandle('')).toBe('');
+    expect(S.normalizeInstagramHandle('@fulano.silva')).toBe('fulano.silva');
+    expect(S.normalizeInstagramHandle('fulano_1')).toBe('fulano_1');
+    expect(S.normalizeInstagramHandle('instagram.com/fulano')).toBe('fulano');
+    expect(S.normalizeInstagramHandle('https://www.instagram.com/fulano/?hl=pt')).toBe('fulano');
+    for (const bad of ['https://evil.com/fulano', 'a b', 'fulano!', 'x'.repeat(31), 'https://instagram.com/']) {
+      expect(S.normalizeInstagramHandle(bad)).toBeNull();
+    }
+  });
 });
 
 describe('security.js — enforceRateLimit', () => {

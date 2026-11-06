@@ -30,7 +30,6 @@ const BCRYPT_COST = 10;
 const DUMMY_BCRYPT_HASH = '$2a$10$CwTycUXWue0Thq9StjUM0uJ8vC0Ldx7Fn6TZ2yq6q9Q2q9Q2q9Q2q';
 
 const USERNAME_RE = /^[a-zA-Z0-9_.]{3,30}$/;
-const INSTAGRAM_RE = /^@?[a-zA-Z0-9_.]{1,30}$/;
 
 function assertValidRegistration(input) {
   const fullName = S.normalizeText(input.fullName);
@@ -38,8 +37,8 @@ function assertValidRegistration(input) {
   const email = S.normalizeText(input.email).toLowerCase();
   const phone = S.normalizeText(input.phone);
   const education = S.normalizeText(input.education);
-  const linkedinUrl = S.normalizeText(input.linkedinUrl);
-  const instagramHandle = S.normalizeText(input.instagramHandle).replace(/^@/, '');
+  const linkedinUrl = S.normalizeLinkedinUrl(input.linkedinUrl);
+  const instagramHandle = S.normalizeInstagramHandle(input.instagramHandle);
   const interests = S.normalizeText(input.interests);
   const password = S.normalizeText(input.password);
   const validationPreference = S.normalizeText(input.validationPreference || 'email');
@@ -59,12 +58,8 @@ function assertValidRegistration(input) {
   if (education && education.length > C.LIMITS.EDUCATION_MAX) {
     throw E.ValidationError('Escolaridade inválida.');
   }
-  if (linkedinUrl && !S.isValidLinkedinUrl(linkedinUrl)) {
-    throw E.ValidationError('Link do LinkedIn inválido — use uma URL começando com https://.');
-  }
-  if (instagramHandle && !INSTAGRAM_RE.test(instagramHandle)) {
-    throw E.ValidationError('Usuário do Instagram inválido.');
-  }
+  if (linkedinUrl === null) throw E.ValidationError(S.LINKEDIN_ERROR);
+  if (instagramHandle === null) throw E.ValidationError(S.INSTAGRAM_ERROR);
   if (interests && interests.length > 500) {
     throw E.ValidationError('Interesses: máximo de 500 caracteres.');
   }

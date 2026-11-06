@@ -58,6 +58,58 @@ export function isValidLinkedinUrl(value) {
   }
 }
 
+export const LINKEDIN_ERROR = 'Link do LinkedIn inválido — use o endereço do seu perfil, como linkedin.com/in/seu-nome.';
+export const INSTAGRAM_ERROR = 'Usuário do Instagram inválido — use @usuario ou o link do perfil.';
+
+const LINKEDIN_PATH_RE = /^\/(in|company)\/[A-Za-z0-9%_.\-]{1,200}$/;
+const INSTAGRAM_HANDLE_RE = /^[a-zA-Z0-9_.]{1,30}$/;
+
+function parseHttpsHost(value, hostRe) {
+  const raw = /^[a-z][a-z0-9+.-]*:/i.test(value) ? value : `https://${value}`;
+  let url;
+  try {
+    url = new URL(raw);
+  } catch (err) {
+    return null;
+  }
+  if (url.protocol !== 'https:' || url.username || url.password || url.port) return null;
+  return hostRe.test(url.hostname.toLowerCase()) ? url : null;
+}
+
+/**
+ * Normaliza o LinkedIn para a URL canônica (https, host linkedin.com, caminho
+ * /in/ ou /company/, sem query nem hash). '' = campo vazio; null = inválido.
+ * Aceita "linkedin.com/in/x", "www.linkedin.com/in/x" ou a URL completa.
+ */
+export function normalizeLinkedinUrl(value) {
+  const v = normalizeText(value);
+  if (!v) return '';
+  if (v.length > 255) return null;
+  const url = parseHttpsHost(v, /^([a-z0-9-]+\.)*linkedin\.com$/);
+  if (!url) return null;
+  const path = url.pathname.replace(/\/+$/, '');
+  if (!LINKEDIN_PATH_RE.test(path)) return null;
+  const host = url.hostname.toLowerCase();
+  const canonicalHost = host === 'linkedin.com' ? 'www.linkedin.com' : host;
+  return `https://${canonicalHost}${path}`;
+}
+
+/**
+ * Normaliza o Instagram para o handle puro. Aceita "@x", "x" e a URL do perfil.
+ * '' = vazio; null = inválido.
+ */
+export function normalizeInstagramHandle(value) {
+  const v = normalizeText(value);
+  if (!v) return '';
+  let handle = v.replace(/^@/, '');
+  if (/instagram\.com/i.test(v)) {
+    const url = parseHttpsHost(v, /^([a-z0-9-]+\.)*instagram\.com$/);
+    if (!url) return null;
+    handle = url.pathname.split('/').filter(Boolean)[0] || '';
+  }
+  return INSTAGRAM_HANDLE_RE.test(handle) ? handle : null;
+}
+
 function toHex(buffer) {
   return Array.from(new Uint8Array(buffer))
     .map((b) => b.toString(16).padStart(2, '0'))

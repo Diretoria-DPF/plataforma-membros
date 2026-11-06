@@ -883,3 +883,6 @@ button.learn-card:focus-visible { outline-offset: 3px; }
   .ai-health-summary strong { font-size: 24px; }
 }
 
+
+/* Links de redes sociais no perfil do membro: alvo de toque confortável. */
+.social-link { display: inline-flex; align-items: center; min-height: 44px; overflow-wrap: anywhere; color: var(--laift-primary, var(--link, #0a66c2)); text-decoration: underline; }

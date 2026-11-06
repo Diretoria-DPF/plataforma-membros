@@ -1639,6 +1639,25 @@
   // começam dentro de controles de formulário, da barra de navegação
   // (que tem sua própria rolagem horizontal no modo admin) ou de modais.
   // ===========================================================================
+  // Link seguro para o perfil público de uma rede: só https e só o host esperado (o valor vem do servidor,
+  // mas dados antigos podem ter sido gravados sem a validação de host). Devolve '' se não for confiável.
+  function socialProfileUrl(kind, value) {
+    var raw = String(value || '').trim();
+    if (!raw) return '';
+    var url = '';
+    if (kind === 'instagram') {
+      if (/^[A-Za-z0-9_.]{1,30}$/.test(raw.replace(/^@/, ''))) url = 'https://www.instagram.com/' + raw.replace(/^@/, '') + '/';
+    } else if (kind === 'linkedin') {
+      try {
+        var parsed = new URL(raw);
+        if (parsed.protocol === 'https:' && /(^|\.)linkedin\.com$/i.test(parsed.hostname) && !parsed.username && !parsed.password) {
+          url = parsed.origin + parsed.pathname;
+        }
+      } catch (err) { url = ''; }
+    }
+    return url && window.LaiftDom ? window.LaiftDom.safeUrl(url) : '';
+  }
+
   var SWIPE_MIN_DISTANCE_PX = 60;
   var SWIPE_MAX_OFF_AXIS_PX = 60;
   var swipeStart = null;
@@ -2218,12 +2237,15 @@
     [
       ['Usuário', profile.username ? '@' + profile.username : ''],
       ['Escolaridade', profile.education],
-      ['LinkedIn', profile.linkedinUrl],
-      ['Instagram', profile.instagramHandle],
+      ['LinkedIn', profile.linkedinUrl, socialProfileUrl('linkedin', profile.linkedinUrl)],
+      ['Instagram', profile.instagramHandle ? '@' + profile.instagramHandle : '', socialProfileUrl('instagram', profile.instagramHandle)],
       ['Interesses', profile.interests],
     ].forEach(function (pair) {
       if (!pair[1]) return;
-      details.appendChild(h('p', {}, [h('strong', {}, [pair[0] + ': ']), text('span', pair[1])]));
+      var value = pair[2]
+        ? h('a', { href: pair[2], target: '_blank', rel: 'noopener noreferrer nofollow', 'class': 'social-link' }, [pair[1]])
+        : text('span', pair[1]);
+      details.appendChild(h('p', {}, [h('strong', {}, [pair[0] + ': ']), value]));
     });
 
     var actions = document.getElementById('member-profile-actions');
