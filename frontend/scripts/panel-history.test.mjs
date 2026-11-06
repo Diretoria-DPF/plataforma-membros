@@ -103,3 +103,26 @@ test('está no index.html, no build e no cache do service worker', () => {
   assert.match(read('scripts/build.js'), /panel-history\.js/);
   assert.match(read('sw.js'), /panel-history\.js/);
 });
+
+test('QA mobile: diálogo aberto marca o estado e a troca de painel o substitui em vez de empilhar', () => {
+  const base = H.stateFor('panel-learn', 'lab');
+  const overlay = H.overlayStateFor(base);
+  assert.deepEqual(overlay, { laift: 'panel', panel: 'panel-learn', module: 'lab', laiftOverlay: true });
+  assert.equal(H.isOverlayState(overlay), true);
+  assert.equal(H.isOverlayState(base), false);
+  assert.equal(H.isOverlayState(null), false);
+  assert.equal(H.isPanelState(overlay), true, 'o estado do diálogo continua sendo do mesmo painel (o Voltar não troca de painel)');
+  assert.deepEqual(H.overlayStateFor(null), { laiftOverlay: true });
+  assert.deepEqual(H.overlayStateFor({ laift: 'panel', panel: 'javascript:x' }), { laiftOverlay: true });
+  assert.equal(H.pushOp(overlay, 'panel-events', false), 'replace');
+  assert.equal(H.pushOp(overlay, 'panel-learn', false, 'lab'), 'none');
+  assert.deepEqual(H.popDecision(base, ctx({ current: 'panel-learn', currentModule: 'lab' })), { type: 'ignore' });
+});
+
+test('QA mobile: os diálogos ficam no histórico (seletores e fechamento no código)', () => {
+  const code = read('panel-history.js');
+  for (const sel of ['dialog[open]', '.modal-overlay:not(.hidden)', '.lia-panel:not(.hidden)', '.l2-sheet']) assert.ok(code.includes(sel), sel);
+  assert.match(code, /MutationObserver/);
+  assert.match(code, /el\.close\(\)/);
+  assert.match(code, /key: 'Escape'/);
+});
