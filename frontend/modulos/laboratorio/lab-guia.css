@@ -258,3 +258,70 @@ html[data-theme="light"] .lmt-fora { color: #991b1b; }
 .lab-atalho { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #546e7a; border-radius: 6px; color: #b0bec5; font-size: 0.85rem; text-decoration: none; }
 .lab-atalho:hover, .lab-atalho:focus-visible { background: #546e7a; color: #fff; }
 html[data-theme="light"] .lab-atalho { color: var(--laift-text); border-color: var(--laift-border-strong); }
+
+/* ---------- Paisagem no celular (altura útil abaixo de 540 px): a janela rola em vez de espremer a bancada ----------
+   Com a faixa e o cabeçalho, a grade ficava com ~10 px. Agora a grade tem altura própria e a barra inferior
+   do Laboratório fica fixa no fim da janela. */
+@media (max-width: 1023px) and (max-height: 540px) {
+  html, body.cockpit-locked {
+    position: static !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 100dvh;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    touch-action: pan-y;
+    overscroll-behavior: auto !important;
+  }
+  body.cockpit-locked { overflow: visible !important; }
+  body.cockpit-locked .main-grid { flex: 0 0 auto; height: 300px !important; max-height: none !important; }
+  body.cockpit-locked .mobile-nav-bar { position: sticky; bottom: 0; }
+}
+
+/* Telas de 320 px: quatro cartões lado a lado cortavam "Volume" e "Temperatura"; passam a duas linhas. */
+@media (max-width: 340px) {
+  .hud-overlay { display: grid; grid-template-columns: 1fr 1fr; }
+  .hud-card { min-width: 0; padding: 3px 4px; }
+  .hud-card .hud-label { letter-spacing: 0; }
+}
+
+/* Celular: a linha "Adicionar / Pausar / Desfazer" fica presa ao fim da lista de controles; a 1ª adição não
+   exige rolar até o fim (antes o botão ficava ~100 px abaixo da dobra mesmo em 390x844). */
+@media (max-width: 1023px) {
+  .controls-scroll .btn-row:has(> #btnStartAdd) {
+    position: sticky; bottom: 0; z-index: 5;
+    padding: 6px 0 4px; margin-bottom: 0;
+    background: var(--panel-bg, var(--laift-surface, #0f172a));
+    box-shadow: 0 -6px 8px -6px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* Tema claro: o título do quadro da missão (verde neon) não passava de contraste sobre o fundo claro. */
+html[data-theme="light"] .mission-box .panel-section-header h3 { color: #065f46; }
+
+/* Tema claro: textos pensados para o fundo escuro (neon, #cbd5e1) ficavam quase invisíveis sobre o painel claro. */
+html[data-theme="light"] #molIupac,
+html[data-theme="light"] #molThermic,
+html[data-theme="light"] .data-val-mono { color: var(--laift-text, #1f2937) !important; }
+html[data-theme="light"] #molFormula { color: #854d0e !important; }
+html[data-theme="light"] #molWeight { color: #065f46 !important; }
+html[data-theme="light"] .mission-box .panel-section-header h3 { color: #065f46 !important; }
+html[data-theme="light"] #missionStatus { color: #92400e !important; border-color: #92400e !important; }
+html[data-theme="light"] #missionStatus[style*="neon-green"] { color: #065f46 !important; border-color: #065f46 !important; }
+html[data-theme="light"] .btn-reset { color: #b91c1c; border-color: #b91c1c; }
+/* Cartões "em preparação" e "bloqueada" da trilha: o opacity 0,8 derrubava o contraste do estado; o tracejado marca a diferença. */
+.lmt-cartao[data-estado="em_preparacao"], .lmt-cartao[data-estado="bloqueada"] { opacity: 1; border-style: dashed; }
+
+/* Celular: o título do Laboratório ficava com ~36 px ("LAB…") entre os botões. Ele ganha a própria linha
+   (com reticências) e os botões vêm abaixo. */
+@media (max-width: 600px) {
+  .lab-header { height: auto !important; max-height: none !important; min-height: 48px; flex-wrap: wrap; padding-top: 2px; padding-bottom: 2px; row-gap: 0; }
+  .lab-header .header-left { flex: 1 1 100%; }
+  .lab-header .header-right { width: 100%; justify-content: flex-start; }
+}
+
+/* Toque: o controle deslizante da chama (16 px de altura) e os botões 2D/3D (43 px) chegam a 44 px. */
+@media (pointer: coarse), (max-width: 1023px) {
+  input[type="range"] { min-height: 44px; }
+  #btnModo2D, #btnModo3D { min-height: 44px !important; }
+}
