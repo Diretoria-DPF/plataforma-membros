@@ -580,7 +580,6 @@ header .subtitle {
 }
 
 @media (max-width: 380px) {
-  .topics-grid { grid-template-columns: minmax(0, 1fr); }
   .quiz-header { flex-direction: column; align-items: stretch; text-align: center; }
 }
 

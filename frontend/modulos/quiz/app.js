@@ -200,7 +200,7 @@
         storageKey: 'pharmaQuizProgress',
         questions: obterQuestoesDisponiveis,
         labels: {
-            noTopic: 'Por favor, selecione pelo menos um tópico no menu lateral!',
+            noTopic: 'Selecione pelo menos um tópico da lista para iniciar.',
             noQuestions: 'Nenhuma questão encontrada para os tópicos selecionados.',
             emptyBank: 'Nenhuma questão foi carregada. Verifique se o arquivo questions.js ou quiz-database.js está na mesma pasta.',
             resetConfirm: 'Tem certeza que deseja apagar todo o seu progresso salvo?',

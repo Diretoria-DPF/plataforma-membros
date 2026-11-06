@@ -95,7 +95,7 @@
    */
   function create(cfg) {
     var L = Object.assign({
-      noTopic: 'Selecione pelo menos um tópico no menu lateral.',
+      noTopic: 'Selecione pelo menos um tópico da lista.',
       noQuestions: 'Nenhuma questão encontrada para os tópicos selecionados.',
       emptyBank: 'Nenhuma questão foi carregada.',
       resetConfirm: 'Tem certeza que deseja apagar todo o seu progresso salvo?',
@@ -414,7 +414,7 @@
     }
 
     function startQuiz() {
-      if (!state.selected.size) { setStatus(L.noTopic, 'error'); return; }
+      if (!state.selected.size) { setStatus(L.noTopic, 'error'); bringIntoView(el.topicsGrid, 'start'); return; }
       var questions = state.bank.filter(function (q) { return state.selected.has(q.topic); });
       if (!questions.length) { setStatus(L.noQuestions, 'error'); return; }
       setStatus('');

@@ -157,6 +157,12 @@ input, select, textarea {
 
 textarea { min-height: 100px; resize: vertical; }
 
+/* Celular: campos com 16 px. Abaixo disso o iOS dá zoom na página ao focar um campo (QA mobile, 2026-11-05). */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+  select, textarea { font-size: 16px; }
+}
+
 input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent);
   outline-offset: 2px;
