@@ -98,6 +98,14 @@ a { color: var(--primary-strong); }
   padding: 24px;
 }
 
+/* Páginas legais e 404 (QA mobile, 2026-11-05): "Voltar" com área de toque de 44 px e a tabela de privacidade sem rolagem
+   horizontal em 320 px (três colunas pedem 336 px; em celular as colunas dividem a largura e o texto quebra). */
+a.back-link.link-btn { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
+@media (max-width: 480px) {
+  main.legal-shell table { table-layout: fixed; }
+  main.legal-shell th, main.legal-shell td { padding: 8px 6px; font-size: 13px; overflow-wrap: anywhere; }
+}
+
 .leaf {
   position: absolute;
   top: -10%;

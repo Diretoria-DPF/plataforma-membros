@@ -419,7 +419,9 @@
 .pub-rodape a {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: var(--laift-touch);
+  min-width: var(--laift-touch);
   color: var(--laift-primary);
   font-weight: 600;
   text-decoration: underline;
