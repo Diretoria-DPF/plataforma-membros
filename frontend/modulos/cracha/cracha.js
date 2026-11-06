@@ -211,6 +211,10 @@ function aplicarParametros() {
     elements.id.value = id;
     elements.qr.value = qr || `LAIFT:ID:${id}`;
   }
+  // semqr=1: o portão aceita só o QR rotativo (da tela do celular); o crachá impresso sai sem QR.
+  if (params.get("semqr") === "1" && elements.showQr) {
+    elements.showQr.checked = false;
+  }
 
   syncBadge();
   renderQr($("qrCode"));

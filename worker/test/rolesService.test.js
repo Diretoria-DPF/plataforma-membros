@@ -292,6 +292,10 @@ describe('apiAdminListRoles', () => {
       expect.objectContaining({ profileId: CURADOR, fullName: 'Pessoa curador', roles: ['curador'] }),
     ]));
     expect(JSON.stringify(all)).not.toMatch(/@example\.com/);
+    expect(all.catalog).toEqual(expect.arrayContaining([
+      { role: 'secretaria', label: 'Secretaria', description: expect.stringContaining('portaria'), privileged: true },
+    ]));
+    expect(all.catalog.map((c) => c.role)).toEqual(all.available);
     expect((await call('apiAdminListRoles', ADMIN, { profileId: 'x' })).message).toMatch(/Pessoa inválida/);
   });
 });

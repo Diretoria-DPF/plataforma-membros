@@ -9,7 +9,7 @@
  */
 import {
   CAPABILITIES, ROLE_CAPS, ADMIN_ONLY_CAPABILITIES, FUNCTIONAL_ROLES, PRIVILEGED_ROLES,
-  capabilitiesFor, requiresMfa, normalizeFunctionalRoles, capabilityCheck, PRIVILEGED_CAPABILITIES,
+  capabilitiesFor, requiresMfa, normalizeFunctionalRoles, capabilityCheck, PRIVILEGED_CAPABILITIES, ROLE_CATALOG,
 } from '../src/roles/capabilities.js';
 
 const EXPECTED = {
@@ -18,6 +18,7 @@ const EXPECTED = {
   moderador: ['reports.moderate', 'assistant.feedback.moderate'],
   curador: ['library.curate'],
   mentor: ['mentoring.offer'],
+  secretaria: ['attendance.manage'],
 };
 const ADMIN_ONLY = ['users.manage', 'flags', 'mfa.reset', 'audit.read', 'metrics.read', 'roles.grant', 'kb.reindex'];
 
@@ -47,8 +48,8 @@ describe('capacidades — tabela', () => {
     expect(() => { 'use strict'; ROLE_CAPS.gestor.push('flags'); }).toThrow();
   });
 
-  test('cargos privilegiados (exigem MFA): gestor, revisor de conteúdo, moderador e curador', () => {
-    expect([...PRIVILEGED_ROLES].sort()).toEqual(['curador', 'gestor', 'moderador', 'revisor_conteudo']);
+  test('cargos privilegiados (exigem MFA): gestor, revisor de conteúdo, moderador, curador e secretaria', () => {
+    expect([...PRIVILEGED_ROLES].sort()).toEqual(['curador', 'gestor', 'moderador', 'revisor_conteudo', 'secretaria']);
   });
 });
 
@@ -138,5 +139,31 @@ describe('home.curate (Destaques da Liga)', () => {
     const gestor = { role: 'member', capabilities: ['home.curate'] };
     expect(capabilityCheck(gestor, 'home.curate')).toBe('mfa');
     expect(capabilityCheck({ ...gestor, mfaConfirmed: true }, 'home.curate')).toBe('ok');
+  });
+});
+
+describe('cargo secretaria (portaria: presença e crachás)', () => {
+  test('libera só a presença, sem mais nada da gestão', () => {
+    const caps = capabilitiesFor({ baseRole: 'member', functionalRoles: ['secretaria'] });
+    expect([...caps]).toEqual(['attendance.manage']);
+  });
+
+  test('sem verificação em duas etapas a capacidade é negada com motivo "mfa"', () => {
+    const base = { role: 'member', capabilities: ['attendance.manage'] };
+    expect(capabilityCheck({ ...base, mfaConfirmed: false }, 'attendance.manage')).toBe('mfa');
+    expect(capabilityCheck({ ...base, mfaConfirmed: true }, 'attendance.manage')).toBe('ok');
+    expect(capabilityCheck({ ...base, mfaConfirmed: true }, 'events.manage')).toBe('missing');
+  });
+
+  test('visitante com o cargo gravado continua sem nada', () => {
+    expect([...capabilitiesFor({ baseRole: 'visitor', functionalRoles: ['secretaria'] })]).toEqual([]);
+  });
+
+  test('cada cargo do catálogo tem rótulo e descrição para a tela de cargos', () => {
+    FUNCTIONAL_ROLES.forEach((role) => {
+      expect(ROLE_CATALOG[role].label.length).toBeGreaterThan(2);
+      expect(ROLE_CATALOG[role].description.length).toBeGreaterThan(10);
+    });
+    expect(ROLE_CATALOG.secretaria.label).toBe('Secretaria');
   });
 });

@@ -165,9 +165,29 @@ test('sem innerHTML nem estilo inline nos módulos novos', () => {
 });
 
 test('admin-roles: cargos que faltam, sem cargo para visitante', () => {
-  assert.deepEqual(adminRoles.availableToGrant({ baseRole: 'member', roles: ['gestor'] }), ['revisor_conteudo', 'moderador', 'curador', 'mentor']);
+  assert.deepEqual(adminRoles.availableToGrant({ baseRole: 'member', roles: ['gestor'] }), ['revisor_conteudo', 'moderador', 'curador', 'mentor', 'secretaria']);
   assert.deepEqual(adminRoles.availableToGrant({ baseRole: 'visitor', roles: [] }), []);
   assert.deepEqual(adminRoles.availableToGrant({ baseRole: 'admin', roles: adminRoles.ROLE_ORDER.slice() }), []);
+});
+
+test('admin-roles: o catálogo vindo do Worker define a ordem, os nomes e as descrições (cargo novo aparece sem mexer na tela)', () => {
+  const before = adminRoles.ROLE_ORDER.slice();
+  adminRoles.applyCatalog([
+    { role: 'secretaria', label: 'Secretaria', description: 'Controla a portaria.', privileged: true },
+    { role: 'comunicacao', label: 'Comunicação', description: 'Cuida da divulgação.', privileged: false },
+  ]);
+  try {
+    assert.deepEqual(adminRoles.ROLE_ORDER, ['secretaria', 'comunicacao']);
+    assert.equal(adminRoles.roleLabel('comunicacao'), 'Comunicação');
+    assert.equal(adminRoles.roleDescription('secretaria'), 'Controla a portaria.');
+    assert.deepEqual(adminRoles.availableToGrant({ baseRole: 'member', roles: ['secretaria'] }), ['comunicacao']);
+    adminRoles.applyCatalog(null);
+    assert.deepEqual(adminRoles.ROLE_ORDER, ['secretaria', 'comunicacao'], 'resposta sem catálogo não apaga o que já se sabe');
+    adminRoles.applyCatalog([{ role: '<img>', label: 'x' }, { label: 'sem id' }, 7]);
+    assert.deepEqual(adminRoles.ROLE_ORDER, ['secretaria', 'comunicacao'], 'itens fora do padrão são ignorados');
+  } finally {
+    adminRoles.applyCatalog(before.map((role) => ({ role, label: adminRoles.roleLabel(role), description: '' })));
+  }
 });
 
 test('admin-roles: reautenticação exige a senha; o código é opcional e validado', () => {

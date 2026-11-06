@@ -586,7 +586,13 @@ export async function exportCsv(sql, identity, input, correlationId) {
 // Crachás em lote
 // =============================================================================
 
-/** apiAdminAttendanceBadges — nome, papel e QR v2 de cada perfil pedido. */
+/**
+ * apiAdminAttendanceBadges — nome, papel e QR v2 de cada perfil pedido.
+ * Com a flag attendance_qr_rotating_only LIGADA o QR permanente v2 não vale mais
+ * no portão: o crachá impresso/PDF então sai SEM QR (qrPayload null,
+ * rotatingOnly true) e a pessoa confirma presença pelo QR rotativo do celular
+ * ou pela lista do terminal.
+ */
 export async function badges(sql, env, identity, input, correlationId) {
   assertAdmin(identity);
   if (!Array.isArray(input.profileIds)) throw E.ValidationError('Selecione ao menos um participante.');
@@ -601,13 +607,14 @@ export async function badges(sql, env, identity, input, correlationId) {
   if (!ids.length) throw E.ValidationError('Selecione ao menos um participante.');
 
   const rows = await sql`
-    SELECT id, full_name, role, league_position
+    SELECT id, full_name, role, league_position, avatar_url
     FROM profiles
     WHERE id = ANY(${ids}::uuid[]) AND status = 'active'
   `;
   const byId = {};
   rows.forEach((r) => { byId[String(r.id).toLowerCase()] = r; });
 
+  const rotatingOnly = await isEnabled(sql, REQUIRE_ROTATING_FLAG, null);
   const out = [];
   for (const id of ids) {
     const r = byId[id];
@@ -617,10 +624,11 @@ export async function badges(sql, env, identity, input, correlationId) {
       fullName: r.full_name,
       role: r.role,
       leaguePosition: r.league_position || null,
-      qrPayload: await signAttendanceQr(env, id),
+      avatarUrl: /^https:\/\//i.test(r.avatar_url || '') ? r.avatar_url : null,
+      qrPayload: rotatingOnly ? null : await signAttendanceQr(env, id),
     });
   }
 
-  await Logging.logAudit(sql, correlationId, identity.profileId, 'ATTENDANCE_BADGES', 'profile', null, 'success', { requested: ids.length, issued: out.length });
-  return { success: true, badges: out };
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'ATTENDANCE_BADGES', 'profile', null, 'success', { requested: ids.length, issued: out.length, rotatingOnly });
+  return { success: true, badges: out, rotatingOnly };
 }

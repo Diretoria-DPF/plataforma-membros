@@ -16,6 +16,7 @@ import { FUNCTIONAL_ROLES } from '../src/roles/capabilities.js';
 const SQL_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'sql');
 const readSql = (rel) => fs.readFileSync(path.join(SQL_DIR, rel), 'utf8');
 const FILE = '038_member_roles.sql';
+const FILE_051 = '051_member_roles_secretaria.sql';
 const ADMIN = '11111111-1111-4111-8111-111111111111';
 const MEMBER = '22222222-2222-4222-8222-222222222222';
 const VISITOR = '33333333-3333-4333-8333-333333333333';
@@ -106,6 +107,29 @@ describe('038 — member_roles', () => {
     } finally {
       await db.exec('RESET ROLE');
     }
+  });
+});
+
+describe('051 — cargo secretaria e nomes reservados', () => {
+  test('o banco aceita a secretaria e os nomes reservados para cargos futuros, e continua recusando o resto', async () => {
+    for (const role of ['secretaria', 'coordenador_eventos', 'coordenador_tarefas', 'relator_propostas', 'comunicacao']) {
+      await grant(MEMBER, role);
+    }
+    await db.query('DELETE FROM member_roles WHERE profile_id = $1', [MEMBER]);
+    await expect(grant(MEMBER, 'admin')).rejects.toThrow(/member_roles_role_chk/);
+    await expect(grant(MEMBER, 'qualquer_coisa')).rejects.toThrow(/member_roles_role_chk/);
+  });
+
+  test('reaplicar é idempotente e o down tira os cargos novos antes de restaurar a lista antiga', async () => {
+    await db.exec(readSql(FILE_051));
+    await db.exec(readSql(FILE_051));
+    await grant(MEMBER, 'secretaria');
+    await db.exec(readSql('down/' + FILE_051));
+    expect(await rolesOf(MEMBER)).toEqual([]);
+    await expect(grant(MEMBER, 'secretaria')).rejects.toThrow(/member_roles_role_chk/);
+    await db.exec(readSql(FILE_051));
+    await grant(MEMBER, 'secretaria');
+    await db.query('DELETE FROM member_roles WHERE profile_id = $1', [MEMBER]);
   });
 });
 
