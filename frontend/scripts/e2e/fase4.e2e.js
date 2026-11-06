@@ -46,7 +46,9 @@ function listOwnedFiles() {
   function walk(dir) {
     for (const name of fs.readdirSync(dir)) {
       const full = path.join(dir, name);
-      if (fs.statSync(full).isDirectory()) walk(full);
+      // vendor/ guarda bibliotecas de terceiros já minificadas (innerHTML interno delas): cada pasta traz LICENSE e VERSION e o
+      // hash é conferido por scripts/vendor-sri.test.mjs. O que é do repositório continua varrido.
+      if (fs.statSync(full).isDirectory()) { if (name !== 'vendor') walk(full); }
       else if (/\.(js|html|css)$/.test(name)) out.push(full);
     }
   }
@@ -70,6 +72,7 @@ function staticChecks() {
   const files = listOwnedFiles();
   const problems = { inline: [], inlineScript: [], sri: [], sink: [], star: [], appsScript: [] };
   let pinned = 0;
+  let localSri = 0;
   for (const file of files) {
     const rel = path.relative(MODULOS, file);
     const raw = fs.readFileSync(file, 'utf8');
@@ -80,6 +83,11 @@ function staticChecks() {
 
     if (file.endsWith('.html')) {
       (text.match(/<script(?![^>]*\bsrc=)[^>]*>/g) || []).forEach((m) => problems.inlineScript.push(`${rel}: ${m}`));
+      // Bibliotecas vendorizadas (mesma origem): integrity + crossorigin; o hash em si é conferido por vendor-sri.test.mjs.
+      (text.match(/<script\b[^>]*\bsrc=["'][^"']*vendor\/[^>]*>/g) || []).forEach((tag) => {
+        if (/\bintegrity=["']sha(256|384|512)-/.test(tag) && /\bcrossorigin=["']anonymous["']/.test(tag)) localSri++;
+        else problems.sri.push(`${rel}: ${tag}`);
+      });
       (text.match(/<script\b[^>]*\bsrc=["']https?:\/\/[^>]*>/g) || []).forEach((tag) => {
         const ok = /\bintegrity=["']sha(256|384|512)-/.test(tag) && /\bcrossorigin=["']anonymous["']/.test(tag) && /@\d+\.\d+\.\d+\//.test(tag);
         if (ok) pinned++; else problems.sri.push(`${rel}: ${tag}`);
@@ -93,17 +101,21 @@ function staticChecks() {
     if (LEGACY_BACKEND.test(text)) problems.appsScript.push(rel);
   }
 
-  // Carregamentos dinâmicos (Estúdio): cada biblioteca com versão e integrity.
+  // Carregamentos dinâmicos: Estúdio (OpenChemLib vendorizado + RDKit versionado no jsDelivr) e bancada (SmilesDrawer e 3Dmol
+  // sob demanda, vendorizados): cada biblioteca com versão fixa e integrity.
   const loader = fs.readFileSync(path.join(MODULOS, 'laboratorio', 'studio', 'studio-loader.js'), 'utf8');
-  const dynPinned = /openchemlib@\d+\.\d+\.\d+\//.test(loader) && /RDKIT_VERSION = '\d+\.\d+\.\d+'/.test(loader) &&
+  const dynPinned = /url: '\.\.\/vendor\/openchemlib\//.test(loader) && /RDKIT_VERSION = '\d+\.\d+\.\d+'/.test(loader) &&
     !/jsdelivr\.net\/npm\/[^@'"]+\/dist/.test(loader) && !/unpkg\.com/.test(loader);
   const dynIntegrity = (loader.match(/integrity:\s*'sha384-/g) || []).length;
+  const bancada = fs.readFileSync(path.join(MODULOS, 'laboratorio', 'js', 'script.js'), 'utf8');
+  const bancadaSri = (bancada.match(/src: 'vendor\/[^']+', sri: 'sha384-/g) || []).length;
 
-  console.log(`  (estático: ${files.length} arquivos da Equipe 4; ${pinned} <script> externos pinados com SRI)`);
+  console.log(`  (estático: ${files.length} arquivos da Equipe 4; ${pinned} <script> externos pinados e ${localSri} vendorizados, todos com SRI)`);
   check(problems.inline.length === 0, 'nenhum handler inline (on*="...") nos arquivos da Equipe 4' + (problems.inline.length ? ': ' + problems.inline.slice(0, 5).join(' | ') : ''));
   check(problems.inlineScript.length === 0, 'nenhum <script> inline nas páginas da Equipe 4' + (problems.inlineScript.length ? ': ' + problems.inlineScript.join(' | ') : ''));
-  check(problems.sri.length === 0 && pinned > 0, 'todo <script src="https://..."> tem versão fixa, integrity e crossorigin' + (problems.sri.length ? ': ' + problems.sri.join(' | ') : ''));
+  check(problems.sri.length === 0 && pinned + localSri > 0, 'todo <script src="https://..."> tem versão fixa, integrity e crossorigin, e todo <script> de vendor/ tem integrity' +(problems.sri.length ? ': ' + problems.sri.join(' | ') : ''));
   check(dynPinned && dynIntegrity >= 2, 'bibliotecas carregadas sob demanda no Estúdio (OpenChemLib, RDKit) têm versão fixa e SRI');
+  check(bancadaSri === 2, 'bibliotecas carregadas sob demanda na bancada (SmilesDrawer, 3Dmol) têm caminho versionado e SRI');
   check(problems.sink.length === 0, 'nenhum innerHTML/insertAdjacentHTML/document.write fora de shared/safe-dom.js' + (problems.sink.length ? ': ' + problems.sink.slice(0, 5).join(' | ') : ''));
   check(problems.star.length === 0, "nenhum postMessage com alvo '*'" + (problems.star.length ? ': ' + problems.star.join(' | ') : ''));
   check(problems.appsScript.length === 0, 'nenhum resto do Apps Script nos arquivos da Equipe 4' + (problems.appsScript.length ? ': ' + problems.appsScript.join(', ') : ''));
@@ -169,6 +181,9 @@ async function runQuiz(frame, { mode }) {
   const total = Number(await frame.textContent('#totalQuestions'));
   for (let i = 1; i < total; i++) await frame.press('body', 'ArrowRight');
   await frame.click('#finishBtn');
+  // Questão em branco pede confirmação (QZ-05): confirma no diálogo acessível.
+  const confirmar = await frame.waitForSelector('.laift-dialog-btn-primary', { timeout: 2000 }).catch(() => null);
+  if (confirmar) await confirmar.click();
   await frame.waitForSelector('#resultsContainer:not([hidden]) .score-display');
   await frame.waitForFunction(() => (window.__laiftCalls || []).length > 0, null, { timeout: 3000 }).catch(() => {});
   return laiftCalls(frame);
@@ -182,14 +197,12 @@ module.exports = async function fase4() {
     await app.login();
 
     // ---- Sem rolagem horizontal e tema escuro, módulo a módulo ----
-    // lab é escuro por natureza (.laift-always-dark): no tema claro
-    // continua escuro (justificativa em docs/FASE_4_QUALIDADE.md). O Atlas
-    // v2 (anatomia-3d, WP13) passou a seguir o tema da plataforma — não
-    // tem mais `.laift-always-dark` (ver docs/ATLAS_UX_SPEC.md §0).
+    // Todos os módulos seguem o tema da plataforma. O Laboratório já foi escuro por natureza (.laift-always-dark);
+    // hoje a bancada, o Atlas v2 (WP13) e os demais ficam claros no tema claro (só o canvas 3D tem fundo próprio).
     const MODULES = [
       { id: 'farmaco', followsLight: true },
       { id: 'toxico', followsLight: true },
-      { id: 'lab', followsLight: false },
+      { id: 'lab', followsLight: true },
       { id: 'anatomia', followsLight: true },
       { id: 'clinica', followsLight: true },
     ];
@@ -205,8 +218,7 @@ module.exports = async function fase4() {
 
       await setTheme(frame, 'light');
       const light = luminance(await bodyBackground(frame));
-      if (mod.followsLight) check(light > 0.7, `módulo "${mod.id}" fica claro com data-theme="light" (luminância ${light.toFixed(3)})`);
-      else check(light < 0.05, `módulo "${mod.id}" permanece escuro no tema claro (visualização 3D)`);
+      check(light > 0.7, `módulo "${mod.id}" fica claro com data-theme="light" (luminância ${light.toFixed(3)})`);
 
       await app.page.click('#learn-back');
     }
@@ -217,7 +229,8 @@ module.exports = async function fase4() {
     check(calls.length === 1 && validQuizAttempt(calls[0], 'farmacologia', 'estudo'),
       'Farmacologia concluída chama LaiftApi.call("apiLearnSubmitQuizAttempt", {module:"farmacologia", mode:"estudo", ...})' + (calls.length ? ' ' + JSON.stringify(calls[0].input) : ''));
     const saved = await frame.evaluate(() => { try { return JSON.parse(localStorage.getItem('pharmaQuizProgress')); } catch (e) { return null; } });
-    check(!saved || Array.isArray(saved.userAnswers), 'progresso da Farmacologia continua na chave pharmaQuizProgress');
+    // O motor guarda as respostas por id de questão (Logic.writeProgress), não mais num vetor userAnswers.
+    check(!!saved && typeof saved === 'object', 'progresso da Farmacologia continua na chave pharmaQuizProgress');
     await app.page.click('#learn-back');
 
     frame = await app.openModule('toxico');
