@@ -55,6 +55,12 @@ const STATS = {
  * pessoa faria rolando, e só então clica.
  */
 async function tap(frame, selector) {
+  // A Portaria recolhe "Presença por e-mail" e "Relatórios" em <details>: abre o que contém o alvo.
+  await frame.locator(selector).evaluate((el) => {
+    const pane = el.closest('.fiscal-pane');
+    if (pane && pane.classList.contains('hidden')) document.querySelector('[aria-controls="' + pane.id + '"]').click();
+    const d = el.closest('details'); if (d) d.open = true;
+  });
   await frame.locator(selector).evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await frame.click(selector);
 }
@@ -271,6 +277,7 @@ async function adminFiscalScenario() {
     check(ev.noPasswordModal && ev.noGroqCard, 'sem senha fiscal e sem o cartão de saúde do Groq');
 
     // ---- Check-in manual por e-mail ----
+    await frame.locator('#manualEmail').evaluate((el) => { const d = el.closest('details'); if (d) d.open = true; }); // "Presença por e-mail" fica recolhida
     await frame.fill('#manualEmail', 'carla@x.com');
     await tap(frame, '#manualSubmit');
     await frame.waitForFunction(() => /Presença registrada/.test(document.getElementById('status').textContent), null, { timeout: 5000 }).catch(() => {});
@@ -315,6 +322,7 @@ async function adminFiscalScenario() {
 
     // ---- Crachás em lote com QR v2 ----
     await frame.locator('#selectAll').evaluate((el) => el.scrollIntoView({ block: 'center' }));
+    await tap(frame, '#tabPessoas'); // a lista de pessoas fica na aba "Pessoas e crachás"
     await frame.check('#selectAll');
     await frame.evaluate(() => { window.__printed = 0; window.print = () => { window.__printed += 1; }; });
     await tap(frame, '#printBadges');

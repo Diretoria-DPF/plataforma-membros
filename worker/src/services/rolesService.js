@@ -15,7 +15,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
-import { FUNCTIONAL_ROLES, PRIVILEGED_ROLES } from '../roles/capabilities.js';
+import { FUNCTIONAL_ROLES, PRIVILEGED_ROLES, ROLE_CATALOG } from '../roles/capabilities.js';
 import { hasConfirmedMfa } from './mfaService.js';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -152,6 +152,14 @@ export async function listRoles(sql, identity, rawInput) {
   return {
     success: true,
     available: FUNCTIONAL_ROLES,
+    // Rótulo e descrição de cada cargo: a tela de cargos lê daqui, então um cargo novo aparece sem mexer no front.
+    catalog: FUNCTIONAL_ROLES.map((role) => ({
+      role, label: ROLE_CATALOG[role].label, description: ROLE_CATALOG[role].description, privileged: PRIVILEGED_ROLES.includes(role),
+    })),
+    // Rótulo e descrição de cada cargo: a tela de cargos lê daqui, então um cargo novo aparece sem mexer no front.
+    catalog: FUNCTIONAL_ROLES.map((role) => ({
+      role, label: ROLE_CATALOG[role].label, description: ROLE_CATALOG[role].description, privileged: PRIVILEGED_ROLES.includes(role),
+    })),
     people: rows.map((r) => ({ profileId: r.profile_id, fullName: r.full_name, baseRole: r.base_role, roles: r.roles })),
   };
 }

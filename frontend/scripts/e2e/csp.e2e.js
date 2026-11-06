@@ -295,6 +295,7 @@ async function memberTour(pkgs) {
       app.page.evaluate(() => window.open('modulos/cracha/index.html?id=7&nome=Ana', '_blank')),
     ]);
     await cracha.waitForLoadState('load');
+    await cracha.evaluate(() => { const d = document.querySelector('details.advanced'); if (d) d.open = true; });
     await cracha.fill('#photoUrl', 'https://example.org/foto.png');
     await cracha.waitForTimeout(300);
     await cracha.close();

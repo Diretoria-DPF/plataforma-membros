@@ -10,14 +10,36 @@
 (function (root) {
   'use strict';
 
-  var ROLE_ORDER = ['gestor', 'revisor_conteudo', 'moderador', 'curador', 'mentor'];
+  // Valores de reserva (a Worker manda o catálogo oficial em apiAdminListRoles e applyCatalog os substitui).
+  var ROLE_ORDER = ['gestor', 'revisor_conteudo', 'moderador', 'curador', 'mentor', 'secretaria'];
   var ROLE_NAMES = {
     gestor: 'Gestor',
     revisor_conteudo: 'Revisor de conteúdo',
     moderador: 'Moderador',
     curador: 'Curador',
     mentor: 'Mentor',
+    secretaria: 'Secretaria',
   };
+  var ROLE_DESCRIPTIONS = {};
+  var ROLE_ID_RE = /^[a-z][a-z_]{1,40}$/;
+
+  /** Adota o catálogo de cargos da Worker (ordem, rótulo, descrição). Itens fora do padrão são ignorados. */
+  function applyCatalog(catalog) {
+    if (!Array.isArray(catalog)) return;
+    var valid = catalog.filter(function (item) {
+      return item && typeof item === 'object' && typeof item.role === 'string' && ROLE_ID_RE.test(item.role) &&
+        typeof item.label === 'string' && item.label.length > 0;
+    });
+    if (!valid.length) return;
+    ROLE_ORDER.length = 0;
+    valid.forEach(function (item) {
+      ROLE_ORDER.push(item.role);
+      ROLE_NAMES[item.role] = item.label;
+      ROLE_DESCRIPTIONS[item.role] = typeof item.description === 'string' ? item.description : '';
+    });
+  }
+
+  function roleDescription(role) { return ROLE_DESCRIPTIONS[role] || ''; }
   var BASE_NAMES = { visitor: 'Visitante', member: 'Membro', admin: 'Administrador' };
   var MSG_ID = 'msg-admin-roles';
   var CODE_RE = /^[0-9A-Za-z-]{0,20}$/;
@@ -129,6 +151,7 @@
     A().callApi('apiAdminListRoles', token(), {}).then(function (res) {
       if (gen !== generation) return;
       if (!res || !res.success) { status((res && res.message) || 'Não foi possível carregar os cargos.', 'error'); return; }
+      applyCatalog(res.catalog);
       (res.people || []).forEach(function (p) { byId[p.profileId] = p; });
       A().renderList('admin-roles-list', res.people || [], renderPerson, 'Ninguém tem cargo ainda.');
     });
@@ -188,7 +211,7 @@
   }
 
   var api = {
-    ROLE_ORDER: ROLE_ORDER, availableToGrant: availableToGrant, stepUpInput: stepUpInput, personFromUser: personFromUser,
+    ROLE_ORDER: ROLE_ORDER, applyCatalog: applyCatalog, roleLabel: roleName, roleDescription: roleDescription, availableToGrant: availableToGrant, stepUpInput: stepUpInput, personFromUser: personFromUser,
     load: load, reset: reset,
   };
 

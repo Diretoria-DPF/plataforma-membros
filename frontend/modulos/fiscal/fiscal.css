@@ -176,3 +176,63 @@ body.fiscal-page { min-height: 0; }
   .badge-code { font-size: 6.5pt; font-family: monospace; color: #64748b; }
   .badge-footer { border-top: 1px solid #e2e8f0; font-size: 5.5pt; color: #64748b; text-align: center; padding-top: 1mm; }
 }
+
+/* ---- Portaria: contador ao vivo, faixa de resultado e últimas entradas ---- */
+.fiscal-live { display: flex; align-items: baseline; gap: 10px; margin-top: 10px; }
+.fiscal-live-count { font-size: 2.2rem; line-height: 1; font-variant-numeric: tabular-nums; color: var(--text-main); }
+.fiscal-live-label { font-size: 0.9rem; color: var(--text-muted); }
+.fiscal-progress { height: 8px; margin-top: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.fiscal-progress > i { display: block; height: 100%; width: 0; background: var(--success, #1e8e5a); transition: width 0.3s ease; }
+.fiscal-page .btn-lg { min-height: 56px; font-size: 1.05rem; }
+
+.fiscal-result { display: grid; gap: 2px; margin-top: 12px; padding: 16px; border-radius: var(--radius-md); border: 2px solid var(--border); text-align: center; }
+.fiscal-result-title { font-size: 1.4rem; }
+.fiscal-result-detail { font-size: 1.05rem; overflow-wrap: anywhere; }
+.fiscal-result.is-success { background: var(--success-bg); border-color: var(--success, #1e8e5a); color: var(--text-main); }
+.fiscal-result.is-warning { background: var(--fiscal-warning-bg); border-color: var(--fiscal-warning-fg); color: var(--fiscal-warning-fg); }
+.fiscal-result.is-error { background: var(--error-bg, #fde8e8); border-color: var(--error, #c0392b); color: var(--text-main); }
+
+.fiscal-recent { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.fiscal-recent-item { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--surface-alt); border-left: 4px solid var(--success, #1e8e5a); }
+.fiscal-recent-item.is-warning { border-left-color: var(--fiscal-warning-fg); }
+
+.fiscal-more > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; }
+.fiscal-more[open] > summary { margin-bottom: 10px; }
+@media (prefers-reduced-motion: reduce) { .fiscal-progress > i { transition: none; } }
+
+/* ---- Abas da portaria, prévia do crachá e lote sob pedido ---- */
+.fiscal-tabs { display: flex; gap: 4px; padding: 3px; border-radius: var(--radius-md); background: var(--surface-alt); }
+.fiscal-tab { flex: 1; min-height: 44px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text-muted); font: inherit; cursor: pointer; }
+.fiscal-tab.is-active { background: var(--fiscal-card-bg); color: var(--text-main); font-weight: 600; box-shadow: inset 0 0 0 1px var(--border); }
+.fiscal-pane { display: grid; gap: 12px; min-width: 0; }
+.fiscal-batch-go { width: 100%; margin-top: 10px; }
+
+/* Na tela o crachá aparece em tamanho CR-80 (85,6 x 54 mm); a regra de impressão só vale no @media print. */
+.badge-preview { display: flex; justify-content: center; margin-bottom: 10px; overflow-x: auto; }
+.badge-preview .badge-card {
+  width: 85.6mm; height: 54mm; flex: none; box-sizing: border-box;
+  border: 1px dashed #94a3b8; border-radius: 4mm; padding: 3.5mm;
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: #ffffff; color: #0f172a;
+}
+.badge-preview .badge-header { border-bottom: 1.5px solid #0f172a; padding-bottom: 1.5mm; text-align: center; }
+.badge-preview .badge-institution { font-size: 6.5pt; font-weight: 700; color: #475569; letter-spacing: 0.5px; }
+.badge-preview .badge-league { font-size: 8.5pt; font-weight: 800; }
+.badge-preview .badge-body { display: flex; align-items: center; gap: 3mm; margin: auto 0; }
+.badge-preview .badge-visual { display: flex; flex-direction: column; align-items: center; gap: 1.5mm; width: 24mm; }
+.badge-preview .badge-avatar { width: 12mm; height: 12mm; border-radius: 50%; background: #e2e8f0; color: #1e293b; font-size: 11pt; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.badge-preview .badge-qr { width: 20mm; height: 20mm; image-rendering: pixelated; }
+.badge-preview .badge-data { flex: 1; overflow: hidden; }
+.badge-preview .badge-name { font-size: 9pt; font-weight: 800; line-height: 1.2; max-height: 2.4em; overflow: hidden; }
+.badge-preview .badge-role { display: inline-block; background: #e2e8f0; color: #334155; font-size: 6.5pt; font-weight: 700; padding: 1px 5px; border-radius: 3px; margin: 2mm 0 1.5mm; text-transform: uppercase; }
+.badge-preview .badge-role.is-board { background: #dbeafe; color: #1e40af; }
+.badge-preview .badge-code { font-size: 6.5pt; font-family: monospace; color: #64748b; }
+.badge-preview .badge-footer { border-top: 1px solid #e2e8f0; font-size: 5.5pt; color: #64748b; text-align: center; padding-top: 1mm; }
+.badge-photo { width: 12mm; height: 12mm; border-radius: 50%; object-fit: cover; }
+
+@media print {
+  .badge-sheet.is-single { grid-template-columns: 85.6mm; }
+}
+
+/* Crachá sem QR permanente (portão só no QR rotativo) */
+.badge-qr-none { display: flex; align-items: center; justify-content: center; text-align: center; font-size: 7pt; line-height: 1.2; border: 1px dashed currentColor; border-radius: 2mm; }

@@ -77,7 +77,7 @@ async function flagOnScenario(vp) {
 
     const tabs = await page.$$eval('.adm2-tab', (n) => n.map((b) => b.textContent));
     check(tabs.slice(0, 4).join('|') === 'Painel|Seleção|Destaques|Flags', 'seções na ordem da prévia (' + tabs.slice(0, 4).join('|') + ')');
-    for (const t of ['Usuários', 'Eventos', 'Propostas', 'Tarefas', 'Feedback', 'Auditoria', 'Denúncias', 'Fiscal', 'IA', 'Biblioteca', 'Exclusões', 'Cargos']) {
+    for (const t of ['Usuários', 'Eventos', 'Propostas', 'Tarefas', 'Feedback', 'Auditoria', 'Denúncias', 'Portaria', 'IA', 'Biblioteca', 'Exclusões', 'Cargos']) {
       check(tabs.includes(t), 'seção de sempre mantida: ' + t);
     }
     check((await page.getAttribute('.adm2-tab.is-active', 'aria-current')) === 'page', 'seção atual marcada com aria-current');
