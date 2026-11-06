@@ -106,6 +106,21 @@ async function dialogosNoHistorico() {
     check(await esperar(fechado('#app-menu')), 'voltar: o menu fecha ao escolher o item');
     await page.goBack();
     check(await esperar(() => visivel(page, 'panel-learn')), 'voltar: um único Voltar sai de Mensagens para o painel anterior');
+    // Base sem estado de painel (processo seletivo e telas públicas): fechar o diálogo não pode levar à Início.
+    await app.showPanel('panel-events');
+    await page.evaluate(() => history.replaceState(null, '', location.href));
+    await page.locator('#app-menu-btn').first().click();
+    check(await esperar(async () => !(await fechado('#app-menu')())), 'voltar: menu abre sobre uma base sem estado');
+    await page.keyboard.press('Escape');
+    check(await esperar(fechado('#app-menu')), 'voltar: Esc fecha o menu sobre a base sem estado');
+    await page.waitForTimeout(400);
+    check(await visivel(page, 'panel-events'), 'voltar: fechar pela tela sobre a base sem estado continua em Eventos');
+    await page.locator('#app-menu-btn').first().click();
+    await esperar(async () => !(await fechado('#app-menu')()));
+    await page.goBack();
+    check(await esperar(fechado('#app-menu')), 'voltar: o Voltar fecha o menu sobre a base sem estado');
+    await page.waitForTimeout(400);
+    check(await visivel(page, 'panel-events'), 'voltar: o Voltar do menu sobre a base sem estado continua em Eventos');
     check(app.errors.length === 0, `voltar: diálogos sem erros de página (${app.errors.join('; ')})`);
   } finally {
     await app.close();

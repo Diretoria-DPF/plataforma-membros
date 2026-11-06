@@ -126,3 +126,11 @@ test('QA mobile: os diálogos ficam no histórico (seletores e fechamento no có
   assert.match(code, /el\.close\(\)/);
   assert.match(code, /key: 'Escape'/);
 });
+
+test('QA mobile: o popstate causado por diálogo é cortado antes do app.js (base sem estado de painel não leva à Início)', () => {
+  const code = read('panel-history.js');
+  assert.match(code, /function onOverlayPop\(event\)/);
+  assert.equal(code.split('stopImmediatePropagation()').length - 1, 2, 'corta o popstate ao fechar pela tela e pelo Voltar');
+  const html = read('index.html');
+  assert.ok(html.indexOf('src="panel-history.js"') < html.indexOf('src="app.js"'), 'panel-history.js carrega antes do app.js (ouvinte vem primeiro)');
+});
