@@ -75,7 +75,7 @@ async function cores(theme) {
     await frame.evaluate(AXE);
     for (const aba of ['tabMol', 'tabMissao']) {
       await frame.evaluate((a) => { window.switchRightTab(a); window.setMobileView('analise'); }, aba);
-      await frame.waitForTimeout(150);
+      await frame.waitForTimeout(500); // as transições de cor (0,25 s) terminam antes da medição
       const ruins = await contraste(frame);
       check(ruins.length === 0, `aba ${aba} sem falha de contraste (${ruins.join(' | ')})`);
     }
