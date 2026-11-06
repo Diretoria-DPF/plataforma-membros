@@ -54,7 +54,7 @@ test('index.html: JSON-LD válido com Organization e WebSite', () => {
   const org = data['@graph'].find((node) => node['@type'] === 'Organization');
   assert.equal(org.name, 'LAIFT');
   assert.equal(org.url, `${SITE}/`);
-  assert.match(org.alternateName, /Farmacologia e Toxicologia/);
+  assert.match([].concat(org.alternateName).join(" "), /Farmacologia e Toxicologia/);
 });
 
 test('index.html: o texto público menciona o nome completo da liga', () => {

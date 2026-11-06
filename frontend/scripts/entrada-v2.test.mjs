@@ -101,10 +101,10 @@ test('conteúdo: promessas só sobre o que a plataforma tem; sem texto proibido 
   assert.equal(V2.VITRINE.length, 5);
   assert.deepEqual(V2.VITRINE.map((v) => v.tag), ['Quiz do dia', 'Atlas 3D', 'A Guia', 'Casos clínicos', 'Liga']);
   assert.equal(V2.PASSOS.length, 3);
-  assert.deepEqual(V2.EXPLORAR.map((e) => e.href), ['liga.html', 'blog.html', '/biblioteca', 'processo-seletivo.html']);
+  assert.deepEqual(V2.EXPLORAR.map((e) => e.href), ['/liga', '/blog', '/biblioteca', '/processo-seletivo']);
   assert.doesNotMatch(read('entrada-v2.js'), /data-ev2-conhecer/, 'o botão do herói é um link para a página da Liga, não rola a tela');
   const hrefs = V2.LINKS.map((l) => l[1]);
-  for (const h of ['termos.html', 'privacidade.html', 'blog.html', 'processo-seletivo.html']) assert.ok(hrefs.includes(h), h);
+  for (const h of ['/termos', '/privacidade', '/blog', '/processo-seletivo']) assert.ok(hrefs.includes(h), h);
 });
 
 test('conteúdo: nada de evento nem número inventado no código (dados vêm da API e do índice do blog)', () => {
