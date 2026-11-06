@@ -1639,12 +1639,44 @@
   // começam dentro de controles de formulário, da barra de navegação
   // (que tem sua própria rolagem horizontal no modo admin) ou de modais.
   // ===========================================================================
+  // Link seguro para o perfil público de uma rede: só https e só o host esperado (o valor vem do servidor,
+  // mas dados antigos podem ter sido gravados sem a validação de host). Devolve '' se não for confiável.
+  function socialProfileUrl(kind, value) {
+    var raw = String(value || '').trim();
+    if (!raw) return '';
+    var url = '';
+    if (kind === 'instagram') {
+      if (/^[A-Za-z0-9_.]{1,30}$/.test(raw.replace(/^@/, ''))) url = 'https://www.instagram.com/' + raw.replace(/^@/, '') + '/';
+    } else if (kind === 'linkedin') {
+      try {
+        var parsed = new URL(raw);
+        if (parsed.protocol === 'https:' && /(^|\.)linkedin\.com$/i.test(parsed.hostname) && !parsed.username && !parsed.password) {
+          url = parsed.origin + parsed.pathname;
+        }
+      } catch (err) { url = ''; }
+    }
+    return url && window.LaiftDom ? window.LaiftDom.safeUrl(url) : '';
+  }
+
   var SWIPE_MIN_DISTANCE_PX = 60;
   var SWIPE_MAX_OFF_AXIS_PX = 60;
   var swipeStart = null;
 
+  // Qualquer ancestral que role na horizontal (carrossel, chips, tabela) fica com o gesto:
+  // o arrasto rola o próprio elemento e não pode também trocar de painel.
+  function hasHorizontalScroller(target, boundary) {
+    for (var node = target; node && node !== boundary && node.nodeType === 1; node = node.parentElement) {
+      if (node.scrollWidth <= node.clientWidth + 1) continue;
+      var overflowX = window.getComputedStyle(node).overflowX;
+      if (overflowX === 'auto' || overflowX === 'scroll') return true;
+    }
+    return false;
+  }
+
   function isSwipeExcluded(target) {
-    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .adm2-bar, .modal-overlay, canvas, .learn-viewer, .v3-strip, .hl-list'));
+    if (!(target.closest)) return false;
+    if (target.closest('input, select, textarea, .bottom-nav, .adm2-bar, .modal-overlay, canvas, .learn-viewer, .v3-strip, .hl-list')) return true;
+    return hasHorizontalScroller(target, document.querySelector('.app-main'));
   }
 
   // Ordem do deslizar no modo membro: a mesma de antes do menu (os itens do menu entram no lugar certo).
@@ -2205,12 +2237,15 @@
     [
       ['Usuário', profile.username ? '@' + profile.username : ''],
       ['Escolaridade', profile.education],
-      ['LinkedIn', profile.linkedinUrl],
-      ['Instagram', profile.instagramHandle],
+      ['LinkedIn', profile.linkedinUrl, socialProfileUrl('linkedin', profile.linkedinUrl)],
+      ['Instagram', profile.instagramHandle ? '@' + profile.instagramHandle : '', socialProfileUrl('instagram', profile.instagramHandle)],
       ['Interesses', profile.interests],
     ].forEach(function (pair) {
       if (!pair[1]) return;
-      details.appendChild(h('p', {}, [h('strong', {}, [pair[0] + ': ']), text('span', pair[1])]));
+      var value = pair[2]
+        ? h('a', { href: pair[2], target: '_blank', rel: 'noopener noreferrer nofollow', 'class': 'social-link' }, [pair[1]])
+        : text('span', pair[1]);
+      details.appendChild(h('p', {}, [h('strong', {}, [pair[0] + ': ']), value]));
     });
 
     var actions = document.getElementById('member-profile-actions');

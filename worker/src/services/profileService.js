@@ -15,7 +15,6 @@ import { getRelationship } from './connectionService.js';
 import { requiresMfa } from '../roles/capabilities.js';
 
 const USERNAME_RE = /^[a-zA-Z0-9_.]{3,30}$/;
-const INSTAGRAM_RE = /^@?[a-zA-Z0-9_.]{1,30}$/;
 
 export async function getMyProfile(sql, identity) {
   const rows = await sql`
@@ -114,8 +113,8 @@ export async function updateMyProfile(sql, identity, input, correlationId) {
   const username = S.normalizeText(input.username).toLowerCase();
   const phone = S.normalizeText(input.phone);
   const education = S.normalizeText(input.education);
-  const linkedinUrl = S.normalizeText(input.linkedinUrl);
-  const instagramHandle = S.normalizeText(input.instagramHandle).replace(/^@/, '');
+  const linkedinUrl = S.normalizeLinkedinUrl(input.linkedinUrl);
+  const instagramHandle = S.normalizeInstagramHandle(input.instagramHandle);
   const interests = S.normalizeText(input.interests);
 
   if (!USERNAME_RE.test(username)) {
@@ -125,8 +124,8 @@ export async function updateMyProfile(sql, identity, input, correlationId) {
     throw E.ValidationError('Informe um telefone válido.');
   }
   if (education && education.length > C.LIMITS.EDUCATION_MAX) throw E.ValidationError('Escolaridade inválida.');
-  if (linkedinUrl && !S.isValidLinkedinUrl(linkedinUrl)) throw E.ValidationError('Link do LinkedIn inválido — use uma URL começando com https://.');
-  if (instagramHandle && !INSTAGRAM_RE.test(instagramHandle)) throw E.ValidationError('Usuário do Instagram inválido.');
+  if (linkedinUrl === null) throw E.ValidationError(S.LINKEDIN_ERROR);
+  if (instagramHandle === null) throw E.ValidationError(S.INSTAGRAM_ERROR);
   if (interests && interests.length > 500) throw E.ValidationError('Interesses: máximo de 500 caracteres.');
 
   const usernameTaken = await sql`SELECT id FROM profiles WHERE username = ${username} AND id <> ${identity.profileId}::uuid LIMIT 1`;

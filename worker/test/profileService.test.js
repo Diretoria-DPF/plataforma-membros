@@ -126,3 +126,30 @@ describe('ProfileService.getMemberProfile', () => {
     expect(res.relationship).toEqual({ isSelf: false, isConnection: true, isBlockedEitherWay: false });
   });
 });
+
+describe('ProfileService.updateMyProfile — redes sociais', () => {
+  const base = { username: 'fulano', phone: '71999990000', education: '', interests: '' };
+
+  test('grava a URL canônica do LinkedIn e o handle puro do Instagram', async () => {
+    const ProfileService = await import('../src/services/profileService.js');
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([]); // username livre
+    sql.mockResolvedValueOnce([]); // UPDATE
+    sql.mockResolvedValue([]);
+    const res = await ProfileService.updateMyProfile(
+      sql, MEMBER, { ...base, linkedinUrl: 'linkedin.com/in/fulano/?x=1', instagramHandle: 'https://instagram.com/fulano.s/' }, 'cid',
+    );
+    expect(res.success).toBe(true);
+    const values = sql.mock.calls.flatMap((c) => c.slice(1));
+    expect(values).toContain('https://www.linkedin.com/in/fulano');
+    expect(values).toContain('fulano.s');
+  });
+
+  test('recusa LinkedIn de outro host e Instagram malformado', async () => {
+    const ProfileService = await import('../src/services/profileService.js');
+    await expect(ProfileService.updateMyProfile(makeSql(), MEMBER, { ...base, linkedinUrl: 'https://evil.com/in/x' }, 'cid'))
+      .rejects.toThrow(/LinkedIn/);
+    await expect(ProfileService.updateMyProfile(makeSql(), MEMBER, { ...base, instagramHandle: 'a b!' }, 'cid'))
+      .rejects.toThrow(/Instagram/);
+  });
+});

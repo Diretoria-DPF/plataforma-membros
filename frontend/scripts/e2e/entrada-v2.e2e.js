@@ -76,14 +76,14 @@ async function verificarPagina(app, rotulo) {
   }));
   check(s.h1.length === 1 && /farmacologia/i.test(s.h1[0]), `${rotulo}: um único h1 visível com a promessa (${JSON.stringify(s.h1)})`);
   check(s.rotulos.includes('Criar conta') && s.rotulos.includes('Conheça a LAIFT'), `${rotulo}: botões "Criar conta" e "Conheça a LAIFT"`);
-  check(JSON.stringify(s.explorar) === JSON.stringify(['liga.html', 'blog.html', '/biblioteca', 'processo-seletivo.html']), `${rotulo}: seção Explore com Liga, Blog, Biblioteca e Processo seletivo no corpo (${JSON.stringify(s.explorar)})`);
-  check(s.heroiHref === 'liga.html', `${rotulo}: "Conheça a LAIFT" do herói é link para liga.html (${s.heroiHref})`);
+  check(JSON.stringify(s.explorar) === JSON.stringify(['/liga', '/blog', '/biblioteca', '/processo-seletivo']), `${rotulo}: seção Explore com Liga, Blog, Biblioteca e Processo seletivo no corpo (${JSON.stringify(s.explorar)})`);
+  check(s.heroiHref === '/liga', `${rotulo}: "Conheça a LAIFT" do herói é link para /liga (${s.heroiHref})`);
   check(s.cartoes === 5, `${rotulo}: vitrine com 5 cartões com cadeado (${s.cartoes})`);
   check(s.passos === 3, `${rotulo}: "Como funciona" em 3 passos (${s.passos})`);
   check(s.legado === 0, `${rotulo}: cartões antigos de login e atalhos escondidos (${s.legado})`);
   check(s.folhaOculta, `${rotulo}: folha fechada ao abrir a página`);
   check(s.formNaFolha, `${rotulo}: #form-login e #form-register estão na folha (mesmos elementos do app)`);
-  check(['termos.html', 'privacidade.html', 'blog.html', 'processo-seletivo.html'].every((l) => s.links.includes(l)), `${rotulo}: links Termos, Privacidade, Blog e Processo seletivo (${s.links.join(', ')})`);
+  check(['/termos', '/privacidade', '/blog', '/processo-seletivo'].every((l) => s.links.includes(l)), `${rotulo}: links Termos, Privacidade, Blog e Processo seletivo (${s.links.join(', ')})`);
   check(s.transborda <= 0, `${rotulo}: sem rolagem horizontal (${s.transborda} px)`);
   const pequenos = await page.evaluate(alvosPequenos, { seletor: '.ev2 button, .ev2 a', minimo: MIN_ALVO_PX });
   check(pequenos.length === 0, `${rotulo}: alvos de toque >= ${MIN_ALVO_PX} px (${JSON.stringify(pequenos)})`);
@@ -269,7 +269,7 @@ async function cenarioDesligado() {
       login: document.getElementById('form-login').getClientRects().length > 0,
       pai: document.getElementById('form-login').closest('.auth-card') !== null,
     }));
-    check(s.v2 === 0 && s.h1 === 'Entrar' && s.login && s.pai, 'desligada: tela de login de sempre, sem nada da Entrada v2');
+    check(s.v2 === 0 && s.h1 && /^LAIFT/.test(s.h1) && s.login && s.pai, 'desligada: tela de login de sempre, sem nada da Entrada v2');
     check(!pedidos.some((u) => /entrada-v2\.(js|css)/.test(u)), 'desligada: entrada-v2.js e entrada-v2.css nem são baixados');
     await app.login();
     check((await app.page.locator('#app-root:not(.hidden)').count()) === 1, 'desligada: o login de sempre continua entrando no app');

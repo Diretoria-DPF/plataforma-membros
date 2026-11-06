@@ -129,15 +129,15 @@ function verificarBlocos(s, rotulo, largura) {
 async function verificarTela(page, s, rotulo, flags, largura) {
   check(s.visivel, `${rotulo}: tela de entrada visível`);
   check(s.liaNaTela === 0, `${rotulo}: nenhuma Guia no topo da tela de entrada (achou ${s.liaNaTela})`);
-  check(s.h1.length === 1 && s.h1[0] === 'Entrar', `${rotulo}: um único h1 "Entrar" (achou ${JSON.stringify(s.h1)})`);
-  check(JSON.stringify(s.blocos) === JSON.stringify(['div', 'nav.welcome-liga']),
-    `${rotulo}: dois cartões, login (div) e atalhos (nav.welcome-liga) (achou ${JSON.stringify(s.blocos)})`);
+  check(s.h1.length === 1 && /^LAIFT/.test(s.h1[0]), `${rotulo}: um único h1 com a marca LAIFT (achou ${JSON.stringify(s.h1)})`);
+  check(JSON.stringify(s.blocos) === JSON.stringify(['div', 'nav.welcome-liga', 'article']),
+    `${rotulo}: login (div), atalhos (nav.welcome-liga) e texto institucional (article) (achou ${JSON.stringify(s.blocos)})`);
   const liga = s.botoes.find((b) => b.classe.includes('welcome-liga__link'));
   const blog = s.botoes.find((b) => b.classe.includes('welcome-liga__blog'));
   const biblioteca = s.botoes.find((b) => b.classe.includes('welcome-liga__biblioteca'));
-  check(s.botoes.length === 3 && !!liga && liga.texto === 'Conheça a LAIFT' && liga.href === 'liga.html',
+  check(s.botoes.length === 3 && !!liga && liga.texto === 'Conheça a LAIFT' && liga.href === '/liga',
     `${rotulo}: botão "Conheça a LAIFT" leva a liga.html`);
-  check(!!blog && blog.texto === 'Acessar blog' && blog.href === 'blog.html', `${rotulo}: botão "Acessar blog" leva a blog.html`);
+  check(!!blog && blog.texto === 'Acessar blog' && blog.href === '/blog', `${rotulo}: botão "Acessar blog" leva a /blog`);
   check(!!biblioteca && biblioteca.texto === 'Biblioteca' && biblioteca.href === '/biblioteca', `${rotulo}: botão "Biblioteca" leva a /biblioteca`);
   for (const b of s.botoes) {
     const medida = `${Math.round(b.w)}x${Math.round(b.h)} px (largura útil ${Math.round(s.larguraUtil)} px)`;
