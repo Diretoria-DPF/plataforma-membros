@@ -2239,3 +2239,14 @@ textarea:focus-visible,
 }
 
 .score-status h3 { margin: 0 0 4px; font-size: 1.05rem; }
+
+/* Clínica, aba Diálogo em celular (QA mobile, 2026-11-05): a linha "Guia Semiológico" deixava as sugestões em uma coluna estreita
+   (texto cortado) e os 480 px fixos do chat sobravam ~100 px para a conversa em 320x568. Empilha a linha e deixa o chat crescer. */
+@media (max-width: 480px) {
+  .chat-container { height: auto; min-height: 420px; }
+  .chat-viewport { min-height: 180px; padding: 12px; }
+  .chat-bubble { max-width: 92%; }
+  .suggested-questions-row { flex-direction: column; align-items: stretch; gap: 4px; margin: 8px 0; overflow-x: visible; }
+  .suggestions-chips { max-height: 124px; }
+  .suggestion-chip { text-align: left; min-height: 44px; }
+}
