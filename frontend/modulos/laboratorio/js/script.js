@@ -180,6 +180,7 @@
   let modoVisualizacao = '2D';
   let compostoAtualParaDossie = null;
   let sdfCachePendente = null;
+  let conformacaoPedida = null;
 
   const logEl = document.getElementById('logStream');
   const phCanvas = document.getElementById('phCanvas');
@@ -237,6 +238,28 @@
     const novo = Math.max(0, atual - mmol);
     if (novo < 1e-12) sys.especies.delete(chave);
     else sys.especies.set(chave, novo);
+  }
+
+  // Bibliotecas pesadas (SmilesDrawer 61 KB e 3Dmol 155 KB, comprimidas) saem do caminho crítico: baixam sob demanda, com o
+  // mesmo SRI de antes (conferido por vendor-sri.test.mjs). Resolve true/false; nunca rejeita.
+  const VENDOR = {
+    smiles: { src: 'vendor/smiles-drawer-2.1.7/smiles-drawer.min.js', sri: 'sha384-7qaH3wakC2tfDmCIw89VkGQ+G9iEvHeVV+GFGveOo/NLBcwW3TtGNHrL7HLDCbCm' },
+    '3dmol': { src: 'vendor/3dmol/3Dmol-min.js', sri: 'sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d' }
+  };
+  const vendorCarga = {};
+  const vendorFim = {};
+  function carregarVendor(nome) {
+    if (vendorCarga[nome]) return vendorCarga[nome];
+    vendorCarga[nome] = new Promise((ok) => {
+      const s = document.createElement('script');
+      s.src = VENDOR[nome].src;
+      s.integrity = VENDOR[nome].sri;
+      s.crossOrigin = 'anonymous';
+      s.onload = () => { vendorFim[nome] = true; ok(true); };
+      s.onerror = () => { vendorFim[nome] = true; ok(false); };
+      document.head.appendChild(s);
+    });
+    return vendorCarga[nome];
   }
 
   // =========================================================================
@@ -326,6 +349,7 @@
       if (img2D) img2D.style.display = 'none';
       if (div3D) {
         div3D.style.display = 'block';
+        iniciarConformacao3D();
         setTimeout(() => {
           if (div3D.offsetWidth > 0 && div3D.offsetHeight > 0) {
             if (sdfCachePendente) {
@@ -463,6 +487,10 @@
   }
 
   function desenharEstruturaSmiles(smiles, nomeExibicao, pubchemQuery, formula, peso) {
+    if (smiles && smiles !== '--' && typeof SmilesDrawer === 'undefined' && !vendorFim.smiles) {
+      carregarVendor('smiles').then(() => desenharEstruturaSmiles(smiles, nomeExibicao, pubchemQuery, formula, peso));
+      return;
+    }
     const canvas = document.getElementById('moleculeCanvas');
     const imgEl = document.getElementById('moleculeImg');
     const placeholder = document.getElementById('molPlaceholder');
@@ -511,7 +539,15 @@
       carregarImagemExterna(smiles, nomeExibicao, pubchemQuery, formula, peso);
     }
 
-    carregarConformacao3D(pubchemQuery || nomeExibicao || smiles, smiles);
+    // O conformador 3D (3 consultas ao PubChem/CACTUS e o 3Dmol) só é buscado quando a pessoa está na visão 3D.
+    conformacaoPedida = [pubchemQuery || nomeExibicao || smiles, smiles];
+    if (modoVisualizacao === '3D') iniciarConformacao3D();
+  }
+
+  function iniciarConformacao3D() {
+    if (!conformacaoPedida) return;
+    const pedido = conformacaoPedida;
+    carregarVendor('3dmol').then((ok) => { if (ok && pedido === conformacaoPedida) carregarConformacao3D(pedido[0], pedido[1]); });
   }
 
   window.desenharEstruturaSmiles = desenharEstruturaSmiles;
@@ -1659,6 +1695,7 @@
     const catContainer = document.getElementById('catalogContainer');
     if (catContainer) {
       LaiftDom.clear(catContainer);
+      catContainer.removeAttribute('aria-busy');
       grupos.forEach(([titulo, itens], idx) => {
         const lista = h('div', { className: 'reagent-list', role: 'radiogroup', 'aria-label': titulo });
         itens.forEach(([val, label], i) => {
@@ -1986,5 +2023,7 @@
   if (!document.hidden) timerLoop = setInterval(loopTermico, 200);
   else pausadoPorAba = true;
   log('Bancada pronta. Escolha um reagente, informe a quantidade e toque em Adicionar.', 'log-info');
+  const faixaBoot = document.getElementById('faixaBoot');
+  if (faixaBoot) faixaBoot.remove();
 
 })();

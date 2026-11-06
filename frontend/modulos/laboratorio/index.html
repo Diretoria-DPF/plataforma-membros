@@ -4,25 +4,25 @@
   <meta charset="UTF-8">
   <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov; font-src 'self'; connect-src 'self' https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov https://query.wikidata.org https://www.ebi.ac.uk; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
-  <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
-  <script src="../shared/laift-identity.js"></script>
-  <script src="../shared/laift-dialog.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LAIFT — Laboratório Virtual de Bancada & Síntese Farmacêutica</title>
-  
-  <!-- Visualizadores Moleculares: 2D (SmilesDrawer) & 3D WebGL (3Dmol.js).
-       Versões fixas no jsDelivr (bytes do npm) com SRI — ver docs/FASE_4_QUALIDADE.md. -->
-  <script src="vendor/smiles-drawer-2.1.7/smiles-drawer.min.js" integrity="sha384-7qaH3wakC2tfDmCIw89VkGQ+G9iEvHeVV+GFGveOo/NLBcwW3TtGNHrL7HLDCbCm" crossorigin="anonymous"></script>
-  <script src="vendor/3dmol/3Dmol-min.js" integrity="sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d" crossorigin="anonymous"></script>
 
-  <!-- Tokens do design system (a bancada segue o tema da plataforma: data-theme) -->
+  <!-- Tokens do design system (a bancada segue o tema da plataforma: data-theme).
+       Os estilos vêm antes de qualquer script, para o navegador buscar tudo em paralelo. -->
   <link rel="stylesheet" href="../shared/laift-dialog.css">
   <link rel="stylesheet" href="../shared/laift-tokens.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="lab-guia.css">
 
+  <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela e aplica o tema antes da
+       primeira pintura: por isso é o único script síncrono, e pequeno). -->
+  <script src="../shared/laift-identity.js"></script>
+
+  <!-- Visualizadores moleculares (SmilesDrawer, 3Dmol) NÃO bloqueiam a carga: o script.js os baixa sob demanda,
+       com o mesmo SRI de antes (ver carregarVendor e vendor-sri.test.mjs). -->
+
   <!-- Os controladores de interface (tela cheia, abas, visão mobile, Estúdio)
-       ficam em js/script.js: sem <script> inline, pronto para a CSP. -->
+       ficam no script principal da bancada: sem <script> inline, pronto para a CSP. -->
 </head>
 <body class="cockpit-locked">
 
@@ -72,6 +72,7 @@
         </select>
       </div>
     </div>
+    <progress class="lab-boot-progresso faixa-boot" id="faixaBoot" aria-label="Preparando a bancada"></progress>
     <progress class="faixa-progresso" id="faixaProgresso" max="100" value="0" hidden aria-label="Progresso do roteiro"></progress>
     <p class="faixa-passo" id="faixaPasso"></p>
     <div class="faixa-balao" id="labBalao" role="status" aria-live="polite" hidden>
@@ -117,7 +118,13 @@
 
         <div class="control-group">
           <label>Catálogo de Precursores & Fármacos:</label>
-          <div id="catalogContainer" class="reagent-catalog">Carregando catálogo...</div>
+          <div id="catalogContainer" class="reagent-catalog" aria-busy="true">
+            <div class="lab-esqueleto" id="catalogEsqueleto" role="status">
+              <span class="lab-esqueleto-msg">Carregando catálogo...</span>
+              <progress class="lab-boot-progresso" aria-label="Preparando o catálogo de reagentes"></progress>
+              <span class="lab-esqueleto-linha"></span><span class="lab-esqueleto-linha"></span><span class="lab-esqueleto-linha"></span><span class="lab-esqueleto-linha"></span><span class="lab-esqueleto-linha"></span>
+            </div>
+          </div>
         </div>
 
         <div class="control-group compact-row">
@@ -452,22 +459,26 @@
     </div>
   </div>
 
-<!-- Módulos de Execução Científica e Bancos de Dados -->
-  <script src="../shared/safe-dom.js"></script>
-  <script src="data/lab-database.js"></script>
-  <script src="data/lab-seed.js"></script>
-  <script src="js/lab-seed-leitor.js"></script>
-  <script src="data/sinteses-database.js"></script>
-  <script src="js/lab-apis.js"></script>
-  <script src="js/lab-storage.js"></script>
-  <script src="js/lab-preceptor.js"></script>
-  <script src="js/lab-quimica.js"></script>
-  <script src="js/lab-cache-local.js"></script>
-  <script src="js/lab-rotulos.js"></script>
-  <script src="js/lab-missoes.js"></script>
-  <script src="js/lab-guia.js"></script>
-  <script src="js/lab-guia-ui.js"></script>
-  <script src="js/script.js"></script>
-  <script src="js/lab-motor-carregador.js"></script>
+<!-- Módulos de Execução Científica e Bancos de Dados.
+       Todos com defer: baixam em paralelo e rodam na ordem, depois da leitura da página (a bancada pinta antes).
+       A ordem importa (o seed antes do leitor, o leitor antes do script principal): ver lab-orcamento.test.mjs. -->
+  <script src="js/lab-boot.js" defer></script>
+  <script src="../shared/laift-dialog.js" defer></script>
+  <script src="../shared/safe-dom.js" defer></script>
+  <script src="data/lab-database.js" defer></script>
+  <script src="data/lab-seed.js" defer></script>
+  <script src="js/lab-seed-leitor.js" defer></script>
+  <script src="data/sinteses-database.js" defer></script>
+  <script src="js/lab-apis.js" defer></script>
+  <script src="js/lab-storage.js" defer></script>
+  <script src="js/lab-preceptor.js" defer></script>
+  <script src="js/lab-quimica.js" defer></script>
+  <script src="js/lab-cache-local.js" defer></script>
+  <script src="js/lab-rotulos.js" defer></script>
+  <script src="js/lab-missoes.js" defer></script>
+  <script src="js/lab-guia.js" defer></script>
+  <script src="js/lab-guia-ui.js" defer></script>
+  <script src="js/script.js" defer></script>
+  <script src="js/lab-motor-carregador.js" defer></script>
 </body>
 </html>

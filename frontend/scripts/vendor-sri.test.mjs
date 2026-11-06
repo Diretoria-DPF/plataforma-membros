@@ -41,6 +41,15 @@ test('<script src> local com integrity bate com o hash do arquivo vendorizado', 
       checked++;
     }
   }
+  // Desempenho em 3G: as bibliotecas pesadas da bancada (SmilesDrawer, 3Dmol) saíram do <head> e carregam sob
+  // demanda por js/script.js (VENDOR); o mesmo hash precisa continuar valendo.
+  const principal = fs.readFileSync(path.join(MODULOS, 'laboratorio/js/script.js'), 'utf8');
+  for (const m of principal.matchAll(/src: '(vendor\/[^']+)', sri: '(sha384-[^']+)'/g)) {
+    const file = path.resolve(MODULOS, 'laboratorio', m[1]);
+    assert.ok(fs.existsSync(file), `${m[1]} não existe`);
+    assert.equal(sri(file), m[2], `SRI sob demanda de ${m[1]} não bate`);
+    checked++;
+  }
   assert.ok(checked >= 6, `esperava >= 6 scripts vendorizados com SRI, achei ${checked}`);
 });
 
