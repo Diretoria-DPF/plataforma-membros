@@ -244,6 +244,8 @@ summary:focus-visible,
 /* ---------- Crédito de desenvolvimento (rodapé discreto, tela de entrada e área logada) ---------- */
 .site-credito { margin: 8px 0 0; text-align: center; color: var(--muted); font-size: 0.75rem; line-height: 1.4; }
 .site-credito a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+/* Área de toque de 44 px sem mudar a altura do rodapé (margem negativa compensa o preenchimento). */
+.site-credito a { display: inline-block; padding: 14px 6px; margin: -14px -6px; }
 .site-credito a:hover, .site-credito a:focus-visible { color: var(--primary); }
 /* Na entrada o crédito fica na faixa livre sob os cartões (a margem de 96 px também afasta a Guia flutuante dos botões). */
 .site-credito--entrada { position: absolute; left: 0; right: 0; bottom: 84px; margin: 0; padding: 0 16px; }
