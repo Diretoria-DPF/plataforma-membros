@@ -250,7 +250,7 @@ async function linkDoLogin() {
     const blog = app.page.locator('.welcome-liga__blog');
     await blog.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
     check((await blog.count()) === 1 && (await blog.isVisible()), `${rotulo}: "Acessar blog" visível`);
-    check((await blog.getAttribute('href')) === 'blog.html', `${rotulo}: "Acessar blog" leva a blog.html`);
+    check((await blog.getAttribute('href')) === '/blog', `${rotulo}: "Acessar blog" leva a /blog`);
     check(((await blog.textContent()) || '').trim() === 'Acessar blog', `${rotulo}: o botão do blog diz "Acessar blog"`);
     check((await app.page.locator('.welcome-liga__link').count()) === 1, `${rotulo}: botão "Conheça a LAIFT" continua único`);
   } finally {
