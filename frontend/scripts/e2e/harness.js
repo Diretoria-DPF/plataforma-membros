@@ -200,7 +200,8 @@ async function startApp(opts = {}) {
   const errors = [];
 
   const browser = await chromium.launch(opts.launchArgs ? { args: opts.launchArgs } : undefined);
-  const mobile = opts.viewport && opts.viewport.width < 600;
+  // `opts.touch` força (ou desliga) o modo celular: paisagem de celular tem 640 px ou mais de largura e ainda assim é toque.
+  const mobile = opts.touch !== undefined ? !!opts.touch : (opts.viewport && opts.viewport.width < 600);
   const context = await browser.newContext({
     viewport: opts.viewport || { width: 1280, height: 900 },
     hasTouch: !!mobile,

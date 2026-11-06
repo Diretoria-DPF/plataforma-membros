@@ -415,6 +415,7 @@
     // (styles.css .learn-viewer-immersive) — o cabeçalho da plataforma e as
     // folhas decorativas não disputam espaço com o corpo 3D.
     $('learn-viewer').classList.toggle('learn-viewer-immersive', IMMERSIVE_MODULES[id] === true);
+    $('learn-viewer').setAttribute('data-module', id);
     $('learn-viewer-title').textContent = mod.icon + ' ' + mod.title;
     $('learn-hub').classList.add('hidden');
     $('learn-viewer').classList.remove('hidden');

@@ -58,3 +58,37 @@ test('celular: o título do Laboratório ganha a própria linha no cabeçalho', 
   assert.match(css, /@media \(max-width: 600px\) \{\s*\.lab-header \{ height: auto !important;[^}]*flex-wrap: wrap/);
   assert.match(css, /\.lab-header \.header-left \{ flex: 1 1 100%; \}/);
 });
+
+// ---- Paisagem de celular (leiaute próprio, sem rolar o módulo) ----
+const PAISAGEM = '@media (orientation: landscape) and (max-height: 540px) and (max-width: 1023px)';
+const blocoPaisagem = () => {
+  const css = fs.readFileSync(path.join(lab, 'lab-guia.css'), 'utf8');
+  const i = css.indexOf(PAISAGEM);
+  assert.ok(i > 0, 'bloco de paisagem presente');
+  return css.slice(i);
+};
+
+test('paisagem: painel ao lado da bancada, trilho de navegação à direita e #mainGrid fora do leiaute', () => {
+  const css = blocoPaisagem();
+  assert.match(css, /grid-template-columns: var\(--lab-esq\) minmax\(0, 1fr\) var\(--lab-trilho\)/);
+  assert.match(css, /\.main-grid, \.main-grid\[data-mobile-view\] \{ display: contents !important; \}/);
+  assert.match(css, /\.mobile-nav-bar \{ grid-column: 3; grid-row: 1 \/ 4; flex-direction: column !important/);
+  assert.match(css, /#viewReagentes \{ display: flex !important; grid-column: 1;/);
+  assert.match(css, /#viewBancada \{ display: flex !important; grid-column: 2;/);
+});
+
+test('paisagem: a janela deixa de rolar (a regra de rolagem vale só em retrato) e os botões do topo viram ícones de 44 px', () => {
+  const css = fs.readFileSync(path.join(lab, 'lab-guia.css'), 'utf8');
+  assert.match(css, /@media \(max-width: 1023px\) and \(max-height: 540px\) and \(orientation: portrait\)/);
+  assert.match(blocoPaisagem(), /\.lab-header \.manual-btn \{[^}]*font-size: 0; min-width: 44px; min-height: 44px/);
+  const html = fs.readFileSync(path.join(lab, 'index.html'), 'utf8');
+  for (const id of ['btnLabFullscreen', 'btnOpenStudio', 'btnComece', 'btnManual']) assert.match(html, new RegExp(`id="${id}" data-ico="[^"]+"`));
+});
+
+test('paisagem estreita (até 620 px): bancada e painel alternam; a casca tira a barra da plataforma só do Laboratório', () => {
+  const css = fs.readFileSync(path.join(lab, 'lab-guia.css'), 'utf8');
+  assert.match(css, /@media \(orientation: landscape\) and \(max-height: 540px\) and \(max-width: 620px\)/);
+  const shell = fs.readFileSync(path.join(lab, '..', '..', 'styles.css'), 'utf8');
+  assert.match(shell, /body:has\(\.learn-viewer-immersive\[data-module="lab"\]:not\(\.hidden\)\) \.bottom-nav \{ display: none; \}/);
+  assert.match(fs.readFileSync(path.join(lab, '..', '..', 'learning.js'), 'utf8'), /setAttribute\('data-module', id\)/);
+});
