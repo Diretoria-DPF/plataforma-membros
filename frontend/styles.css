@@ -907,3 +907,12 @@ button.learn-card:focus-visible { outline-offset: 3px; }
   #panel-admin-fiscal > .card h2 { margin-bottom: 4px; }
   #panel-admin-fiscal > .card .muted { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0; }
 }
+
+/* Laboratório em paisagem de celular (altura abaixo de 540 px): o módulo precisa da altura toda. A barra inferior da
+   plataforma sai (o "← Voltar" da barra do visualizador continua) e a barra do visualizador fica numa linha de 44 px.
+   O Laboratório ganha ~110 px a mais e desenha o próprio leiaute de paisagem (modulos/laboratorio/lab-guia.css). */
+@media (orientation: landscape) and (max-height: 540px) and (max-width: 1023px) {
+  .learn-viewer.learn-viewer-immersive[data-module="lab"]:not(.hidden) { bottom: 0; padding-top: max(2px, env(safe-area-inset-top, 0px)); padding-bottom: 0; }
+  .learn-viewer.learn-viewer-immersive[data-module="lab"] .learn-viewer-bar { margin-bottom: 2px; }
+  body:has(.learn-viewer-immersive[data-module="lab"]:not(.hidden)) .bottom-nav { display: none; }
+}

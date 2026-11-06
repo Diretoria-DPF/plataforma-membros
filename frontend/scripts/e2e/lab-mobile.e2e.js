@@ -17,7 +17,7 @@ const contraste = (fr) => fr.evaluate(async () => {
 });
 
 async function abrir(viewport, theme = 'light') {
-  const app = await startApp({ role: 'member', viewport, theme });
+  const app = await startApp({ role: 'member', viewport, theme, touch: true });
   await app.login();
   const frame = await app.openModule('lab');
   await frame.waitForSelector('#faixaMissao');
@@ -53,18 +53,50 @@ async function retrato(w, h, alturaMin, exigeSemRolar = true) {
   } finally { await app.close(); }
 }
 
-async function paisagem() {
-  console.log('  paisagem 667x375');
-  const { app, frame } = await abrir({ width: 667, height: 375 });
+/** Retângulo de um elemento do módulo (ou null). */
+const caixa = (frame, sel) => frame.evaluate((q) => { const e = document.querySelector(q); if (!e || !e.getClientRects().length) return null; const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, r: r.right, b: r.bottom, w: r.width, h: r.height }; }, sel);
+
+async function paisagem(w, h, larga) {
+  console.log(`  paisagem ${w}x${h}${larga ? '' : ' (estreita)'}`);
+  const { app, frame } = await abrir({ width: w, height: h });
   try {
-    const m = await frame.evaluate(() => {
-      const nav = document.getElementById('mobileNavBar').getBoundingClientRect();
-      return { rola: document.documentElement.scrollHeight > innerHeight, navBottom: nav.bottom, ih: innerHeight, grid: document.getElementById('mainGrid').getBoundingClientRect().height, hs: document.documentElement.scrollWidth - innerWidth };
-    });
-    check(m.rola, 'a janela do módulo rola na paisagem');
-    check(m.grid >= 250, `bancada com altura própria (${Math.round(m.grid)} px)`);
-    check(m.navBottom <= m.ih + 1, 'barra inferior fixa no fim da janela');
-    check(m.hs <= 0, 'sem rolagem horizontal');
+    const m = await frame.evaluate(() => ({ sh: document.documentElement.scrollHeight, ih: innerHeight, sw: document.documentElement.scrollWidth, iw: innerWidth }));
+    check(m.sh <= m.ih + 1, `o módulo não rola na paisagem (${m.sh} de ${m.ih} px)`);
+    check(m.sw <= m.iw, 'sem rolagem horizontal');
+    const shell = await app.page.evaluate(() => { const i = document.querySelector('.learn-frame:not(.hidden)').getBoundingClientRect(); const n = document.getElementById('app-nav'); return { fim: i.bottom, ih: innerHeight, nav: getComputedStyle(n).display }; });
+    check(shell.nav === 'none' && shell.fim >= shell.ih - 1, 'a barra da plataforma sai e o módulo usa a altura toda');
+    const bancada = await caixa(frame, '#viewBancada');
+    const trilho = await caixa(frame, '#mobileNavBar');
+    check(bancada && bancada.h >= 150, `bancada com altura própria (${bancada && Math.round(bancada.h)} px)`);
+    check(trilho && trilho.r <= m.iw + 1 && trilho.b <= m.ih + 1 && trilho.w >= 44 && trilho.h >= m.ih - 2, 'trilho de navegação na borda direita, na altura toda');
+    const botoes = await frame.evaluate(() => [...document.querySelectorAll('.m-nav-btn')].map((e) => { const r = e.getBoundingClientRect(); return [r.width, r.height]; }));
+    check(botoes.every(([bw, bh]) => bw >= 44 && bh >= 44), 'botões do trilho com 44 px ou mais');
+    const topo = await frame.evaluate(() => [...document.querySelectorAll('.lab-header .manual-btn')].map((e) => { const r = e.getBoundingClientRect(); return [r.width, r.height]; }));
+    check(topo.every(([bw, bh]) => bw >= 44 && bh >= 44), 'botões do topo (ícones) com 44 px ou mais');
+    if (larga) {
+      const reag = await caixa(frame, '#viewReagentes');
+      check(reag && reag.r <= bancada.x + 1 && reag.y <= bancada.y + 1, 'reagentes ao lado da bancada (esquerda)');
+      const add = await caixa(frame, '#btnStartAdd');
+      check(add && add.h >= 44 && add.b <= m.ih && add.y >= 0, `"Adicionar" visível sem rolar e com 44 px (${add && Math.round(add.y)}-${add && Math.round(add.b)})`);
+      check(add && add.x < m.iw / 2, '"Adicionar" no lado esquerdo (polegar esquerdo)');
+      await frame.tap('#btnStartAdd');
+      await frame.waitForTimeout(250);
+      check(await frame.evaluate(() => window.sys.especies.size > 0), '1ª adição em 1 toque na paisagem');
+      await frame.tap('.m-nav-btn[data-target=analise]');
+      await frame.waitForTimeout(200);
+      check(await frame.evaluate(() => getComputedStyle(document.getElementById('viewAnalise')).display !== 'none' && getComputedStyle(document.getElementById('viewBancada')).display !== 'none'), 'Análise ao lado da bancada');
+      const tab = await frame.evaluate(() => [...document.querySelectorAll('.rtab-btn')].map((e) => { const r = e.getBoundingClientRect(); return [r.width, r.height]; }));
+      check(tab.every(([bw, bh]) => bw >= 40 && bh >= 44), 'abas da Análise com altura de 44 px');
+    } else {
+      check(await frame.evaluate(() => getComputedStyle(document.getElementById('viewReagentes')).display === 'none'), 'estreita: a visão Bancada mostra só a bancada');
+      await frame.tap('.m-nav-btn[data-target=reagentes]');
+      await frame.waitForTimeout(200);
+      const add = await caixa(frame, '#btnStartAdd');
+      check(add && add.h >= 44 && add.b <= m.ih && add.y >= 0, 'estreita: Reagentes mostra o painel e "Adicionar" sem rolar');
+    }
+    const preceptor = await frame.evaluate(() => { document.getElementById('mobileNavBar').querySelector('[data-action="toggleLabChat"]').click(); const d = document.getElementById('labChatDrawer').getBoundingClientRect(); return { r: d.right, t: d.top, b: d.bottom, ih: innerHeight, iw: innerWidth }; });
+    check(preceptor.t >= 0 && preceptor.b <= preceptor.ih && preceptor.r <= preceptor.iw - 60, 'gaveta do Preceptor dentro da janela e sem cobrir o trilho');
+    check(app.errors.length === 0, `sem erro de JavaScript (${app.errors.join(' | ')})`);
   } finally { await app.close(); }
 }
 
@@ -99,7 +131,9 @@ module.exports = async function () {
   await retrato(360, 740, 280);
   await retrato(375, 667, 240);
   await retrato(390, 844, 340);
-  await paisagem();
+  await paisagem(667, 375, true);
+  await paisagem(844, 390, true);
+  await paisagem(568, 320, false);
   await cores('light');
   await cores('dark');
 };
