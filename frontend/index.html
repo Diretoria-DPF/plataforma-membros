@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-app-version="v38">
+<html lang="pt-BR" data-app-version="v39">
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
@@ -8,6 +8,8 @@
   <title>LAIFT – Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</title>
   <meta name="description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Quiz, casos clínicos, laboratório virtual e atlas 3D para estudantes de Farmácia.">
   <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="dpflabs.com">
+  <link rel="author" href="/humans.txt">
   <link rel="canonical" href="https://laift.com.br/">
   <!-- PWA: instalável no Android e no iPhone (manifest + service worker em pwa.js/sw.js). -->
   <link rel="manifest" href="manifest.webmanifest">
@@ -283,7 +285,7 @@
         </form>
         <div id="msg-reset" class="status-msg" role="alert" aria-live="polite"></div>
       </section>
-      <footer class="site-credito site-credito--entrada">© 2026 LAIFT · desenvolvido por: <a href="https://dpflabs.com" target="_blank" rel="noopener noreferrer">dpflabs.com</a></footer>
+      <footer class="site-credito site-credito--entrada">© 2026 LAIFT</footer>
     </main>
 
     <!-- ================= AUTENTICADO ================= -->
@@ -846,6 +848,11 @@
               <button type="button" id="btn-app-update" class="secondary">Atualizar o aplicativo</button>
               <div id="msg-app-update" class="status-msg" role="status" aria-live="polite"></div>
             </div>
+            <div class="card sobre-card" id="about-card">
+              <h3>Sobre</h3>
+              <p class="sobre-linha">Plataforma desenvolvida por <a href="https://dpflabs.com" target="_blank" rel="noopener noreferrer">dpflabs.com</a></p>
+              <button type="button" id="about-version" class="sobre-versao">Versão</button>
+            </div>
           </div>
         </section>
 
@@ -1263,7 +1270,7 @@
           <h1 class="sr-only">Pedidos de exclusão de conta</h1>
           <div id="privacy-admin-root"></div>
         </section>
-        <footer class="site-credito">© 2026 LAIFT · desenvolvido por: <a href="https://dpflabs.com" target="_blank" rel="noopener noreferrer">dpflabs.com</a></footer>
+        <footer class="site-credito">© 2026 LAIFT</footer>
       </main>
     </div>
   </div>
@@ -1402,6 +1409,7 @@
   <script type="module" src="messaging.js"></script>
   <!-- Área "Aprender" (módulos LAIFT): só usa window.App dentro de funções. -->
   <script src="domain-notice.js" defer></script>
+  <script src="modulos/shared/dpf-marca.js" defer></script>
   <script src="splash.js" defer></script>
   <script src="shared-states.js" defer></script>
   <script src="panel-history.js" defer></script>
@@ -1421,6 +1429,7 @@
   <script src="lazy-bundles.js" defer></script>
   <script src="keyboard-shortcuts.js" defer></script>
   <script src="modal-a11y.js" defer></script>
+  <script src="sobre.js" defer></script>
   <script src="onboarding.js" defer></script>
   <script src="learning.js" defer></script>
   <!-- Tutor clínico na tela Aprender (ADR 0007, etapa 5): usa assistant-sources.js e window.App só dentro de funções. -->

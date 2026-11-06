@@ -428,14 +428,6 @@
   text-underline-offset: 3px;
 }
 
-/* Crédito de desenvolvimento: discreto, na cor do texto do rodapé (não é um link de navegação). */
-.pub-rodape .pub-rodape__credito {
-  display: inline;
-  min-height: 0;
-  color: inherit;
-  font-weight: 500;
-}
-
 /* -------------------------------------------------------------------------
    Estados em hover: só com ponteiro de verdade
    ------------------------------------------------------------------------- */

@@ -248,6 +248,11 @@ summary:focus-visible,
 .site-credito a { display: inline-block; padding: 14px 6px; margin: -14px -6px; }
 .site-credito a:hover, .site-credito a:focus-visible { color: var(--primary); }
 /* Na entrada o crédito fica na faixa livre sob os cartões (a margem de 96 px também afasta a Guia flutuante dos botões). */
+/* Perfil > Sobre: linha discreta da autoria técnica e a versão (alvo de toque de 44 px). */
+.sobre-card .sobre-linha { margin: 0 0 4px; color: var(--muted); font-size: 0.875rem; }
+.sobre-card .sobre-linha a { display: inline-flex; align-items: center; min-height: 44px; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.sobre-card .sobre-versao { display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; margin: 0; background: none; border: 0; box-shadow: none; color: var(--muted); font-size: 0.875rem; font-weight: 500; -webkit-tap-highlight-color: transparent; user-select: none; }
+
 .site-credito--entrada { position: absolute; left: 0; right: 0; bottom: 84px; margin: 0; padding: 0 16px; }
 .cadastro-opcional {
   border-radius: var(--radius-md); background: var(--surface-alt);

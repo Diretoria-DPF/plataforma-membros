@@ -916,3 +916,6 @@ button.learn-card:focus-visible { outline-offset: 3px; }
   .learn-viewer.learn-viewer-immersive[data-module="lab"] .learn-viewer-bar { margin-bottom: 2px; }
   body:has(.learn-viewer-immersive[data-module="lab"]:not(.hidden)) .bottom-nav { display: none; }
 }
+
+/* Marca d'água da autoria técnica (404): monograma de uma cor, baixa opacidade, sem captura de toque. */
+.marca-dagua { position: fixed; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); width: 40px; height: auto; color: var(--muted); opacity: 0.25; pointer-events: none; }

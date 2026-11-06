@@ -1,0 +1,59 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Créditos (creditos.js): tela cheia. O nome anda pela tela só com transform (leve, sem canvas);
+   o texto legível fica numa caixa fixa, com contraste AA nos dois temas (usa os tokens de texto e
+   de camada). Movimento reduzido: o bloco único de
+   laift-tokens.css zera a animação, as faixas ficam fora da tela e só o texto estático aparece. */
+.creditos {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 16px;
+  background: var(--layer-0);
+  color: var(--text);
+}
+.creditos__palco { position: absolute; inset: 0; overflow: hidden; pointer-events: none; color: var(--primary); }
+.creditos__corre {
+  position: absolute;
+  left: 0;
+  white-space: nowrap;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  opacity: 0.16;
+  transform: translateX(-100%);
+  animation: creditos-passa 9s linear infinite;
+  will-change: transform;
+}
+.creditos__corre--1 { top: 12%; font-size: 44px; animation-duration: 9s; }
+.creditos__corre--2 { top: 46%; font-size: 64px; animation-duration: 12s; animation-delay: -4s; animation-direction: reverse; }
+.creditos__corre--3 { top: 76%; font-size: 36px; animation-duration: 7s; animation-delay: -2s; }
+@keyframes creditos-passa {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100vw); }
+}
+.creditos__caixa {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  max-width: 100%;
+  text-align: center;
+}
+.creditos__marca { color: var(--primary-strong); margin-bottom: 4px; }
+.creditos__titulo { margin: 0; font-size: 1.5rem; }
+.creditos__linha { margin: 0; font-size: 1rem; line-height: 1.5; overflow-wrap: anywhere; }
+.creditos__linha--forte { font-weight: 700; }
+.creditos__linha--suave { color: var(--muted); }
+.creditos__fechar {
+  min-width: 44px;
+  min-height: 44px;
+  margin-top: 16px;
+  padding: 0 24px;
+  font-size: 1rem;
+}

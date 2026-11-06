@@ -23,6 +23,7 @@
 //  - tarefas2: carregado quando a flag tasks_v2_enabled está ligada e Tarefas abre (app.js);
 //  - biblioteca2: carregado quando a flag library_v2_enabled está ligada e a Biblioteca abre (app.js);
 //  - novidades: carregado após o login (uma vez por versão) ou ao abrir "Ver novidades" no Perfil;
+//  - creditos: carregado quando a pessoa toca três vezes seguidas na versão, em Perfil > Sobre (sobre.js);
 //  - lia: carregado logo após o login e, para quem só visita, quando o navegador
 //    fica ocioso depois do evento load (fora do caminho crítico).
 // Cada pacote é carregado uma única vez; se falhar (sem rede e sem cache), a
@@ -76,6 +77,8 @@
     // Novidades (ENG-07): aviso uma vez por versão no login e "Ver novidades" no Perfil. O estilo do diálogo
     // (laift-dialog.css) vem no index.html; aqui só o script.
     novidades: ['modulos/shared/laift-dialog.js', 'whats-new.js'],
+    // Créditos (toque triplo na versão em Perfil > Sobre): tela cheia com animação por CSS; o creditos.css é injetado pelo script.
+    creditos: ['creditos.js'],
     lia: [
       'modulos/shared/lia/lia-art.js', 'modulos/shared/lia/lia-states.js', 'modulos/shared/lia/lia-mood.js',
       'assistant-mood-glue.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia-props.js',
