@@ -900,3 +900,10 @@ button.learn-card:focus-visible { outline-offset: 3px; }
 
 /* Links de redes sociais no perfil do membro: alvo de toque confortável. */
 .social-link { display: inline-flex; align-items: center; min-height: 44px; overflow-wrap: anywhere; color: var(--laift-primary, var(--link, #0a66c2)); text-decoration: underline; }
+
+/* Portaria no celular: o texto de apresentação ocupava ~210 px e empurrava o botão "Ler QR Code" para fora da primeira tela. */
+@media (max-width: 600px) {
+  #panel-admin-fiscal > .card { padding: 12px 16px; }
+  #panel-admin-fiscal > .card h2 { margin-bottom: 4px; }
+  #panel-admin-fiscal > .card .muted { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0; }
+}
