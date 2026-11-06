@@ -401,3 +401,17 @@ test('paleta de gráficos: 8 tokens claros e 8 escuros, uma vez, hex válido, co
     }
   }
 });
+
+test('restoreFlags com padrões: primeira abertura (sem cache) já nasce no visual novo; com cache, o cache vale', () => {
+  const primeira = fakeElement();
+  const ligadas = Ux.restoreFlags(primeira, fakeStorage({}), Ux.BOOT_DEFAULT_FLAGS);
+  assert.ok(ligadas.includes('ux_v2_enabled'));
+  assert.ok(ligadas.includes('entrada_v2_enabled'));
+  assert.ok(ligadas.includes('home_v2_enabled'));
+  // com cache existente, os padrões não se somam ao que o servidor já informou
+  const comCache = fakeElement();
+  const so = Ux.restoreFlags(comCache, fakeStorage({ [Ux.CACHE_KEY]: '{"ux_v2_enabled":true}' }), Ux.BOOT_DEFAULT_FLAGS);
+  assert.deepEqual(so, ['ux_v2_enabled']);
+  // sem padrões o comportamento antigo se mantém
+  assert.deepEqual(Ux.restoreFlags(fakeElement(), fakeStorage({})), []);
+});
