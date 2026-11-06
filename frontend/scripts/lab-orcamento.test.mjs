@@ -24,7 +24,10 @@ const ORCAMENTO = {
   // Preceptor: ~13 KB em 3 arquivos). JUSTIFICATIVA: esses arquivos só são baixados ao abrir a trilha (lista
   // ARQUIVOS_TUTOR do carregador) e nenhum entra no index.html; o que pesa para a pessoa é a CARGA INICIAL, que
   // tem teto próprio logo abaixo e NÃO subiu. Próxima onda que precisar de mais: cortar código antes de subir.
-  scriptsBytes: 465 * 1024,
+  // Subiu de 465 para 468 KB no desempenho em 3G (lab-boot.js, 1 KB, e o carregador sob demanda das bibliotecas, ~1,5 KB em
+  // script.js). JUSTIFICATIVA: o ganho líquido é grande (a carga inicial em Fast 3G com CPU 4x caiu de 348 para 137 KB e de ~15 s
+  // para ~4 s) e a carga inicial tem teto próprio (abaixo). Próxima onda que precisar de mais: cortar código antes de subir.
+  scriptsBytes: 468 * 1024,
   cargaInicialBytes: 210 * 1024, // só os <script src="js/..."> do index.html da bancada (hoje ~201 KB)
 };
 
@@ -42,7 +45,7 @@ test('orçamento do Laboratório: dados (seed + bases antigas) cabem em 700 KB',
   assert.ok(n <= ORCAMENTO.dadosBytes, `data/ com ${kb(n)}; teto ${kb(ORCAMENTO.dadosBytes)}`);
 });
 
-test('orçamento do Laboratório: scripts do módulo cabem em 465 KB', () => {
+test('orçamento do Laboratório: scripts do módulo cabem em 468 KB', () => {
   const n = soma('js', '.js');
   assert.ok(n <= ORCAMENTO.scriptsBytes, `js/ com ${kb(n)}; teto ${kb(ORCAMENTO.scriptsBytes)}`);
 });

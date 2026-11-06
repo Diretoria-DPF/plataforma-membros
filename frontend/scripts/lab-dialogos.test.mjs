@@ -36,7 +36,8 @@ for (const rel of AUTORAIS) {
 for (const [rel, prefixo] of [['modulos/laboratorio/index.html', '../shared/'], ['modulos/laboratorio/studio/index.html', '../../shared/']]) {
   test(`${rel} carrega laift-dialog.js e .css sem script inline`, () => {
     const html = read(rel);
-    assert.ok(html.includes(`<script src="${prefixo}laift-dialog.js"></script>`));
+    // A bancada carrega com defer (depois da leitura da página); o Estúdio, síncrono.
+    assert.ok(html.includes(`<script src="${prefixo}laift-dialog.js"></script>`) || html.includes(`<script src="${prefixo}laift-dialog.js" defer></script>`));
     assert.ok(html.includes(`<link rel="stylesheet" href="${prefixo}laift-dialog.css">`));
     assert.ok(html.indexOf('laift-dialog.js') < html.indexOf('js/script.js') || rel.includes('studio'));
     assert.doesNotMatch(html.replace(/<!--[\s\S]*?-->/g, ''), /<script(?![^>]*\bsrc=)[^>]*>/);
