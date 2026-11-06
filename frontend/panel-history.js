@@ -162,9 +162,12 @@
     raf(syncOverlays);
   }
 
-  function onOverlayPop() {
-    if (overlaySwallow > 0) { overlaySwallow -= 1; return; }
+  // O popstate de um diálogo não é navegação: este ouvinte vem antes do app.js e corta o evento, senão o app trataria o estado
+  // de baixo (sem estado de painel, como no processo seletivo) como "voltar à Início" e tiraria a pessoa da tela.
+  function onOverlayPop(event) {
+    if (overlaySwallow > 0) { overlaySwallow -= 1; event.stopImmediatePropagation(); return; }
     if (!overlayPushed) return;
+    event.stopImmediatePropagation();
     overlayPushed = false; // o Voltar consumiu a entrada do diálogo
     var list = openOverlays();
     var inside = list.filter(function (el) { return document.activeElement && el.contains(document.activeElement); });
