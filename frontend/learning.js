@@ -63,6 +63,9 @@
   // Um iframe por módulo, criado na primeira abertura e mantido escondido ao
   // voltar ao hub — preserva o progresso (questão atual, leito aberto, cena
   // 3D) enquanto a pessoa navega pela plataforma, como no hub antigo.
+  // Módulos que ocupam toda a altura útil no celular (camada fixa até a barra inferior): o Atlas 3D e a bancada do
+  // Laboratório, onde o cabeçalho da plataforma comia ~150 px e deixava a bancada com ~200 px.
+  var IMMERSIVE_MODULES = { anatomia: true, lab: true };
   var frames = {};
   var activeModuleId = null;
   var openerCard = null; // cartão que abriu o módulo (o foco volta para ele)
@@ -406,12 +409,12 @@
       // .learn-frame-immersive); os demais módulos continuam com a altura
       // padrão calc(100dvh - ...px). Nunca fica em mais de um iframe por
       // vez, e sai de qualquer outro ao trocar de módulo.
-      frames[key].classList.toggle('learn-frame-immersive', key === 'anatomia' && key === id);
+      frames[key].classList.toggle('learn-frame-immersive', IMMERSIVE_MODULES[key] === true && key === id);
     });
     // O Atlas ocupa toda a área entre o topo da tela e a barra inferior
     // (styles.css .learn-viewer-immersive) — o cabeçalho da plataforma e as
     // folhas decorativas não disputam espaço com o corpo 3D.
-    $('learn-viewer').classList.toggle('learn-viewer-immersive', id === 'anatomia');
+    $('learn-viewer').classList.toggle('learn-viewer-immersive', IMMERSIVE_MODULES[id] === true);
     $('learn-viewer-title').textContent = mod.icon + ' ' + mod.title;
     $('learn-hub').classList.add('hidden');
     $('learn-viewer').classList.remove('hidden');

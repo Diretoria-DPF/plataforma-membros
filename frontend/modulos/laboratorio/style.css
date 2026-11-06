@@ -325,7 +325,7 @@ label {
 
 .btn-play { background: var(--neon-green); color: #000; }
 .btn-stop { background: #ff9800; color: #000; }
-.btn-fire { background: #ff5722; color: #fff; }
+.btn-fire { background: #c2410c; color: #fff; }
 .btn-ice { background: #4fc3f7; color: #000; }
 .btn-lock { background: #7c4dff; color: #fff; }
 .btn-time { background: #37474f; color: #fff; }
@@ -738,7 +738,7 @@ summary:hover {
   position: absolute;
   bottom: 28px;
   right: 12px;
-  background: #0284c7;
+  background: #0369a1;
   color: #ffffff;
   border: 1px solid rgba(56, 189, 248, 0.4);
   border-radius: 24px;
@@ -820,7 +820,7 @@ summary:hover {
 }
 
 .msg-aluno {
-  background: #0284c7;
+  background: #0369a1;
   color: #ffffff;
   align-self: flex-end;
 }
@@ -845,7 +845,7 @@ summary:hover {
 }
 
 .lab-chat-input button {
-  background: #0284c7;
+  background: #0369a1;
   border: none;
   color: #fff;
   border-radius: 6px;
@@ -920,7 +920,7 @@ summary:hover {
 }
 
 .chat-chip:hover {
-  background: #0284c7;
+  background: #0369a1;
   color: #ffffff;
   transform: translateY(-1px);
 }
@@ -964,7 +964,7 @@ summary:hover {
 }
 
 .rtab-btn.active {
-  background: #0284c7;
+  background: #0369a1;
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
 }
@@ -1769,3 +1769,17 @@ html[data-theme="light"] summary { background: var(--laift-surface); color: var(
 html[data-theme="light"] summary:hover { background: var(--laift-surface-alt); color: var(--laift-text); }
 html[data-theme="light"] .reagent-list label { color: var(--laift-text); }
 html[data-theme="light"] .sub-label, html[data-theme="light"] label { color: var(--laift-muted); }
+
+/* Celular e tablet: campos com 16 px. Abaixo disso o Safari do iPhone aproxima a página ao tocar no campo
+   (os campos da bancada tinham 12,5 px) e o leiaute "pula". */
+@media (pointer: coarse), (max-width: 1023px) {
+  select,
+  input[type="number"],
+  input[type="text"],
+  input[type="search"],
+  textarea,
+  .lab-chat-input input,
+  .faixa-nivel {
+    font-size: 16px !important;
+  }
+}
