@@ -28,6 +28,7 @@ const PERMITIDOS = new Set([
   'frontend/404.html', // meta author (e marca d'água sem texto)
   'frontend/humans.txt',
   'frontend/scripts/marca-dpf.test.mjs',
+  'frontend/scripts/e2e/marca.e2e.js',
   'LICENSE',
   'README.md',
 ]);
