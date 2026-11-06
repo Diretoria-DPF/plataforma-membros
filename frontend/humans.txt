@@ -1,0 +1,8 @@
+/* TEAM */
+Desenvolvimento: dpflabs.com
+Site: https://dpflabs.com
+
+/* SITE */
+Plataforma: Plataforma de Membros LAIFT
+Ultima atualizacao: 2026/11
+Tecnologias: HTML, CSS, JavaScript, Cloudflare Workers

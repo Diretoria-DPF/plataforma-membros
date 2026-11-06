@@ -88,6 +88,13 @@
     inner.appendChild(brand);
     inner.appendChild(icons);
     box.appendChild(inner);
+    // Selo da autoria técnica: monograma apagado, só durante a abertura (modulos/shared/dpf-marca.js).
+    if (root.LaiftMarca) {
+      var selo = doc.createElement('span');
+      selo.className = 'splash-selo';
+      selo.appendChild(root.LaiftMarca.create(doc, { width: 34 }));
+      box.appendChild(selo);
+    }
     return box;
   }
 

@@ -69,3 +69,21 @@
   from { opacity: 0; transform: translateY(var(--move-md)); }
   to { opacity: 1; transform: none; }
 }
+
+/* Selo da autoria técnica: apagado, aparece com a abertura (que dura ~1 s) e sai junto com ela; não
+   toca no tempo da abertura nem captura toque. Movimento reduzido: o bloco único de laift-tokens.css
+   zera a animação e o selo fica parado. */
+.splash-selo {
+  position: absolute;
+  left: 50%;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  margin-left: -17px;
+  color: var(--muted);
+  opacity: 0.5;
+  animation: splash-selo var(--dur-slow) var(--ease-out) var(--dur-base) backwards;
+  pointer-events: none;
+}
+@keyframes splash-selo {
+  from { opacity: 0; }
+  to { opacity: 0.5; }
+}
