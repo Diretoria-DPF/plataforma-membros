@@ -152,3 +152,6 @@ html[data-theme="dark"] .ev2-heroi { background: radial-gradient(110% 80% at 90%
 .ev2-explorar__icone { flex: none; width: 36px; height: 36px; color: var(--primary, #0f6f62); fill: none; stroke: currentColor; }
 .ev2-explorar__texto { display: grid; gap: 2px; font-size: 14px; }
 .ev2-explorar__texto strong { font-size: 16px; }
+
+/* Texto de marca no herói (visível, também para quem lê a página sem a imagem) */
+.ev2-sobre { margin: 0 0 16px; max-width: 46ch; font-size: 15px; line-height: 1.5; color: #fff; }

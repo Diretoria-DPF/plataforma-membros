@@ -53,10 +53,10 @@ test('a tela de entrada tem login, atalhos e publicação do blog, nessa ordem, 
 
 test('os botões da tela de entrada usam os textos "Conheça a LAIFT" e "Acessar blog"', () => {
   const tela = telaDeEntrada();
-  const liga = tela.indexOf('welcome-liga__link" href="liga.html"');
-  const blog = tela.indexOf('welcome-liga__blog" href="blog.html"');
-  assert.ok(liga >= 0, 'faltou o botão da Liga (href="liga.html")');
-  assert.ok(blog >= 0, 'faltou o botão do blog (href="blog.html")');
+  const liga = tela.indexOf('welcome-liga__link" href="/liga"');
+  const blog = tela.indexOf('welcome-liga__blog" href="/blog"');
+  assert.ok(liga >= 0, 'faltou o botão da Liga (href="/liga")');
+  assert.ok(blog >= 0, 'faltou o botão do blog (href="/blog")');
   assert.ok(tela.slice(liga, tela.indexOf('</a>', liga)).includes('<span>Conheça a LAIFT</span>'), 'o botão da Liga deve dizer "Conheça a LAIFT"');
   assert.ok(tela.slice(blog, tela.indexOf('</a>', blog)).includes('<span>Acessar blog</span>'), 'o botão do blog deve dizer "Acessar blog"');
   assert.ok(!/conheça a plataforma/i.test(HTML), 'sobrou o texto antigo "Conheça a plataforma" no index.html');

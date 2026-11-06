@@ -41,14 +41,14 @@
   ];
   // Atalhos em destaque (corpo da página, não só no rodapé). Ícones do sprite blog/icones.svg.
   var EXPLORAR = [
-    { titulo: 'Conheça a LAIFT', texto: 'Quem somos, o que fazemos e como participar.', href: 'liga.html', icone: 'liga' },
-    { titulo: 'Blog', texto: 'Novidades, campanhas e conteúdo da Liga.', href: 'blog.html', icone: 'novidades' },
+    { titulo: 'Conheça a LAIFT', texto: 'Quem somos, o que fazemos e como participar.', href: '/liga', icone: 'liga' },
+    { titulo: 'Blog', texto: 'Novidades, campanhas e conteúdo da Liga.', href: '/blog', icone: 'novidades' },
     { titulo: 'Biblioteca', texto: 'Artigos de farmacologia e toxicologia para consultar.', href: '/biblioteca', icone: 'aprender' },
-    { titulo: 'Processo seletivo', texto: 'Inscrições abertas para entrar na Liga.', href: 'processo-seletivo.html', icone: 'bemvindo' },
+    { titulo: 'Processo seletivo', texto: 'Inscrições abertas para entrar na Liga.', href: '/processo-seletivo', icone: 'bemvindo' },
   ];
   var LINKS = [
-    ['Termos', 'termos.html'], ['Privacidade', 'privacidade.html'], ['Blog', 'blog.html'],
-    ['Processo seletivo', 'processo-seletivo.html'], ['Biblioteca', '/biblioteca'], ['Conheça a LAIFT', 'liga.html'],
+    ['Termos', '/termos'], ['Privacidade', '/privacidade'], ['Blog', '/blog'],
+    ['Processo seletivo', '/processo-seletivo'], ['Biblioteca', '/biblioteca'], ['Conheça a LAIFT', '/liga'],
   ];
 
   // ---------------------------------------------------------------------------
@@ -190,14 +190,16 @@
     barra.appendChild(no(doc, 'span', 'ev2-logo', 'LAIFT'));
     barra.appendChild(botao(doc, 'ev2-btn-fantasma', 'Entrar', 'entrar'));
     wrap.appendChild(barra);
-    var h1 = no(doc, 'h1', null, 'Estude farmacologia de um jeito que dá vontade de voltar.');
+    var h1 = no(doc, 'h1', null, 'LAIFT · Estude farmacologia de um jeito que dá vontade de voltar.');
     h1.id = 'ev2-h1';
     wrap.appendChild(h1);
     wrap.appendChild(no(doc, 'p', 'ev2-sub', 'Quiz do dia, Atlas 3D, a Guia e a comunidade da Liga. Tudo no seu celular, no seu ritmo.'));
+    // Texto visível com a marca por extenso: a entrada v2 esconde o bloco "O que é a LAIFT" da entrada comum.
+    wrap.appendChild(no(doc, 'p', 'ev2-sobre', 'A LAIFT é a Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia da UNINASSAU Salvador, para estudantes da área da saúde.'));
     var ctas = no(doc, 'div', 'ev2-ctas');
     ctas.appendChild(botao(doc, 'ev2-btn ev2-btn--pri', 'Criar conta', 'criar'));
     var conhecer = no(doc, 'a', 'ev2-btn ev2-btn--sec', 'Conheça a LAIFT');
-    conhecer.href = 'liga.html';
+    conhecer.href = '/liga';
     ctas.appendChild(conhecer);
     wrap.appendChild(ctas);
     wrap.appendChild(no(doc, 'p', 'ev2-micro', 'Confirmação por e-mail.'));
