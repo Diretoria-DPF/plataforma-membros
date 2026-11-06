@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm ci || npm install
-      - run: npm install --no-save playwright
+      - run: npm install --no-save playwright@1.64.1
       - run: npx playwright install --with-deps chromium
       - name: Cabeçalhos dos arquivos da abertura (content-encoding)
         env:
