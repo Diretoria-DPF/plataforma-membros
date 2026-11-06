@@ -63,11 +63,22 @@
   }
 
   /** Reaplica as últimas flags conhecidas, antes de a rede responder. */
-  function restoreFlags(element, storage) {
+  function restoreFlags(element, storage, defaults) {
     var cached = null;
     try { cached = storage ? JSON.parse(storage.getItem(CACHE_KEY) || 'null') : null; } catch (e) { cached = null; }
+    // Primeira abertura (sem cache): usa os padrões, para a tela já nascer no visual novo e não trocar
+    // do antigo para o novo quando a API responder. A resposta da API depois corrige o que for diferente.
+    if (cached === null && defaults) cached = defaults;
     return applyFlags(element, pickEnabledFlags(cached));
   }
+
+  /** Flags de visual que estão ligadas em produção: valem só enquanto não há cache nem resposta da API. */
+  var BOOT_DEFAULT_FLAGS = {
+    ux_v2_enabled: true, entrada_v2_enabled: true, home_v2_enabled: true, profile_v2_enabled: true,
+    learn_v2_enabled: true, events_v2_enabled: true, library_v2_enabled: true, messages_v2_enabled: true,
+    team_v2_enabled: true, proposals_v2_enabled: true, tasks_v2_enabled: true, admin_v2_enabled: true,
+    highlights_enabled: true, mentoring_v2_enabled: true,
+  };
 
   /** Liga/desliga data-scrolling no elemento conforme a janela rola. */
   function createScrollGate(win, element, options) {
@@ -103,6 +114,7 @@
     applyFlags: applyFlags,
     applyAndRememberFlags: applyAndRememberFlags,
     restoreFlags: restoreFlags,
+    BOOT_DEFAULT_FLAGS: BOOT_DEFAULT_FLAGS,
     pickEnabledFlags: pickEnabledFlags,
     CACHE_KEY: CACHE_KEY,
     createScrollGate: createScrollGate,
@@ -116,7 +128,7 @@
     if (root.document && root.document.documentElement) {
       var storage = null;
       try { storage = root.localStorage; } catch (e) { storage = null; }
-      restoreFlags(root.document.documentElement, storage);
+      restoreFlags(root.document.documentElement, storage, BOOT_DEFAULT_FLAGS);
       createScrollGate(root, root.document.documentElement);
     }
   }

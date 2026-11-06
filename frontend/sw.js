@@ -17,7 +17,7 @@
   'use strict';
 
   var CACHE_PREFIX = 'laift-shell-';
-  var CACHE_NAME = CACHE_PREFIX + 'v37';
+  var CACHE_NAME = CACHE_PREFIX + 'v38';
   // SÓ o shell essencial entra no cache na instalação (MOB-07): o que o index.html carrega de
   // imediato, para a tela inicial abrir offline já na primeira visita. Os pacotes sob demanda
   // (admin e Guia, ver lazy-bundles.js) e os módulos pesados NÃO são pré-cacheados: entram no
