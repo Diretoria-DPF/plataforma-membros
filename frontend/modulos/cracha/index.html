@@ -26,11 +26,7 @@
       </div>
 
       <section class="group">
-        <h2>Identidade</h2>
-
-        <label class="field">Organização
-          <input id="orgInput" type="text" value="Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia" />
-        </label>
+        <h2>Dados do crachá</h2>
 
         <label class="field">Nome completo
           <input id="nameInput" type="text" />
@@ -40,46 +36,39 @@
           <input id="roleInput" type="text" />
         </label>
 
-        <label class="field">ID do crachá
-          <input id="idInput" type="text" />
-        </label>
-      </section>
-
-      <section class="group">
-        <h2>Foto</h2>
-
         <label class="file-button">
-          Enviar imagem
+          Enviar foto
           <input id="photoFile" type="file" accept="image/*" />
         </label>
-
-        <label class="field">Ou URL da imagem
-          <input id="photoUrl" type="url" placeholder="https://..." />
-        </label>
+        <p class="hint">Sem foto, o crachá mostra as iniciais.</p>
       </section>
 
-      <section class="group">
-        <h2>Verso e QR Code</h2>
+      <details class="group advanced">
+        <summary>Personalizar (opcional)</summary>
 
-        <label class="field">Matrícula / token de validação
+        <label class="field">Organização
+          <input id="orgInput" type="text" value="Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia" />
+        </label>
+
+        <label class="field">Código curto (ID)
+          <input id="idInput" type="text" />
+        </label>
+
+        <label class="field">Foto por link
+          <input id="photoUrl" type="url" placeholder="https://..." />
+        </label>
+
+        <label class="field">Código do QR (já vem preenchido pelo terminal do fiscal)
           <input id="qrInput" type="text" value="LAIFT|" />
         </label>
 
-        <label class="field">Instruções
+        <label class="field">Instruções do verso
           <textarea id="instructionsInput">Apresente o QR Code para validação de presença.</textarea>
         </label>
-      </section>
-
-      <section class="group">
-        <h2>Cores</h2>
 
         <div class="color-row">Fundo <input id="bgColor" type="color" value="#f7f4ef" /></div>
         <div class="color-row">Destaque <input id="accentColor" type="color" value="#1d4ed8" /></div>
         <div class="color-row">Texto <input id="textColor" type="color" value="#111827" /></div>
-      </section>
-
-      <section class="group">
-        <h2>Exibir / ocultar</h2>
 
         <label class="switch">Foto <span class="toggle"><input id="showPhoto" type="checkbox" checked /><span class="slider"></span></span></label>
         <label class="switch">Organização <span class="toggle"><input id="showOrg" type="checkbox" checked /><span class="slider"></span></span></label>
@@ -87,11 +76,11 @@
         <label class="switch">QR Code <span class="toggle"><input id="showQr" type="checkbox" checked /><span class="slider"></span></span></label>
         <label class="switch">Instruções <span class="toggle"><input id="showInstructions" type="checkbox" checked /><span class="slider"></span></span></label>
         <label class="switch">ID textual <span class="toggle"><input id="showId" type="checkbox" checked /><span class="slider"></span></span></label>
-      </section>
+      </details>
 
       <div class="actions">
-        <button class="primary" id="flipBtn">Virar Crachá (Frente / Verso)</button>
-        <button class="secondary" id="printBtn">Imprimir / Exportar</button>
+        <button class="primary" id="flipBtn">Ver o verso</button>
+        <button class="secondary" id="printBtn">Imprimir</button>
       </div>
     </aside>
 

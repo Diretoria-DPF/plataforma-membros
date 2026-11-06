@@ -24,6 +24,9 @@
   };
   const SEARCH_DEBOUNCE_MS = 350;
   const SAME_QR_COOLDOWN_MS = 4000; // a câmera lê o mesmo QR várias vezes por segundo
+  const REFRESH_COUNTS_MS = 20000; // outros terminais também registram: o contador acompanha
+  const RECENT_MAX = 8;
+  const RESULT_VIBRATION = { success: [80], warning: [60, 60, 60], error: [200, 80, 200] };
 
   const state = {
     events: [],
@@ -35,6 +38,9 @@
     lastScan: { text: '', at: 0 },
     searchTimer: null,
     searchSeq: 0,
+    recent: [], // últimas entradas desta sessão do terminal
+    previewPerson: null, // pessoa do crachá em prévia
+    refreshTimer: null,
     clockOffset: 0, // hora do servidor menos hora do aparelho (o QR rotativo vale pela hora do servidor)
     queue: null, // fila offline do portão (fiscal-gate.js)
   };
@@ -85,6 +91,67 @@
   }
 
   // =========================================================
+  // 0. FEEDBACK DA PORTARIA (faixa grande, vibração, últimas entradas)
+  // =========================================================
+
+  /** Faixa grande verde/amarela/vermelha, legível de longe, com vibração curta no celular. */
+  function showResult(kind, title, detail) {
+    const box = $('scanResult');
+    if (!box) return;
+    box.className = 'fiscal-result is-' + kind;
+    $('scanResultTitle').textContent = title || '';
+    $('scanResultDetail').textContent = detail || '';
+    if (navigator.vibrate) { try { navigator.vibrate(RESULT_VIBRATION[kind] || [80]); } catch (err) { /* sem vibração */ } }
+  }
+
+  function renderRecent() {
+    const list = $('recentList');
+    if (!list) return;
+    clearEl(list);
+    if (!state.recent.length) {
+      list.appendChild(el('li', { className: 'fiscal-empty', text: 'Nenhuma entrada registrada neste terminal ainda.' }));
+      return;
+    }
+    state.recent.forEach((item) => {
+      list.appendChild(el('li', { className: 'fiscal-recent-item is-' + item.kind }, [
+        el('strong', { text: item.name }),
+        el('span', { className: 'fiscal-item-meta', text: item.time + (item.walkIn ? ' · na porta' : '') + (item.repeat ? ' · já estava presente' : '') }),
+      ]));
+    });
+  }
+
+  function pushRecent(participant, repeat) {
+    state.recent = [{
+      name: participant.fullName || 'Participante', time: formatTime(new Date().toISOString()),
+      walkIn: !!participant.walkIn, repeat: !!repeat, kind: repeat ? 'warning' : 'success',
+    }].concat(state.recent).slice(0, RECENT_MAX);
+    renderRecent();
+  }
+
+  function updateLive(ev) {
+    const count = ev ? Number(ev.checkedInCount) || 0 : 0;
+    const total = ev ? Number(ev.registeredCount) || 0 : 0;
+    const label = $('liveCount');
+    if (label) label.textContent = count + ' / ' + total;
+    const bar = $('liveBar');
+    if (bar) bar.style.width = (total ? Math.min(100, Math.round((count / total) * 100)) : 0) + '%';
+  }
+
+  /** Atualiza só os números (sem redesenhar o seletor), para acompanhar outros terminais. */
+  async function refreshCounts() {
+    if (document.hidden || !state.eventId) return;
+    const res = await api('apiAdminAttendanceListEvents');
+    if (!res || !res.success || !Array.isArray(res.events)) return;
+    const fresh = res.events.find((e) => e.id === state.eventId);
+    const ev = currentEvent();
+    if (!fresh || !ev) return;
+    ev.checkedInCount = fresh.checkedInCount;
+    ev.registeredCount = fresh.registeredCount;
+    ev.checkInOpen = fresh.checkInOpen;
+    updateEventInfo();
+  }
+
+  // =========================================================
   // 1. EVENTOS
   // =========================================================
 
@@ -115,6 +182,7 @@
     ['scannerStart', 'manualSubmit'].forEach((id) => { $(id).disabled = !open; });
     $('exportCsv').disabled = !ev;
     $('listRegistered').disabled = !ev;
+    updateLive(ev);
     if (!ev) { info.textContent = ''; return; }
     let text = ev.checkedInCount + ' presente(s) de ' + ev.registeredCount + ' inscrito(s)';
     if (ev.capacity) text += ' · capacidade ' + ev.capacity;
@@ -167,11 +235,16 @@
       if (input.method === 'qr' && await queueOffline(ev.id, body, res)) return res;
       showGateResult(res, false);
       setStatus(res.message || 'Não foi possível registrar a presença.', 'error');
+      showResult('error', 'Não registrado', res.message || 'Não foi possível registrar a presença.');
       return res;
     }
     showGateResult(res, false);
     const p = res.participant || {};
     setStatus(res.message || 'Presença registrada.', p.alreadyCheckedIn ? 'warning' : 'success');
+    showResult(p.alreadyCheckedIn ? 'warning' : 'success',
+      p.alreadyCheckedIn ? 'Já estava presente' : 'Presença registrada',
+      p.fullName || res.message || '');
+    pushRecent(p, !!p.alreadyCheckedIn);
     if (!p.alreadyCheckedIn) {
       ev.checkedInCount += 1;
       if (p.walkIn) ev.registeredCount += 1;
@@ -428,7 +501,7 @@
         type: 'button', className: 'btn btn-outline btn-sm', 'data-action': 'badge',
         'aria-label': 'Abrir crachá de ' + p.fullName,
       }, ['Crachá']);
-      badgeBtn.addEventListener('click', () => openBadge(p));
+      badgeBtn.addEventListener('click', () => showBadgePreview(p));
 
       list.appendChild(el('li', {
         className: 'fiscal-item' + (p.checkedInAt ? ' is-present' : ''), 'data-profile-id': p.profileId,
@@ -533,7 +606,8 @@
 
   /**
    * Crachá individual no estúdio (../cracha/index.html) — mesma interface
-   * por parâmetros de sempre (id, nome, cargo, qr), agora com o QR v2. A aba
+   * por parâmetros de sempre (id, nome, cargo, qr), com o QR v2 (ou semqr=1 quando
+   * a flag attendance_qr_rotating_only está ligada e o v2 não vale mais). A aba
    * é aberta ANTES da chamada à Worker, ainda dentro do clique, para o
    * bloqueador de pop-up não barrar; sem 'noopener' porque o estúdio acha a
    * plataforma (e a identidade) por window.opener.
@@ -549,11 +623,12 @@
       return;
     }
     const b = badges[0];
+    // Com o portão só no QR rotativo (qrPayload null) o estúdio abre sem QR permanente.
     const url = '../cracha/index.html' +
       '?id=' + encodeURIComponent(badgeCode(b.profileId)) +
       '&nome=' + encodeURIComponent(b.fullName) +
       '&cargo=' + encodeURIComponent(badgeRole(b).toUpperCase()) +
-      '&qr=' + encodeURIComponent(b.qrPayload);
+      (b.qrPayload ? '&qr=' + encodeURIComponent(b.qrPayload) : '&semqr=1');
     win.location.href = new URL(url, window.location.href).href;
     setStatus('', null);
   }
@@ -567,6 +642,15 @@
     return qr.createDataURL(4, 2);
   }
 
+  /** Foto do perfil quando existir (https) e iniciais quando não existir ou falhar ao carregar. */
+  function badgeAvatar(b, initial) {
+    const fallback = el('div', { className: 'badge-avatar', text: initial, 'aria-hidden': 'true' });
+    if (!b.avatarUrl || !/^https:\/\//i.test(b.avatarUrl)) return fallback;
+    const img = el('img', { className: 'badge-photo', src: b.avatarUrl, alt: '' });
+    img.addEventListener('error', () => { if (img.parentNode) img.parentNode.replaceChild(fallback, img); });
+    return img;
+  }
+
   function buildBadgeCard(b) {
     const initial = (b.fullName || '?').trim().charAt(0).toUpperCase();
     const role = badgeRole(b);
@@ -577,8 +661,11 @@
       ]),
       el('div', { className: 'badge-body' }, [
         el('div', { className: 'badge-visual' }, [
-          el('div', { className: 'badge-avatar', text: initial, 'aria-hidden': 'true' }),
-          el('img', { className: 'badge-qr', src: qrDataUrl(b.qrPayload), alt: 'QR Code de presença' }),
+          badgeAvatar(b, initial),
+          // Portão só no QR rotativo: o crachá impresso não leva QR permanente (ele não vale mais).
+          b.qrPayload
+            ? el('img', { className: 'badge-qr', src: qrDataUrl(b.qrPayload), alt: 'QR Code de presença' })
+            : el('div', { className: 'badge-qr badge-qr-none', text: 'QR no celular' }),
         ]),
         el('div', { className: 'badge-data' }, [
           el('div', { className: 'badge-name', text: b.fullName }),
@@ -601,10 +688,15 @@
 
     const area = $('printArea');
     clearEl(area);
-    const sheet = el('div', { className: 'badge-sheet' }, badges.map(buildBadgeCard));
-    area.appendChild(sheet);
+    area.appendChild(el('div', { className: 'badge-sheet' }, badges.map(buildBadgeCard)));
+    printArea(badges.length + ' crachá(s) prontos — ' + Math.ceil(badges.length / 8) + ' folha(s) A4. Escolha “Salvar como PDF”.');
+  }
+
+  /** Abre a impressão do que está em #printArea e limpa tudo quando ela fecha. */
+  function printArea(message) {
+    const area = $('printArea');
     document.body.classList.add('is-printing');
-    setStatus(badges.length + ' crachá(s) prontos — ' + Math.ceil(badges.length / 8) + ' folha(s) A4.', 'success');
+    setStatus(message, 'success');
     const cleanup = () => {
       document.body.classList.remove('is-printing');
       clearEl(area);
@@ -612,6 +704,72 @@
     };
     window.addEventListener('afterprint', cleanup);
     window.print();
+  }
+
+  // =========================================================
+  // 7b. ABAS, CRACHÁ INDIVIDUAL (PDF) E LOTE SOB PEDIDO
+  // =========================================================
+
+  function selectTab(name) {
+    const attendance = name !== 'people';
+    $('paneAttendance').classList.toggle('hidden', !attendance);
+    $('panePeople').classList.toggle('hidden', attendance);
+    [['tabPresenca', attendance], ['tabPessoas', !attendance]].forEach((pair) => {
+      const tab = $(pair[0]);
+      tab.classList.toggle('is-active', pair[1]);
+      tab.setAttribute('aria-selected', pair[1] ? 'true' : 'false');
+      tab.setAttribute('tabindex', pair[1] ? '0' : '-1');
+    });
+    if (!attendance) stopScanner(); // a câmera só fica ligada na aba Presença
+  }
+
+  function onTabKey(evt) {
+    if (evt.key !== 'ArrowRight' && evt.key !== 'ArrowLeft') return;
+    const goPeople = $('tabPresenca').classList.contains('is-active');
+    selectTab(goPeople ? 'people' : 'attendance');
+    $(goPeople ? 'tabPessoas' : 'tabPresenca').focus();
+  }
+
+  /** Mostra o crachá da pessoa na tela, com Exportar PDF ao lado: o caminho normal é um crachá de cada vez. */
+  async function showBadgePreview(participant) {
+    if (typeof window.qrcode !== 'function') { setStatus('Gerador de QR indisponível. Recarregue o terminal.', 'error'); return; }
+    setStatus('Gerando crachá...', 'loading');
+    const badges = await fetchBadges([participant.profileId]);
+    if (!badges) return;
+    if (!badges.length) { setStatus('Conta indisponível para crachá.', 'error'); return; }
+    state.previewPerson = participant;
+    const holder = $('badgePreview');
+    clearEl(holder);
+    holder.appendChild(buildBadgeCard(badges[0]));
+    $('badgePreviewCard').classList.remove('hidden');
+    $('badgePreviewCard').scrollIntoView({ block: 'nearest' });
+    setStatus('', null);
+  }
+
+  function closeBadgePreview() {
+    state.previewPerson = null;
+    clearEl($('badgePreview'));
+    $('badgePreviewCard').classList.add('hidden');
+  }
+
+  /** Imprime só o crachá em prévia: na janela do navegador, o destino "Salvar como PDF" gera o arquivo. */
+  function exportPreviewPdf() {
+    const card = $('badgePreview').firstElementChild;
+    if (!card) return;
+    const area = $('printArea');
+    clearEl(area);
+    area.appendChild(el('div', { className: 'badge-sheet is-single' }, [card.cloneNode(true)]));
+    printArea('Na janela de impressão, escolha “Salvar como PDF”.');
+  }
+
+  /** Seleciona todos os inscritos ou só os presentes para o PDF em lote. */
+  async function selectForBatch(onlyPresent) {
+    await search('');
+    const chosen = state.participants.filter((p) => (onlyPresent ? !!p.checkedInAt : true));
+    state.selected.clear();
+    chosen.forEach((p) => state.selected.set(p.profileId, p.fullName));
+    renderList();
+    setStatus(chosen.length ? chosen.length + ' pessoa(s) selecionada(s) para o PDF.' : 'Ninguém para incluir ainda.', chosen.length ? 'success' : 'warning');
   }
 
   // =========================================================
@@ -638,11 +796,22 @@
     $('selectAll').addEventListener('change', onSelectAll);
     $('exportCsv').addEventListener('click', exportCsv);
     $('printBadges').addEventListener('click', printSelectedBadges);
-    window.addEventListener('pagehide', stopScanner); // libera a câmera ao sair
+    $('tabPresenca').addEventListener('click', () => selectTab('attendance'));
+    $('tabPessoas').addEventListener('click', () => selectTab('people'));
+    $('tabPresenca').addEventListener('keydown', onTabKey);
+    $('tabPessoas').addEventListener('keydown', onTabKey);
+    $('exportBadgePdf').addEventListener('click', exportPreviewPdf);
+    $('closeBadgePreview').addEventListener('click', closeBadgePreview);
+    $('openStudio').addEventListener('click', () => { if (state.previewPerson) openBadge(state.previewPerson); });
+    $('batchRegistered').addEventListener('click', () => selectForBatch(false));
+    $('batchPresent').addEventListener('click', () => selectForBatch(true));
+    window.addEventListener('pagehide', () => { stopScanner(); clearInterval(state.refreshTimer); }); // libera a câmera ao sair
     renderList('Busque participantes ou veja os inscritos deste evento.');
+    renderRecent();
     updateEventInfo();
     initGate(window.LaiftIdentity && window.LaiftIdentity.get ? window.LaiftIdentity.get() : null);
     loadEvents();
+    state.refreshTimer = setInterval(refreshCounts, REFRESH_COUNTS_MS);
   }
 
   window.FiscalEngine = { init: init };

@@ -24,6 +24,21 @@ export const ROLE_CAPS = Object.freeze({
   moderador: freezeList(['reports.moderate', 'assistant.feedback.moderate']),
   curador: freezeList(['library.curate']),
   mentor: freezeList(['mentoring.offer']),
+  secretaria: freezeList(['attendance.manage']),
+});
+
+/**
+ * Texto de cada cargo para a tela de cargos (rótulo curto + o que libera, em linguagem de gente).
+ * Para criar um cargo novo: uma entrada em ROLE_CAPS, uma aqui e, se ele mexer em dado de outras pessoas, o nome
+ * em PRIVILEGED_ROLES. O CHECK do banco (sql/051) já reserva alguns nomes futuros; fora deles, vai uma migração.
+ */
+export const ROLE_CATALOG = Object.freeze({
+  gestor: Object.freeze({ label: 'Gestor', description: 'Organiza eventos, tarefas, propostas, presença, organograma e a curadoria da Início.' }),
+  revisor_conteudo: Object.freeze({ label: 'Revisor de conteúdo', description: 'Revisa conteúdo e simulados antes de irem ao ar.' }),
+  moderador: Object.freeze({ label: 'Moderador', description: 'Trata denúncias e o retorno sobre as respostas da Guia.' }),
+  curador: Object.freeze({ label: 'Curador', description: 'Cuida do acervo da Biblioteca.' }),
+  mentor: Object.freeze({ label: 'Mentor', description: 'Oferece mentoria a outros membros.' }),
+  secretaria: Object.freeze({ label: 'Secretaria', description: 'Controla a portaria: lê a presença nos eventos e emite crachás. Nada além disso.' }),
 });
 
 /** Nomes dos cargos (o CHECK de member_roles na 038 aceita exatamente estes). */
@@ -39,7 +54,7 @@ export const CAPABILITIES = freezeList([
 ]);
 
 /** Cargos que dão poder sobre o conteúdo ou sobre outras pessoas: exigem verificação em duas etapas. */
-export const PRIVILEGED_ROLES = freezeList(['gestor', 'revisor_conteudo', 'moderador', 'curador']);
+export const PRIVILEGED_ROLES = freezeList(['gestor', 'revisor_conteudo', 'moderador', 'curador', 'secretaria']);
 
 const BASE_ADMIN = 'admin';
 const BASE_MEMBER = 'member';

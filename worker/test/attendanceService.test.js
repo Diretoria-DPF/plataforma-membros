@@ -394,19 +394,37 @@ describe('AttendanceService.badges', () => {
     const missing = '99999999-9999-4999-8999-999999999999';
     sql
       .mockResolvedValueOnce([
-        { id: VISITOR.profileId, full_name: 'Beto', role: 'visitor', league_position: null },
-        { id: MEMBER.profileId, full_name: 'Ana', role: 'member', league_position: 'diretor' },
+        { id: VISITOR.profileId, full_name: 'Beto', role: 'visitor', league_position: null, avatar_url: 'javascript:alert(1)' },
+        { id: MEMBER.profileId, full_name: 'Ana', role: 'member', league_position: 'diretor', avatar_url: 'https://media.laift.com.br/avatars/ana.png' },
       ])
+      .mockResolvedValueOnce([]) // feature_flags: attendance_qr_rotating_only desligada
       .mockResolvedValueOnce(undefined);
     const res = await AttendanceService.badges(sql, env, ADMIN, { profileIds: [MEMBER.profileId, VISITOR.profileId.toUpperCase(), MEMBER.profileId, missing] }, 'cid');
+    expect(res.rotatingOnly).toBe(false);
     expect(boundValues(sql, 0)[0]).toEqual([MEMBER.profileId, VISITOR.profileId, missing]);
     expect(res.badges.map((b) => [b.profileId, b.fullName, b.role, b.leaguePosition])).toEqual([
       [MEMBER.profileId, 'Ana', 'member', 'diretor'],
       [VISITOR.profileId, 'Beto', 'visitor', null],
     ]);
+    expect(res.badges.map((b) => b.avatarUrl)).toEqual(['https://media.laift.com.br/avatars/ana.png', null]);
     for (const b of res.badges) {
       expect(await AttendanceService.verifyAttendanceQr(env, b.qrPayload)).toBe(b.profileId);
     }
-    expect(JSON.parse(boundValues(sql, 1).slice(-1)[0])).toEqual({ requested: 3, issued: 2 });
+    expect(JSON.parse(boundValues(sql, 2).slice(-1)[0])).toEqual({ requested: 3, issued: 2, rotatingOnly: false });
+  });
+
+  test('com attendance_qr_rotating_only ligada o crachá sai SEM QR (o v2 permanente não vale mais no portão)', async () => {
+    const env = makeEnv();
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ id: MEMBER.profileId, full_name: 'Ana', role: 'member', league_position: null, avatar_url: null }])
+      .mockResolvedValueOnce([{ key: 'attendance_qr_rotating_only', enabled: true, rollout_pct: 100, conditions: {} }])
+      .mockResolvedValueOnce(undefined);
+    const res = await AttendanceService.badges(sql, env, ADMIN, { profileIds: [MEMBER.profileId] }, 'cid');
+    expect(res.rotatingOnly).toBe(true);
+    expect(res.badges).toHaveLength(1);
+    expect(res.badges[0].qrPayload).toBeNull();
+    expect(res.badges[0].fullName).toBe('Ana');
+    expect(JSON.parse(boundValues(sql, 2).slice(-1)[0])).toMatchObject({ rotatingOnly: true });
   });
 });
