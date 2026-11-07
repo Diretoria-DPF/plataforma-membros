@@ -40,7 +40,9 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminAttendanceCheckIn"
                 - "$ref": "#/components/schemas/apiAdminAttendanceExportCsv"
                 - "$ref": "#/components/schemas/apiAdminAttendanceListEvents"
+                - "$ref": "#/components/schemas/apiAdminAttendanceOverview"
                 - "$ref": "#/components/schemas/apiAdminAttendanceSearch"
+                - "$ref": "#/components/schemas/apiAdminAttendanceSheet"
                 - "$ref": "#/components/schemas/apiAdminBanUser"
                 - "$ref": "#/components/schemas/apiAdminChangeUserRole"
                 - "$ref": "#/components/schemas/apiAdminClientErrors"
@@ -399,6 +401,22 @@ components:
             - description: "sessionToken"
           minItems: 0
           maxItems: 1
+    apiAdminAttendanceOverview:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAttendanceOverview"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminAttendanceSearch:
       type: "object"
       required:
@@ -408,6 +426,22 @@ components:
       properties:
         action:
           const: "apiAdminAttendanceSearch"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminAttendanceSheet:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAttendanceSheet"
         args:
           type: "array"
           prefixItems:

@@ -36,7 +36,7 @@ const BY_ROLE = {
     'apiAdminCreateEvent', 'apiAdminUpdateEventStatus', 'apiAdminListAllEvents', 'apiAdminUploadEventImage',
     'apiAdminCreateTask', 'apiAdminUpdateTaskStatus', 'apiAdminListAllTasks',
     'apiAdminAttendanceListEvents', 'apiAdminAttendanceCheckIn', 'apiAdminAttendanceSearch',
-    'apiAdminAttendanceExportCsv', 'apiAdminAttendanceBadges',
+    'apiAdminAttendanceExportCsv', 'apiAdminAttendanceBadges', 'apiAdminAttendanceOverview', 'apiAdminAttendanceSheet',
     'apiAdminListProposalsForReview', 'apiAdminTransitionProposal', 'apiAdminSetLeaguePosition',
     'apiAdminListHighlights', 'apiAdminSaveHighlight', 'apiAdminSetHighlightActive', 'apiAdminReorderHighlights', 'apiAdminDeleteHighlight',
   ],

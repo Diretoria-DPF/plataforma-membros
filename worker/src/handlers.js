@@ -43,6 +43,7 @@ import * as MessageService from './services/messageService.js';
 import * as LearningService from './services/learningService.js';
 import * as EngagementService from './services/engagementService.js';
 import * as AttendanceService from './services/attendanceService.js';
+import * as AttendanceOverview from './services/attendanceOverviewService.js';
 // Fase 3 — IA (Groq) e clínica virtual
 import * as AiService from './services/aiService.js';
 import * as ClinicalService from './services/clinicalService.js';
@@ -336,6 +337,8 @@ export const API_REGISTRY = {
   apiAdminAttendanceCheckIn: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AttendanceService.checkIn(sql, env, identity, asInput(input), cid)),
   apiAdminAttendanceSearch: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.search(sql, identity, asInput(input))),
   apiAdminAttendanceExportCsv: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AttendanceService.exportCsv(sql, identity, asInput(input), cid)),
+  apiAdminAttendanceOverview: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AttendanceOverview.overview(sql, identity, asInput(input), cid)),
+  apiAdminAttendanceSheet: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AttendanceOverview.sheet(sql, identity, asInput(input), cid)),
   apiAdminAttendanceBadges: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AttendanceService.badges(sql, env, identity, asInput(input), cid)),
   // Fase 3 — IA na Worker e clínica virtual (docs/FASE_3_IA_CLINICA.md).
   // Chamados pelos módulos via ponte LaiftApi (Contrato 3): entrada é UM

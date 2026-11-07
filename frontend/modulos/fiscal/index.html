@@ -49,6 +49,7 @@
       <div class="fiscal-tabs" role="tablist" aria-label="Áreas da portaria">
         <button id="tabPresenca" class="fiscal-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="paneAttendance">Presença</button>
         <button id="tabPessoas" class="fiscal-tab" type="button" role="tab" aria-selected="false" aria-controls="panePeople" tabindex="-1">Pessoas e crachás</button>
+        <button id="tabVisao" class="fiscal-tab" type="button" role="tab" aria-selected="false" aria-controls="paneOverview" tabindex="-1">Visão geral</button>
       </div>
 
       <div id="paneAttendance" class="fiscal-pane" role="tabpanel" aria-labelledby="tabPresenca">
@@ -85,9 +86,10 @@
       <details class="fiscal-card fiscal-more">
         <summary>Relatório de presença</summary>
         <div class="fiscal-row">
+          <button id="sheetPdf" class="btn btn-primary fiscal-grow" type="button">📄 Ficha de presença (PDF)</button>
           <button id="exportCsv" class="btn btn-outline fiscal-grow" type="button">📥 Exportar CSV</button>
         </div>
-        <p class="fiscal-note">CSV pronto para o Excel, com as presenças do evento escolhido.</p>
+        <p class="fiscal-note">A ficha traz a lista nominal do evento escolhido, com coluna de assinatura para conferir no papel. O CSV abre direto no Excel.</p>
       </details>
       </div>
 
@@ -127,6 +129,42 @@
           <button id="printBadges" class="btn btn-secondary fiscal-batch-go" type="button">📄 Gerar PDF dos selecionados</button>
         </details>
       </div>
+
+      <div id="paneOverview" class="fiscal-pane hidden" role="tabpanel" aria-labelledby="tabVisao">
+        <section class="fiscal-card" aria-labelledby="ovTitle">
+          <h2 id="ovTitle">Balanço do ambiente</h2>
+          <div class="fiscal-row">
+            <label class="fiscal-label" for="ovPeriod">Período</label>
+            <select id="ovPeriod">
+              <option value="30">Últimos 30 dias</option>
+              <option value="90" selected>Últimos 90 dias</option>
+              <option value="0">Tudo</option>
+            </select>
+            <label class="fiscal-label" for="ovSort">Ordenar por</label>
+            <select id="ovSort">
+              <option value="nome" selected>Nome</option>
+              <option value="presenca">Presença</option>
+            </select>
+            <button id="ovRefresh" class="btn btn-outline btn-sm" type="button">Atualizar</button>
+          </div>
+          <p id="ovStamp" class="fiscal-note" aria-live="polite">Abra esta aba para carregar o balanço.</p>
+          <div id="ovMetrics" class="fiscal-metrics"></div>
+          <button id="ovPdf" class="btn btn-primary fiscal-batch-go" type="button">📄 Balanço em PDF</button>
+          <p class="fiscal-note">Só nome, cargo e contagens, sem e-mail nem telefone. Eventos que ainda não aconteceram não contam como falta. Reunião é um evento comum.</p>
+        </section>
+        <section class="fiscal-card" aria-labelledby="ovMembersTitle">
+          <h2 id="ovMembersTitle">Membros</h2>
+          <div id="ovMembers" class="fiscal-tablewrap"></div>
+        </section>
+        <section class="fiscal-card" aria-labelledby="ovEventsTitle">
+          <h2 id="ovEventsTitle">Eventos e reuniões</h2>
+          <div id="ovEvents" class="fiscal-tablewrap"></div>
+        </section>
+        <section class="fiscal-card" aria-labelledby="ovTasksTitle">
+          <h2 id="ovTasksTitle">Tarefas</h2>
+          <div id="ovTasks" class="fiscal-tablewrap"></div>
+        </section>
+      </div>
     </div>
   </main>
 
@@ -136,6 +174,7 @@
 
   <script src="fiscal-gate.js"></script>
   <script src="fiscal-engine.js"></script>
+  <script src="fiscal-overview.js"></script>
   <script src="fiscal-page.js"></script>
 </body>
 </html>

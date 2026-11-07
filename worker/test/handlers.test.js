@@ -40,7 +40,7 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     expected.push(
       'apiLearnGetMyStats', 'apiLearnGetWeakTopics', 'apiLearnGetEngagement', 'apiLearnSetDailyGoal', 'apiLearnSubmitQuizAttempt', 'apiLearnRecordLabFormulation', 'apiLearnGetMyAttendanceQr',
       'apiAdminAttendanceListEvents', 'apiAdminAttendanceCheckIn', 'apiAdminAttendanceSearch',
-      'apiAdminAttendanceExportCsv', 'apiAdminAttendanceBadges'
+      'apiAdminAttendanceExportCsv', 'apiAdminAttendanceBadges', 'apiAdminAttendanceOverview', 'apiAdminAttendanceSheet'
     );
     // Fase 2 (segurança) — feature flags
     expected.push('apiGetFeatureFlags', 'apiAdminListFeatureFlags', 'apiAdminSetFeatureFlag');
