@@ -710,24 +710,28 @@
   // 7b. ABAS, CRACHÁ INDIVIDUAL (PDF) E LOTE SOB PEDIDO
   // =========================================================
 
+  const TABS = [['attendance', 'tabPresenca', 'paneAttendance'], ['people', 'tabPessoas', 'panePeople'], ['overview', 'tabVisao', 'paneOverview']];
+
   function selectTab(name) {
-    const attendance = name !== 'people';
-    $('paneAttendance').classList.toggle('hidden', !attendance);
-    $('panePeople').classList.toggle('hidden', attendance);
-    [['tabPresenca', attendance], ['tabPessoas', !attendance]].forEach((pair) => {
-      const tab = $(pair[0]);
-      tab.classList.toggle('is-active', pair[1]);
-      tab.setAttribute('aria-selected', pair[1] ? 'true' : 'false');
-      tab.setAttribute('tabindex', pair[1] ? '0' : '-1');
+    const current = TABS.some((t) => t[0] === name) ? name : 'attendance';
+    TABS.forEach((t) => {
+      const on = t[0] === current;
+      $(t[2]).classList.toggle('hidden', !on);
+      const tab = $(t[1]);
+      tab.classList.toggle('is-active', on);
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      tab.setAttribute('tabindex', on ? '0' : '-1');
     });
-    if (!attendance) stopScanner(); // a câmera só fica ligada na aba Presença
+    if (current !== 'attendance') stopScanner(); // a câmera só fica ligada na aba Presença
+    if (current === 'overview' && window.FiscalOverview) window.FiscalOverview.show();
   }
 
   function onTabKey(evt) {
     if (evt.key !== 'ArrowRight' && evt.key !== 'ArrowLeft') return;
-    const goPeople = $('tabPresenca').classList.contains('is-active');
-    selectTab(goPeople ? 'people' : 'attendance');
-    $(goPeople ? 'tabPessoas' : 'tabPresenca').focus();
+    const index = TABS.findIndex((t) => $(t[1]).classList.contains('is-active'));
+    const next = TABS[(index + (evt.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length];
+    selectTab(next[0]);
+    $(next[1]).focus();
   }
 
   /** Mostra o crachá da pessoa na tela, com Exportar PDF ao lado: o caminho normal é um crachá de cada vez. */
@@ -800,6 +804,8 @@
     $('tabPessoas').addEventListener('click', () => selectTab('people'));
     $('tabPresenca').addEventListener('keydown', onTabKey);
     $('tabPessoas').addEventListener('keydown', onTabKey);
+    $('tabVisao').addEventListener('click', () => selectTab('overview'));
+    $('tabVisao').addEventListener('keydown', onTabKey);
     $('exportBadgePdf').addEventListener('click', exportPreviewPdf);
     $('closeBadgePreview').addEventListener('click', closeBadgePreview);
     $('openStudio').addEventListener('click', () => { if (state.previewPerson) openBadge(state.previewPerson); });
@@ -814,5 +820,5 @@
     state.refreshTimer = setInterval(refreshCounts, REFRESH_COUNTS_MS);
   }
 
-  window.FiscalEngine = { init: init };
+  window.FiscalEngine = { init: init, printArea: printArea, setStatus: setStatus };
 })();
