@@ -67,6 +67,9 @@ html[data-theme="dark"] .ev2-heroi { background: radial-gradient(110% 80% at 90%
 .ev2-cartao strong { font-size: 19px; display: block; margin-top: 8px; }
 .ev2-desc { font-size: 13px; }
 .ev2-cadeado { position: absolute; top: 14px; right: 14px; width: 18px; height: 18px; }
+.ev2-cartao--demo { text-decoration: none; }
+.ev2-ver-previa { position: absolute; top: 12px; right: 12px; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: rgba(255, 255, 255, 0.92); color: #0b3a35; }
+.ev2-cartao--demo:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 .ev2-previa { position: absolute; right: -14px; top: 44px; width: 112px; height: 82px; border-radius: 14px; background: rgba(255, 255, 255, 0.16); filter: blur(1.6px); transform: rotate(6deg); }
 .ev2-previa i { display: block; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.45); margin: 10px 10px 0; }
 .ev2-previa i:nth-child(2) { width: 60%; }

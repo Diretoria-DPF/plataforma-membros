@@ -27,6 +27,7 @@ const PERMITIDOS = new Set([
   'frontend/creditos.js', // tela de créditos (easter egg)
   'frontend/404.html', // meta author (e marca d'água sem texto)
   'frontend/humans.txt',
+  'frontend/_headers', // frame-ancestors da /demo embutida no portfólio (cabeçalho, nunca texto visível)
   'frontend/scripts/marca-dpf.test.mjs',
   'frontend/scripts/e2e/marca.e2e.js',
   'LICENSE',

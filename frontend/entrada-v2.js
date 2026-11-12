@@ -28,10 +28,10 @@
     criar: { titulo: 'Criar conta', apoio: 'Sua conta começa como visitante. Confirme o e-mail para entrar.' },
   };
   var VITRINE = [
-    { tag: 'Quiz do dia', titulo: 'Uma questão nova todo dia', texto: 'Acerte, mantenha a sequência e acompanhe seu ritmo.' },
-    { tag: 'Atlas 3D', titulo: 'Gire estruturas em 3D', texto: 'Anatomia e moléculas na palma da mão.' },
+    { tag: 'Quiz do dia', titulo: 'Uma questão nova todo dia', texto: 'Acerte, mantenha a sequência e acompanhe seu ritmo.', demo: 'farmaco' },
+    { tag: 'Atlas 3D', titulo: 'Gire estruturas em 3D', texto: 'Anatomia e moléculas na palma da mão.', demo: 'anatomia' },
     { tag: 'A Guia', titulo: 'Tire dúvidas com a Guia', texto: 'Respostas com referências e cuidado clínico.' },
-    { tag: 'Casos clínicos', titulo: 'Simulações passo a passo', texto: 'Treine o raciocínio antes do plantão.' },
+    { tag: 'Casos clínicos', titulo: 'Simulações passo a passo', texto: 'Treine o raciocínio antes do plantão.', demo: 'clinica' },
     { tag: 'Liga', titulo: 'Eventos e comunidade', texto: 'Encontros, tarefas e propostas da Liga.' },
   ];
   var PASSOS = [
@@ -158,9 +158,17 @@
     return svg;
   }
 
+  // Cartão com `demo`: link para a prévia sem conta (/demo#<módulo>); os demais pedem a conta (cadeado).
   function cartaoVitrine(doc, item) {
-    var b = botao(doc, 'ev2-cartao', null, 'criar');
-    b.appendChild(cadeado(doc));
+    var b;
+    if (item.demo) {
+      b = no(doc, 'a', 'ev2-cartao ev2-cartao--demo');
+      b.href = '/demo#' + item.demo;
+      b.appendChild(no(doc, 'span', 'ev2-ver-previa', 'Ver prévia ›'));
+    } else {
+      b = botao(doc, 'ev2-cartao', null, 'criar');
+      b.appendChild(cadeado(doc));
+    }
     var previa = no(doc, 'div', 'ev2-previa');
     previa.setAttribute('aria-hidden', 'true');
     for (var i = 0; i < 3; i++) previa.appendChild(no(doc, 'i'));
@@ -170,7 +178,7 @@
     topo.appendChild(no(doc, 'strong', null, item.titulo));
     b.appendChild(topo);
     b.appendChild(no(doc, 'span', 'ev2-desc', item.texto));
-    b.appendChild(no(doc, 'span', 'visually-hidden', 'Disponível depois de criar a conta.'));
+    b.appendChild(no(doc, 'span', 'visually-hidden', item.demo ? 'Abre a demonstração, sem conta.' : 'Disponível depois de criar a conta.'));
     return b;
   }
 

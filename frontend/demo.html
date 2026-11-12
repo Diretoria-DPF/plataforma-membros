@@ -19,7 +19,16 @@
     <a class="demo-cta" href="/#cadastro">Criar conta grátis</a>
   </header>
   <main>
-    <p class="demo-aviso" role="note">Você está na demonstração: use os módulos à vontade. Nada é salvo, e recursos com IA, progresso e ranking pedem conta.</p>
+    <div id="demo-aviso" class="demo-aviso" role="status">
+      <p><strong>Prévia da LAIFT.</strong> Use à vontade: nada é salvo. Com a conta grátis, você guarda o progresso e usa a IA.</p>
+      <a class="demo-cta" href="/#cadastro">Criar conta</a>
+      <button type="button" class="demo-x" data-fechar aria-label="Fechar aviso">×</button>
+    </div>
+    <div id="demo-convite" class="demo-convite" role="dialog" aria-labelledby="demo-convite-titulo" hidden>
+      <h2 id="demo-convite-titulo">Gostando da prévia?</h2>
+      <p>Crie sua conta grátis para salvar o progresso, manter sua sequência de estudo e usar a Guia e os casos com IA.</p>
+      <div class="demo-convite-acoes"><a class="demo-cta" href="/#cadastro">Criar conta grátis</a><button type="button" class="demo-voltar" data-fechar>Continuar na prévia</button></div>
+    </div>
     <section id="demo-inicio" aria-labelledby="demo-titulo">
       <h1 id="demo-titulo">Experimente a plataforma da LAIFT</h1>
       <p class="demo-lead">Escolha um módulo. É o mesmo ambiente que os membros usam, com o mesmo conteúdo.</p>
