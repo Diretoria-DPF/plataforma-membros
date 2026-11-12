@@ -995,7 +995,7 @@ const ClinicEngine = (() => {
       // Sem IA (cota esgotada, ponte ausente ou serviço fora): NADA é inventado. A pergunta não conta, o paciente
       // não responde e a pessoa vê o motivo; pode repetir a pergunta depois.
       if (studentBubble) studentBubble.remove();
-      appendSystemNotice(response.quotaExceeded && response.message ? response.message : UNAVAILABLE_MSG);
+      appendSystemNotice((response.quotaExceeded || response.demo) && response.message ? response.message : UNAVAILABLE_MSG);
       dom.questionInput.value = text;
       if (response.quotaExceeded) refreshAiQuota();
       return;
@@ -1157,7 +1157,7 @@ const ClinicEngine = (() => {
 
     // Sem avaliação do servidor: NÃO há nota local nem leito "Concluído". Quem ainda está no atendimento pode tentar
     // de novo; nos desfechos críticos o resultado fica "indisponível" e nada é registrado.
-    const aviso = response.quotaExceeded && response.message ? response.message : UNAVAILABLE_MSG;
+    const aviso = (response.quotaExceeded || response.demo) && response.message ? response.message : UNAVAILABLE_MSG;
     if (response.quotaExceeded) refreshAiQuota();
     if (caseOutcome === 'EM_ANDAMENTO') {
       canRetryEvaluation = true;

@@ -1,0 +1,30 @@
+/* Modo demonstração (demo.html). Usa os tokens de modulos/shared/laift-tokens.css. */
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { min-height: 100dvh; display: flex; flex-direction: column; background: var(--laift-bg); color: var(--laift-text); font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--laift-primary); }
+.demo-topo { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem max(16px, 4vw); background: var(--laift-surface); border-bottom: 1px solid var(--laift-border); }
+.demo-marca { font-weight: 800; letter-spacing: 0.04em; color: var(--laift-text); text-decoration: none; }
+.demo-selo { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.2rem 0.6rem; border-radius: 999px; background: var(--laift-warning-soft); color: var(--laift-warning); }
+.demo-cta { margin-left: auto; display: inline-flex; align-items: center; min-height: 44px; padding: 0 1rem; border-radius: 999px; background: var(--laift-primary); color: var(--laift-on-primary); font-weight: 700; text-decoration: none; }
+.demo-cta:hover { background: var(--laift-primary-strong); }
+main { flex: 1; width: 100%; max-width: 1120px; margin: 0 auto; padding: 1.25rem max(16px, 4vw) 2rem; }
+.demo-aviso { margin: 0 0 1.5rem; padding: 0.75rem 1rem; border-radius: 12px; background: var(--laift-primary-soft); color: var(--laift-text); font-size: 0.95rem; }
+h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.2; margin: 0 0 0.4rem; }
+.demo-lead { color: var(--laift-muted); margin: 0 0 1.25rem; }
+.demo-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+.demo-card { text-align: left; display: flex; flex-direction: column; gap: 0.35rem; padding: 1.1rem; min-height: 44px; border-radius: 16px; border: 1px solid var(--laift-border); background: var(--laift-surface); color: var(--laift-text); font: inherit; cursor: pointer; transition: border-color var(--dur-fast, 180ms), transform var(--dur-fast, 180ms); }
+.demo-card:hover, .demo-card:focus-visible { border-color: var(--laift-primary); transform: translateY(-2px); }
+.demo-card:focus-visible, .demo-voltar:focus-visible, .demo-cta:focus-visible { outline: 3px solid var(--laift-primary); outline-offset: 2px; }
+.demo-ico { font-size: 1.6rem; }
+.demo-card strong { font-size: 1.1rem; }
+.demo-sub { font-size: 0.85rem; font-weight: 600; color: var(--laift-primary); }
+.demo-desc { font-size: 0.92rem; color: var(--laift-muted); }
+.demo-palco[hidden], #demo-inicio[hidden] { display: none; }
+.demo-barra { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.demo-barra h2 { margin: 0; font-size: 1.2rem; }
+.demo-voltar { min-height: 44px; padding: 0 1rem; border-radius: 999px; border: 1px solid var(--laift-border-strong); background: transparent; color: var(--laift-text); font: inherit; cursor: pointer; }
+.demo-frame iframe { display: block; width: 100%; height: calc(100dvh - 190px); min-height: 560px; border: 1px solid var(--laift-border); border-radius: 14px; background: var(--laift-surface); }
+.demo-rodape { text-align: center; padding: 1rem; font-size: 0.85rem; color: var(--laift-muted); border-top: 1px solid var(--laift-border); }
+.demo-cta { white-space: nowrap; }
+@media (max-width: 600px) { .demo-topo { gap: 0.5rem; } .demo-topo .demo-cta { padding: 0 0.8rem; font-size: 0.9rem; } .demo-barra .demo-cta { display: none; } .demo-frame iframe { height: calc(100dvh - 170px); min-height: 480px; } }

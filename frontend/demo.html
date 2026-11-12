@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- CSP da demonstração: só o próprio site; nenhuma chamada à Worker (demo.js responde localmente). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Demonstração · LAIFT</title>
+  <meta name="description" content="Experimente os módulos de estudo da LAIFT sem criar conta: farmacologia, toxicologia, clínica virtual, laboratório e anatomia 3D.">
+  <link rel="canonical" href="https://laift.com.br/demo">
+  <link rel="icon" href="icons/favicon-32.png">
+  <link rel="stylesheet" href="modulos/shared/laift-tokens.css">
+  <link rel="stylesheet" href="demo.css">
+</head>
+<body>
+  <header class="demo-topo">
+    <a class="demo-marca" href="/">LAIFT</a>
+    <span class="demo-selo">Demonstração</span>
+    <a class="demo-cta" href="/#cadastro">Criar conta grátis</a>
+  </header>
+  <main>
+    <p class="demo-aviso" role="note">Você está na demonstração: use os módulos à vontade. Nada é salvo, e recursos com IA, progresso e ranking pedem conta.</p>
+    <section id="demo-inicio" aria-labelledby="demo-titulo">
+      <h1 id="demo-titulo">Experimente a plataforma da LAIFT</h1>
+      <p class="demo-lead">Escolha um módulo. É o mesmo ambiente que os membros usam, com o mesmo conteúdo.</p>
+      <div id="demo-modulos" class="demo-grade"></div>
+    </section>
+    <section id="demo-palco" class="demo-palco" hidden aria-labelledby="demo-titulo-modulo">
+      <div class="demo-barra">
+        <button id="demo-voltar" type="button" class="demo-voltar">← Módulos</button>
+        <h2 id="demo-titulo-modulo"></h2>
+        <a class="demo-cta" href="/#cadastro">Criar conta</a>
+      </div>
+      <div id="demo-frame" class="demo-frame"></div>
+    </section>
+  </main>
+  <footer class="demo-rodape"><a href="/">Conheça a LAIFT</a> · <a href="privacidade.html">Privacidade</a></footer>
+  <script src="modulos/shared/catalogo.js"></script>
+  <script src="demo.js"></script>
+</body>
+</html>
