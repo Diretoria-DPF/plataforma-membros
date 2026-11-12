@@ -29,9 +29,17 @@
    * Localiza a janela da plataforma. Os módulos podem estar num iframe
    * (window.top), num iframe dentro de outro (studio dentro do laboratório)
    * ou numa aba aberta por um módulo (window.opener → .top).
+   * Também sobe pelos pais (window.parent): na demonstração embutida no portfólio do autor
+   * (/demo?embed=1), o topo é outro site e a plataforma é o pai de mesma origem.
    */
   function findHost() {
     var candidates = [];
+    try {
+      for (var w = global.parent, n = 0; w && w !== global && n < 4; w = w.parent, n++) {
+        candidates.push(w);
+        if (w === w.parent) break;
+      }
+    } catch (e) { /* outra origem */ }
     try { if (global.top && global.top !== global) candidates.push(global.top); } catch (e) { /* outra origem */ }
     try { if (global.opener) candidates.push(global.opener.top || global.opener); } catch (e) { /* outra origem */ }
     for (var i = 0; i < candidates.length; i++) {
