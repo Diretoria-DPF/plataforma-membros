@@ -88,6 +88,27 @@
 
   var host = findHost();
 
+  // Modo demonstração (/demo): a plataforma entrega um armazenamento só em memória em App.demoStorage.
+  // Este é o primeiro script do módulo, então localStorage, sessionStorage e indexedDB já são trocados
+  // antes de qualquer outro código ler ou gravar: o progresso da demonstração nunca chega às chaves das
+  // contas. Se a troca falhar, o módulo não abre (falha fechada), em vez de gravar no aparelho.
+  function isolateDemoStorage(h) {
+    var pair = null;
+    try { pair = h && h.App && h.App.isDemo === true ? h.App.demoStorage : null; } catch (e) { pair = null; }
+    if (!pair) return;
+    var ok = true;
+    [['localStorage', pair.local], ['sessionStorage', pair.session]].forEach(function (item) {
+      try { Object.defineProperty(global, item[0], { configurable: true, get: function () { return item[1]; } }); } catch (e) { ok = false; }
+      try { if (global[item[0]] !== item[1]) ok = false; } catch (e) { ok = false; }
+    });
+    try { Object.defineProperty(global, 'indexedDB', { configurable: true, get: function () { return undefined; } }); } catch (e) { ok = false; }
+    if (!ok) {
+      try { global.document.documentElement.textContent = 'A demonstração não está disponível neste navegador.'; } catch (e) { /* sem DOM */ }
+      throw new Error('demo-storage-isolation-failed');
+    }
+  }
+  isolateDemoStorage(host);
+
   // Aberto fora da plataforma: não há de quem herdar identidade.
   if (!host) {
     global.location.replace(LOGIN_URL);

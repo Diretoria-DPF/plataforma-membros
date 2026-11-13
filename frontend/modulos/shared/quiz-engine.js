@@ -238,7 +238,8 @@
     function savedProgress() {
       var p = Logic.readProgress(readJson(cfg.storageKey), state.bank);
       var now = ownerNow();
-      if (p.owner && now && p.owner !== now) return Logic.readProgress(null, state.bank);
+      // Progresso sem dono (ex.: gravado pela demonstração antiga) nunca é adotado por uma conta (F-006).
+      if (now && p.owner !== now) return Logic.readProgress(null, state.bank);
       return p;
     }
 

@@ -6,8 +6,11 @@
 // Modo demonstração (demo.html): abre os módulos de estudo sem conta.
 // Faz o papel da plataforma para modulos/shared/laift-identity.js, com uma identidade fictícia
 // de visitante. Nada sai do navegador: callLearningApi e submitContentReport respondem
-// "precisa de conta" sem chamar a Worker. Sem token, cookie, telemetria ou armazenamento:
-// a contagem de uso que dispara o convite vive só na memória desta página.
+// "precisa de conta" sem chamar a Worker. Sem token, cookie ou telemetria. Nada é gravado no aparelho:
+// progresso, erros, missão e preferências dos módulos vão para um armazenamento só em memória
+// (modulos/shared/demo-storage.js, exposto em App.demoStorage e aplicado por laift-identity.js),
+// que some ao sair da página. A contagem de uso que dispara o convite também vive só na memória.
+// A única leitura do localStorage é a limpeza de registros sem dono deixados pela versão antiga da demo.
 // ?embed=1 (portfólio do autor): só o módulo, sem cabeçalho; links de cadastro abrem em nova aba.
 (function () {
   'use strict';
@@ -27,6 +30,25 @@
   }
   document.documentElement.setAttribute('data-theme', prefersDark() ? 'dark' : 'light');
 
+  // Armazenamento em memória dos módulos (ver demo-storage.js). Nunca toca as chaves das contas.
+  var memoria = window.LaiftDemoStorage.createPair();
+
+  // Versões antigas da demo gravavam no aparelho com dono vazio e uma conta herdava esse progresso (F-006).
+  // Apaga só o que tem dono vazio; o que pertence a uma conta (dono preenchido) nunca é tocado.
+  var CHAVES_ANTIGAS = ['laiftQuizErrors', 'laiftMissao', 'pharmaQuizProgress', 'toxicoQuizProgress'];
+  function limparRestosAntigos() {
+    CHAVES_ANTIGAS.forEach(function (k) {
+      try {
+        var raw = window.localStorage.getItem(k);
+        if (raw === null) return;
+        var obj = JSON.parse(raw);
+        if (obj && typeof obj === 'object' && !obj.owner) window.localStorage.removeItem(k);
+      } catch (e) { /* armazenamento bloqueado ou texto inválido: nada a limpar */ }
+    });
+  }
+  limparRestosAntigos();
+  window.addEventListener('pagehide', function () { memoria.clear(); });
+
   var interacoes = 0;
   var inicioUso = 0;
   var convidou = false;
@@ -40,6 +62,8 @@
 
   // Interface mínima que os módulos usam da plataforma (laift-identity.js).
   window.App = Object.freeze({
+    isDemo: true,
+    demoStorage: memoria,
     getIdentity: function () { return IDENTITY; },
     notifyActivity: registrarUso,
     callLearningApi: function () { return Promise.resolve({ success: false, demo: true, message: MSG }); },
