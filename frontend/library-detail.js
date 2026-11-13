@@ -6,7 +6,7 @@
 /**
  * frontend/library-detail.js
  * Ficha do artigo no painel da Biblioteca (CONTRATO-B2 §4.1): troca a lista pela ficha, com o
- * título focado, autores, revista, selos, resumo com a origem, links validados, favorito e a
+ * título focado, autores, revista, selos, resumo, links validados, favorito e a
  * citação ABNT ou Vancouver com cópia (CONTRATO-B2 §4.2, library-cite.js). Chama só
  * apiLearnLibraryGetArticle e apiLearnLibrarySetFavorite.
  *
@@ -67,13 +67,6 @@
 
   function count(value) { return Number.isInteger(value) && value > 0 ? value : 0; }
 
-  /** Data do servidor formatada pelo app; sem data, ''. */
-  function fmtDate(formatDate, iso) {
-    var raw = text(iso);
-    if (!raw) return '';
-    return typeof formatDate === 'function' ? text(formatDate(raw)) : raw;
-  }
-
   function authorName(author) {
     var family = text(author && author.family);
     var given = text(author && author.given);
@@ -95,30 +88,6 @@
   function safeHref(url, pattern) {
     var value = text(url);
     return (pattern || LANDING_RE).test(value) ? value : '';
-  }
-
-  function aiNote(summary, formatDate) {
-    var name = text(summary.reviewerName);
-    var when = fmtDate(formatDate, summary.reviewedAt);
-    var note = 'Gerado por IA e revisado';
-    if (name) note += ' por ' + name;
-    if (when) note += ' em ' + when;
-    return note + '.';
-  }
-
-  /** Origem do resumo (CONTRATO-B2 §4.1): curadoria, IA revisada, ou '' quando não se sabe. */
-  function pickSummaryNote(summary, formatDate) {
-    var origin = summary && summary.origin;
-    if (origin === 'curador') return 'Escrito pela curadoria.';
-    if (origin === 'ia' || origin === 'ia_editado') return aiNote(summary, formatDate);
-    return '';
-  }
-
-  /** "Revisão clínica: {nome}, {data}." ou '' sem revisão. */
-  function clinicalNote(review, formatDate) {
-    if (!review || typeof review !== 'object') return '';
-    var who = [text(review.reviewerName), fmtDate(formatDate, review.reviewedAt)].filter(Boolean).join(', ');
-    return who ? 'Revisão clínica: ' + who + '.' : '';
   }
 
   /** "Licença CC BY", "Domínio público"; sem licença, o aviso que a tela usa. */
@@ -254,24 +223,20 @@
     return h('div', { className: 'library-selos' }, badges);
   }
 
-  function summaryParts(article, formatDate) {
+  function summaryParts(article) {
     var summary = article.summary && typeof article.summary === 'object' ? article.summary : null;
     var body = summary && text(summary.text)
       ? [h('p', null, [text(summary.text)])]
       : [h('p', { className: 'muted' }, [MSG.noSummary])];
-    var note = summary && text(summary.text) ? pickSummaryNote(summary, formatDate) : '';
-    if (note) body.push(h('p', { className: 'muted' }, [note]));
-    var clinical = clinicalNote(article.clinicalReview, formatDate);
-    if (clinical) body.push(h('p', { className: 'muted' }, [clinical]));
     return body;
   }
 
-  /** Resumo da LAIFT: aviso para visitante, texto com a origem ou a frase de "sem resumo". */
-  function summarySection(article, formatDate) {
+  /** Resumo da LAIFT: aviso para visitante, texto ou a frase de "sem resumo". */
+  function summarySection(article) {
     var heading = h('h3', null, ['Resumo da LAIFT']);
     var body = article.membersOnly === true
       ? [h('p', { className: 'muted' }, [MSG.membersOnly])]
-      : summaryParts(article, formatDate);
+      : summaryParts(article);
     return h('section', { className: 'library-resumo' }, [heading].concat(body));
   }
 
@@ -375,7 +340,7 @@
       authorsParagraph(article),
       publicationBlock(article),
       badgesBlock(article, session.topics),
-      summarySection(article, formatDate),
+      summarySection(article),
       abstractSection(article),
       actionsRow(session, article),
       session.status,
@@ -525,8 +490,6 @@
   var pure = {
     authorsLine: authorsLine,
     safeHref: safeHref,
-    pickSummaryNote: pickSummaryNote,
-    clinicalNote: clinicalNote,
     licenseText: licenseText,
     topicName: topicName,
     isoDay: isoDay,

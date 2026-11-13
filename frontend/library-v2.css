@@ -90,19 +90,7 @@
 :root[data-flag-library-v2-enabled] #panel-library[data-lib2] .library-mais { justify-self: center; padding: 0 28px; border-radius: var(--laift-radius-md, 14px); }
 :root[data-flag-library-v2-enabled] #panel-library[data-lib2] .state { border-radius: var(--laift-radius-lg, 20px); }
 
-/* ===== Selo de revisão (ⓘ) e sua nota ===== */
-:root[data-flag-library-v2-enabled] #panel-library[data-lib2] .lib2-selo {
-  width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: 99px; font-size: 18px; line-height: 1;
-  display: inline-grid; place-items: center; background: transparent; color: var(--primary-strong); border: 1px solid var(--border); cursor: pointer;
-}
-:root[data-flag-library-v2-enabled] #panel-library[data-lib2] .lib2-selo[aria-expanded="true"] { background: var(--primary-soft); border-color: var(--primary); }
-:root[data-flag-library-v2-enabled] #panel-library[data-lib2] .lib2-selo:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
-:root[data-flag-library-v2-enabled] #panel-library[data-lib2] .lib2-nota {
-  margin: 0; padding: 10px 12px; font-size: 14px; border-radius: var(--laift-radius-md, 14px); background: var(--primary-soft); color: var(--text);
-}
-:root[data-flag-library-v2-enabled] #panel-library[data-lib2] .lib2-nota[hidden] { display: none; }
-
-/* ===== Ficha do artigo (resumo com anotação de origem, Citar, links) ===== */
+/* ===== Ficha do artigo (resumo, Citar, links) ===== */
 :root[data-flag-library-v2-enabled] #panel-library[data-lib2] .library-ficha {
   padding: 18px; border-radius: var(--laift-radius-xl, 28px); background: var(--layer-1, var(--surface-alt));
   box-shadow: var(--elev-2, 0 8px 24px rgba(8, 40, 36, .12)); min-width: 0; overflow-wrap: anywhere;
@@ -114,13 +102,11 @@
 
 /* ===== Movimento ===== */
 :root[data-flag-library-v2-enabled] #panel-library[data-lib2] .library-item,
-:root[data-flag-library-v2-enabled] #panel-library[data-lib2] .library-chip,
-:root[data-flag-library-v2-enabled] #panel-library[data-lib2] .lib2-selo { transition: background-color var(--dur-fast, 150ms) var(--ease-out, ease-out), box-shadow var(--dur-fast, 150ms) var(--ease-out, ease-out); }
+:root[data-flag-library-v2-enabled] #panel-library[data-lib2] .library-chip { transition: background-color var(--dur-fast, 150ms) var(--ease-out, ease-out), box-shadow var(--dur-fast, 150ms) var(--ease-out, ease-out); }
 @media (hover: hover) {
   :root[data-flag-library-v2-enabled] #panel-library[data-lib2] .library-item:hover { box-shadow: var(--elev-2, 0 8px 24px rgba(8, 40, 36, .16)); }
 }
 @media (prefers-reduced-motion: reduce) {
   :root[data-flag-library-v2-enabled] #panel-library[data-lib2] .library-item,
-  :root[data-flag-library-v2-enabled] #panel-library[data-lib2] .library-chip,
-  :root[data-flag-library-v2-enabled] #panel-library[data-lib2] .lib2-selo { transition: none; }
+  :root[data-flag-library-v2-enabled] #panel-library[data-lib2] .library-chip { transition: none; }
 }

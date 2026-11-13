@@ -5,7 +5,7 @@
  */
 /**
  * library-v2.e2e.js — Biblioteca v2 (frontend/library-v2.js, library-v2.css) atrás da flag library_v2_enabled:
- *  - flag ligada em 375x812, 768x1024 e 1280x800: cabeçalho, cartões, selo ⓘ (aria-expanded), sem rolagem horizontal,
+ *  - flag ligada em 375x812, 768x1024 e 1280x800: cabeçalho, cartões, sem selo de revisão, sem rolagem horizontal,
  *    alvos de 44 px, fontes de 12 px; busca, filtro, favorito, ficha e Citar continuam funcionando;
  *  - claro e escuro, movimento reduzido;
  *  - flag desligada: Biblioteca de sempre, sem nada do v2 (nem o pacote é baixado).
@@ -71,14 +71,9 @@ async function flagOnScenario(vp) {
   const app = await boot(vp.size);
   const { page } = app;
   try {
-    await page.waitForSelector('.lib2-selo', { timeout: 8000 });
-    check((await page.locator('.lib2-selo').count()) === 1, 'selo ⓘ só no artigo com resumo');
-    check((await page.getAttribute('.lib2-selo', 'aria-expanded')) === 'false', 'selo começa fechado');
-    check(await page.locator('.lib2-nota').isHidden(), 'nota do selo escondida');
-    await page.click('.lib2-selo');
-    check((await page.getAttribute('.lib2-selo', 'aria-expanded')) === 'true' && (await page.locator('.lib2-nota').isVisible()), 'clicar no selo abre a nota');
-    await page.click('.lib2-selo');
-    check(await page.locator('.lib2-nota').isHidden(), 'clicar de novo fecha a nota');
+    await page.waitForSelector('.library-item', { timeout: 8000 });
+    check((await page.locator('.lib2-selo, .lib2-nota').count()) === 0, 'sem selo nem nota de revisão na lista pública');
+    check(!/revisad|gerado por ia|rascunho|\[NV\]/i.test(await page.locator('#library-root').innerText()), 'sem texto de revisão ou de IA na lista pública');
 
     const cols = await page.locator('.library-lista').evaluate((n) => getComputedStyle(n).gridTemplateColumns.split(' ').length);
     check(cols === Math.min(vp.cols, 2) || cols === vp.cols, vp.name + ': colunas da lista (' + cols + ')');
@@ -87,7 +82,7 @@ async function flagOnScenario(vp) {
     const overflowX = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     check(overflowX <= 0, 'a página não rola na horizontal (' + overflowX + ' px)');
 
-    const sizes = await page.$$eval('#panel-library .library-abas button, #panel-library .library-chip, #panel-library .library-titulo, #panel-library .library-favorito, #panel-library .lib2-selo, #panel-library .library-busca button', (n) => n.map((b) => { const r = b.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)]; }));
+    const sizes = await page.$$eval('#panel-library .library-abas button, #panel-library .library-chip, #panel-library .library-titulo, #panel-library .library-favorito, #panel-library .library-busca button', (n) => n.map((b) => { const r = b.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)]; }));
     check(sizes.length >= 8 && sizes.every((s) => s[0] >= 44 && s[1] >= 44), 'alvos de pelo menos 44 px (' + sizes.length + ' controles)');
     const fonts = await page.$$eval('#panel-library *', (nodes) => nodes.filter((n) => n.getClientRects().length && Array.from(n.childNodes).some((c) => c.nodeType === 3 && c.textContent.trim())).map((n) => parseFloat(getComputedStyle(n).fontSize)));
     check(fonts.length > 10 && fonts.every((f) => f >= 12), 'fontes de pelo menos 12 px (menor: ' + Math.min.apply(null, fonts) + ')');
@@ -123,8 +118,6 @@ async function functionsScenario() {
     await page.click('.library-chip >> text=Farmacologia');
     await page.waitForTimeout(300);
     check(buscas[buscas.length - 1].topic === 'farmacologia', 'filtro rápido de área continua valendo');
-    await page.waitForSelector('.lib2-selo', { timeout: 5000 });
-    check((await page.locator('.lib2-selo').count()) === 1, 'o selo volta depois de nova busca (tela refeita)');
 
     await page.locator('.library-titulo', { hasText: ITEM_A.title }).first().click();
     await page.waitForSelector('#library-root .library-ficha');
