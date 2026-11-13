@@ -14,7 +14,7 @@
   'use strict';
 
   /** Versão das novidades: muda a cada nova leva de entradas (AAAA-MM-DD). */
-  var VERSION = '2026-11-01';
+  var VERSION = '2026-11-13';
   var STORAGE_KEY = 'laift_whats_new_seen';
   var TITLE = 'Novidades da plataforma';
   var OK_LABEL = 'Entendi';
@@ -23,9 +23,11 @@
   /** `flag`: a entrada só aparece com a flag pública ligada (atributo data-flag-* no <html>). */
   var ENTRIES = Object.freeze([
     Object.freeze({ id: 'guia', text: 'A assistente agora se chama Guia. Ela explica as telas e responde dúvidas, e não altera seus dados.' }),
-    Object.freeze({ id: 'selo', text: 'O selo ⓘ indica conteúdo ainda não revisado por profissional. Toque nele para ler a explicação e reportar um erro.' }),
     Object.freeze({ id: 'dialogos', text: 'Avisos e confirmações dos módulos agora são diálogos acessíveis: funcionam com teclado e leitor de tela, e Esc fecha.' }),
     Object.freeze({ id: 'destaques', flag: 'highlights_enabled', text: 'A Início tem um bloco "Na Liga" com os destaques da Liga.' }),
+    Object.freeze({ id: 'demo', text: 'A Demonstração abre a plataforma sem conta e sem salvar nada. Serve para mostrar a LAIFT a outras pessoas.' }),
+    Object.freeze({ id: 'qr-rotativo', text: 'O QR de presença dos eventos agora é rotativo: ele troca com o tempo, e a contagem regressiva aparece na tela.' }),
+    Object.freeze({ id: 'visao-geral', text: 'A portaria ganhou a Visão geral, com o resumo dos eventos e das presenças.' }),
   ]);
 
   function flagAttribute(flag) {
