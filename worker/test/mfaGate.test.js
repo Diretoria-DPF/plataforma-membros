@@ -21,6 +21,8 @@ const TOKEN = 'token-de-sessao-de-teste';
 //  - sessão opcional / encerrar sessão (não devolvem dado de administração).
 const OPEN_FOR_SETUP = ['apiMfaStatus', 'apiMfaBeginEnrollment', 'apiMfaConfirmEnrollment', 'apiGetMyProfile'];
 const OPTIONAL_SESSION = ['apiLogout', 'apiTouchSession', 'apiListEvents', 'apiGetFeatureFlags', 'apiAssistantChat', 'apiSelectionOverview'];
+//  - ações desligadas no servidor: resposta fixa, sem ler sessão nem banco (F-029; ver o teste abaixo).
+const DISABLED_NO_OP = ['apiLearnAtlasTelemetry'];
 
 function world({ role = 'admin', flagEnabled = true, enrolled = false } = {}) {
   return routedSql([
@@ -34,8 +36,15 @@ beforeEach(() => __resetFlagCacheForTests());
 
 describe('portão de MFA — admin sem autenticador e flag ligada', () => {
   const sessionActions = describeActions(API_REGISTRY)
-    .filter((a) => a.session && !OPEN_FOR_SETUP.includes(a.name) && !OPTIONAL_SESSION.includes(a.name))
+    .filter((a) => a.session && !OPEN_FOR_SETUP.includes(a.name) && !OPTIONAL_SESSION.includes(a.name) && !DISABLED_NO_OP.includes(a.name))
     .map((a) => a.name);
+
+  test.each(DISABLED_NO_OP)('%s está desligada: não toca o banco nem devolve dado', async (name) => {
+    const sql = world();
+    const res = await API_REGISTRY[name](sql, makeEnv(), [TOKEN, {}, {}]);
+    expect(res).toEqual({ success: true, stored: 0, disabled: true });
+    expect(sql).not.toHaveBeenCalled();
+  });
 
   test('há muitas actions cobertas (guarda contra o filtro ficar vazio)', () => {
     expect(sessionActions.length).toBeGreaterThan(70);
