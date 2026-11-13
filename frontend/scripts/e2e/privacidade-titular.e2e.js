@@ -187,18 +187,23 @@ async function admin(rotulo, viewport) {
     await page.click('#modal-confirm-cancel');
     check(seen.completes.length === 0, `${rotulo}: cancelar a confirmação não conclui`);
 
+    // Depois da confirmação, pede a senha (reautenticação); com erro do servidor a janela fica aberta para tentar de novo.
     falha = 'Não é possível excluir o último administrador.';
     await page.click('.pv-row button[data-id="d2"]');
     await page.waitForSelector('#modal-confirm:not(.hidden)');
     await page.click('#modal-confirm-ok');
+    await page.waitForSelector('#modal-stepup:not(.hidden)');
+    check(seen.completes.length === 0, `${rotulo}: concluir espera a senha`);
+    await page.fill('#stepup-password', 'senha-de-teste');
+    await page.click('#modal-stepup-ok');
     await page.waitForFunction(() => /último administrador/.test(document.querySelector('#privacy-admin-root .pv-live').textContent));
     check((await page.locator('.pv-row').count()) === 3, `${rotulo}: conflito mantém a lista`);
+    check(await page.locator('#modal-stepup').isVisible(), `${rotulo}: com erro, a janela da senha continua aberta`);
 
     falha = null;
-    await page.click('.pv-row button[data-id="d2"]');
-    await page.waitForSelector('#modal-confirm:not(.hidden)');
-    await page.click('#modal-confirm-ok');
+    await page.click('#modal-stepup-ok');
     await page.waitForFunction(() => /Exclusão concluída/.test(document.querySelector('#privacy-admin-root .pv-live').textContent));
+    check(seen.completes.length === 2 && seen.completes[1].password === 'senha-de-teste', `${rotulo}: a senha segue no pedido de conclusão`);
     check(seen.completes.length === 2 && seen.completes[1].id === 'd2', `${rotulo}: concluir envia o id`);
     check(seen.lists.filter((s) => s === 'requested').length >= 3, `${rotulo}: lista recarregada depois de concluir`);
     check(app.errors.length === 0, `${rotulo}: sem erros de página (${app.errors.join('; ')})`);

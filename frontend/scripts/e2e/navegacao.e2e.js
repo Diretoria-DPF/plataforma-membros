@@ -253,11 +253,11 @@ async function fluxoDaLiga() {
     const ctaVisivel = await estaVisivel(page, '#liga-cta-processo');
     check(ctaVisivel, `${rotulo}: "Processo seletivo" visível em liga.html`);
     if (!ctaVisivel) return;
-    const foi = await irPara(page, () => clicar(page, '#liga-cta-processo'), /\/processo-seletivo\.html$/);
+    const foi = await irPara(page, () => clicar(page, '#liga-cta-processo'), /\/processo-seletivo(\.html)?$/);
     check(foi, `${rotulo}: clique em "Processo seletivo" leva a processo-seletivo.html`);
     await page.waitForLoadState('networkidle');
     await checarSaude(app, respostas, `${rotulo} (processo-seletivo.html)`);
-    const voltou = await irPara(page, () => page.locator('.pub-voltar').first().click({ timeout: TEMPO_ESPERA_MS }), /\/liga\.html$/);
+    const voltou = await irPara(page, () => page.locator('.pub-voltar').first().click({ timeout: TEMPO_ESPERA_MS }), /\/liga(\.html)?$/);
     check(voltou, `${rotulo}: "Voltar" devolve a liga.html`);
     await page.waitForLoadState('networkidle');
     await checarSaude(app, respostas, `${rotulo} (liga.html)`);
@@ -351,39 +351,69 @@ async function movimentoReduzidoNoEdital() {
 
 /* ---------- atalhos de URL da tela de entrada ---------- */
 
-/** /#cadastro abre o cadastro e o hash sai da URL; "Voltar" é o primeiro filho da tela. */
-async function atalhoCadastro() {
-  const app = await startApp();
+/**
+ * Abre o app público com a Entrada v2 ligada ou desligada. O app nasce com a v2 ligada por padrão e só a
+ * resposta da API a desliga; por isso o desligado também semeia o cache de flags (como no segundo acesso).
+ */
+async function abrirEntrada(entradaV2, respostas) {
+  const app = await startApp({ workerHandlers: workerComFlags({ entrada_v2_enabled: entradaV2 }) });
+  if (!entradaV2) await app.context.addInitScript(() => { try { window.localStorage.setItem('laift-ui-flags', '{}'); } catch (e) { /* sem storage */ } });
+  await vigiar(app, respostas);
+  return app;
+}
+
+/**
+ * /#cadastro abre o cadastro e o hash sai da URL. Com a Entrada v2 (padrão) o cadastro abre na folha
+ * (aba "Criar conta"); com a flag desligada, na tela #screen-register, onde "Voltar" é o primeiro filho.
+ */
+async function atalhoCadastro(entradaV2) {
   const respostas = [];
-  const rotulo = 'atalho /#cadastro';
+  const app = await abrirEntrada(entradaV2, respostas);
+  const rotulo = `atalho /#cadastro (Entrada v2 ${entradaV2 ? 'ligada' : 'desligada'})`;
   try {
-    await vigiar(app, respostas);
     await app.page.goto(app.baseUrl + '#cadastro');
     await app.page.waitForLoadState('networkidle');
     const { page } = app;
-    check(await estaVisivel(page, '#screen-register'), `${rotulo}: #screen-register visível`);
+    if (entradaV2) {
+      await page.waitForSelector('#ev2-folha.ev2-on', { timeout: TEMPO_ESPERA_MS });
+      check(await estaVisivel(page, '#form-register'), `${rotulo}: formulário de cadastro visível na folha`);
+      const aba = await page.getAttribute('#ev2-aba-criar', 'aria-selected');
+      check(aba === 'true', `${rotulo}: aba "Criar conta" selecionada`);
+    } else {
+      check(await estaVisivel(page, '#screen-register'), `${rotulo}: #screen-register visível`);
+      check(await primeiroFilhoEhVoltar(page, '#screen-register'), `${rotulo}: "Voltar" é o primeiro filho de #screen-register`);
+    }
     check(new URL(page.url()).hash === '', `${rotulo}: o hash sai da URL`);
-    check(await primeiroFilhoEhVoltar(page, '#screen-register'), `${rotulo}: "Voltar" é o primeiro filho de #screen-register`);
     await checarSaude(app, respostas, rotulo);
   } finally {
     await app.close();
   }
 }
 
-/** /#entrar abre o login com foco no e-mail; "Esqueci minha senha" abre a recuperação com "Voltar". */
-async function atalhoEntrar() {
-  const app = await startApp();
+/**
+ * /#entrar abre o login. Com a Entrada v2 (padrão) abre a folha na aba "Entrar", com o foco preso nela;
+ * com a flag desligada, foco no e-mail da tela. Nos dois casos "Esqueci minha senha" abre a recuperação.
+ */
+async function atalhoEntrar(entradaV2) {
   const respostas = [];
-  const rotulo = 'atalho /#entrar';
+  const app = await abrirEntrada(entradaV2, respostas);
+  const rotulo = `atalho /#entrar (Entrada v2 ${entradaV2 ? 'ligada' : 'desligada'})`;
   try {
-    await vigiar(app, respostas);
     await app.page.goto(app.baseUrl + '#entrar');
     await app.page.waitForLoadState('networkidle');
     const { page } = app;
-    check(await estaVisivel(page, '#screen-welcome'), `${rotulo}: #screen-welcome visível`);
-    const focoNoEmail = await page.evaluate(() => !!document.activeElement && document.activeElement.id === 'login-email');
-    check(focoNoEmail, `${rotulo}: foco em #login-email`);
-    await clicar(page, '#screen-welcome button[data-nav="screen-forgot"]');
+    if (entradaV2) {
+      await page.waitForSelector('#ev2-folha.ev2-on', { timeout: TEMPO_ESPERA_MS });
+      check((await page.getAttribute('#ev2-aba-entrar', 'aria-selected')) === 'true', `${rotulo}: aba "Entrar" selecionada na folha`);
+      const focoNaFolha = await page.evaluate(() => document.getElementById('ev2-folha').contains(document.activeElement));
+      check(focoNaFolha, `${rotulo}: foco dentro da folha`);
+      await clicar(page, '#ev2-folha .auth-esqueci');
+    } else {
+      check(await estaVisivel(page, '#screen-welcome'), `${rotulo}: #screen-welcome visível`);
+      const focoNoEmail = await page.evaluate(() => !!document.activeElement && document.activeElement.id === 'login-email');
+      check(focoNoEmail, `${rotulo}: foco em #login-email`);
+      await clicar(page, '#screen-welcome button[data-nav="screen-forgot"]');
+    }
     check(await estaVisivel(page, '#screen-forgot'), `${rotulo}: "Esqueci minha senha" abre #screen-forgot`);
     check(await primeiroFilhoEhVoltar(page, '#screen-forgot'), `${rotulo}: "Voltar" é o primeiro filho de #screen-forgot`);
     await checarSaude(app, respostas, rotulo);
@@ -526,8 +556,10 @@ module.exports = async function navegacao() {
   await cenario('edital 1280px, ligada', () => edital(1280, 900, true));
   await cenario('edital 375px, desligada', () => edital(375, 812, false));
   await cenario('edital com movimento reduzido', movimentoReduzidoNoEdital);
-  await cenario('atalho /#cadastro', atalhoCadastro);
-  await cenario('atalho /#entrar', atalhoEntrar);
+  await cenario('atalho /#cadastro, Entrada v2', () => atalhoCadastro(true));
+  await cenario('atalho /#cadastro, Entrada v2 desligada', () => atalhoCadastro(false));
+  await cenario('atalho /#entrar, Entrada v2', () => atalhoEntrar(true));
+  await cenario('atalho /#entrar, Entrada v2 desligada', () => atalhoEntrar(false));
   await cenario('voltar do membro 375px', () => voltarNoApp(375, 812));
   await cenario('voltar do membro 1280px', () => voltarNoApp(1280, 900));
   await cenario('voltar do admin', voltarNoAdmin);

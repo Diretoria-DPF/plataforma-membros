@@ -61,6 +61,8 @@ function alvosPequenos({ seletor, minimo }) {
 
 async function verificarPagina(app, rotulo) {
   const { page } = app;
+  // O CSS da v2 é injetado pelo script sob demanda: só mede depois que a tela antiga saiu de cena.
+  await page.waitForFunction(() => document.querySelectorAll('#screen-welcome > .auth-card, #screen-welcome > nav').length === 0 || Array.from(document.querySelectorAll('#screen-welcome > .auth-card, #screen-welcome > nav')).every((e) => e.getClientRects().length === 0), null, { timeout: 8000 });
   const s = await page.evaluate(() => ({
     h1: Array.from(document.querySelectorAll('h1')).filter((h) => h.getClientRects().length).map((h) => h.textContent.trim()),
     cartoes: document.querySelectorAll('.ev2-cartao').length,
@@ -162,7 +164,11 @@ async function verificarFolha(app, rotulo, celular) {
 
 async function verificarCartaoELogin(app, rotulo) {
   const { page, calls } = app;
-  await page.locator('.ev2-cartao').first().click();
+  // Cartões com prévia (Quiz, Atlas, Casos) são links para /demo#<módulo>; os demais pedem conta (cadeado).
+  const previas = await page.$$eval('a.ev2-cartao--demo', (els) => els.map((a) => a.getAttribute('href')));
+  check(JSON.stringify(previas) === JSON.stringify(['/demo#farmaco', '/demo#anatomia', '/demo#clinica']), `${rotulo}: 3 cartões levam à prévia sem conta (${JSON.stringify(previas)})`);
+  check((await page.locator('button.ev2-cartao').count()) === 2, `${rotulo}: 2 cartões com cadeado (Guia e Liga)`);
+  await page.locator('button.ev2-cartao').first().click();
   const nome = await page.evaluate(() => document.getElementById('ev2-titulo').textContent);
   check(await folhaAberta(page) && /Criar conta/.test(nome), `${rotulo}: cartão com cadeado leva ao cadastro`);
   await page.click('#ev2-aba-entrar');
@@ -255,9 +261,15 @@ async function cenarioReduzido() {
   }
 }
 
-async function cenarioDesligado() {
-  console.log('\n▶ flag desligada (375x812)');
+/**
+ * Flag desligada. O app nasce com a v2 ligada por padrão (ux-v2.js, BOOT_DEFAULT_FLAGS) e só a resposta da API
+ * a desliga: no primeiro acesso (sem cache) a v2 chega a carregar e é desmontada; a partir do segundo, o cache
+ * de flags ({}) já a mantém desligada e nem é baixada.
+ */
+async function cenarioDesligado(comCache) {
+  console.log(`\n▶ flag desligada (${comCache ? 'segundo acesso, com cache' : 'primeiro acesso, sem cache'}) (375x812)`);
   const app = await startApp({ viewport: { width: 375, height: 812 }, workerHandlers: handlers({ flag: false }) });
+  if (comCache) await app.context.addInitScript(() => { try { window.localStorage.setItem('laift-ui-flags', '{}'); } catch (e) { /* sem storage */ } });
   const pedidos = [];
   app.page.on('request', (r) => pedidos.push(r.url()));
   try {
@@ -270,7 +282,7 @@ async function cenarioDesligado() {
       pai: document.getElementById('form-login').closest('.auth-card') !== null,
     }));
     check(s.v2 === 0 && s.h1 && /^LAIFT/.test(s.h1) && s.login && s.pai, 'desligada: tela de login de sempre, sem nada da Entrada v2');
-    check(!pedidos.some((u) => /entrada-v2\.(js|css)/.test(u)), 'desligada: entrada-v2.js e entrada-v2.css nem são baixados');
+    if (comCache) check(!pedidos.some((u) => /entrada-v2\.(js|css)/.test(u)), 'desligada: entrada-v2.js e entrada-v2.css nem são baixados');
     await app.login();
     check((await app.page.locator('#app-root:not(.hidden)').count()) === 1, 'desligada: o login de sempre continua entrando no app');
     check(app.errors.length === 0, 'desligada: sem erros de JavaScript');
@@ -283,5 +295,6 @@ module.exports = async function entradaV2() {
   fs.mkdirSync(SHOTS_DIR, { recursive: true });
   for (const cen of CENARIOS) await cenarioLigado(cen);
   await cenarioReduzido();
-  await cenarioDesligado();
+  await cenarioDesligado(true);
+  await cenarioDesligado(false);
 };

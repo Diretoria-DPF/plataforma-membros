@@ -106,13 +106,18 @@ async function darkScenario(size) {
   const { page } = app;
   try {
     check((await page.evaluate(() => document.documentElement.getAttribute('data-theme'))) === 'dark', 'tema escuro ativo');
-    const lum = (css) => { const m = css.match(/\d+(\.\d+)?/g).map(Number); return (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255; };
-    const card = await page.locator('.p2-sec').first().evaluate((n) => getComputedStyle(n).backgroundColor);
-    check(lum(card) < 0.3, 'cartões escuros no tema escuro (luminância ' + lum(card).toFixed(2) + ')');
-    const title = await page.locator('.p2-sec__toggle').first().evaluate((n) => getComputedStyle(n).color);
-    check(lum(title) > 0.6, 'títulos claros sobre o cartão escuro');
-    const hero = await page.locator('.p2-hero').evaluate((n) => getComputedStyle(n).backgroundImage);
-    check(/rgb\(12, 63, 58\)/.test(hero), 'cabeçalho com o gradiente escuro');
+    // As cores do tema escuro entram com transição de cor e o CSS do v2 é carregado sob demanda: mede o estado final.
+    const estavel = (leitura, ok) => page.waitForFunction(({ fonte, limite }) => {
+      const luz = (css) => { const m = css.match(/\d+(\.\d+)?/g).map(Number); return (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255; };
+      const n = document.querySelector(fonte.seletor);
+      if (!n) return false;
+      const v = getComputedStyle(n)[fonte.prop];
+      if (fonte.gradiente) return /rgb\(12, 63, 58\)/.test(v);
+      return fonte.maior ? luz(v) > limite : luz(v) < limite;
+    }, { fonte: leitura, limite: ok }, { timeout: 8000 }).then(() => true, () => false);
+    check(await estavel({ seletor: '.p2-sec', prop: 'backgroundColor' }, 0.3), 'cartões escuros no tema escuro');
+    check(await estavel({ seletor: '.p2-sec__toggle', prop: 'color', maior: true }, 0.6), 'títulos claros sobre o cartão escuro');
+    check(await estavel({ seletor: '.p2-hero', prop: 'backgroundImage', gradiente: true }, 0), 'cabeçalho com o gradiente escuro');
     await shot(page, 'perfil-' + size.width + '-escuro');
     check(app.errors.length === 0, 'tema escuro: sem erros de JavaScript');
   } finally {
@@ -163,7 +168,7 @@ async function flagOffScenario() {
     await page.waitForFunction(() => document.getElementById('profile-name').value === 'Ana Teste', null, { timeout: 8000 });
     check((await page.locator('.p2-hero, .p2-sec, .p2-col, .p2-list, [data-p2]').count()) === 0, 'nenhum elemento do Perfil v2');
     check((await page.locator('link[data-profile-v2-css]').count()) === 0, 'o CSS do Perfil v2 nem é carregado');
-    check((await page.locator('#profile-grid > .card').count()) === 6, 'seis cartões de sempre dentro da grade');
+    check((await page.locator('#profile-grid > .card').count()) === 7, 'sete cartões de sempre dentro da grade (perfil, verificação em duas etapas, métricas, preferências, privacidade, atualizar, sobre)');
     check((await page.textContent('#panel-profile h2')) === 'Meu perfil', 'título de sempre "Meu perfil"');
     check(await page.locator('#profile-phone').isVisible() && await page.locator('#btn-whats-new').isVisible(), 'campos e botões de sempre visíveis');
     await shot(page, 'perfil-1280-flag-desligada');

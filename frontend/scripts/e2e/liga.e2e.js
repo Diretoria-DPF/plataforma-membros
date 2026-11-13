@@ -49,7 +49,7 @@ const AREAS = [
 const CONTAGEM_ESPERADA = { cards: 7, areas: 8, compromissos: 5, beneficios: 6, secoes: 8 };
 // Barra das páginas da Liga: marca, "Voltar" e os 4 links de navegação (CONTRATO §1).
 const ALVOS_DA_BARRA = 6;
-const LINKS_DA_BARRA = ['./', 'blog.html', '/biblioteca', './#entrar', './#cadastro'];
+const LINKS_DA_BARRA = ['./', '/blog', '/biblioteca', './#entrar', './#cadastro'];
 const REGEX_HREF_BLOG = /^blog\/[a-z0-9-]+\.html$/;
 const SELOS_NOVIDADE = ['Nova publicação no blog', ''];
 const MAPA_EMBED = 'https://www.openstreetmap.org/export/embed.html?bbox=';
@@ -144,7 +144,7 @@ async function verificarCtaFechado(page, rotulo) {
 async function verificarCtaAberto(page, rotulo) {
   const cta = page.locator('#liga-cta-processo');
   check(await cta.isVisible(), `${rotulo}: botão "Processo seletivo" visível`);
-  check((await atributoDe(cta, 'href')) === 'processo-seletivo.html', `${rotulo}: botão aponta para processo-seletivo.html`);
+  check((await atributoDe(cta, 'href')) === '/processo-seletivo', `${rotulo}: botão aponta para /processo-seletivo`);
   check(!(await page.locator('[data-se-fechado]').first().isVisible()), `${rotulo}: "Conheça o processo seletivo" escondido`);
   await verificarStatus(page, 'aberto', AVISO_ABERTO, rotulo);
 }
@@ -258,7 +258,7 @@ async function voltarParaInicio(largura) {
     await checarSaude(app, respostas, rotulo);
     await voltar.click();
     const chegou = await app.page
-      .waitForURL((url) => url.pathname === '/' || url.pathname === '/index.html', { timeout: 5000 })
+      .waitForURL((url) => url.pathname === '/' || url.pathname === '/index.html', { timeout: 15000 })
       .then(() => true, () => false);
     check(chegou, `${rotulo}: clique leva à tela inicial (${app.page.url()})`);
   } finally {
@@ -429,10 +429,10 @@ async function faixaDoLogin(ligada) {
     const link = app.page.locator('.welcome-liga__link');
     const linkVisivel = await link.isVisible();
     const linkDestino = await atributoDe(link, 'href');
-    check(linkVisivel && linkDestino === 'liga.html', `${rotulo}: link "Conheça a LAIFT" visível e aponta para liga.html`);
+    check(linkVisivel && linkDestino === '/liga', `${rotulo}: link "Conheça a LAIFT" visível e aponta para /liga`);
     const linkBlog = await atributoDe(app.page.locator('.welcome-liga__blog'), 'href');
     const textoBlog = (((await app.page.locator('.welcome-liga__blog').textContent()) || '').trim());
-    check(linkBlog === 'blog.html' && textoBlog === 'Acessar blog', `${rotulo}: botão "Acessar blog" aponta para blog.html`);
+    check(linkBlog === '/blog' && textoBlog === 'Acessar blog', `${rotulo}: botão "Acessar blog" aponta para /blog`);
     await verificarNovidadeDaTela(app.page, rotulo);
     await checarSaude(app, respostas, rotulo);
   } finally {

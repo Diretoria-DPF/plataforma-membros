@@ -13,6 +13,9 @@ const { startApp, check } = require('./harness');
 const MOBILE = { width: 375, height: 812 };
 const PRAZO_MS = 5000;
 
+/** O diálogo só entra no histórico depois de um MutationObserver e de um frame (panel-history.js): o Voltar antes disso falha. */
+const marcaEmpilhada = (page) => esperar(() => page.evaluate(() => !!(history.state && history.state.laiftOverlay)));
+
 async function esperar(condicao) {
   const fim = Date.now() + PRAZO_MS;
   while (Date.now() < fim) {
@@ -83,6 +86,7 @@ async function dialogosNoHistorico() {
     for (const [nome, abrir, alvo] of casos) {
       await page.locator(abrir).first().click();
       check(await esperar(async () => !(await fechado(alvo)())), `voltar: ${nome} abre`);
+      check(await marcaEmpilhada(page), `voltar: o ${nome} entra no histórico`);
       await page.goBack();
       check(await esperar(fechado(alvo)), `voltar: o Voltar fecha o ${nome}`);
       check((await painel()) === 'panel-home', `voltar: depois de fechar o ${nome} continua na Início (${await painel()})`);
@@ -117,6 +121,7 @@ async function dialogosNoHistorico() {
     check(await visivel(page, 'panel-events'), 'voltar: fechar pela tela sobre a base sem estado continua em Eventos');
     await page.locator('#app-menu-btn').first().click();
     await esperar(async () => !(await fechado('#app-menu')()));
+    check(await marcaEmpilhada(page), 'voltar: o menu entra no histórico sobre a base sem estado');
     await page.goBack();
     check(await esperar(fechado('#app-menu')), 'voltar: o Voltar fecha o menu sobre a base sem estado');
     await page.waitForTimeout(400);
