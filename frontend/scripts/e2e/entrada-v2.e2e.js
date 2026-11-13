@@ -61,6 +61,8 @@ function alvosPequenos({ seletor, minimo }) {
 
 async function verificarPagina(app, rotulo) {
   const { page } = app;
+  // O CSS da v2 é injetado pelo script sob demanda: só mede depois que a tela antiga saiu de cena.
+  await page.waitForFunction(() => document.querySelectorAll('#screen-welcome > .auth-card, #screen-welcome > nav').length === 0 || Array.from(document.querySelectorAll('#screen-welcome > .auth-card, #screen-welcome > nav')).every((e) => e.getClientRects().length === 0), null, { timeout: 8000 });
   const s = await page.evaluate(() => ({
     h1: Array.from(document.querySelectorAll('h1')).filter((h) => h.getClientRects().length).map((h) => h.textContent.trim()),
     cartoes: document.querySelectorAll('.ev2-cartao').length,
