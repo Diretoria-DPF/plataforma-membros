@@ -70,8 +70,10 @@ function startStaticServer() {
   }
   const server = http.createServer((req, res) => {
     const urlPath = decodeURIComponent(req.url.split('?')[0]);
-    const filePath = path.join(DIST, urlPath === '/' ? '/index.html' : urlPath);
+    let filePath = path.join(DIST, urlPath === '/' ? '/index.html' : urlPath);
     if (!filePath.startsWith(DIST)) { res.writeHead(403); res.end(); return; }
+    // URLs limpas (/liga, /blog/post): o Cloudflare serve o .html correspondente; o servidor local imita.
+    if (!path.extname(filePath) && !fs.existsSync(filePath) && fs.existsSync(filePath + '.html')) filePath += '.html';
     fs.readFile(filePath, (err, data) => {
       if (err) { res.writeHead(404); res.end('Not found'); return; }
       const ext = path.extname(filePath).toLowerCase();
