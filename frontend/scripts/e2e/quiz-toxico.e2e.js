@@ -81,6 +81,11 @@ async function testarNoNavegador() {
     check(labels.some((l) => /\(sua resposta, (correta|incorreta)\)|\(correta\)/.test(l)), 'QZ-12: aria-label informa correta/incorreta depois do gabarito');
     check(await frame.locator('[aria-live]').count() <= 3, 'QZ-12: poucas regiões vivas');
     check(await frame.locator('.laift-review-seal').count() === 0, 'sem selo de revisão para o público');
+    check(!/revisad|rascunho|por IA|ⓘ/i.test(await frame.evaluate(() => document.getElementById('quizContainer').innerText)), 'sem texto de revisão visível');
+    const reportar = frame.locator('.quiz-report-btn');
+    check(await reportar.count() === 1 && (await reportar.textContent()).trim() === 'Reportar erro', 'item "Reportar erro" presente');
+    const caixa = await reportar.boundingBox();
+    check(!!caixa && caixa.height >= 44, 'Reportar erro com alvo >= 44px');
 
     // QZ-05 e QZ-04: avança, deixa as demais em branco e finaliza
     const total = await frame.evaluate(() => window.LaiftQuiz.state.questions.length);

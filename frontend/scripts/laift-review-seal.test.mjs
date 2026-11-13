@@ -3,8 +3,8 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// LaiftReviewSeal (modulos/shared/laift-review-seal.js, CON-01): selo ⓘ "ainda não revisada por profissional" em
-// questões/fichas sem revisor, com explicação ao tocar e "Reportar erro" pelo feedback existente (apiSubmitFeedback).
+// LaiftReviewSeal (modulos/shared/laift-review-seal.js, CON-01): sem selo nem texto público de revisão; fica o
+// "Reportar erro" pelo feedback existente (apiSubmitFeedback) e o estado interno de revisão (reviewState).
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -14,7 +14,6 @@ import { fileURLToPath } from 'node:url';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = fs.readFileSync(path.join(frontend, 'modulos/shared/laift-review-seal.js'), 'utf8');
-const CSS = fs.readFileSync(path.join(frontend, 'modulos/shared/laift-review-seal.css'), 'utf8');
 
 function makeNode(tag) {
   const node = {
@@ -77,36 +76,18 @@ test('reviewState: sem dado de revisão é "unknown" por padrão e "unreviewed" 
   assert.equal(Seal.reviewState({ reviewed_by: 'Dra. Ana' }, { whenMissing: 'unreviewed' }), 'reviewed');
 });
 
-test('create: revisada ou sem dado -> nenhum selo', () => {
-  assert.equal(Seal.create({ reviewed_by: 'Dra. Ana' }, { kind: 'questão' }, { whenMissing: 'unreviewed' }), null);
-  assert.equal(Seal.create({ id: 3 }, { kind: 'ficha' }), null);
+test('sem selo nem texto público de revisão: a API não tem create e o código não traz o texto', () => {
+  assert.equal(Seal.create, undefined);
+  assert.doesNotMatch(SRC, /ainda não revisada|ainda não foi revisada|ⓘ|rascunho|IA/i);
 });
 
-test('create: botão ⓘ acessível, discreto, com rótulo e alvo para o diálogo', () => {
-  const btn = Seal.create({ id: 3 }, { kind: 'questão' }, { whenMissing: 'unreviewed' });
-  assert.equal(btn.tag, 'button');
-  assert.equal(btn.type, 'button');
-  assert.equal(btn.className, 'laift-review-seal');
-  assert.equal(btn.textContent, 'ⓘ');
-  assert.match(btn.attrs['aria-label'], /ainda não revisada por profissional/i);
-  assert.equal(btn.attrs['aria-haspopup'], 'dialog');
-});
-
-test('toque abre a explicação com "Reportar erro"; Fechar não envia nada', async () => {
-  const btn = Seal.create({ id: 3 }, { kind: 'questão', module: 'Quiz' }, { whenMissing: 'unreviewed' });
-  confirmAnswer = false;
-  await btn.click();
-  assert.equal(calls.confirm.length, 1);
-  assert.match(calls.confirm[0][0], /ainda não foi revisada por um profissional/i);
-  assert.equal(calls.confirm[0][1].okLabel, 'Reportar erro');
-  assert.equal(calls.confirm[0][1].cancelLabel, 'Fechar');
-  assert.equal(calls.report.length, 0);
-});
-
-test('Reportar erro envia pelo feedback existente, com módulo/id/tópico, e agradece', async () => {
-  const btn = Seal.create({ id: 42, topic: 'Farmacodinâmica', question: 'Qual é o antídoto?' }, { kind: 'questão', module: 'Quiz de Farmacologia', id: 42, topic: 'Farmacodinâmica', excerpt: 'Qual é o antídoto?' }, { whenMissing: 'unreviewed' });
+test('report: confirma sem texto de revisão, envia pelo feedback existente com módulo/id/tópico, e agradece', async () => {
+  const ctx = { kind: 'questão', module: 'Quiz de Farmacologia', id: 42, topic: 'Farmacodinâmica', excerpt: 'Qual é o antídoto?' };
   confirmAnswer = true;
-  await btn.click();
+  await Seal.report(ctx);
+  assert.equal(calls.confirm.length, 1);
+  assert.doesNotMatch(calls.confirm[0][0] + ' ' + calls.confirm[0][1].title, /revisad|rascunho|IA/i);
+  assert.equal(calls.confirm[0][1].title, 'Reportar erro');
   assert.equal(calls.report.length, 1);
   const msg = calls.report[0];
   assert.match(msg, /^\[Erro de conteúdo\]/);
@@ -119,6 +100,12 @@ test('Reportar erro envia pelo feedback existente, com módulo/id/tópico, e agr
   assert.deepEqual(calls.alert, ['Obrigado! Seu feedback foi enviado.']);
 });
 
+test('report: cancelar não envia nada', async () => {
+  confirmAnswer = false;
+  await Seal.report({ kind: 'questão', module: 'Quiz' });
+  assert.equal(calls.report.length, 0);
+});
+
 test('buildReportMessage: corta trecho longo, remove quebras/controles e nunca passa de 600 caracteres', () => {
   const msg = Seal.buildReportMessage({ kind: 'ficha', module: 'Atlas', id: 'za:kidney-l', excerpt: `${'x'.repeat(900)}\n\u0007fim` });
   assert.ok(msg.length <= 600);
@@ -126,53 +113,47 @@ test('buildReportMessage: corta trecho longo, remove quebras/controles e nunca p
 });
 
 test('falha do envio: mostra a mensagem do servidor, ou uma padrão', async () => {
-  const btn = Seal.create({ id: 1 }, { kind: 'questão' }, { whenMissing: 'unreviewed' });
   confirmAnswer = true;
   apiReply = { success: false, message: 'Muitas tentativas. Aguarde.' };
-  await btn.click();
+  await Seal.report({ kind: 'questão' });
   assert.deepEqual(calls.alert, ['Muitas tentativas. Aguarde.']);
   apiReply = null;
-  await btn.click();
+  await Seal.report({ kind: 'questão' });
   assert.match(calls.alert[1], /não foi possível enviar/i);
 });
 
 test('sem a ponte (LaiftApi.reportContent), avisa sem quebrar', async () => {
   load({ withApi: false });
-  const btn = Seal.create({ id: 1 }, { kind: 'questão' }, { whenMissing: 'unreviewed' });
   confirmAnswer = true;
-  await btn.click();
+  await Seal.report({ kind: 'questão' });
   assert.equal(calls.report.length, 0);
   assert.match(calls.alert[0], /não foi possível enviar/i);
 });
 
-test('sem LaiftDialog, o selo não é criado (não há como explicar/reportar)', () => {
+test('sem LaiftDialog, report não quebra e não envia', async () => {
   load({ withDialog: false });
-  assert.equal(Seal.create({ id: 1 }, { kind: 'questão' }, { whenMissing: 'unreviewed' }), null);
+  await Seal.report({ kind: 'questão' });
+  assert.equal(calls.report.length, 0);
 });
 
-test('CSS: alvo >= 44px, glifo discreto (cor atenuada), foco visível; JS sem innerHTML/inline', () => {
-  assert.match(CSS, /\.laift-review-seal \{[^}]*min-height: 44px/);
-  assert.match(CSS, /\.laift-review-seal \{[^}]*min-width: 44px/);
-  assert.match(CSS, /:focus-visible/);
-  assert.doesNotMatch(SRC, /\.innerHTML|insertAdjacentHTML|eval\(|new Function|document\.write/);
-});
-
-test('integração: quiz e toxicologia carregam folha e script; motores usam o selo', () => {
+test('integração: quiz e toxicologia carregam o script (sem folha de selo); motores usam só o report', () => {
   const need = [
     ['modulos/quiz/index.html', 'quiz-engine'],
     ['modulos/toxicologia/index.html', 'quiz-engine'],
   ];
   for (const [page, before] of need) {
     const html = fs.readFileSync(path.join(frontend, page), 'utf8');
-    assert.match(html, /laift-review-seal\.css/, `${page} sem a folha`);
+    assert.doesNotMatch(html, /laift-review-seal\.css/, `${page} ainda carrega a folha do selo`);
     assert.match(html, /<script src="\.\.\/shared\/laift-review-seal\.js"><\/script>/, `${page} sem o script`);
-    assert.ok(html.indexOf('laift-dialog.js') < html.indexOf('laift-review-seal.js'), `${page}: dialog antes do selo`);
-    if (before) assert.ok(html.indexOf('laift-review-seal.js') < html.search(new RegExp(`<script src="[^"]*${before}\\.js`)), `${page}: selo antes do motor`);
+    assert.ok(html.indexOf('laift-dialog.js') < html.indexOf('laift-review-seal.js'), `${page}: dialog antes do script`);
+    if (before) assert.ok(html.indexOf('laift-review-seal.js') < html.search(new RegExp(`<script src="[^"]*${before}\\.js`)), `${page}: script antes do motor`);
   }
   const engine = fs.readFileSync(path.join(frontend, 'modulos/shared/quiz-engine.js'), 'utf8');
   // Regra do dono: o público não vê selo nem aviso de revisão nos quizzes; sobra só "Reportar erro".
   assert.doesNotMatch(engine, /LaiftReviewSeal\.create|whenMissing|laift-review-seal-row/);
   assert.match(engine, /LaiftReviewSeal\.report/);
+  assert.match(engine, /text: 'Reportar erro'/);
+  assert.doesNotMatch(engine, /revisad|rascunho|por IA/i);
   assert.doesNotMatch(SRC.slice(SRC.indexOf('function report'), SRC.indexOf('function create')), /revisad|\bIA\b|rascunho/);
   const card = fs.readFileSync(path.join(frontend, 'modulos/anatomia-3d/js/ui/infocard.js'), 'utf8');
   // Atlas: sem selo de revisão na ficha (regra do dono).

@@ -504,7 +504,7 @@
     function ensureReportButton() {
       if (!el.explanation || el.reportBtn || !global.LaiftReviewSeal || typeof global.LaiftReviewSeal.report !== 'function') return;
       el.reportBtn = LaiftDom.h('button', {
-        type: 'button', className: 'quiz-report-btn', text: 'Reportar erro nesta questão',
+        type: 'button', className: 'quiz-report-btn', text: 'Reportar erro',
         onClick: function () { var q = state.questions[state.index]; if (q) global.LaiftReviewSeal.report(reportContext(q)); },
       });
       var row = LaiftDom.h('div', { className: 'quiz-report-row' }, [el.reportBtn]);
