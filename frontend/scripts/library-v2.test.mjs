@@ -23,26 +23,10 @@ const CSS = ler('library-v2.css');
 const APP = ler('app.js');
 const HTML = ler('index.html');
 
-test('hasSummaryBadge: só com o selo "Com resumo" da lista de sempre', () => {
-  assert.equal(l2.hasSummaryBadge(['Artigo', 'Com resumo']), true);
-  assert.equal(l2.hasSummaryBadge(['Artigo', 'Acesso aberto']), false);
-  assert.equal(l2.hasSummaryBadge(null), false);
-});
-
-test('noteId: só caracteres seguros; sealLabel cita o título', () => {
-  assert.equal(l2.noteId('11111111-1111-4111'), 'lib2-nota-11111111-1111-4111');
-  assert.equal(l2.noteId('a b"<c>'), 'lib2-nota-abc');
-  assert.ok(l2.sealLabel('Dipirona').includes('"Dipirona"'));
-  assert.ok(l2.sealLabel('').length > 10);
-  assert.equal(l2.expandedValue(true), 'true');
-  assert.equal(l2.expandedValue(false), 'false');
-});
-
-test('o selo usa o mesmo texto do selo de sempre e não promete o que a lista não sabe', () => {
-  const lib = ler('library.js');
-  assert.ok(lib.includes("'Com resumo'"), 'library.js ainda emite "Com resumo"');
-  assert.equal(l2.SUMMARY_BADGE, 'Com resumo');
-  assert.ok(/Diretoria Científica/.test(l2.SEAL_NOTE));
+test('a Biblioteca v2 não exibe selo nem nota de revisão ou de IA (regra do dono)', () => {
+  assert.equal(l2.SEAL_NOTE, undefined);
+  assert.ok(!/lib2-selo|lib2-nota|SEAL_/.test(SRC + CSS), 'sem selo no código nem no CSS');
+  assert.ok(!/revisad|gerado por ia|rascunho|\[NV\]/i.test(SRC.replace(/\/\/.*$/gm, '')), 'sem texto de revisão no código executável');
 });
 
 test('mount sem o painel não faz nada', () => {
@@ -55,8 +39,7 @@ test('o script não recria a tela: sem innerHTML, sem estilo inline, só DOM seg
   assert.ok(!/innerHTML|outerHTML|insertAdjacentHTML|document\.write/.test(SRC));
   assert.ok(!/\.style\.|setAttribute\('style'/.test(SRC));
   assert.ok(!/\bfetch\(|callApi|XMLHttpRequest/.test(SRC), 'sem API nova');
-  assert.ok(SRC.includes('aria-expanded') && SRC.includes('aria-controls'));
-});
+  });
 
 test('textos: a Guia, sem diminutivos nem "grátis"', () => {
   for (const texto of [SRC, CSS, ler('../docs/biblioteca-v2.md')]) assert.ok(!/gr[áa]tis/i.test(texto));

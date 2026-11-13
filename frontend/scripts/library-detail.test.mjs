@@ -198,24 +198,6 @@ test('safeHref com o padrão de PMC: só /articles/PMC<n>/', () => {
   assert.equal(Detail.safeHref('https://pmc.ncbi.nlm.nih.gov/articles/PMC1/?x=1', Detail.PMC_RE), '');
 });
 
-test('nota de origem do resumo: curadoria, IA revisada ou nada', () => {
-  const fmt = (iso) => 'data ' + iso;
-  assert.equal(Detail.pickSummaryNote({ origin: 'curador' }, fmt), 'Escrito pela curadoria.');
-  assert.equal(
-    Detail.pickSummaryNote({ origin: 'ia', reviewerName: 'Dra. Lima', reviewedAt: '2026-10-08' }, fmt),
-    'Gerado por IA e revisado por Dra. Lima em data 2026-10-08.',
-  );
-  assert.equal(Detail.pickSummaryNote({ origin: 'ia_editado', reviewerName: 'Dra. Lima', reviewedAt: '2026-10-08' }, fmt).startsWith('Gerado por IA'), true);
-  assert.equal(Detail.pickSummaryNote({ origin: 'outra' }, fmt), '');
-  assert.equal(Detail.pickSummaryNote(null, fmt), '');
-});
-
-test('revisão clínica: nome e data; sem revisão, nada', () => {
-  const fmt = (iso) => 'data ' + iso;
-  assert.equal(Detail.clinicalNote({ reviewerName: 'Dr. Souza', reviewedAt: '2026-10-09' }, fmt), 'Revisão clínica: Dr. Souza, data 2026-10-09.');
-  assert.equal(Detail.clinicalNote(null, fmt), '');
-});
-
 test('licença em texto: "Licença CC BY", "Domínio público" e o aviso quando não há licença', () => {
   assert.equal(Detail.licenseText('cc-by'), 'Licença CC BY');
   assert.equal(Detail.licenseText('pd'), 'Domínio público');
@@ -291,19 +273,18 @@ test('NotFound mostra a mensagem do servidor, com o título de erro e foco no t�
 
 // ---------- Conteúdo e origem do resumo ----------
 
-test('resumo da curadoria: "Escrito pela curadoria."', async () => {
-  await abrir({ success: true, article: article() });
-  assert.match(textOf(root()), /Resumo da LAIFT[\s\S]*Resumo da curadoria\.[\s\S]*Escrito pela curadoria\./);
-});
+const PROIBIDOS = /revisad|gerado por ia|escrito pela curadoria|revisão clínica|rascunho|\[NV\]|por IA|Dra\. Lima|Dr\. Souza/i;
 
-test('resumo por IA revisado mostra quem revisou e quando', async () => {
-  await abrir({ success: true, article: article({ summary: { text: 'Texto IA.', origin: 'ia', reviewerName: 'Dra. Lima', reviewedAt: '2026-10-08' } }) });
-  assert.match(textOf(root()), /Gerado por IA e revisado por Dra\. Lima em 08\/10\/2026\./);
-});
-
-test('revisão clínica aparece com nome e data', async () => {
-  await abrir({ success: true, article: article({ clinicalReview: { reviewerName: 'Dr. Souza', reviewedAt: '2026-10-09' } }) });
-  assert.match(textOf(root()), /Revisão clínica: Dr\. Souza, 09\/10\/2026\./);
+test('vista pública: nenhum texto de revisão, origem por IA ou nome de revisor, qualquer que seja a origem', async () => {
+  for (const origin of ['curador', 'ia', 'ia_editado']) {
+    await abrir({ success: true, article: article({
+      summary: { text: 'Texto do resumo.', origin, reviewerName: 'Dra. Lima', reviewedAt: '2026-10-08' },
+      clinicalReview: { reviewerName: 'Dr. Souza', reviewedAt: '2026-10-09' },
+    }) });
+    const texto = textOf(root());
+    assert.match(texto, /Texto do resumo\./);
+    assert.doesNotMatch(texto, PROIBIDOS, 'origem ' + origin);
+  }
 });
 
 test('sem resumo, diz isso; membersOnly mostra o aviso e esconde favorito e coleções', async () => {
