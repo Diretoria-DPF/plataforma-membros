@@ -21,7 +21,7 @@ jobs:
       # fetch-depth 2: em PR o checkout é o commit de merge (refs/pull/N/merge);
       # HEAD^1 é a ponta da base e HEAD o merge, então
       # `git diff --name-only HEAD^1 HEAD` lista exatamente os arquivos da PR.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with: { fetch-depth: 2 }
       # Segurança: roda tudo (run=true) em workflow_dispatch e sempre que a
       # detecção falhar ou vier vazia. Só vira run=false quando o diff foi lido
@@ -47,7 +47,7 @@ jobs:
         if: steps.escopo.outputs.run != 'true'
         run: echo "PR não toca frontend/**, tools/atlas-*, workflows atlas-* nem docs/atlas-conteudo/**"
       - if: steps.escopo.outputs.run == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with: { node-version: 22 }
       - if: steps.escopo.outputs.run == 'true'
         run: npm ci || npm install

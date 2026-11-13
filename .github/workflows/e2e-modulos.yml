@@ -1,0 +1,66 @@
+name: Testes e2e dos módulos
+
+# Roda as suítes e2e dos módulos que não entram no check do Atlas (atlas-e2e.yml).
+# É um workflow separado e sem `needs`: não bloqueia nem atrasa os outros jobs.
+# Só as suítes que passam de forma estável ficam na lista; as quebradas ficam
+# de fora até serem consertadas, e a lista é o registro disso.
+on:
+  pull_request:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+# Um push novo na mesma PR cancela a execução anterior (poupa minutos do GitHub Actions).
+concurrency:
+  group: e2e-modulos-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-modulos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults: { run: { working-directory: frontend } }
+    steps:
+      # fetch-depth 2: em PR o checkout é o commit de merge; HEAD^1 é a base.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: { fetch-depth: 2 }
+      # Só roda os passos pesados quando a PR toca o front, o build ou o próprio
+      # workflow. Se a detecção falhar ou vier vazia, roda tudo (fail-safe).
+      - name: Detectar escopo da PR
+        id: escopo
+        working-directory: .
+        run: |
+          run=true
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if files=$(git diff --name-only HEAD^1 HEAD 2>/dev/null) && [ -n "$files" ]; then
+              if printf '%s\n' "$files" | grep -Eq '^(frontend/|\.github/workflows/e2e-modulos\.yml)'; then
+                run=true
+              else
+                run=false
+              fi
+            fi
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "E2E dos módulos: run=$run"
+      - if: steps.escopo.outputs.run == 'true'
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version: 22 }
+      - if: steps.escopo.outputs.run == 'true'
+        run: npm ci || npm install
+      - if: steps.escopo.outputs.run == 'true'
+        run: npm install --no-save playwright@1.64.1 axe-core
+      - if: steps.escopo.outputs.run == 'true'
+        run: npx playwright install --with-deps chromium
+      - if: steps.escopo.outputs.run == 'true'
+        run: node scripts/build.js
+      # Suítes que passam no Ubuntu do CI. Fora desta lista, por falharem aqui
+      # (e passarem no Windows local): navegacao (navegacao-modulos), voltar,
+      # privacidade-titular, lab-experiencia, qa-mobile-portao, qa-mobile-publico.
+      # run.js casa por prefixo: "qa-mobile." pega só qa-mobile.e2e.js.
+      - if: steps.escopo.outputs.run == 'true'
+        run: >-
+          node scripts/e2e/run.js
+          liga entrada-v2 profile-v2 parsers apis assistant casca-robusta
+          qa-mobile-clinica qa-mobile-cracha qa-mobile.
+          lab-mobile lab-motor lab-tutor
