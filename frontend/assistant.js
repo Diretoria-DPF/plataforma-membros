@@ -730,17 +730,17 @@
     refresh();
   }
 
+  var SourcesApi = Sources || {}; // sem assistant-sources.js (rede ruim) o arquivo ainda sobe
   var api = {
     ACTION_KEYS: ACTION_KEYS,
     clip: clip,
     isAllowedAction: isAllowedAction,
     sanitizeActions: sanitizeActions,
     sanitizeSuggestions: sanitizeSuggestions,
-    sanitizeSources: Sources.sanitizeSources,
-    sanitizeCta: Sources.sanitizeCta,
-    isPublicPath: Sources.isPublicPath,
-    PUBLIC_PATHS: Sources.PUBLIC_PATHS,
-    CTA_PATHS: Sources.CTA_PATHS,
+    sanitizeSources: SourcesApi.sanitizeSources,
+    sanitizeCta: SourcesApi.sanitizeCta,
+    isPublicPath: SourcesApi.isPublicPath,
+    PUBLIC_PATHS: SourcesApi.PUBLIC_PATHS, CTA_PATHS: SourcesApi.CTA_PATHS,
     pickHistory: pickHistory,
     shouldShow: shouldShow,
     refresh: refresh,

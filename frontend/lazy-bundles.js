@@ -95,6 +95,10 @@
 
   /** Espera de ociosidade para quem só visita (a Guia sobe depois do load, sem disputar a primeira pintura). */
   var IDLE_TIMEOUT_MS = 3000;
+  /** Recuo entre as tentativas de baixar de novo um pacote que falhou (rede ruim): 0,8 s e 2,4 s; depois desiste. */
+  var RETRY_DELAYS_MS = [800, 2400];
+
+  function defaultWait(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
 
   /** Cria um carregador ligado a um documento (a página usa o real; os testes usam um falso). */
   function createLoader(doc, bundles, requires, optionalRequires) {
@@ -108,7 +112,10 @@
         script.src = src;
         script.async = false; // ordem de execução = ordem de inserção
         script.onload = function () { resolve(src); };
-        script.onerror = function () { reject(new Error('Falha ao carregar ' + src)); };
+        script.onerror = function () {
+          if (script.parentNode && typeof script.parentNode.removeChild === 'function') script.parentNode.removeChild(script); // a nova tentativa insere outro
+          reject(new Error('Falha ao carregar ' + src));
+        };
         (doc.body || doc.head || doc.documentElement).appendChild(script);
       });
     }
@@ -128,9 +135,27 @@
       return pending[name];
     }
 
+    /** Como load(), mas com novas tentativas e recuo quando o download falha (a rede costuma voltar em segundos). */
+    function loadWithRetry(name, delays, wait) {
+      var steps = (delays || RETRY_DELAYS_MS).slice();
+      var sleep = wait || defaultWait;
+      function attempt() {
+        return load(name).catch(function (err) {
+          if (!steps.length || !bundles[name]) throw err;
+          return sleep(steps.shift()).then(attempt);
+        });
+      }
+      return attempt();
+    }
+
+    /** Baixa de novo scripts do index.html que não chegaram (sem memória: cada chamada insere os <script> outra vez). */
+    function recover(list) {
+      return Promise.all((list || []).map(inject));
+    }
+
     function isRequested(name) { return !!pending[name]; }
 
-    return { load: load, isRequested: isRequested };
+    return { load: load, loadWithRetry: loadWithRetry, recover: recover, isRequested: isRequested };
   }
 
   /** Roda fn quando o navegador estiver ocioso (com teto de tempo); sem requestIdleCallback, usa setTimeout. */
@@ -140,12 +165,12 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { BUNDLES: BUNDLES, REQUIRES: REQUIRES, OPTIONAL_REQUIRES: OPTIONAL_REQUIRES, IDLE_TIMEOUT_MS: IDLE_TIMEOUT_MS, createLoader: createLoader, whenIdle: whenIdle };
+    module.exports = { BUNDLES: BUNDLES, REQUIRES: REQUIRES, OPTIONAL_REQUIRES: OPTIONAL_REQUIRES, IDLE_TIMEOUT_MS: IDLE_TIMEOUT_MS, RETRY_DELAYS_MS: RETRY_DELAYS_MS, createLoader: createLoader, whenIdle: whenIdle };
     return;
   }
 
   var loader = createLoader(root.document, BUNDLES);
-  root.LaiftLazy = { load: loader.load, isRequested: loader.isRequested };
+  root.LaiftLazy = { load: loader.load, loadWithRetry: loader.loadWithRetry, recover: loader.recover, isRequested: loader.isRequested };
 
   // Visitante (ou sessão restaurada): a Guia sobe depois da primeira pintura. Quem faz login a pede antes, em app.js.
   function scheduleLia() { whenIdle(root, function () { loader.load('lia').catch(function () { /* sem rede: tenta no login */ }); }); }

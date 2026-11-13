@@ -24,7 +24,8 @@
   // Nomes do catálogo único (modulos/shared/catalogo.js); no Node (testes) vem do próprio arquivo.
   var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/shared/catalogo.js') : root.LaiftModules;
   var MODULE_LABELS = {};
-  CATALOG.MODULES.forEach(function (m) { MODULE_LABELS[m.id] = m.name; });
+  // Se o catálogo não chegou (script que falhou ao carregar), os nomes ficam vazios em vez de derrubar o arquivo inteiro.
+  ((CATALOG && CATALOG.MODULES) || []).forEach(function (m) { MODULE_LABELS[m.id] = m.name; });
   var ACTIVITY_LABELS = { quiz_estudo: 'simulado', quiz_prova: 'prova', caso_clinico: 'caso clínico', formulacao: 'formulação', simulacao_pk: 'simulação' };
 
   var dayFormat = typeof Intl !== 'undefined'
@@ -266,6 +267,7 @@
   // ---------- Carga (servidor + complemento local) ----------
 
   function fetchEngagement(app, token) {
+    if (!token) return Promise.resolve(null); // sem sessão não há o que pedir (visitante recebia 401)
     return app.callApi('apiLearnGetEngagement', token).then(function (res) {
       return res && res.success && res.engagement ? res.engagement : null;
     }, function () { return null; });

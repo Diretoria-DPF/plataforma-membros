@@ -12,7 +12,8 @@
 //
 // Como os tetos foram escolhidos (medição em 2026-11-01, depois do MOB-04):
 //   shell gzip   = 273 KB  -> teto 295 KB (+8%: cabe um módulo pequeno novo, não um painel inteiro)
-//   JS eager raw = 649 KB  -> teto 700 KB
+//   JS eager raw = 649 KB  -> teto 700 KB (706 KB desde a PR de robustez da casca: estado de erro e nova tentativa
+//                             com recuo para falha de script, ~6 KB de código que só roda na falha)
 //   precache raw = 879 KB  -> teto 950 KB
 // Antes do MOB-04/07 eram 401 KB gzip, 1.059 KB de JS e 1.586 KB de precache. Se o teto estourar:
 // primeiro tente carregar sob demanda (lazy-bundles.js); só suba o teto com justificativa na PR.
@@ -28,7 +29,7 @@ const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8');
 
 const BUDGET = {
   shellGzipBytes: 295 * 1024,
-  eagerJsRawBytes: 700 * 1024,
+  eagerJsRawBytes: 706 * 1024,
   precacheRawBytes: 950 * 1024,
   immutableMaxAgeSeconds: 31536000,
 };
@@ -49,7 +50,7 @@ test('orçamento: o shell (HTML + scripts + estilos do carregamento inicial) cab
   assert.ok(total <= BUDGET.shellGzipBytes, `shell com ${(total / 1024).toFixed(1)} KB gzip; teto ${BUDGET.shellGzipBytes / 1024} KB`);
 });
 
-test('orçamento: o JavaScript do carregamento inicial cabe em 700 KB', () => {
+test('orçamento: o JavaScript do carregamento inicial cabe em 706 KB', () => {
   const total = shellFiles().filter((f) => f.endsWith('.js')).reduce((sum, f) => sum + fs.statSync(path.join(frontend, f)).size, 0);
   assert.ok(total <= BUDGET.eagerJsRawBytes, `JS eager com ${(total / 1024).toFixed(1)} KB; teto ${BUDGET.eagerJsRawBytes / 1024} KB`);
 });

@@ -80,6 +80,18 @@ export function isCryptoSupported() {
   }
 }
 
+/** O navegador sabe X25519? Importa uma chave PKCS8 de teste (bytes sem valor); nunca lança. */
+export async function supportsX25519() {
+  try {
+    var subtle = getCrypto().subtle;
+    var probe = concatBytes(hexToBytes(MSG_CRYPTO_CONFIG.X25519_PKCS8_PREFIX_HEX), new Uint8Array(32));
+    await subtle.importKey('pkcs8', probe, { name: 'X25519' }, false, ['deriveBits']);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 // ===========================================================================
 // Codificação — tudo em base64url SEM padding, conforme o contrato exato
 // de worker/src/services/messagingKeyService.js e messageService.js.

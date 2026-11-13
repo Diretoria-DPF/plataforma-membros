@@ -103,6 +103,9 @@ summary:focus-visible,
 .state-title { margin: 0; font-weight: 700; color: var(--text); }
 .state-message { margin: 0; font-size: 14px; }
 .state button { margin-top: 8px; width: auto; }
+/* Aviso de casca que não subiu (ux-v2.js) e botão "Tentar de novo" dos estados de erro: alvo de toque de 44 px, sem rolagem lateral em 320 px. */
+.state-error button { min-height: 44px; min-width: 44px; }
+.shell-error { position: relative; z-index: 10; box-sizing: border-box; width: calc(100% - 32px); max-width: 480px; margin: 16px auto; overflow-wrap: anywhere; }
 .state-error { border-color: color-mix(in srgb, var(--danger) 45%, var(--border)); background: var(--danger-soft); }
 .state-error .state-title { color: var(--danger); }
 

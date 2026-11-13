@@ -183,6 +183,7 @@
     generation += 1;
     var mine = generation;
     var token = app.getState().sessionToken || '';
+    if (!token) { renderBlock(doc, host, [], app); return Promise.resolve(); } // visitante: o bloco "Na Liga" é do membro (evita 401)
     return Promise.resolve(app.callApi('apiListHighlights', token)).then(function (res) {
       if (mine !== generation) return undefined;
       if (!res || res.success !== true || res.enabled === false) { renderBlock(doc, host, [], app); return undefined; }

@@ -30,7 +30,7 @@ Ganho real em tempo (LCP/TBT) não foi medido aqui; precisa de Lighthouse logado
 
 ## Orçamento (teto = medição + ~8%)
 
-- Shell: 295 KB gzip. JS inicial: 700 KB. Pré-cache: 950 KB. Estourou? Primeiro tente carregar sob demanda; só suba o teto justificando na PR.
+- Shell: 295 KB gzip. JS inicial: 706 KB (700 KB até a PR de robustez da casca). Pré-cache: 950 KB. Estourou? Primeiro tente carregar sob demanda; só suba o teto justificando na PR.
 - O teste também falha se admin, Guia, Atlas ou `.wasm` voltarem para o `index.html`, e se `immutable` aparecer num caminho sem versão ou em HTML/`sw.js`.
 
 ## Por que NÃO foram feitos nomes de arquivo com hash no shell

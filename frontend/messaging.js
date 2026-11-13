@@ -45,7 +45,39 @@
   'use strict';
 
   var MsgCrypto = null;
-  var msgCryptoReady = import('./msg-crypto.js').then(function (mod) { MsgCrypto = mod; });
+  var cryptoStatus = 'failed'; // 'ready' | 'failed' (o módulo não baixou) | 'unsupported' (sem X25519)
+  var cryptoAttempts = 0;
+  var CRYPTO_MESSAGES = {
+    failed: 'Não foi possível carregar a parte segura das mensagens. Confira a conexão e tente de novo.',
+    unsupported: 'Seu navegador é antigo demais para as mensagens cifradas (falta suporte a X25519). Atualize o navegador.',
+  };
+  // Nunca recusa: a falha vira estado. A nova tentativa usa outro endereço (?r=N), pois o navegador guarda o import() que falhou.
+  function loadMsgCrypto() {
+    var url = './msg-crypto.js' + (cryptoAttempts ? '?r=' + cryptoAttempts : '');
+    cryptoAttempts += 1;
+    return import(url).then(function (mod) {
+      MsgCrypto = mod;
+      return Promise.resolve(typeof mod.supportsX25519 === 'function' ? mod.supportsX25519() : true);
+    }).then(function (ok) { cryptoStatus = ok ? 'ready' : 'unsupported'; }, function () { cryptoStatus = 'failed'; });
+  }
+  var msgCryptoReady = loadMsgCrypto();
+
+  async function ensureCrypto() { // se falhou, tenta de novo (a rede pode ter voltado)
+    await msgCryptoReady;
+    if (cryptoStatus === 'failed') { msgCryptoReady = loadMsgCrypto(); await msgCryptoReady; }
+    return cryptoStatus === 'ready' && MsgCrypto.isCryptoSupported();
+  }
+
+  function showCryptoUnavailable() {
+    showPreparing(true, CRYPTO_MESSAGES[cryptoStatus] || CRYPTO_MESSAGES.unsupported);
+    if (cryptoStatus !== 'failed') return;
+    var button = document.createElement('button');
+    button.setAttribute('type', 'button');
+    button.className = 'secondary';
+    button.textContent = 'Tentar de novo';
+    button.addEventListener('click', function () { loadMessagingPanel(); });
+    document.getElementById('messaging-preparing').appendChild(button);
+  }
 
   function App() {
     if (!window.App) throw new Error('window.App ainda não está pronto (bug de ordem de carregamento).');
@@ -247,12 +279,8 @@
   var identitySetupPromise = null;
 
   async function loadMessagingPanel() {
-    await msgCryptoReady;
     var app = App();
-    if (!MsgCrypto.isCryptoSupported()) {
-      showPreparing(true, 'Seu navegador não é compatível com mensagens cifradas. Atualize o navegador para usar esta área.');
-      return;
-    }
+    if (!(await ensureCrypto())) { showCryptoUnavailable(); return; }
     if (identity) {
       showPreparing(false);
       showConversationsView();
@@ -333,9 +361,8 @@
   // deixa pronto para digitar — sem nenhuma tela intermediária.
   // ===========================================================================
   async function openConversationWithPeer(peer) {
-    await msgCryptoReady;
     var app = App();
-    if (!MsgCrypto.isCryptoSupported()) { app.showPanel('panel-messages'); return; }
+    if (!(await ensureCrypto())) { app.showPanel('panel-messages'); return; } // o painel mostra a mensagem e o "Tentar de novo"
     if (!identity) {
       pendingPeerAfterUnlock = peer;
       app.showPanelSection('panel-messages');
