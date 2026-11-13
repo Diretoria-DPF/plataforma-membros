@@ -47,7 +47,9 @@ const NOTES = Object.freeze([
   'Não incluímos segredos de segurança (senha, tokens, fatores de autenticação) nem anotações internas da comissão do processo seletivo.',
   'Votos e tarefas aparecem pelo título, para você reconhecê-los. Conexões e bloqueios mostram só o nome de usuário da outra pessoa.',
   'A memória de estudo da Guia fica em um banco separado e tem exportação própria, no cartão da memória de estudo do seu perfil.',
-  'Registros técnicos (sessões, limites de uso, registros de auditoria e de uso da IA) não entram: servem à segurança da plataforma e são apagados nos prazos da política de privacidade.',
+  'Registros técnicos de segurança (sessões, limites de uso e registros de auditoria) não entram: servem à segurança da plataforma e são apagados nos prazos da política de privacidade.',
+  'O uso da IA e dos agentes aparece resumido (recurso, modelo, tamanho e resultado), sem o texto das conversas além das respostas da Guia já listadas.',
+  'Denúncias feitas por você aparecem sem trechos de terceiros nem anotações da moderação. Denúncias e bloqueios feitos por outras pessoas contra você não entram, para proteger quem os fez.',
 ]);
 
 const iso = (value) => (value ? new Date(value).toISOString() : null);
@@ -71,15 +73,22 @@ function toRequest(row) {
   return { id: row.id, status: row.status, requestedAt: iso(row.requested_at), dueAt: iso(row.due_at), processedAt: iso(row.processed_at) };
 }
 
+/** Só o código do erro (SQLSTATE ou nome): a mensagem do banco ou do R2 pode citar valores, ids ou chaves da pessoa. */
+function errorCode(err) {
+  const code = err && (err.code || err.name);
+  return /^[A-Za-z0-9_]{1,40}$/.test(String(code || '')) ? String(code) : 'erro';
+}
+
 /**
  * Uma tabela ausente (migração atrasada) esvazia a seção em vez de derrubar a exportação. Qualquer outro erro também
- * esvazia a seção, mas fica registrado em error_logs (sem dado pessoal), para uma consulta quebrada não sumir em silêncio.
+ * esvazia a seção, mas fica registrado em error_logs (só o código, sem dado pessoal), para uma consulta quebrada não sumir
+ * em silêncio.
  */
 async function section(sql, correlationId, name, query) {
   try {
     return await query();
   } catch (err) {
-    if (!isMissingTable(err)) await Logging.logError(sql, correlationId,'PRIVACY_EXPORT_SECTION_FAILED', name + ': ' + ((err && err.message) || 'erro'), null);
+    if (!isMissingTable(err)) await Logging.logError(sql, correlationId, 'PRIVACY_EXPORT_SECTION_FAILED', name + ': ' + errorCode(err), null);
     return [];
   }
 }
@@ -136,6 +145,60 @@ function exportQueries(sql, id) {
       WHERE profile_id = ${id}::uuid ORDER BY created_at DESC LIMIT ${EXPORT_LIMIT}`,
     activityDays: () => sql`SELECT day FROM activity_days WHERE profile_id = ${id}::uuid ORDER BY day DESC LIMIT ${EXPORT_LIMIT}`,
     preferences: () => sql`SELECT theme, density, email_notifications, updated_at FROM preferences WHERE profile_id = ${id}::uuid`,
+    ...ownRecordQueries(sql, id),
+  };
+}
+
+/**
+ * Registros próprios em outras tabelas. Só colunas da própria pessoa: nada de trecho de mensagem de terceiro nem nota da moderação
+ * (profile_reports), índice de chave de API (ai_usage_log) ou decisões internas e hash de persona (agent_traces).
+ * Denúncias RECEBIDAS ficam fora: revelariam quem denunciou.
+ */
+function ownRecordQueries(sql, id) {
+  return {
+    taskComments: () => sql`SELECT t.title, c.message, c.created_at FROM task_comments c JOIN tasks t ON t.id = c.task_id
+      WHERE c.profile_id = ${id}::uuid ORDER BY c.created_at DESC LIMIT ${EXPORT_LIMIT}`,
+    proposalsAuthored: () => sql`SELECT title, status, created_at FROM proposals
+      WHERE author_id = ${id}::uuid ORDER BY created_at DESC LIMIT ${EXPORT_LIMIT}`,
+    reportsMade: () => sql`SELECT o.username, r.category, r.details, r.status, r.created_at, r.resolved_at
+      FROM profile_reports r LEFT JOIN profiles o ON o.id = r.reported_profile_id
+      WHERE r.reporter_id = ${id}::uuid ORDER BY r.created_at DESC LIMIT ${EXPORT_LIMIT}`,
+    messagePenalties: () => sql`SELECT mute_strikes, muted_until, updated_at FROM message_penalties WHERE profile_id = ${id}::uuid`,
+    aiUsage: () => sql`SELECT feature, provider, model, prompt_tokens, completion_tokens, ok, created_at FROM ai_usage_log
+      WHERE profile_id = ${id}::uuid ORDER BY created_at DESC LIMIT ${EXPORT_LIMIT}`,
+    assistantModeration: () => sql`SELECT level, until, last_incident_at, redeemed_at, updated_at FROM assistant_moderation
+      WHERE profile_id = ${id}::uuid`,
+    assistantIncidents: () => sql`SELECT kind, detection, level_after, created_at FROM assistant_incidents
+      WHERE profile_id = ${id}::uuid ORDER BY created_at DESC LIMIT ${EXPORT_LIMIT}`,
+    agentTraces: () => sql`SELECT persona, feature, model, tokens_in, tokens_out, outcome, memory_used, created_at FROM agent_traces
+      WHERE profile_id = ${id}::uuid ORDER BY created_at DESC LIMIT ${EXPORT_LIMIT}`,
+    labBoletim: () => sql`SELECT competencia, acertos, erros, dicas, pulos, fora_de_ordem, sem_apoio, updated_at FROM lab_boletim_competencia
+      WHERE profile_id = ${id}::uuid ORDER BY competencia LIMIT ${EXPORT_LIMIT}`,
+    memoryConsent: () => sql`SELECT status, purpose_version, granted_at, revoked_at, updated_at FROM member_memory_consent
+      WHERE profile_id = ${id}::uuid`,
+    libraryStaff: () => sql`SELECT role, granted_at FROM library_staff WHERE profile_id = ${id}::uuid LIMIT ${EXPORT_LIMIT}`,
+    deletionRequests: () => sql`SELECT status, reason, requested_at, due_at, processed_at FROM account_deletion_requests
+      WHERE profile_id = ${id}::uuid ORDER BY requested_at DESC LIMIT ${EXPORT_LIMIT}`,
+  };
+}
+
+const one = (list, map) => (list[0] ? map(list[0]) : null);
+
+/** Formata os registros próprios das outras tabelas. */
+function ownRecordsOut(r) {
+  return {
+    taskComments: r.taskComments.map((c) => ({ task: c.title, message: c.message, createdAt: iso(c.created_at) })),
+    proposalsAuthored: r.proposalsAuthored.map((p) => ({ title: p.title, status: p.status, createdAt: iso(p.created_at) })),
+    reportsMade: r.reportsMade.map((x) => ({ reported: x.username || null, category: x.category, details: x.details || null, status: x.status, createdAt: iso(x.created_at), resolvedAt: iso(x.resolved_at) })),
+    messagePenalties: one(r.messagePenalties, (p) => ({ muteStrikes: p.mute_strikes, mutedUntil: iso(p.muted_until), updatedAt: iso(p.updated_at) })),
+    aiUsage: r.aiUsage.map((u) => ({ feature: u.feature, provider: u.provider || null, model: u.model, promptTokens: u.prompt_tokens, completionTokens: u.completion_tokens, ok: !!u.ok, createdAt: iso(u.created_at) })),
+    assistantModeration: one(r.assistantModeration, (m) => ({ level: m.level, until: iso(m.until), lastIncidentAt: iso(m.last_incident_at), redeemedAt: iso(m.redeemed_at), updatedAt: iso(m.updated_at) })),
+    assistantIncidents: r.assistantIncidents.map((i) => ({ kind: i.kind, detection: i.detection, levelAfter: i.level_after, createdAt: iso(i.created_at) })),
+    agentTraces: r.agentTraces.map((t) => ({ persona: t.persona, feature: t.feature, model: t.model || null, tokensIn: t.tokens_in, tokensOut: t.tokens_out, outcome: t.outcome, memoryUsed: !!t.memory_used, createdAt: iso(t.created_at) })),
+    labBoletim: r.labBoletim.map((b) => ({ competencia: b.competencia, acertos: b.acertos, erros: b.erros, dicas: b.dicas, pulos: b.pulos, foraDeOrdem: b.fora_de_ordem, semApoio: b.sem_apoio, updatedAt: iso(b.updated_at) })),
+    memoryConsent: one(r.memoryConsent, (m) => ({ status: m.status, purposeVersion: m.purpose_version, grantedAt: iso(m.granted_at), revokedAt: iso(m.revoked_at), updatedAt: iso(m.updated_at) })),
+    libraryStaff: r.libraryStaff.map((s) => ({ role: s.role, grantedAt: iso(s.granted_at) })),
+    deletionRequests: r.deletionRequests.map((d) => ({ status: d.status, reason: d.reason || null, requestedAt: iso(d.requested_at), dueAt: iso(d.due_at), processedAt: iso(d.processed_at) })),
   };
 }
 
@@ -189,6 +252,7 @@ export async function exportMyData(sql, identity, correlationId) {
       tasks: r.tasks.map((t) => ({ title: t.title, status: t.status, signedUpAt: iso(t.signed_up_at) })),
       consents: r.consents.map((c) => ({ document: c.document_type, version: c.document_version, acceptedAt: iso(c.accepted_at) })),
       ...activityOut(r),
+      ...ownRecordsOut(r),
     },
     notes: NOTES.slice(),
   };
@@ -290,7 +354,7 @@ async function deleteMedia(sql, env, profileId, avatarUrl, correlationId) {
     const keys = await ownMediaKeys(env, profileId, avatarUrl);
     if (keys.length) await env.MEDIA_BUCKET.delete(keys);
   } catch (err) {
-    await Logging.logError(sql, correlationId, 'PRIVACY_MEDIA_CLEANUP_FAILED', (err && err.message) || 'falha no R2', null);
+    await Logging.logError(sql, correlationId, 'PRIVACY_MEDIA_CLEANUP_FAILED', 'R2: ' + errorCode(err), null);
   }
 }
 
