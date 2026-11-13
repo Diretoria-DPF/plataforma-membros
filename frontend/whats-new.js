@@ -27,7 +27,6 @@
     Object.freeze({ id: 'destaques', flag: 'highlights_enabled', text: 'A Início tem um bloco "Na Liga" com os destaques da Liga.' }),
     Object.freeze({ id: 'demo', text: 'A Demonstração abre a plataforma sem conta e sem salvar nada. Serve para mostrar a LAIFT a outras pessoas.' }),
     Object.freeze({ id: 'qr-rotativo', text: 'O QR de presença dos eventos agora é rotativo: ele troca com o tempo, e a contagem regressiva aparece na tela.' }),
-    Object.freeze({ id: 'visao-geral', text: 'A portaria ganhou a Visão geral, com o resumo dos eventos e das presenças.' }),
   ]);
 
   function flagAttribute(flag) {

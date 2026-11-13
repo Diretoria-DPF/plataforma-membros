@@ -45,9 +45,10 @@ test('conteúdo: primeira entrada é a Guia, em feminino, e há diálogos acess�
   assert.ok(!ids.includes('selo'), 'a entrada de selo foi retirada (regra do dono)');
 });
 
-test('conteúdo: novidades de F-027 (demo, QR rotativo, Visão geral) estão no aviso', () => {
+test('conteúdo: novidades de F-027 (demo, QR rotativo) estão no aviso; Visão geral (só staff) não', () => {
   const ids = WhatsNew.ENTRIES.map((e) => e.id);
-  assert.ok(ids.includes('demo') && ids.includes('qr-rotativo') && ids.includes('visao-geral'));
+  assert.ok(ids.includes('demo') && ids.includes('qr-rotativo'));
+  assert.ok(!ids.includes('visao-geral'), 'Visão geral é recurso de secretaria/gestor/admin');
   assert.equal(WhatsNew.VERSION, '2026-11-13');
 });
 
