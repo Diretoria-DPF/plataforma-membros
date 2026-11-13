@@ -22,7 +22,6 @@
   var DESEMP_HOST_ID = 'profile-desempenho-host';
 
   /** Assuntos da faixa: nome e legenda do catálogo único (modulos/shared/catalogo.js; no Node, o próprio arquivo) + cores e arte. */
-  var CATALOG = typeof module !== 'undefined' && module.exports ? require('./modulos/shared/catalogo.js') : root.LaiftModules;
   var LOOK = {
     farmaco: { c1: '#0f6f62', c2: '#1aa38f', art: 'pill' },
     toxico: { c1: '#7a2e8c', c2: '#b04fc4', art: 'flask' },
@@ -30,9 +29,16 @@
     lab: { c1: '#1f5fa8', c2: '#4f93dd', art: 'molecule' },
     anatomia: { c1: '#0b6e4f', c2: '#3bbd8b', art: 'body' },
   };
-  var SUBJECTS = CATALOG.MODULES.map(function (m) {
-    return { id: m.id, stat: m.stat, name: m.name, sub: m.sub, c1: LOOK[m.id].c1, c2: LOOK[m.id].c2, art: LOOK[m.id].art };
-  });
+  var SUBJECTS = [];
+  /** Preenche os assuntos quando o catálogo existe; sem ele (script que falhou) fica vazio e o "Tentar de novo" preenche depois. */
+  function fillSubjects() {
+    var catalog = typeof module !== 'undefined' && module.exports ? require('./modulos/shared/catalogo.js') : root.LaiftModules;
+    if (SUBJECTS.length || !catalog || !catalog.MODULES) return;
+    catalog.MODULES.forEach(function (m) {
+      SUBJECTS.push({ id: m.id, stat: m.stat, name: m.name, sub: m.sub, c1: LOOK[m.id].c1, c2: LOOK[m.id].c2, art: LOOK[m.id].art });
+    });
+  }
+  fillSubjects();
 
   /** Arte dos assuntos: [tag, atributos]. */
   var ART = {
@@ -223,7 +229,8 @@
     var doc = ctx.doc;
     var top = el(doc, 'header', 'v3-top');
     var hello = el(doc, 'p', 'v3-hello');
-    var greeting = homeLib().greeting(ctx.name, ctx.now).split(', ');
+    var homeApi = homeLib();
+    var greeting = (homeApi ? homeApi.greeting(ctx.name, ctx.now) : 'Olá').split(', '); // sem home.js (rede ruim), saudação simples
     hello.appendChild(el(doc, 'span', 'v3-hello__small', greeting[0] + (greeting[1] ? ',' : '')));
     if (greeting[1]) hello.appendChild(el(doc, 'strong', 'v3-hello__name', greeting[1]));
     var actions = el(doc, 'div', 'v3-actions');
@@ -490,12 +497,39 @@
     });
   }
 
-  function failureNode(ctx) {
+  /** Scripts da casca de que a Início depende, por global: se algum não chegou, "Tentar de novo" baixa só o que falta. */
+  var SHELL_LIBS = [
+    ['LaiftModules', 'modulos/shared/catalogo.js'],
+    ['LaiftEngagement', 'engagement.js'],
+    ['LaiftHome', 'home.js'],
+  ];
+
+  function missingShellScripts() {
+    return SHELL_LIBS.filter(function (item) { return !root[item[0]]; }).map(function (item) { return item[1]; });
+  }
+
+  /** Baixa de novo o que faltou (se o carregador existe) e monta a Início outra vez; sem carregador, recarrega a página. */
+  function retryLoad(ctx) {
+    var missing = missingShellScripts();
+    if (missing.length && root.LaiftLazy && typeof root.LaiftLazy.recover === 'function') {
+      return root.LaiftLazy.recover(missing).then(function () { return load(ctx.app, ctx.doc); }, function () { return load(ctx.app, ctx.doc); });
+    }
+    if (missing.length && root.location && typeof root.location.reload === 'function') { root.location.reload(); return Promise.resolve(); }
+    return load(ctx.app, ctx.doc);
+  }
+
+  function failureNode(ctx, message) {
     var states = root.LaiftStates;
-    if (!states) return el(ctx.doc, 'p', 'v3-error', 'Não foi possível carregar a Início agora.');
+    var text = message || 'Confira a conexão e tente de novo.';
+    var onAction = function () { retryLoad(ctx); };
+    if (!states) {
+      var box = el(ctx.doc, 'div', 'v3-error');
+      box.appendChild(el(ctx.doc, 'p', '', 'Não foi possível carregar a Início agora. ' + text));
+      box.appendChild(button(ctx.doc, 'v3-btn', 'Tentar de novo', onAction));
+      return box;
+    }
     return states.createStateNode(ctx.doc, 'error', {
-      title: 'Não foi possível carregar', message: 'Confira a conexão e tente de novo.', actionLabel: 'Tentar de novo',
-      onAction: function () { load(ctx.app, ctx.doc); },
+      title: 'Não foi possível carregar', message: text, actionLabel: 'Tentar de novo', onAction: onAction,
     });
   }
 
@@ -511,6 +545,7 @@
     generation += 1;
     var mine = generation;
     var state = app.getState();
+    if (!state.sessionToken) { reset(doc); return Promise.resolve(); } // visitante: sem sessão não há o que pedir (evita 401)
     var parts = layout(doc);
     var ctx = {
       app: app, doc: doc, host: host, token: state.sessionToken || '', name: state.profile && state.profile.fullName,
@@ -528,7 +563,13 @@
     host.classList.remove('hidden');
     panel.setAttribute('data-v3', '1');
 
+    fillSubjects();
     var lib = engagementLib();
+    if (!lib || !SUBJECTS.length) { // o script engagement.js não chegou (rede ruim): estado de erro em vez de tela em branco
+      setSlot(parts.slots.focus, failureNode(ctx, 'Uma parte do aplicativo não carregou. Confira a conexão e tente de novo.'));
+      host.setAttribute('aria-busy', 'false');
+      return Promise.resolve();
+    }
     return Promise.all([fetchSummary(app, ctx.token), lib.fetchEngagement(app, ctx.token), fetchStats(app)]).then(function (res) {
       if (mine !== generation) return;
       ctx.summary = res[0];

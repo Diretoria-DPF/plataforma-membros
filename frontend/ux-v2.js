@@ -109,7 +109,52 @@
     };
   }
 
+  // Casca que não subiu (app.js ou dependência não carregou): depois do load, sem window.App, aviso com "Tentar de novo"
+  // e uma nova tentativa automática por sessão, com recuo. Não envia nada a lugar nenhum.
+  var SHELL_RETRY_KEY = 'laift-shell-retry';
+  var SHELL_RETRY_DELAY_MS = 5000;
+
+  function shellMissing(win) {
+    var doc = win && win.document;
+    return !!(doc && doc.getElementById('public-shell')) && !win.App;
+  }
+
+  function el(doc, tag, cls, txt) {
+    var n = doc.createElement(tag);
+    n.className = cls;
+    n.textContent = txt;
+    return n;
+  }
+
+  function checkShell(win, storage) {
+    var flag = function (on) { try { if (on) storage.setItem(SHELL_RETRY_KEY, '1'); else storage.removeItem(SHELL_RETRY_KEY); } catch (e) { /* sem storage */ } };
+    if (!shellMissing(win)) { flag(false); return null; }
+    var doc = win.document;
+    var box = el(doc, 'div', 'shell-error state state-error', '');
+    box.setAttribute('role', 'alert');
+    box.appendChild(el(doc, 'p', 'state-title', 'Não foi possível abrir o aplicativo'));
+    box.appendChild(el(doc, 'p', 'state-message', 'Uma parte dele não chegou, em geral por causa da conexão. Toque em "Tentar de novo" e, se continuar, confira a internet.'));
+    var button = el(doc, 'button', 'secondary', 'Tentar de novo');
+    button.setAttribute('type', 'button');
+    button.addEventListener('click', function () { win.location.reload(); });
+    box.appendChild(button);
+    if (doc.body) doc.body.insertBefore(box, doc.body.firstChild);
+    var tried = false;
+    try { tried = !!storage.getItem(SHELL_RETRY_KEY); } catch (e) { tried = true; }
+    if (!tried) { flag(true); win.setTimeout(function () { if (shellMissing(win)) win.location.reload(); }, SHELL_RETRY_DELAY_MS); }
+    return box;
+  }
+
+  function watchShell(win, storage) {
+    if (win.document.readyState === 'complete') checkShell(win, storage);
+    else win.addEventListener('load', function () { checkShell(win, storage); });
+  }
+
   var api = {
+    checkShell: checkShell,
+    shellMissing: shellMissing,
+    SHELL_RETRY_KEY: SHELL_RETRY_KEY,
+    SHELL_RETRY_DELAY_MS: SHELL_RETRY_DELAY_MS,
     flagAttribute: flagAttribute,
     applyFlags: applyFlags,
     applyAndRememberFlags: applyAndRememberFlags,
@@ -130,6 +175,9 @@
       try { storage = root.localStorage; } catch (e) { storage = null; }
       restoreFlags(root.document.documentElement, storage, BOOT_DEFAULT_FLAGS);
       createScrollGate(root, root.document.documentElement);
+      var sessionStore = null;
+      try { sessionStore = root.sessionStorage; } catch (e) { sessionStore = null; }
+      watchShell(root, sessionStore);
     }
   }
 })(typeof window !== 'undefined' ? window : globalThis);

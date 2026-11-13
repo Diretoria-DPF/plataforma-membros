@@ -660,7 +660,7 @@
       if (res && res.success === true) {
         window.LaiftUx.applyAndRememberFlags(document.documentElement, res.flags, window.localStorage);
         mountEntradaV2(); // a flag chega depois do primeiro desenho da tela pública
-        if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home') mountHighlights(); // a flag chega depois do primeiro desenho da Início
+        if (res.flags && res.flags.highlights_enabled === true && currentPanelId === 'panel-home' && state.sessionToken) mountHighlights(); // a flag chega depois do primeiro desenho da Início
         if (res.flags && res.flags.home_v2_enabled === true) enableHomeV2(); // Início v3 e navegação responsiva
         if (res.flags && res.flags.library_v2_enabled === true && currentPanelId === 'panel-library') mountLibraryV2(); // a flag chega depois da abertura da Biblioteca
         if (res.flags && res.flags.learn_v2_enabled === true && currentPanelId === 'panel-learn' && window.LaiftLearning) window.LaiftLearning.loadPanel(); // Aprender v2: a flag chega depois do primeiro desenho do hub
@@ -1376,6 +1376,7 @@
 
   // Destaques da Liga: o bloco "Na Liga" da Início só baixa o pacote com a flag highlights_enabled ligada (atributo no <html>).
   function mountHighlights() {
+    if (!state.sessionToken) return; // visitante não tem Início: nada de pedir destaques (evita 401)
     if (!document.documentElement.hasAttribute('data-flag-highlights-enabled')) {
       if (window.LaiftHighlights) window.LaiftHighlights.reset(document);
       return;
@@ -1388,15 +1389,49 @@
   var homeV2Requested = false;
   function homeV2On() { return document.documentElement.hasAttribute('data-flag-home-v2-enabled'); }
   function mountHomeV2() {
+    if (!state.sessionToken) return; // visitante não tem Início: nenhuma chamada (evita 401)
     homeV2Requested = true;
-    withBundle('inicio3', function () {
+    clearHomeError();
+    var done = function () {
       if (window.LaiftHomeV3) window.LaiftHomeV3.load(window.App, document);
       else if (window.LaiftHome) window.LaiftHome.load(window.App, document);
-    });
+      else showHomeError();
+    };
+    // Rede ruim: baixa o pacote de novo (recuo de 0,8 s e 2,4 s); se desistir, vale a Início de sempre ou o estado de erro.
+    if (window.LaiftLazy && window.LaiftLazy.loadWithRetry) window.LaiftLazy.loadWithRetry('inicio3').then(done, done);
+    else withBundle('inicio3', done);
+  }
+
+  // Estado de erro da Início (nenhuma versão pôde ser montada): mensagem e "Tentar de novo", nunca tela em branco.
+  var HOME_LIBS = [['LaiftModules', 'modulos/shared/catalogo.js'], ['LaiftEngagement', 'engagement.js'], ['LaiftHome', 'home.js']];
+  function clearHomeError() {
+    var host = document.getElementById('home-v3');
+    if (!host || !host.hasAttribute('data-load-error')) return;
+    host.removeAttribute('data-load-error');
+    clearEl(host);
+    host.classList.add('hidden');
+  }
+  function retryHome() {
+    var missing = HOME_LIBS.filter(function (item) { return !window[item[0]]; }).map(function (item) { return item[1]; });
+    var again = function () { homeV2Requested = false; if (currentPanelId === 'panel-home' && state.sessionToken) PANEL_LOADERS['panel-home'](); };
+    if (!window.LaiftLazy || !window.LaiftLazy.recover) window.location.reload();
+    else window.LaiftLazy.recover(missing).then(again, again);
+  }
+  function showHomeError() {
+    var host = document.getElementById('home-v3');
+    if (!host || !window.LaiftStates) return;
+    clearEl(host);
+    host.setAttribute('data-load-error', '1');
+    host.classList.remove('hidden');
+    host.appendChild(window.LaiftStates.createStateNode(document, 'error', {
+      title: 'Não foi possível carregar a Início',
+      message: 'Uma parte do aplicativo não chegou, em geral por causa da conexão.',
+      actionLabel: 'Tentar de novo', onAction: retryHome,
+    }));
   }
   // A flag chega (ou volta do cache) depois do login: baixa o pacote (CSS da navegação responsiva) e monta a Início se ela está aberta.
   function enableHomeV2() {
-    if (homeV2Requested) return;
+    if (homeV2Requested || !state.sessionToken) return;
     if (currentPanelId === 'panel-home') { mountHomeV2(); return; }
     withBundle('inicio3', function () { if (window.LaiftHomeV3) window.LaiftHomeV3.ensureStyles(document); });
   }
@@ -1478,10 +1513,12 @@
   var PANEL_LOADERS = {
     // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
     'panel-home': function () {
+      clearHomeError();
       if (homeV2On()) mountHomeV2();
       else {
         resetHomeV2();
         if (window.LaiftHome) window.LaiftHome.load(window.App, document);
+        else showHomeError(); // home.js não chegou: estado de erro com "Tentar de novo" em vez da Início vazia
       }
       mountHighlights();
     },
