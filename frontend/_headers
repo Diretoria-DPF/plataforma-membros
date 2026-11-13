@@ -48,8 +48,8 @@ https://:version.:name.:subdomain.workers.dev/*
   Permissions-Policy: camera=(self), microphone=(), geolocation=()
   Content-Security-Policy: frame-ancestors 'self'
 
-# Demonstração embutida no portfólio do autor (?embed=1): só a /demo e as páginas dos módulos
-# (que ela abre em iframe) aceitam esse outro ancestral. Um módulo embutido direto, sem a /demo,
+# Demonstração embutida no portfólio do autor (?embed=1): só a /demo e as páginas dos 5 módulos
+# da demo (F-051: Portão e crachá ficam só com 'self') aceitam esse outro ancestral. Um módulo embutido direto, sem a /demo,
 # não acha a plataforma e volta ao index.html, que segue só com 'self'.
 /demo
   ! Content-Security-Policy
@@ -59,7 +59,23 @@ https://:version.:name.:subdomain.workers.dev/*
   ! Content-Security-Policy
   Content-Security-Policy: frame-ancestors 'self' https://dpflabs.com https://www.dpflabs.com
 
-/modulos/*
+/modulos/quiz/*
+  ! Content-Security-Policy
+  Content-Security-Policy: frame-ancestors 'self' https://dpflabs.com https://www.dpflabs.com
+
+/modulos/toxicologia/*
+  ! Content-Security-Policy
+  Content-Security-Policy: frame-ancestors 'self' https://dpflabs.com https://www.dpflabs.com
+
+/modulos/clinica/*
+  ! Content-Security-Policy
+  Content-Security-Policy: frame-ancestors 'self' https://dpflabs.com https://www.dpflabs.com
+
+/modulos/laboratorio/*
+  ! Content-Security-Policy
+  Content-Security-Policy: frame-ancestors 'self' https://dpflabs.com https://www.dpflabs.com
+
+/modulos/anatomia-3d/*
   ! Content-Security-Policy
   Content-Security-Policy: frame-ancestors 'self' https://dpflabs.com https://www.dpflabs.com
 
