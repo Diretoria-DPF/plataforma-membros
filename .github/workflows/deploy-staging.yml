@@ -163,7 +163,7 @@ jobs:
 
       - name: Publica o site de homologação
         working-directory: frontend
-        run: npx --yes wrangler@4.156.0 deploy --env staging
+        run: npx --yes wrangler@4.86.0 deploy --env staging
 
   # Teste de fumaça depois do deploy: site responde 200 com CSP e a API responde
   # apiGetFeatureFlags. Tenta por ~3 min porque, no push, o site de staging é
