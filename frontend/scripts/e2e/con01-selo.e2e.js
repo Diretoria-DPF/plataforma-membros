@@ -31,6 +31,7 @@ async function run() {
     const btn = frame.locator('.quiz-report-btn');
     check(await btn.count() === 1, 'um único item "Reportar erro" depois do gabarito');
     const box = await btn.boundingBox();
+    check((await btn.textContent()).trim() === 'Reportar erro', 'o item se chama "Reportar erro"');
     check(box && box.height >= 44, 'alvo de toque do item >= 44px');
 
     await btn.click();
