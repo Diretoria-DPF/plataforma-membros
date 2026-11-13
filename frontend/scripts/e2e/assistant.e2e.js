@@ -440,7 +440,9 @@ module.exports = async function assistant() {
     await page.keyboard.press('Escape');
     check(await page.locator('#lia-panel .lia').count() === 0, 'fechar o painel desmonta a Guia do cabeçalho');
 
-    // Sair da conta zera a conversa
+    // Sair da conta zera a conversa. O botão Sair fica atrás da barra do módulo aberto: o logout é da casca,
+    // então volta à casca antes (a barra do módulo cobre o cabeçalho).
+    if (await page.locator('#learn-back').isVisible()) await page.click('#learn-back');
     await page.click('#btn-logout');
     await page.waitForSelector('#public-shell:not(.hidden)');
     await page.waitForFunction(() => document.getElementById('lia-log').children.length === 0);
