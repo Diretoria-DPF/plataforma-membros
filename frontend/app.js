@@ -710,7 +710,9 @@
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     var symbols = ['🍃', '🍂', '🌿'];
-    for (var i = 0; i < 14; i++) {
+    var isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    var total = isTouch ? 6 : 14;
+    for (var i = 0; i < total; i++) {
       var leaf = document.createElement('span');
       leaf.className = 'leaf';
       leaf.textContent = symbols[i % symbols.length];

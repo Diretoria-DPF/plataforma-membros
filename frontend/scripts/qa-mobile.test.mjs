@@ -14,9 +14,9 @@ import { fileURLToPath } from 'node:url';
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8');
 
-test('styles.css: campos de formulário com 16 px até 767 px (o iOS dá zoom abaixo disso)', () => {
+test('styles.css: campos de formulário com 16 px em aparelho de toque (o iOS dá zoom abaixo disso)', () => {
   const css = read('styles.css');
-  const bloco = css.split('@media (max-width: 767px)').map((parte) => parte.slice(0, 400)).find((parte) => /textarea \{ font-size: 16px; \}/.test(parte));
+  const bloco = css.split('@media (pointer: coarse)').map((parte) => parte.slice(0, 400)).find((parte) => /textarea \{ font-size: 16px; \}/.test(parte));
   assert.ok(bloco, 'regra de 16 px dos campos no celular');
   assert.match(bloco, /:not\(\[type="checkbox"\]\)/);
   assert.match(bloco, /:not\(\[type="file"\]\)/);
