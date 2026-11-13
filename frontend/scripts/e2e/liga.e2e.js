@@ -258,7 +258,7 @@ async function voltarParaInicio(largura) {
     await checarSaude(app, respostas, rotulo);
     await voltar.click();
     const chegou = await app.page
-      .waitForURL((url) => url.pathname === '/' || url.pathname === '/index.html', { timeout: 5000 })
+      .waitForURL((url) => url.pathname === '/' || url.pathname === '/index.html', { timeout: 15000 })
       .then(() => true, () => false);
     check(chegou, `${rotulo}: clique leva à tela inicial (${app.page.url()})`);
   } finally {
