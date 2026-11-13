@@ -488,6 +488,20 @@ module.exports = async function apis() {
     fail.pubchem.length = 0;
     check(calls.pubchem.some((c) => c.url.includes('SdfFallbackE2E') && /\/SDF/.test(c.url)), 'laboratório: SDF do PubChem (por nome) tentado para a conformação 3D');
     check(calls.cactus.some((c) => /\/file\?format=sdf/.test(c.url)), 'laboratório: SDF do CACTUS pedido no fallback da conformação 3D (a URL usa o SMILES, não o nome)');
+    // Regressão do "reading 'length'" (GLModel.selectedAtoms): alterna 2D/3D e troca a espécie com o laço de render ativo.
+    // O animate() do 3Dmol com passo fracionado deixava model.atoms indefinido em modelo de um quadro; agora a rotação é spin().
+    const errosAntes3D = app.errors.length;
+    for (let i = 0; i < 3; i++) {
+      await frame.evaluate(() => window.setModoVisualizacao('3D'));
+      await frame.waitForTimeout(250);
+      await frame.evaluate(() => window.desenharEstruturaSmiles('OC(=O)c1ccccc1O', 'Conformação E2E', 'Conf3DE2E', 'C7H6O3', 138));
+      await frame.waitForTimeout(250);
+      await frame.evaluate(() => window.setModoVisualizacao('2D'));
+      await frame.waitForTimeout(100);
+    }
+    await frame.evaluate(() => window.setModoVisualizacao('3D'));
+    await frame.waitForTimeout(1200); // vários ciclos do laço de rotação sobre o modelo
+    check(app.errors.slice(errosAntes3D).length === 0, 'laboratório: alternar 2D/3D e trocar a espécie não gera erro de console no 3Dmol' + (app.errors.length > errosAntes3D ? ': ' + app.errors.slice(errosAntes3D).join(' | ') : ''));
     await frame.waitForTimeout(500); // o 3Dmol da bancada termina de renderizar antes de sair do módulo
     await app.page.click('#learn-back');
 
@@ -539,12 +553,7 @@ module.exports = async function apis() {
     // Verificações globais: nenhuma violação de CSP, nenhum erro de JS.
     // =========================================================================
     reportCsp(violations, 'apis (toxicologia, quiz, laboratório, estúdio, anatomia, credencial)');
-    // Pendência registrada (achada ao exercitar a visão 3D da bancada): o laço de render do 3Dmol lança
-    // "Cannot read properties of undefined (reading 'length')" (GLModel.selectedAtoms) na bancada 3D em headless.
-    // Fica fora da lista só este erro, e é contado à parte (abaixo) para não sumir; origem ainda não isolada.
-    const erro3Dmol = app.errors.filter((e) => /reading 'length'/.test(e));
-    console.log('  (aviso) erros do 3Dmol na bancada 3D, pendência aberta: ' + erro3Dmol.length);
-    const realErrors = app.errors.filter((e) => !IGNORABLE.test(e) && !erro3Dmol.includes(e));
+    const realErrors = app.errors.filter((e) => !IGNORABLE.test(e));
     check(realErrors.length === 0, 'sem erros de JavaScript não tratados' + (realErrors.length ? ': ' + realErrors.join(' | ') : ''));
   } finally {
     await app.close();
