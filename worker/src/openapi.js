@@ -19,7 +19,8 @@ const SIM_NOTE = 'Simulação clínica (beta; flag clinical_sim_enabled, desliga
 const ACTION_NOTES = {
   apiLearnClinicalChat: SIM_NOTE + ' Com a flag ligada a resposta traz `simulation: { simId, guardrails }` (sem os eixos).',
   apiLearnClinicalEvaluate: SIM_NOTE + ' A nota sai de 4 componentes limitados pelo servidor (hipótese 30, conduta 30, processo 20, comunicação 20); a resposta traz `simulation` com o debrief (eixos revelados) e `result.score`.',
-  apiLearnGetMyAiQuota: 'Com a flag clinical_sim_enabled ligada para a pessoa, a resposta traz `simulation: { available: true, version }`; sem isso o campo não existe.',
+  apiLearnAtlasTelemetry: 'Coleta desligada no servidor: os argumentos são aceitos e ignorados (o token não é conferido) e a resposta é sempre `{ success: true, stored: 0, disabled: true }`, sem gravar nada.',
+  apiLearnGetMyAiQuota:'Com a flag clinical_sim_enabled ligada para a pessoa, a resposta traz `simulation: { available: true, version }`; sem isso o campo não existe.',
   apiAdminGrantRole: 'Cargo funcional (ADR 0010): `input = { profileId, role, password, code? }`. Só admin, com reautenticação; cargo privilegiado (gestor, revisor_conteudo, moderador, curador) exige MFA ativo da pessoa. Idempotente (`changed`).',
   apiAdminRevokeRole: 'Retira um cargo funcional: `input = { profileId, role, password, code? }`. Só admin, com reautenticação. Idempotente (`changed`).',
   apiAdminListRoles: 'Cargos funcionais de uma pessoa (`input.profileId`) ou de todas que têm algum (nome e cargos, sem e-mail).',

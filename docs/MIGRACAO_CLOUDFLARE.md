@@ -111,7 +111,7 @@ Quanto antes a troca, menos histórico se perde. Avisar com antecedência.
 ## Reversão
 | Etapa | Como desfazer |
 |---|---|
-| 5 (API) | Recomentar o bloco de `routes`; a URL `*.workers.dev` nunca deixou de funcionar |
+| 5 (API) | Recomentar o bloco de `routes` e pôr `workers_dev = true` (desligada desde F-030) antes do deploy, senão a API fica sem endereço |
 | 7 (site) | Recomentar o `[[routes]]` do front e rodar o workflow; ou remover o domínio no painel |
 | 9 (e-mail) | Voltar `APP_BASE_URL` e `MAIL_FROM_ADDRESS` aos valores anteriores |
 | 2 (DNS) | Devolver os nameservers `*.auto.dns.br` no Registro.br |

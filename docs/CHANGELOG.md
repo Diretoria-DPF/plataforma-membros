@@ -4,6 +4,10 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 
 ## [Não publicado]
 
+### Alterado (Worker: telemetria do Atlas e endereço workers.dev)
+- **Telemetria do Atlas recusada no servidor (F-029)**: `apiLearnAtlasTelemetry` responde fixo (`stored: 0, disabled: true`) sem conferir sessão, sem limite de taxa e sem gravar no banco, mesmo que o cliente seja forçado com `?flags=telemetry`. Tabela e migração 014 continuam como estão.
+- **URL `*.workers.dev` da API de produção desligada (F-030)**: `workers_dev = false` em `worker/wrangler.toml`; a API segue em `api.laift.com.br` e o staging não muda. Reversão: voltar para `true` e publicar.
+
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
 ### Adicionado (Início v3, atrás da flag `home_v2_enabled`, desligada)

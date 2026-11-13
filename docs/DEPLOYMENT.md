@@ -158,7 +158,7 @@ npm run validate:sql     # todas as migrações de sql/, com 0 falha(s)
 npm run deploy           # wrangler deploy
 ```
 
-URL de teste: `https://plataforma-membros-api.diretoria-dpf.workers.dev`. Em produção, o front usa `https://api.laift.com.br`: o `API_BASE_URL` de `frontend/app.js` é escolhido pelo hostname, e o `*.workers.dev` vale só para localhost e GitHub Pages. Os três endereços estão no `connect-src` da CSP do `frontend/index.html`. Se algum mudar, atualize os dois lados.
+A API responde só em `https://api.laift.com.br` (staging: `https://staging-api.laift.com.br`). A URL `*.workers.dev` da Worker de produção está desligada (`workers_dev = false` em `worker/wrangler.toml`, F-030); para religar, volte para `true` e publique. O `API_BASE_URL` de `frontend/app.js` ainda aponta para `*.workers.dev` em hosts fora de `laift.com.br` e de staging (localhost, testes e2e, que simulam a API); a CSP do `frontend/index.html` mantém esse host só por isso.
 
 Conferência:
 - `npx wrangler tail` enquanto alguém faz login: nenhuma exceção.

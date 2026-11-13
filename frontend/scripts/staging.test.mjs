@@ -91,6 +91,17 @@ test('Worker: [env.staging] tem nome, domínio, variáveis e banco próprios; se
   assert.doesNotMatch(toml, /DATABASE_URL\s*=/);
 });
 
+test('Worker de produção: sem URL *.workers.dev, só o domínio próprio (F-030)', () => {
+  const toml = read('worker/wrangler.toml');
+  // Chaves de topo: tudo antes do primeiro cabeçalho de tabela.
+  const top = toml.split(/\r?\n/).filter((l) => !/^\s*#/.test(l)).join('\n').split(/^\s*\[/m)[0];
+  assert.match(top, /^\s*workers_dev\s*=\s*false\s*$/m);
+  assert.doesNotMatch(top, /workers_dev\s*=\s*true/);
+  const route = tomlSection(toml, '[[routes]]');
+  assert.match(route, /pattern\s*=\s*"api\.laift\.com\.br"/);
+  assert.match(route, /custom_domain\s*=\s*true/);
+});
+
 test('Front: [env.staging] publica em staging.laift.com.br com os mesmos assets', () => {
   const toml = read('frontend/wrangler.toml');
   assert.match(tomlSection(toml, '[env.staging]'), /workers_dev\s*=\s*false/);

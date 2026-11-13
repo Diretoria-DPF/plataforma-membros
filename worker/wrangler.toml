@@ -2,13 +2,11 @@ name = "plataforma-membros-api"
 main = "src/index.js"
 compatibility_date = "2024-11-01"
 
-# CORTE PARA laift.com.br (docs/MIGRACAO_CLOUDFLARE.md) — só depois de a zona
-# estar "Active" no Cloudflare, descomente o bloco abaixo e faça o deploy.
-# `workers_dev = true` mantém a URL antiga (*.workers.dev) funcionando para o
-# front do GitHub Pages durante a transição; sem ele, definir `routes` a desliga.
-# Ao cortar, troque também APP_BASE_URL para "https://laift.com.br/" (links de
-# confirmação/redefinição de senha enviados por e-mail).
-workers_dev = true
+# A API responde só em api.laift.com.br (docs/MIGRACAO_CLOUDFLARE.md). A URL
+# *.workers.dev ficou desligada (F-030): servia ao front do GitHub Pages, que
+# saiu do ar; laift.com.br usa api.laift.com.br. Para religar (reversão),
+# volte para `workers_dev = true` e publique a Worker.
+workers_dev = false
 [[routes]]
 pattern = "api.laift.com.br"
 custom_domain = true

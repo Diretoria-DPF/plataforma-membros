@@ -59,6 +59,15 @@ export function normalizeEvent(raw) {
 // ---------------------------------------------------------------------------
 // apiLearnAtlasTelemetry
 // ---------------------------------------------------------------------------
+/**
+ * Coleta desligada (F-029): a ação aceita a chamada e não faz nada — não lê a
+ * sessão, não toca o banco nem o limite de taxa. Ligar de novo exige trocar o
+ * handler para `record` (decisão do dono, com aviso na Política).
+ */
+export function recordDisabled() {
+  return { success: true, stored: 0, disabled: true };
+}
+
 export async function record(sql, identity, input) {
   const sessionId = typeof input.sessionId === 'string' ? input.sessionId : '';
   if (!T.SESSION_ID_RE.test(sessionId)) throw E.ValidationError('Sessão de telemetria inválida.');

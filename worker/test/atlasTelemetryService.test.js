@@ -110,12 +110,45 @@ describe('adminStats (apiAdminLearnAtlasTelemetry)', () => {
 });
 
 describe('handlers', () => {
-  test('as duas actions passam pela ponte e exigem sessão', async () => {
+  test('as duas actions passam pela ponte; o painel admin exige sessão', async () => {
     const BRIDGE = /^api(Learn|AdminAttendance|AdminAi|AdminLearn)[A-Z][A-Za-z]*$/;
     expect('apiLearnAtlasTelemetry').toMatch(BRIDGE);
     expect('apiAdminLearnAtlasTelemetry').toMatch(BRIDGE);
     const sql = makeSql();
-    const res = await API_REGISTRY.apiLearnAtlasTelemetry(sql, makeEnv(), ['', { sessionId, events: [] }]);
+    const res = await API_REGISTRY.apiAdminLearnAtlasTelemetry(sql, makeEnv(), ['', { days: 7 }]);
     expect(res.success).toBe(false);
+  });
+});
+
+// F-029: coleta desligada no servidor. Nenhuma chamada ao banco (nem sessão, nem limite de taxa, nem INSERT).
+describe('apiLearnAtlasTelemetry desligada (F-029)', () => {
+  const events = [
+    { event: 'app_open', props: { mode: 'explore', viewport: 'm', offline: false } },
+    { event: 'structure_view', sid: 'za:left-ventricle', props: { source: 'pick' } },
+  ];
+
+  test('resposta fixa e nenhuma linha gravada, com ou sem token', async () => {
+    for (const token of ['', 'qualquer-token-de-sessao', null]) {
+      const sql = makeSql();
+      const res = await API_REGISTRY.apiLearnAtlasTelemetry(sql, makeEnv(), [token, { sessionId, events }]);
+      expect(res).toEqual({ success: true, stored: 0, disabled: true });
+      expect(sql).not.toHaveBeenCalled();
+    }
+  });
+
+  test('entrada inválida ou gigante também não toca o banco', async () => {
+    const sql = makeSql();
+    const many = Array.from({ length: 500 }, () => ({ event: 'search', props: { len: 3, results: 1 } }));
+    for (const input of [undefined, null, 'x', { sessionId: '!', events: 'x' }, { sessionId, events: many }]) {
+      const res = await API_REGISTRY.apiLearnAtlasTelemetry(sql, makeEnv(), ['t', input]);
+      expect(res).toEqual({ success: true, stored: 0, disabled: true });
+    }
+    expect(sql).not.toHaveBeenCalled();
+  });
+
+  test('recordDisabled devolve um objeto novo a cada chamada', () => {
+    const a = T.recordDisabled();
+    a.stored = 99;
+    expect(T.recordDisabled()).toEqual({ success: true, stored: 0, disabled: true });
   });
 });
