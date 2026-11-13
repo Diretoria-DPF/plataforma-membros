@@ -19,6 +19,7 @@
  *    mensagem fixa — o front mostra "Serviço de moléculas indisponível".
  */
 import { ValidationError } from '../errors.js';
+import { checkSafety } from '../ai/safetyBlocklist.js';
 
 export const PDB_ID_RE = /^[0-9][A-Za-z0-9]{3}$/;
 export const PDB_MAX_BYTES = 5 * 1024 * 1024;
@@ -96,8 +97,9 @@ export async function readTextLimited(res, maxBytes) {
 /**
  * Arquivo .pdb de uma estrutura do RCSB.
  * @param {{ id?: string }} input
+ * enforceLimit (opcional) roda só em falha de cache, antes de ir à fonte.
  */
-export async function getPdb(input, { cache = defaultCache() } = {}) {
+export async function getPdb(input, { cache = defaultCache(), enforceLimit = null } = {}) {
   const raw = input && typeof input.id === 'string' ? input.id.trim() : '';
   if (!PDB_ID_RE.test(raw)) throw ValidationError('Código PDB inválido (4 caracteres, começando por número).');
   const id = raw.toUpperCase();
@@ -105,6 +107,7 @@ export async function getPdb(input, { cache = defaultCache() } = {}) {
   const cached = await cacheGet(cache, key);
   if (cached && typeof cached.pdb === 'string') return { success: true, id, pdb: cached.pdb, cached: true };
 
+  if (enforceLimit) await enforceLimit();
   let res;
   try {
     res = await fetchWithTimeout('https://files.rcsb.org/download/' + id + '.pdb');
@@ -128,7 +131,7 @@ export async function getPdb(input, { cache = defaultCache() } = {}) {
  * Propriedades fixas de um composto do PubChem, por nome ou CID.
  * @param {{ name?: string, cid?: number|string }} input
  */
-export async function getPubchem(input, { cache = defaultCache() } = {}) {
+export async function getPubchem(input, { cache = defaultCache(), enforceLimit = null } = {}) {
   const src = input && typeof input === 'object' ? input : {};
   let path;
   let keyPart;
@@ -147,6 +150,7 @@ export async function getPubchem(input, { cache = defaultCache() } = {}) {
   const cached = await cacheGet(cache, key);
   if (cached && cached.props) return { success: true, cid: cached.cid, props: cached.props, cached: true };
 
+  if (enforceLimit) await enforceLimit();
   let res;
   try {
     res = await fetchWithTimeout('https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/' + path + '/property/' + PUBCHEM_PROPS.join(',') + '/JSON');
@@ -174,6 +178,10 @@ export async function getPubchem(input, { cache = defaultCache() } = {}) {
     IUPACName: typeof row.IUPACName === 'string' ? row.IUPACName : null,
   };
   const cid = Number.isInteger(row.CID) ? row.CID : null;
+  // Consulta por CID não traz nome: o nome devolvido pela fonte também passa pela lista de bloqueio.
+  if (props.IUPACName && checkSafety({ term: props.IUPACName }).reason === 'cbrn') {
+    return { success: false, blocked: true, message: 'Esta substância não é consultada pelo atlas.' };
+  }
   await cachePut(cache, key, { cid, props });
   return { success: true, cid, props, cached: false };
 }

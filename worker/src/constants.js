@@ -561,6 +561,14 @@ Object.assign(RATE_LIMITS, {
   DASHBOARD_SERIES: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
 });
 
+// ---- Proxies de moléculas (Laboratório e Atlas): limite por perfil, só em falha de cache (F-008) ----
+// Conta no Neon (enforceRateLimit), nunca em KV. Cache hit não gasta o limite; o visitante recém-criado
+// tem a metade do membro, pois é quem mais serve de amplificador para PubChem, EBI e RCSB.
+Object.assign(RATE_LIMITS, {
+  MOLECULE_PROXY_MEMBER: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 600 },
+  MOLECULE_PROXY_VISITOR: { MAX_ATTEMPTS: 20, WINDOW_SECONDS: 600 },
+});
+
 // ---- Guia: moderação sob concorrência e abuso (juiz LLM e redenção) ----
 // Limites por perfil, via enforceRateLimit. Estourar o juiz não derruba o chat: segue só pelos termos.
 Object.assign(RATE_LIMITS, {

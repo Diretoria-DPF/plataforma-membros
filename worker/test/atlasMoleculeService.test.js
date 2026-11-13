@@ -150,3 +150,41 @@ describe('handlers — proxy exige sessão', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 });
+
+describe('atlas — limite de taxa e bloqueio pelo nome devolvido (F-008, F-037)', () => {
+  const OKP = { PropertyTable: { Properties: [{ CID: 2244, MolecularFormula: 'C9H8O4', IUPACName: '2-acetyloxybenzoic acid' }] } };
+
+  test('dentro do limite consulta a fonte; cache hit não gasta o limite', async () => {
+    const cache = memoryCache();
+    const enforceLimit = jest.fn().mockResolvedValue(undefined);
+    fetch.mockResolvedValueOnce(textResponse(JSON.stringify(OKP)));
+    await Mol.getPubchem({ cid: 2244 }, { cache, enforceLimit });
+    await Mol.getPubchem({ cid: 2244 }, { cache, enforceLimit });
+    expect(enforceLimit).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  test.each([
+    ['getPdb', (o) => Mol.getPdb({ id: '4EY7' }, o)],
+    ['getPubchem', (o) => Mol.getPubchem({ name: 'aspirin' }, o)],
+  ])('%s fora do limite: erro padrão e a rede não é chamada', async (_n, call) => {
+    const { rateLimitExceeded } = await import('../src/security.js');
+    const enforceLimit = jest.fn().mockRejectedValue(rateLimitExceeded());
+    await expect(call({ cache: memoryCache(), enforceLimit })).rejects.toMatchObject({ expected: true, message: 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.' });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  test('entrada inválida é recusada antes de gastar o limite', async () => {
+    const enforceLimit = jest.fn();
+    await expect(Mol.getPdb({ id: 'xx' }, { cache: null, enforceLimit })).rejects.toMatchObject({ expected: true });
+    expect(enforceLimit).not.toHaveBeenCalled();
+  });
+
+  test('CID cujo nome devolvido é agente de guerra é bloqueado e não vai à cache', async () => {
+    const cache = memoryCache();
+    fetch.mockResolvedValueOnce(textResponse(JSON.stringify({ PropertyTable: { Properties: [{ CID: 6371, IUPACName: 'carbonyl dichloride' }] } })));
+    const res = await Mol.getPubchem({ cid: 6371 }, { cache });
+    expect(res).toMatchObject({ success: false, blocked: true });
+    expect(cache.put).not.toHaveBeenCalled();
+  });
+});
