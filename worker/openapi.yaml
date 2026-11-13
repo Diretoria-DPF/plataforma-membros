@@ -1922,7 +1922,7 @@ components:
       required:
         - "action"
         - "args"
-      description: "Exige sessão (primeiro argumento: token)."
+      description: "Exige sessão (primeiro argumento: token). Coleta desligada no servidor: os argumentos são aceitos e ignorados (o token não é conferido) e a resposta é sempre `{ success: true, stored: 0, disabled: true }`, sem gravar nada."
       properties:
         action:
           const: "apiLearnAtlasTelemetry"

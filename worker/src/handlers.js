@@ -363,7 +363,10 @@ export const API_REGISTRY = {
   apiAdminAiMetrics: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AiService.adminMetrics(sql, env, identity, asInput(input))),
   apiAdminLearnListPendingCases: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.listPendingCases(sql, identity)),
   // Atlas 3D — moléculas pelo proxy (sem chamada direta do navegador).
-  apiLearnAtlasTelemetry: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AtlasTelemetryService.record(sql, identity, asInput(input))),
+  // Telemetria do Atlas desligada no servidor (F-029): resposta fixa, sem sessão, sem banco e sem limite de taxa.
+  // A ação continua registrada (mesmos argumentos) para o cliente antigo não receber "ação desconhecida"; os valores são ignorados.
+  // eslint-disable-next-line no-unused-vars
+  apiLearnAtlasTelemetry: (sql, env, [sessionToken, input]) => AtlasTelemetryService.recordDisabled(),
   apiAdminLearnAtlasTelemetry: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AtlasTelemetryService.adminStats(sql, identity, asInput(input))),
   // Limite por perfil (Neon, nunca KV) só em falha de cache; visitante tem teto menor que membro (F-008).
   apiLearnAtlasPdb: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AtlasMoleculeService.getPdb(asInput(input), { enforceLimit: moleculeProxyLimiter(sql, 'ATLAS_MOLECULE', identity) })),

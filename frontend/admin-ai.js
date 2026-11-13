@@ -333,7 +333,7 @@
     var totals = res.totals || {};
     var any = Object.keys(ATLAS_EVENT_LABELS).some(function (k) { return Number(totals[k]) > 0; });
     if (!any) {
-      container.appendChild(text('p', 'Nenhum evento nos últimos ' + res.days + ' dias. A coleta fica desligada até a flag "telemetry" do atlas ser ligada.', { className: 'empty-state' }));
+      container.appendChild(text('p', 'Nenhum evento nos últimos ' + res.days + ' dias. A coleta está desligada no servidor.', { className: 'empty-state' }));
       return;
     }
     container.appendChild(h('div', { className: 'meta-row' }, [
