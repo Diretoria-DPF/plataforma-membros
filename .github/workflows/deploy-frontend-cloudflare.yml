@@ -43,9 +43,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
 
@@ -85,9 +85,9 @@ jobs:
       SMOKE_SITE_URL: ${{ github.ref_name == 'main' && 'https://laift.com.br' || 'https://staging.laift.com.br' }}
       SMOKE_API_URL: ${{ github.ref_name == 'main' && 'https://api.laift.com.br' || 'https://staging-api.laift.com.br' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
 
@@ -144,9 +144,9 @@ jobs:
         working-directory: frontend
         run: |
           if [ "$GITHUB_REF_NAME" = "main" ]; then
-            npx --yes wrangler@4 deploy
+            npx --yes wrangler@4.156.0 deploy
           else
-            npx --yes wrangler@4 deploy --env staging
+            npx --yes wrangler@4.156.0 deploy --env staging
           fi
 
       # Site e API do ambiente que acabou de ser publicado. Tenta por ~2 min
