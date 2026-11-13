@@ -204,7 +204,7 @@ function installOpenFdaMock(context) {
 
 /** Toxicologia/OpenFDA: fetchOpenFdaWarning é privada (IIFE) — exercitada via UI real com Playwright, como os demais *.e2e.js. */
 async function testToxicologiaOpenFda() {
-  const app = await startApp({ role: 'member' });
+  let app = await startApp({ role: 'member' });
   const mock = installOpenFdaMock(app.context);
   try {
     await app.login();
@@ -218,7 +218,7 @@ async function testToxicologiaOpenFda() {
     await frame.click('.option');
     await frame.waitForFunction(() => {
       const tag = document.getElementById('apiDataSourceTag');
-      return !!tag && !tag.hidden && tag.dataset.source;
+      return !!tag && !tag.hidden && /^(local|fda)$/.test(tag.dataset.source || ''); // 'loading' é transitório
     }, null, { timeout: 4000 }).catch(() => {});
     const notFoundState = await frame.evaluate(() => ({
       tagSource: (document.getElementById('apiDataSourceTag') || {}).dataset && document.getElementById('apiDataSourceTag').dataset.source,
@@ -230,9 +230,15 @@ async function testToxicologiaOpenFda() {
     await app.page.click('#learn-back');
 
     // Cenário B: bula só com `warnings_and_cautions` (formato OTC) — cobre o fallback novo desta tarefa.
-    mock.setScenario('warnings_and_cautions');
-    // No estudo a resposta é definitiva e retomada do progresso salvo (QZ-03): zera o cenário A para responder de novo.
-    await app.page.evaluate(() => localStorage.removeItem('toxicoQuizProgress'));
+    // No estudo a resposta é definitiva e retomada do progresso salvo (QZ-03): o cenário A já respondeu a questão 1,
+    // então o B roda num navegador novo (progresso e estado do módulo zerados) em vez de tentar limpar o do A.
+    const realErrorsA = app.errors.filter((e) => !/(THREE|QRCode|\$3Dmol|SmilesDrawer|Chart|OCL|Html5QrcodeScanner|initRDKitModule)/.test(e));
+    check(realErrorsA.length === 0, 'toxicologia/OpenFDA (404): sem erros de JavaScript não tratados' + (realErrorsA.length ? ': ' + realErrorsA.join(' | ') : ''));
+    await app.close();
+    app = await startApp({ role: 'member' });
+    const mockB = installOpenFdaMock(app.context);
+    await app.login();
+    mockB.setScenario('warnings_and_cautions');
     frame = await app.openModule('toxico');
     await frame.click('.topic-btn');
     await frame.click('#startQuiz');
