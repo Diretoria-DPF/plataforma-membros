@@ -117,6 +117,13 @@ const KEEP_ATLAS_DEV = process.env.ATLAS_KEEP_DEV === '1';
   });
 });
 
+// Laboratório (F-005): as fontes guardam marcas [NV] e o objeto interno `conferencia` para o revisor farmacêutico
+// (fila em docs/LABORATORIO_NV_FILA.md, gerada por scripts/lab-nv-fila.js). Em dist saem só as versões limpas.
+{
+  const alterados = require('./lab-nv-fila.js').sanitizarDist(path.join(DIST, 'modulos', 'laboratorio'));
+  console.log(`[laboratorio] ${alterados} JSON publicado(s) sem marcas internas de conferência.`);
+}
+
 // Blog "Conheça a LAIFT": os módulos e o sprite de blog/ vão como estão; blog/conteudo/ (JSON dos posts)
 // fica só no repositório e vira dist/blog/<slug>.html + index.json + URLs do sitemap pelo gerador.
 fs.cpSync(path.join(ROOT, 'blog'), path.join(DIST, 'blog'), { recursive: true, filter: (src) => !/[\\/]blog[\\/]conteudo(?:[\\/]|$)/.test(src) });
