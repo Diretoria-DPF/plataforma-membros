@@ -12,6 +12,9 @@ const ADMIN = { profileId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', role: 'admin'
 const MEMBER = { profileId: '11111111-1111-4111-8111-111111111111', role: 'member', email: 'membro@x.com', fullName: 'Membro' };
 const VISITOR = { profileId: '22222222-2222-4222-8222-222222222222', role: 'visitor', email: 'visitante@x.com', fullName: 'Visitante' };
 const EVENT_ID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+const ISO_RE = /^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/;
+const SECRETARIA = { profileId: '33333333-3333-4333-8333-333333333333', role: 'member', capabilities: ['attendance.manage'], mfaConfirmed: true, email: 's@x.com', fullName: 'Sec' };
+const GESTOR = { ...SECRETARIA, profileId: '44444444-4444-4444-8444-444444444444', capabilities: ['events.manage', 'attendance.manage'] };
 const RATE_OK = [{ attempts: 1 }];
 const OPEN_EVENT = [{ id: EVENT_ID, title: 'Simpósio', status: 'in_progress' }];
 const PERSON = [{ id: MEMBER.profileId, full_name: 'Ana Souza', role: 'member', status: 'active', email_confirmed_at: '2026-01-01' }];
@@ -153,8 +156,35 @@ describe('AttendanceService.checkIn', () => {
     expect(boundValues(sql, 3)).toEqual([MEMBER.profileId]); // perfil = o do QR verificado
     expect(queryText(sql, 4)).toContain('UPDATE event_registrations');
     expect(queryText(sql, 4)).toContain('checked_in_at IS NULL');
-    expect(boundValues(sql, 4)).toEqual([ADMIN.profileId, 'qr', EVENT_ID, MEMBER.profileId]);
+    expect(boundValues(sql, 4)).toEqual([expect.stringMatching(ISO_RE), ADMIN.profileId, 'qr', EVENT_ID, MEMBER.profileId]);
     expect(env.HOT_CACHE.delete).not.toHaveBeenCalled(); // contagem de inscritos não mudou
+  });
+
+  describe('hora gravada no check-in (F-036)', () => {
+    async function run(extra) {
+      __resetFlagCacheForTests();
+      const env = makeEnv();
+      const qr = await AttendanceService.signAttendanceQr(env, MEMBER.profileId);
+      const sql = makeSql();
+      sql.mockResolvedValueOnce(RATE_OK).mockResolvedValueOnce([]).mockResolvedValueOnce(OPEN_EVENT).mockResolvedValueOnce(PERSON)
+        .mockResolvedValueOnce([{ checked_in_at: 'x' }]).mockResolvedValueOnce(undefined);
+      await AttendanceService.checkIn(sql, env, ADMIN, { eventId: EVENT_ID, method: 'qr', qrPayload: qr, ...extra }, 'cid');
+      return boundValues(sql, 4)[0];
+    }
+
+    test('leitura reenviada da fila offline grava a hora da leitura', async () => {
+      const at = Date.now() - 60 * 1000;
+      expect(await run({ scannedAt: at })).toBe(new Date(at).toISOString());
+    });
+
+    test('hora no futuro ou muito antiga é descartada (vale agora)', async () => {
+      const before = Date.now();
+      for (const bad of [Date.now() + 3600 * 1000, Date.now() - 48 * 3600 * 1000, 'ontem', NaN]) {
+        const got = Date.parse(await run({ scannedAt: bad }));
+        expect(got).toBeGreaterThanOrEqual(before - 1000);
+        expect(got).toBeLessThanOrEqual(Date.now() + 1000);
+      }
+    });
   });
 
   test('segundo check-in é idempotente → alreadyCheckedIn: true, nada é regravado', async () => {
@@ -187,7 +217,7 @@ describe('AttendanceService.checkIn', () => {
     const res = await AttendanceService.checkIn(sql, env, ADMIN, { eventId: EVENT_ID, method: 'manual', email: ' Ana@X.com ' }, 'cid');
     expect(boundValues(sql, 2)).toEqual(['ana@x.com']);
     expect(queryText(sql, 5)).toContain('INSERT INTO event_registrations');
-    expect(boundValues(sql, 5)).toEqual([EVENT_ID, MEMBER.profileId, ADMIN.profileId, 'manual']);
+    expect(boundValues(sql, 5)).toEqual([EVENT_ID, MEMBER.profileId, expect.stringMatching(ISO_RE), ADMIN.profileId, 'manual']);
     expect(res.participant).toMatchObject({ walkIn: true, alreadyCheckedIn: false });
     expect(res.message).toContain('inscrição criada na portaria');
     expect(env.HOT_CACHE.delete).toHaveBeenCalledWith('cache:events:members:v2');
@@ -356,6 +386,25 @@ describe('AttendanceService.exportCsv', () => {
     const res = await AttendanceService.exportCsv(sql, ADMIN, { eventId: EVENT_ID, excel: true }, 'cid');
     expect(res.csv.charCodeAt(0)).toBe(0xfeff);
     expect(res.csv.slice(1).split('\r\n')[0]).toBe('"Nome";"E-mail";"Papel";"Inscrito em";"Presente";"Check-in em";"Método";"Registrado por"');
+  });
+
+  test.each([['secretaria', SECRETARIA], ['gestor', GESTOR]])('%s recebe e-mail mascarado no CSV (como a busca)', async (_n, who) => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(EVENT_ROW).mockResolvedValueOnce([{ ...ROWS[2], email: 'ana.souza@x.com' }]).mockResolvedValueOnce(undefined);
+    const res = await AttendanceService.exportCsv(sql, who, { eventId: EVENT_ID }, 'cid');
+    expect(res.csv).toContain('"an***@x.com"');
+    expect(res.csv).not.toContain('ana.souza@x.com');
+  });
+
+  test('admin recebe o e-mail completo no CSV', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(EVENT_ROW).mockResolvedValueOnce([{ ...ROWS[2], email: 'ana.souza@x.com' }]).mockResolvedValueOnce(undefined);
+    const res = await AttendanceService.exportCsv(sql, ADMIN, { eventId: EVENT_ID }, 'cid');
+    expect(res.csv).toContain('"ana.souza@x.com"');
+  });
+
+  test('membro sem cargo não exporta', async () => {
+    await expect(AttendanceService.exportCsv(makeSql(), MEMBER, { eventId: EVENT_ID }, 'cid')).rejects.toMatchObject({ name: 'ForbiddenError' });
   });
 
   test('evento inexistente → NotFoundError', async () => {

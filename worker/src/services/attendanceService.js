@@ -351,13 +351,16 @@ export async function checkIn(sql, env, identity, input, correlationId) {
   if (person.status === C.ACCOUNT_STATUS.BANNED) throw E.ConflictError('Esta conta está banida; a presença não pode ser registrada.');
   if (!person.email_confirmed_at) throw E.ConflictError('Esta conta ainda não confirmou o e-mail; a presença não pode ser registrada.');
 
+  // Hora da leitura (validada e limitada); fora do QR vale o instante atual.
+  const scanIso = new Date(method === 'qr' ? effectiveScanTime(input.scannedAt) : Date.now()).toISOString();
+
   // 1) Já inscrito e ainda sem presença → marca a presença.
   let walkIn = false;
   let alreadyCheckedIn = false;
   let checkedInAt = null;
   const updated = await sql`
     UPDATE event_registrations
-    SET checked_in_at = now(), checked_in_by = ${identity.profileId}::uuid, checkin_method = ${method}
+    SET checked_in_at = ${scanIso}::timestamptz, checked_in_by = ${identity.profileId}::uuid, checkin_method = ${method}
     WHERE event_id = ${eventId}::uuid AND profile_id = ${person.id}::uuid AND checked_in_at IS NULL
     RETURNING checked_in_at
   `;
@@ -379,7 +382,7 @@ export async function checkIn(sql, env, identity, input, correlationId) {
       try {
         const inserted = await sql`
           INSERT INTO event_registrations (event_id, profile_id, checked_in_at, checked_in_by, checkin_method)
-          VALUES (${eventId}::uuid, ${person.id}::uuid, now(), ${identity.profileId}::uuid, ${method})
+          VALUES (${eventId}::uuid, ${person.id}::uuid, ${scanIso}::timestamptz, ${identity.profileId}::uuid, ${method})
           RETURNING checked_in_at
         `;
         walkIn = true;
@@ -392,7 +395,7 @@ export async function checkIn(sql, env, identity, input, correlationId) {
           // tentativa do passo 1 resolve os dois casos.
           const retried = await sql`
             UPDATE event_registrations
-            SET checked_in_at = now(), checked_in_by = ${identity.profileId}::uuid, checkin_method = ${method}
+            SET checked_in_at = ${scanIso}::timestamptz, checked_in_by = ${identity.profileId}::uuid, checkin_method = ${method}
             WHERE event_id = ${eventId}::uuid AND profile_id = ${person.id}::uuid AND checked_in_at IS NULL
             RETURNING checked_in_at
           `;
@@ -560,7 +563,7 @@ export async function exportCsv(sql, identity, input, correlationId) {
   rows.forEach((r) => {
     lines.push([
       r.full_name,
-      r.email,
+      identity.role === C.ROLES.ADMIN ? r.email : maskEmail(r.email),
       ROLE_LABELS[r.role] || r.role,
       formatDateTimeBr(r.registered_at),
       r.checked_in_at ? 'Sim' : 'Não',
