@@ -35,14 +35,30 @@ function setup({ flags = [], storage = memoryStorage(), withDialog = true } = {}
   return { doc, api, shown, storage };
 }
 
-test('conteúdo: primeira entrada é a Guia, em feminino, e há selo e diálogos acessíveis', () => {
+test('conteúdo: primeira entrada é a Guia, em feminino, e há diálogos acessíveis (sem selo)', () => {
   const [first] = WhatsNew.ENTRIES;
   assert.equal(first.id, 'guia');
   assert.match(first.text, /Guia/);
   assert.match(first.text, /\bEla\b/);
   const ids = WhatsNew.ENTRIES.map((e) => e.id);
-  assert.ok(ids.includes('selo') && ids.includes('dialogos'));
-  assert.ok(WhatsNew.ENTRIES.find((e) => e.id === 'selo').text.includes('ⓘ'));
+  assert.ok(ids.includes('dialogos'));
+  assert.ok(!ids.includes('selo'), 'a entrada de selo foi retirada (regra do dono)');
+});
+
+test('conteúdo: novidades de F-027 (demo, QR rotativo) estão no aviso; Visão geral (só staff) não', () => {
+  const ids = WhatsNew.ENTRIES.map((e) => e.id);
+  assert.ok(ids.includes('demo') && ids.includes('qr-rotativo'));
+  assert.ok(!ids.includes('visao-geral'), 'Visão geral é recurso de secretaria/gestor/admin');
+  assert.equal(WhatsNew.VERSION, '2026-11-13');
+});
+
+test('conteúdo público: whats-new.js não traz selo, revisão, IA, rascunho nem [NV]', () => {
+  const code = read('whats-new.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  assert.doesNotMatch(code, /selo|revis|rascunho|\[NV\]|ⓘ|inteligência artificial/i);
+  assert.doesNotMatch(code, /\bIA\b/);
+  for (const entry of WhatsNew.ENTRIES) {
+    assert.doesNotMatch(entry.text, /selo|revis|rascunho|\[NV\]|ⓘ|\bIA\b|inteligência artificial/i, `${entry.id}: termo proibido`);
+  }
 });
 
 test('conteúdo: texto curto, sem diminutivos nem dado pessoal, versão no formato AAAA-MM-DD', () => {

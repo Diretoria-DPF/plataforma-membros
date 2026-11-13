@@ -40,7 +40,7 @@ async function abreEAcessibilidade() {
       return box.getAttribute('aria-labelledby') && box.getAttribute('aria-describedby') && box.contains(document.activeElement);
     }), 'aviso: nome e descrição ligados e foco dentro do diálogo');
     check(texto.split('\n')[0].includes('Guia'), 'aviso: a primeira entrada é a Guia');
-    check(texto.includes('ⓘ') && /acessíveis/.test(texto), 'aviso: cita o selo ⓘ e os diálogos acessíveis');
+    check(!texto.includes('ⓘ') && /acessíveis/.test(texto), 'aviso: sem selo; cita os diálogos acessíveis');
     check(!texto.includes('Na Liga'), 'aviso: sem destaques da Liga com a flag highlights_enabled desligada');
     check((await page.evaluate((k) => localStorage.getItem(k), KEY)) !== null, 'aviso: grava a versão vista em localStorage');
     await page.keyboard.press('Escape');
