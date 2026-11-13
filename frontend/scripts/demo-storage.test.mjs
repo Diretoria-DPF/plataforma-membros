@@ -143,9 +143,9 @@ test('F-035: o aviso da demo tem fundo opaco e se reorganiza em celular estreito
   assert.match(css, /\.demo-topo \{ flex-wrap: wrap/); // o cabeçalho não alarga a página em 320 px
 });
 
-test('F-006: frame-ancestors do dpflabs.com só em /demo e /modulos/*', () => {
+test('F-006: frame-ancestors de terceiros só em /demo e /modulos/*', () => {
   const h = read('_headers');
-  const blocos = h.split(/\n(?=\S)/).filter((b) => b.includes('dpflabs.com'));
+  const blocos = h.split(/\n(?=\S)/).filter((b) => /frame-ancestors 'self' https:/.test(b));
   assert.ok(blocos.length > 0);
   for (const b of blocos) assert.match(b.split('\n')[0], /^\/(demo|demo\.html|modulos\/\*)/);
 });
