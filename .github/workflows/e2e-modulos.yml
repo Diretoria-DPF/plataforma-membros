@@ -54,10 +54,13 @@ jobs:
         run: npx playwright install --with-deps chromium
       - if: steps.escopo.outputs.run == 'true'
         run: node scripts/build.js
-      # Suítes verdes localmente (um run.js por nome; "navegacao" e "qa-mobile" casam por prefixo).
+      # Suítes que passam no Ubuntu do CI. Fora desta lista, por falharem aqui
+      # (e passarem no Windows local): navegacao (navegacao-modulos), voltar,
+      # privacidade-titular, lab-experiencia, qa-mobile-portao, qa-mobile-publico.
+      # run.js casa por prefixo: "qa-mobile." pega só qa-mobile.e2e.js.
       - if: steps.escopo.outputs.run == 'true'
         run: >-
           node scripts/e2e/run.js
-          liga navegacao entrada-v2 profile-v2 voltar parsers
-          privacidade-titular apis qa-mobile assistant casca-robusta
-          lab-mobile lab-experiencia lab-motor lab-tutor
+          liga entrada-v2 profile-v2 parsers apis assistant casca-robusta
+          qa-mobile-clinica qa-mobile-cracha qa-mobile.
+          lab-mobile lab-motor lab-tutor
