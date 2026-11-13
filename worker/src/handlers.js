@@ -21,7 +21,7 @@
  */
 import * as S from './security.js';
 import * as Logging from './logging.js';
-import { GENERIC_ERROR_MESSAGE, RATE_LIMITS } from './constants.js';
+import { GENERIC_ERROR_MESSAGE, RATE_LIMITS, ROLES } from './constants.js';
 import * as AuthService from './services/authService.js';
 import * as ProfileService from './services/profileService.js';
 import * as HomeService from './services/homeService.js';
@@ -117,6 +117,13 @@ async function runWithSession(sql, env, sessionToken, callback, options) {
 // service (nunca um TypeError inesperado ao ler input.campo).
 function asInput(input) {
   return input && typeof input === 'object' && !Array.isArray(input) ? input : {};
+}
+
+// Limitador dos proxies de moléculas: um balde por proxy, chave = perfil (Neon, sem KV); visitante tem teto menor.
+// Estourou: erro padrão do Worker, com mensagem fixa e neutra.
+export function moleculeProxyLimiter(sql, bucket, identity) {
+  const limit = identity.role === ROLES.VISITOR ? RATE_LIMITS.MOLECULE_PROXY_VISITOR : RATE_LIMITS.MOLECULE_PROXY_MEMBER;
+  return () => S.enforceRateLimit(sql, bucket, identity.profileId, limit.MAX_ATTEMPTS, limit.WINDOW_SECONDS);
 }
 
 export const API_REGISTRY = {
@@ -358,10 +365,11 @@ export const API_REGISTRY = {
   // Atlas 3D — moléculas pelo proxy (sem chamada direta do navegador).
   apiLearnAtlasTelemetry: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AtlasTelemetryService.record(sql, identity, asInput(input))),
   apiAdminLearnAtlasTelemetry: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AtlasTelemetryService.adminStats(sql, identity, asInput(input))),
-  apiLearnAtlasPdb: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, () => AtlasMoleculeService.getPdb(asInput(input))),
-  apiLearnAtlasPubchem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, () => AtlasMoleculeService.getPubchem(asInput(input))),
+  // Limite por perfil (Neon, nunca KV) só em falha de cache; visitante tem teto menor que membro (F-008).
+  apiLearnAtlasPdb: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AtlasMoleculeService.getPdb(asInput(input), { enforceLimit: moleculeProxyLimiter(sql, 'ATLAS_MOLECULE', identity) })),
+  apiLearnAtlasPubchem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AtlasMoleculeService.getPubchem(asInput(input), { enforceLimit: moleculeProxyLimiter(sql, 'ATLAS_MOLECULE', identity) })),
   // Laboratório: PubChem, ChEMBL e ChEBI pelo proxy (atrás da flag lab_chem_proxy_enabled).
-  apiLearnLabChem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LabChemService.lookup(sql, identity, asInput(input))),
+  apiLearnLabChem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LabChemService.lookup(sql, identity, asInput(input), { enforceLimit: moleculeProxyLimiter(sql, 'LAB_CHEM', identity) })),
   apiAdminLearnReviewCase: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ClinicalService.reviewCase(sql, env, identity, input || {}, cid)),
   // ---- Biblioteca LAIFT (docs/cortex/CONTRATO-B1.md §4). O catálogo público não tem sessão: só o build o consome. ----
   apiLearnLibraryPublicCatalog: (sql, env) => run(sql, () => LibraryService.publicCatalog(sql, env)),

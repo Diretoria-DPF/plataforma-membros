@@ -76,6 +76,12 @@ const num = (v) => {
   return typeof n === 'number' && Number.isFinite(n) ? n : null;
 };
 
+const RETURNED_NAME_FIELDS = ['IUPACName', 'prefName', 'nome'];
+
+function returnedNameBlocked(data) {
+  return RETURNED_NAME_FIELDS.some((f) => typeof data[f] === 'string' && checkSafety({ term: data[f] }).reason === 'cbrn');
+}
+
 /** Constrói URL, chave de cache e leitor de cada provedor. */
 function plan(provider, src) {
   if (provider === 'pubchem') {
@@ -171,8 +177,9 @@ function plan(provider, src) {
  * @param {Function} sql  usado só para ler a flag
  * @param {object} identity
  * @param {{ provider?: string, name?: string, cid?: number|string, chemblId?: string }} input
+ * @param {{ enforceLimit?: Function }} opts  enforceLimit roda só antes de ir à fonte (cache hit não conta)
  */
-export async function lookup(sql, identity, input, { cache = defaultCache(), now = () => new Date() } = {}) {
+export async function lookup(sql, identity, input, { cache = defaultCache(), now = () => new Date(), enforceLimit = null } = {}) {
   const src = input && typeof input === 'object' ? input : {};
   const provider = typeof src.provider === 'string' ? src.provider.trim().toLowerCase() : '';
   if (!PROVIDERS.includes(provider)) throw ValidationError('Fonte de consulta inválida.');
@@ -194,11 +201,14 @@ export async function lookup(sql, identity, input, { cache = defaultCache(), now
   const cached = await cacheGet(cache, key);
   if (cached && cached.data) return ok(provider, cached.data, cached.fetchedAt, true);
 
+  if (enforceLimit) await enforceLimit();
   const res = await getJson(p.url);
   if (res.notFound) return notFound(p.label);
   if (res.unavailable) return unavailable();
   const data = p.read(res.json);
   if (!data) return notFound(p.label);
+  // Consulta por cid ou chemblId não traz nome na entrada: o nome devolvido pela fonte também passa pela lista.
+  if (returnedNameBlocked(data)) return { success: false, blocked: true, message: BLOCKED_MESSAGE };
   const fetchedAt = now().toISOString();
   await cachePut(cache, key, { data, fetchedAt });
   return ok(provider, data, fetchedAt, false);

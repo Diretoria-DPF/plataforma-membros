@@ -19,7 +19,9 @@ const AGENT_TERMS = [
   // Química (agentes de guerra)
   'sarin', 'soman', 'tabun', 'ciclosarin', 'cyclosarin', 'novichok', 'agente nervoso', 'nerve agent',
   'gas mostarda', 'mostarda sulfurada', 'sulfur mustard', 'mustard gas', 'iperita', 'yperite', 'lewisita', 'lewisite',
-  'cloropicrina', 'chloropicrin', 'difosgenio', 'diphosgene', 'bz agent', 'gas de guerra', 'arma quimica',
+  'cloropicrina', 'chloropicrin', 'difosgenio', 'diphosgene', 'fosgenio', 'phosgene', 'carbonyl dichloride',
+  'dicloreto de carbonila', 'cloreto de carbonila', 'cianeto de hidrogenio', 'hydrogen cyanide', 'acido cianidrico',
+  'hydrocyanic acid', 'cloreto de cianogenio', 'cyanogen chloride', 'methylphosphonofluoridate', 'bz agent', 'gas de guerra', 'arma quimica',
   'chemical weapon', 'chemical warfare',
   // Biológica
   'antraz', 'anthrax', 'bacillus anthracis', 'ricina', 'ricin', 'abrina', 'abrin', 'variola', 'smallpox',
@@ -32,6 +34,8 @@ const AGENT_TERMS = [
 
 /** Siglas curtas: exigem palavra inteira para não casar dentro de outras palavras. */
 const AGENT_WORDS = ['vx', 'gb', 'ga', 'gd', 'gf', 'vr', 'hd'];
+/** Cloro em si é insumo comum: só bloqueia quando o texto o põe como arma ou gás de guerra. */
+const CHLORINE_WEAPON = /\b(cloro|chlorine)\b.*\b(arma|armas|weapon|weapons|guerra|war|combate|ataque|attack)\b|\b(arma|armas|weapon|weapons|guerra|war|combate|ataque|attack)\b.*\b(cloro|chlorine)\b/;
 const AGENT_WORD_CONTEXT = /\b(agente|agent|nerv\w*|guerra|war|chemical|quimic\w*)\b/;
 
 /** Drogas ilícitas e opioides/estimulantes de alto abuso: bloqueadas quando o pedido é de produção. */
@@ -70,6 +74,7 @@ function mentionsAgent(norm) {
     // Burla por espaçamento ("s a r i n"): só para termos de uma palavra com 5+ letras.
     if (!term.includes(' ') && term.length >= 5 && squashed.includes(term)) return true;
   }
+  if (CHLORINE_WEAPON.test(norm)) return true;
   const words = norm.split(' ');
   if (words.some((w) => AGENT_WORDS.includes(w)) && AGENT_WORD_CONTEXT.test(norm)) return true;
   // "VX" sozinho como agente nervoso é inequívoco no uso do laboratório.

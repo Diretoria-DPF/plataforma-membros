@@ -171,3 +171,78 @@ describe('handler', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 });
+
+describe('lookup — limite de taxa (F-008)', () => {
+  const PUB = JSON.stringify(PUBCHEM);
+
+  test('dentro do limite: consulta a fonte uma vez por falha de cache', async () => {
+    const enforceLimit = jest.fn().mockResolvedValue(undefined);
+    fetch.mockResolvedValueOnce(text(PUB));
+    const res = await Lab.lookup(sqlFlag(true), { profileId: 'p1' }, { provider: 'pubchem', name: 'aspirin' }, { cache: memoryCache(), now: NOW, enforceLimit });
+    expect(res.success).toBe(true);
+    expect(enforceLimit).toHaveBeenCalledTimes(1);
+  });
+
+  test('fora do limite: erro padrão e a rede não é chamada', async () => {
+    const { rateLimitExceeded } = await import('../src/security.js');
+    const enforceLimit = jest.fn().mockRejectedValue(rateLimitExceeded());
+    await expect(Lab.lookup(sqlFlag(true), { profileId: 'p1' }, { provider: 'pubchem', name: 'aspirin' }, { cache: memoryCache(), enforceLimit }))
+      .rejects.toMatchObject({ expected: true, message: 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.' });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  test('cache hit não gasta o limite', async () => {
+    const cache = memoryCache();
+    fetch.mockResolvedValueOnce(text(PUB));
+    await Lab.lookup(sqlFlag(true), { profileId: 'p1' }, { provider: 'pubchem', name: 'aspirin' }, { cache, now: NOW });
+    const enforceLimit = jest.fn();
+    const res = await Lab.lookup(sqlFlag(true), { profileId: 'p1' }, { provider: 'pubchem', name: 'aspirin' }, { cache, enforceLimit });
+    expect(res.cached).toBe(true);
+    expect(enforceLimit).not.toHaveBeenCalled();
+  });
+
+  test('flag desligada e nome bloqueado não gastam o limite', async () => {
+    const enforceLimit = jest.fn();
+    await Lab.lookup(sqlFlag(false), { profileId: 'p1' }, { provider: 'pubchem', name: 'aspirin' }, { cache: null, enforceLimit });
+    __resetFlagCacheForTests();
+    await Lab.lookup(sqlFlag(true), { profileId: 'p1' }, { provider: 'pubchem', name: 'Sarin' }, { cache: null, enforceLimit });
+    expect(enforceLimit).not.toHaveBeenCalled();
+  });
+
+  test('limitador do handler: visitante tem teto menor que membro', async () => {
+    const { moleculeProxyLimiter } = await import('../src/handlers.js');
+    const { RATE_LIMITS } = await import('../src/constants.js');
+    const v = RATE_LIMITS.MOLECULE_PROXY_VISITOR.MAX_ATTEMPTS;
+    const m = RATE_LIMITS.MOLECULE_PROXY_MEMBER.MAX_ATTEMPTS;
+    expect(v).toBeLessThan(m);
+    const mk = (n) => jest.fn().mockResolvedValue([{ attempts: n }]);
+    await expect(moleculeProxyLimiter(mk(v), 'LAB_CHEM', { role: 'visitor', profileId: 'a' })()).resolves.toBeUndefined();
+    await expect(moleculeProxyLimiter(mk(v + 1), 'LAB_CHEM', { role: 'visitor', profileId: 'a' })()).rejects.toMatchObject({ expected: true });
+    await expect(moleculeProxyLimiter(mk(v + 1), 'LAB_CHEM', { role: 'member', profileId: 'b' })()).resolves.toBeUndefined();
+    await expect(moleculeProxyLimiter(mk(m + 1), 'LAB_CHEM', { role: 'member', profileId: 'b' })()).rejects.toMatchObject({ expected: true });
+  });
+});
+
+describe('lookup — bloqueio pelo nome devolvido pela fonte (F-037)', () => {
+  test('consulta por CID cujo nome devolvido é fosgênio é bloqueada e não vai à cache', async () => {
+    const cache = memoryCache();
+    const body = { PropertyTable: { Properties: [{ CID: 6371, MolecularFormula: 'CCl2O', IUPACName: 'carbonyl dichloride' }] } };
+    fetch.mockResolvedValueOnce(text(JSON.stringify(body)));
+    const res = await Lab.lookup(sqlFlag(true), null, { provider: 'pubchem', cid: 6371 }, { cache, now: NOW });
+    expect(res).toEqual({ success: false, blocked: true, message: Lab.BLOCKED_MESSAGE });
+    expect(cache.put).not.toHaveBeenCalled();
+  });
+
+  test('consulta por ChEMBL ID cujo nome preferido é agente de guerra é bloqueada', async () => {
+    const body = { molecule_chembl_id: 'CHEMBL1', pref_name: 'SARIN', molecule_properties: {}, molecule_structures: {} };
+    fetch.mockResolvedValueOnce(text(JSON.stringify(body)));
+    const res = await Lab.lookup(sqlFlag(true), null, { provider: 'chembl', chemblId: 'CHEMBL1' }, { cache: memoryCache(), now: NOW });
+    expect(res).toMatchObject({ success: false, blocked: true });
+  });
+
+  test('nome comum devolvido pela fonte segue normal', async () => {
+    fetch.mockResolvedValueOnce(text(JSON.stringify(PUBCHEM)));
+    const res = await Lab.lookup(sqlFlag(true), null, { provider: 'pubchem', cid: 2244 }, { cache: memoryCache(), now: NOW });
+    expect(res.success).toBe(true);
+  });
+});

@@ -30,3 +30,26 @@ describe('safetyBlocklist', () => {
     expect(SAFE_EDUCATIONAL_ANSWER).not.toMatch(/\d+\s?(mg|g|mL)|°C/);
   });
 });
+
+describe('safetyBlocklist — F-037 (asfixiantes e sufocantes)', () => {
+  test.each([
+    ['fosgênio'], ['Phosgene'], ['cianeto de hidrogênio'], ['hydrogen cyanide'], ['ácido cianídrico'],
+    ['carbonyl dichloride'], ['cloreto de cianogênio'], ['f o s g e n i o'],
+  ])('bloqueia no termo: %s', (term) => {
+    expect(checkSafety({ term })).toEqual({ blocked: true, reason: 'cbrn' });
+  });
+
+  test.each([
+    ['cloro como arma química'], ['chlorine gas weapon'], ['usar cloro como arma de guerra'],
+  ])('bloqueia cloro posto como arma: %s', (question) => {
+    expect(checkSafety({ question }).reason).toBe('cbrn');
+  });
+
+  test.each([
+    [{ term: 'cloro' }], [{ term: 'hipoclorito de sódio' }], [{ term: 'cianeto de potássio' }],
+    [{ question: 'Como o cloro desinfeta a água da piscina?' }], [{ question: 'Qual o antídoto da intoxicação por cianeto?' }],
+    [{ question: 'O cloro é usado na farmácia para desinfecção?' }],
+  ])('não bloqueia uso legítimo: %j', (input) => {
+    expect(checkSafety(input).blocked).toBe(false);
+  });
+});
