@@ -2273,6 +2273,7 @@ console.log(
     if (d._semDescritores) {
       setHtml(body, html`<div class="cadd-cards-grid"><div class="cadd-card"><div class="cadd-card-title-row"><span class="cadd-card-title">Massa molar</span></div><div class="cadd-param-list"><div class="cadd-param-item"><span>MW:</span><strong>${d.mw.toFixed(2)}</strong></div>${d.heavyAtoms !== null ? html`<div class="cadd-param-item"><span>Átomos pesados:</span><strong>${d.heavyAtoms}</strong></div>` : ''}</div></div><div class="cadd-card"><div class="cadd-card-title-row"><span class="cadd-card-title">Descritores</span></div><div class="studio-empty-msg is-error">logP, TPSA, doadores e aceptores de hidrogênio, Lipinski, Veber, Ghose e alertas estruturais dependem do RDKit, que não está disponível agora. Nenhum valor foi estimado.</div></div></div>`);
       modal.style.display = 'flex';
+      anexarCrossReferencesCADD(); // os identificadores cruzados não dependem do RDKit
       return;
     }
 

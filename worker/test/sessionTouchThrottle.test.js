@@ -17,6 +17,11 @@ const TTL = LIMITS.SESSION_TTL_MINUTES; // 30
 const MIN_INTERVAL = LIMITS.SESSION_TOUCH_MIN_INTERVAL_MINUTES; // 5
 const ABS_HOURS = LIMITS.SESSION_ABSOLUTE_MAX_HOURS; // 12
 
+// Tolerância de 0,5 min (30 s) no relógio real: com a máquina carregada o PGlite leva segundos entre a criação
+// da sessão e a leitura, e 0,05 min (3 s) gerava falha intermitente. Os casos de fronteira distam 4,9 min ou mais
+// entre "ignorado" e "estendido", então 0,5 min continua separando os dois comportamentos.
+const MINUTES_PRECISION = 0;
+
 let db;
 let sql;
 let counter = 0;
@@ -67,44 +72,44 @@ describe('touchSession — limite de 5 min no servidor', () => {
     const { token, hash } = await makeSession({ createdAgoMin: 1, expiresInMin: TTL - 1 });
     const before = await minutesLeft(hash);
     await S.touchSession(sql, PEPPER, token);
-    expect(await minutesLeft(hash)).toBeCloseTo(before, 1);
+    expect(await minutesLeft(hash)).toBeCloseTo(before, MINUTES_PRECISION);
   });
 
   test('último deslize há 1 min (restam 29): ignorado, expires_at não muda', async () => {
     const { token, hash } = await makeSession({ createdAgoMin: 40, expiresInMin: TTL - 1 });
     const before = await minutesLeft(hash);
     await S.touchSession(sql, PEPPER, token);
-    expect(await minutesLeft(hash)).toBeCloseTo(before, 1);
+    expect(await minutesLeft(hash)).toBeCloseTo(before, MINUTES_PRECISION);
   });
 
   test('último deslize há 4 min (restam 26): ainda ignorado', async () => {
     const { token, hash } = await makeSession({ createdAgoMin: 60, expiresInMin: TTL - 4 });
     await S.touchSession(sql, PEPPER, token);
-    expect(await minutesLeft(hash)).toBeCloseTo(26, 1);
+    expect(await minutesLeft(hash)).toBeCloseTo(26, MINUTES_PRECISION);
   });
 
   test('último deslize há 4,9 min (restam 25,1): logo antes do limite, ignorado', async () => {
     const { token, hash } = await makeSession({ createdAgoMin: 60, expiresInMin: TTL - (MIN_INTERVAL - 0.1) });
     await S.touchSession(sql, PEPPER, token);
-    expect(await minutesLeft(hash)).toBeCloseTo(TTL - (MIN_INTERVAL - 0.1), 1);
+    expect(await minutesLeft(hash)).toBeCloseTo(TTL - (MIN_INTERVAL - 0.1), MINUTES_PRECISION);
   });
 
   test('último deslize há 5,1 min (restam 24,9): logo depois do limite, estende para ~30 min', async () => {
     const { token, hash } = await makeSession({ createdAgoMin: 60, expiresInMin: TTL - (MIN_INTERVAL + 0.1) });
     await S.touchSession(sql, PEPPER, token);
-    expect(await minutesLeft(hash)).toBeCloseTo(TTL, 1);
+    expect(await minutesLeft(hash)).toBeCloseTo(TTL, MINUTES_PRECISION);
   });
 
   test('último deslize há 6 min (restam 24): estende para ~30 min', async () => {
     const { token, hash } = await makeSession({ createdAgoMin: 60, expiresInMin: TTL - 6 });
     await S.touchSession(sql, PEPPER, token);
-    expect(await minutesLeft(hash)).toBeCloseTo(TTL, 1);
+    expect(await minutesLeft(hash)).toBeCloseTo(TTL, MINUTES_PRECISION);
   });
 
   test('último deslize há 29 min (resta 1): estende para ~30 min — a sessão não cai por causa do limite', async () => {
     const { token, hash } = await makeSession({ createdAgoMin: 120, expiresInMin: 1 });
     await S.touchSession(sql, PEPPER, token);
-    expect(await minutesLeft(hash)).toBeCloseTo(TTL, 1);
+    expect(await minutesLeft(hash)).toBeCloseTo(TTL, MINUTES_PRECISION);
   });
 
   test('nunca encurta: a sessão ignorada mantém exatamente o expires_at que tinha', async () => {
@@ -119,7 +124,7 @@ describe('touchSession — limite de 5 min no servidor', () => {
     const createdAgoMin = ABS_HOURS * 60 - 10; // faltam 10 min para o teto
     const { token, hash } = await makeSession({ createdAgoMin, expiresInMin: 2 });
     await S.touchSession(sql, PEPPER, token);
-    expect(await minutesLeft(hash)).toBeCloseTo(10, 1);
+    expect(await minutesLeft(hash)).toBeCloseTo(10, MINUTES_PRECISION);
   });
 
   test('sessão já no teto absoluto não é reescrita (nada a estender)', async () => {

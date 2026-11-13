@@ -206,7 +206,7 @@ test('relógio: com o painel aberto, a suspensão acaba no horário e o chat vol
   const m = Moderation.createModeration(ctx);
   try {
     m.suspend(Date.now() + 60, 0);
-    await tick(150);
+    await tick(600); // folga larga: em CI carregado o timer de 60 ms chegava a passar de 150 ms
     assert.equal(m.isSuspended(), false);
     assert.deepEqual(calls.note, [BACK]);
   } finally {

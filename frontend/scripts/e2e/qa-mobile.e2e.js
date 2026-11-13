@@ -6,7 +6,7 @@
 /**
  * qa-mobile.e2e.js — regressões da bateria de QA mobile (2026-11-05), sobre o BUILD, em celulares de 320 a 390 px:
  *  - campos de formulário com 16 px (o iOS dá zoom ao focar abaixo disso);
- *  - o crédito do rodapé tem área de toque de 44 px;
+ *  - o crédito do rodapé é só texto (sem link, desde a #187), legível e sem estourar a largura;
  *  - o quiz mostra os tópicos em duas colunas até 320 px e o aviso de "sem tópico" não cita "menu lateral".
  */
 const { startApp, check } = require('./harness');
@@ -32,8 +32,13 @@ module.exports = async function qaMobile() {
       check((await app.page.goto(app.baseUrl)) !== null, `${tag}: entrada abre`);
       await app.page.waitForSelector('#login-email');
       check((await app.page.evaluate(smallFields)).length === 0, `${tag}: campos da entrada com 16 px`);
-      const link = await app.page.locator('.site-credito a').first().boundingBox();
-      check(!!link && link.height >= 44, `${tag}: crédito do rodapé com 44 px de área de toque (${link && Math.round(link.height)})`);
+      const credito = await app.page.evaluate(() => {
+        const el = document.querySelector('.site-credito--entrada') || document.querySelector('.site-credito');
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { texto: el.textContent.trim(), links: el.querySelectorAll('a').length, dentro: r.left >= 0 && r.right <= window.innerWidth + 1 };
+      });
+      check(!!credito && /LAIFT/.test(credito.texto) && credito.links === 0 && credito.dentro, `${tag}: crédito do rodapé é texto, sem link e dentro da tela (${credito && credito.texto})`);
       await app.login();
       await app.showPanel('panel-profile');
       await app.page.waitForSelector('#profile-name');
