@@ -226,11 +226,36 @@ describe('lookup — limite de taxa (F-008)', () => {
 describe('lookup — bloqueio pelo nome devolvido pela fonte (F-037)', () => {
   test('consulta por CID cujo nome devolvido é fosgênio é bloqueada e não vai à cache', async () => {
     const cache = memoryCache();
-    const body = { PropertyTable: { Properties: [{ CID: 6371, MolecularFormula: 'CCl2O', IUPACName: 'carbonyl dichloride' }] } };
+    const body = { PropertyTable: { Properties: [{ CID: 990001, MolecularFormula: 'CCl2O', IUPACName: 'carbonyl dichloride' }] } };
     fetch.mockResolvedValueOnce(text(JSON.stringify(body)));
-    const res = await Lab.lookup(sqlFlag(true), null, { provider: 'pubchem', cid: 6371 }, { cache, now: NOW });
+    const res = await Lab.lookup(sqlFlag(true), null, { provider: 'pubchem', cid: 990001 }, { cache, now: NOW });
     expect(res).toEqual({ success: false, blocked: true, message: Lab.BLOCKED_MESSAGE });
     expect(cache.put).not.toHaveBeenCalled();
+  });
+
+  test.each([[7871, 'sarin'], [768, 'cianeto de hidrogênio'], [10461, 'mostarda sulfurada']])(
+    'CID %s (%s) é recusado pelo identificador, sem rede nem cache (F-049)', async (cid) => {
+      const cache = memoryCache();
+      const res = await Lab.lookup(sqlFlag(true), null, { provider: 'pubchem', cid }, { cache, now: NOW });
+      expect(res).toEqual({ success: false, blocked: true, message: Lab.BLOCKED_MESSAGE });
+      expect(fetch).not.toHaveBeenCalled();
+      expect(cache.put).not.toHaveBeenCalled();
+    });
+
+  test('nome sistemático que o PubChem resolve para um CID da lista é bloqueado (F-049)', async () => {
+    const cache = memoryCache();
+    const body = { PropertyTable: { Properties: [{ CID: 10461, IUPACName: '1-chloro-2-(2-chloroethylsulfanyl)ethane' }] } };
+    fetch.mockResolvedValueOnce(text(JSON.stringify(body)));
+    const res = await Lab.lookup(sqlFlag(true), null, { provider: 'pubchem', name: 'bis(2-chloroethyl) sulfide' }, { cache, now: NOW });
+    expect(res).toEqual({ success: false, blocked: true, message: Lab.BLOCKED_MESSAGE });
+    expect(cache.put).not.toHaveBeenCalled();
+  });
+
+  test('ChEMBL sem nome preferido, com InChIKey da lista, é bloqueado (F-049)', async () => {
+    const body = { molecule_chembl_id: 'CHEMBL2', pref_name: null, molecule_properties: {}, molecule_structures: { standard_inchi_key: 'DYAHQFWOVKZOOW-UHFFFAOYSA-N' } };
+    fetch.mockResolvedValueOnce(text(JSON.stringify(body)));
+    const res = await Lab.lookup(sqlFlag(true), null, { provider: 'chembl', chemblId: 'CHEMBL2' }, { cache: memoryCache(), now: NOW });
+    expect(res).toMatchObject({ success: false, blocked: true });
   });
 
   test('consulta por ChEMBL ID cujo nome preferido é agente de guerra é bloqueada', async () => {

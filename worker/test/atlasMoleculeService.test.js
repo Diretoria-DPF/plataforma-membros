@@ -182,8 +182,25 @@ describe('atlas — limite de taxa e bloqueio pelo nome devolvido (F-008, F-037)
 
   test('CID cujo nome devolvido é agente de guerra é bloqueado e não vai à cache', async () => {
     const cache = memoryCache();
-    fetch.mockResolvedValueOnce(textResponse(JSON.stringify({ PropertyTable: { Properties: [{ CID: 6371, IUPACName: 'carbonyl dichloride' }] } })));
-    const res = await Mol.getPubchem({ cid: 6371 }, { cache });
+    fetch.mockResolvedValueOnce(textResponse(JSON.stringify({ PropertyTable: { Properties: [{ CID: 990001, IUPACName: 'carbonyl dichloride' }] } })));
+    const res = await Mol.getPubchem({ cid: 990001 }, { cache });
+    expect(res).toMatchObject({ success: false, blocked: true });
+    expect(cache.put).not.toHaveBeenCalled();
+  });
+
+  test.each([[7871, 'sarin'], [768, 'cianeto de hidrogênio'], [10461, 'mostarda sulfurada']])(
+    'CID %s (%s) é recusado pelo identificador, sem rede nem cache (F-049)', async (cid) => {
+      const cache = memoryCache();
+      const res = await Mol.getPubchem({ cid }, { cache });
+      expect(res).toMatchObject({ success: false, blocked: true });
+      expect(fetch).not.toHaveBeenCalled();
+      expect(cache.put).not.toHaveBeenCalled();
+    });
+
+  test('nome sistemático que a fonte resolve para um CID da lista é bloqueado (F-049)', async () => {
+    const cache = memoryCache();
+    fetch.mockResolvedValueOnce(textResponse(JSON.stringify({ PropertyTable: { Properties: [{ CID: 768, IUPACName: 'formonitrile' }] } })));
+    const res = await Mol.getPubchem({ name: 'formonitrile' }, { cache });
     expect(res).toMatchObject({ success: false, blocked: true });
     expect(cache.put).not.toHaveBeenCalled();
   });

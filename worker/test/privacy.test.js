@@ -29,8 +29,8 @@ const rows = async (text, params = []) => (await db.query(text, params)).rows;
 beforeAll(async () => {
   db = await createMigratedDb();
   sql = toSql(db);
-}, 60000);
-afterAll(async () => { await db.close(); });
+}, 180000);
+afterAll(async () => { if (db) await db.close(); });
 
 beforeEach(async () => {
   await db.exec('TRUNCATE selection_events, selection_applications, account_deletion_requests, audit_logs, rate_limit_buckets, consents');

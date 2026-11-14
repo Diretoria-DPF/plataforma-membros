@@ -17,7 +17,7 @@
  * Fontes permitidas: PubChem, ChEMBL, ChEBI. A resposta leva fonte, licença, atribuição e data da consulta.
  */
 import { ValidationError } from '../errors.js';
-import { checkSafety } from '../ai/safetyBlocklist.js';
+import { checkSafety, isBlockedIdentifier } from '../ai/safetyBlocklist.js';
 import { isEnabled } from './featureFlagService.js';
 import {
   PUBCHEM_PROPS, PUBCHEM_NAME_RE, UNAVAILABLE_MESSAGE, unavailable, defaultCache, cacheGet, cachePut,
@@ -79,6 +79,7 @@ const num = (v) => {
 const RETURNED_NAME_FIELDS = ['IUPACName', 'prefName', 'nome'];
 
 function returnedNameBlocked(data) {
+  if (isBlockedIdentifier({ cid: data.cid, inchiKey: data.inchiKey })) return true;
   return RETURNED_NAME_FIELDS.some((f) => typeof data[f] === 'string' && checkSafety({ term: data[f] }).reason === 'cbrn');
 }
 
@@ -194,6 +195,10 @@ export async function lookup(sql, identity, input, { cache = defaultCache(), now
 
   const p = plan(provider, src);
   if (typeof src.name === 'string' && checkSafety({ term: src.name }).reason === 'cbrn') {
+    return { success: false, blocked: true, message: BLOCKED_MESSAGE };
+  }
+  // Consulta por CID: o identificador é conferido antes do cache e da rede.
+  if (provider === 'pubchem' && isBlockedIdentifier({ cid: src.cid })) {
     return { success: false, blocked: true, message: BLOCKED_MESSAGE };
   }
 
