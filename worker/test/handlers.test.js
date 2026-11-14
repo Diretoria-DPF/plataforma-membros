@@ -110,6 +110,10 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     );
     // SEC-02 — reenvio do e-mail de confirmação (público, resposta uniforme)
     expected.push('apiResendConfirmation');
+    // Cursos, prova, certificado e requisito de evento (Onda 1; sql/056–058)
+    expected.push('apiLearnCourseList', 'apiLearnCourseGet', 'apiLearnCourseLesson', 'apiLearnCourseMarkLesson', 'apiLearnCourseExamStart',
+      'apiLearnCourseExamSubmit', 'apiLearnCertificateIssue', 'apiLearnCertificateListMine', 'apiLearnEventPrereqStatus', 'apiAdminLearnCourseList',
+      'apiAdminLearnCourseSetStatus', 'apiAdminLearnCertificateRevoke', 'apiAdminLearnEventSetRequirements', 'apiAdminLearnEventWaive', 'apiCertificateVerify');
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });
 

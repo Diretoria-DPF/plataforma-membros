@@ -82,6 +82,11 @@ import * as ClientErrorService from './services/clientErrorService.js';
 import * as HighlightsService from './services/highlightsService.js';
 // Mentoria entre membros (ROL-04; sql/039; flag mentoring_enabled)
 import * as MentoringService from './services/mentoringService.js';
+// Cursos, prova, certificado e requisito de evento (Onda 1 da Educação; sql/056–058; flags desligadas)
+import * as CourseService from './services/courseService.js';
+import * as AssessmentService from './services/assessmentService.js';
+import * as CertificateService from './services/certificateService.js';
+import * as EventPrereqService from './services/eventPrereqService.js';
 import { recordActivity } from './analytics/usage.js';
 import { statusForError, tagStatus } from './httpStatus.js';
 
@@ -241,7 +246,11 @@ export const API_REGISTRY = {
   apiMentoringEnd: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MentoringService.end(sql, identity, asInput(input), cid)),
   apiMentoringSetShare: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MentoringService.setShareProgress(sql, identity, asInput(input), cid)),
   apiMentoringGetMenteeProgress: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => MentoringService.getMenteeProgress(sql, identity, asInput(input))),
-  apiRegisterForEvent: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.registerForEvent(sql, env, identity, eventId, cid)),
+  // Com event_prereq_enabled, confere os cursos exigidos ANTES da inscrição (lista do que falta em missingCourses).
+  apiRegisterForEvent: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, async (identity, cid) => {
+    await EventPrereqService.enforceForRegistration(sql, identity, eventId);
+    return EventService.registerForEvent(sql, env, identity, eventId, cid);
+  }),
   apiCancelEventRegistration: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.cancelEventRegistration(sql, env, identity, eventId, cid)),
   apiListRecentCompletedEvents: (sql) => run(sql, () => EventService.listRecentCompletedEvents(sql)),
 
@@ -404,6 +413,28 @@ export const API_REGISTRY = {
   apiAdminLearnLibrarySaveTopic: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.saveTopic(sql, identity, asInput(input), cid)),
   apiAdminLearnLibraryListStaff: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LibraryAdmin.listStaff(sql, identity)),
   apiAdminLearnLibrarySetStaff: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.setStaff(sql, identity, asInput(input), cid)),
+  // ---- Cursos (Onda 1; docs/cursos-operacao.md). Prefixo apiLearn/apiAdminLearn: alcançáveis pela ponte dos módulos. ----
+  apiLearnCourseList: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => CourseService.listCourses(sql, identity)),
+  apiLearnCourseGet: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => CourseService.getCourse(sql, identity, asInput(input))),
+  apiLearnCourseLesson: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => CourseService.getLesson(sql, identity, asInput(input))),
+  apiLearnCourseMarkLesson: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => CourseService.markLesson(sql, identity, asInput(input))),
+  apiLearnCourseExamStart: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssessmentService.startExam(sql, identity, asInput(input), cid)),
+  apiLearnCourseExamSubmit: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssessmentService.submitExam(sql, identity, asInput(input), cid)),
+  apiLearnCertificateIssue: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => CertificateService.issue(sql, env, identity, asInput(input), cid)),
+  apiLearnCertificateListMine: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => CertificateService.listMine(sql, identity)),
+  apiLearnEventPrereqStatus: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => EventPrereqService.myStatus(sql, identity, asInput(input))),
+  apiAdminLearnCourseList: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => CourseService.adminListCourses(sql, identity)),
+  apiAdminLearnCourseSetStatus: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => CourseService.adminSetStatus(sql, identity, asInput(input), cid)),
+  // Revogar exige o 2º fator na própria ação (reautenticação), além de ser exclusivo do admin.
+  apiAdminLearnCertificateRevoke: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity, cid) => {
+    await MfaService.requireStepUp(sql, env, identity, asInput(input));
+    return CertificateService.revoke(sql, identity, asInput(input), cid);
+  }),
+  apiAdminLearnEventSetRequirements: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventPrereqService.setRequirements(sql, identity, asInput(input), cid)),
+  apiAdminLearnEventWaive: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventPrereqService.waive(sql, identity, asInput(input), cid)),
+  // Verificação pública do certificado (sem sessão; limite por IP; resposta mínima).
+  apiCertificateVerify: (sql, env, [input]) => run(sql, () => CertificateService.verify(sql, env, asInput(input))),
+
   // ---- Agentes de IA (alfa, agents/v1-alpha). Rodam no shell (App.call), fora da ponte dos módulos. Sessão obrigatória; o traceId é o correlationId. ----
   apiAgentsList: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AgentsService.list(sql, env, identity)),
   apiAgentsInvoke: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AgentsService.invoke(sql, env, identity, asInput(input), cid)),
