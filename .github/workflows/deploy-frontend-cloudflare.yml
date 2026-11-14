@@ -107,6 +107,8 @@ jobs:
 
       - name: Gera frontend/dist/ (app.js ofuscado; _headers e demais arquivos copiados)
         working-directory: frontend
+        env:
+          LAIFT_DEPLOY_ENV: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
         run: npm run build
 
       # Mesma validação do deploy do Worker: aceita o token colado com quebra
