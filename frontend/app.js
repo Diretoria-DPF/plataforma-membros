@@ -1576,6 +1576,7 @@
     },
     'panel-learn': function () { if (window.LaiftLearning) window.LaiftLearning.loadPanel(); },
     'panel-admin-fiscal': function () { if (window.LaiftLearning) window.LaiftLearning.loadFiscalPanel(); },
+    'panel-courses': function () { if (window.LaiftLearning) window.LaiftLearning.loadCoursesPanel(); },
     // Fase 3 — painel admin de IA (frontend/admin-ai.js)
     'panel-admin-ai': function () {
       withBundle('admin', function () {

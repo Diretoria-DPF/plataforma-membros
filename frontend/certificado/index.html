@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#0f6f62">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+  <title>Conferir certificado · LAIFT</title>
+  <link rel="stylesheet" href="/modulos/shared/laift-tokens.css">
+  <link rel="stylesheet" href="/certificado/certificado.css">
+</head>
+<body>
+  <main class="cv-app">
+    <p class="cv-org"><a href="/">LAIFT</a></p>
+    <h1>Conferir certificado</h1>
+    <p class="cv-muted">Digite o código impresso no certificado. Se a pessoa não liberou a conferência pública, digite também o nome completo dela.</p>
+    <form id="cv-form" class="cv-form" novalidate>
+      <label for="cv-code">Código</label>
+      <input id="cv-code" name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="20" placeholder="LAIFT-XXXXX-XXXXX" required>
+      <label for="cv-name">Nome completo (se pedido)</label>
+      <input id="cv-name" name="name" autocomplete="off" maxlength="200">
+      <button type="submit" id="cv-submit">Conferir</button>
+    </form>
+    <section id="cv-result" class="cv-result hidden" aria-live="polite" tabindex="-1"></section>
+  </main>
+  <script src="/modulos/cursos/cursos-core.js"></script>
+  <script src="/certificado/certificado.js"></script>
+</body>
+</html>
