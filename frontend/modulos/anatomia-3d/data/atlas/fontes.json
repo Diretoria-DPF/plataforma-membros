@@ -1,5 +1,5 @@
 {
-  "descricao": "Obras aprovadas para citar no atlas (PR 3.2, A.2). sources[].obraId precisa existir aqui; fora disso só com exception=true e justificativa (≥ 20 caracteres), revisada à mão. Nunca citar PMID, DOI, URL ou página inventados.",
+  "descricao": "Obras aprovadas para citar no atlas (PR 3.2, A.2). sources[].obraId precisa existir aqui; fora disso só com exception=true e justificativa (≥ 20 caracteres). Nunca citar PMID, DOI, URL ou página inventados.",
   "obras": [
     { "id": "grays42", "titulo": "Gray's Anatomy: The Anatomical Basis of Clinical Practice", "autores": "Standring S (org.)", "edicao": "42ª", "tipo": "textbook" },
     { "id": "moore", "titulo": "Clinically Oriented Anatomy (Anatomia Orientada para a Clínica)", "autores": "Moore KL, Dalley AF, Agur AMR", "edicao": "8ª", "tipo": "textbook" },
