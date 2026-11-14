@@ -425,10 +425,12 @@ function aplicar(tela) {
 function mostrarCatalogo(tela) {
   if (tela.itens.length === 0) {
     tela.campos.form.hidden = true;
+    tela.campos.form.setAttribute('data-vazio', '');
     tela.vazio.hidden = true;
     tela.campos.status.textContent = MSG_SEM_ARTIGOS;
     return;
   }
+  tela.campos.form.removeAttribute('data-vazio');
   tela.campos.form.hidden = false;
   aplicar(tela);
 }

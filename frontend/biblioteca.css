@@ -150,6 +150,16 @@
   display: none;
 }
 
+/* Com JavaScript, o formulário reserva o próprio espaço (invisível) enquanto o catálogo carrega:
+   ao aparecer, a lista não desce (CLS). Sem JavaScript continua escondido; catálogo vazio
+   (data-vazio, posto por catalogo.js) também. */
+@media (scripting: enabled) {
+  .bib-filtros[hidden]:not([data-vazio]) {
+    display: grid;
+    visibility: hidden;
+  }
+}
+
 @media (min-width: 760px) {
   .bib-filtros {
     grid-template-columns: repeat(3, minmax(0, 1fr));
