@@ -27,30 +27,3 @@
 @media (min-width: 600px) and (min-height: 600px) {
   .atlas-hint { bottom: 24px; }
 }
-
-/* Aviso de versão nova (js/ui/update-bar.js): pílula no topo, acima das dicas. */
-.atlas-update-bar {
-  position: fixed;
-  left: 50%; top: calc(8px + env(safe-area-inset-top));
-  transform: translateX(-50%);
-  z-index: var(--atlas-z-toast);
-  display: flex; align-items: center; gap: 8px;
-  max-width: min(460px, calc(100vw - 24px));
-  padding: 6px 8px 6px 16px;
-  border-radius: 999px;
-  background: var(--laift-surface);
-  color: var(--laift-text);
-  border: 1px solid var(--laift-border);
-  box-shadow: var(--laift-shadow);
-  font-size: 14px; line-height: 1.3;
-}
-.atlas-update-bar-btn, .atlas-update-bar-later {
-  flex: 0 0 auto;
-  min-width: 44px; min-height: 44px;
-  padding: 0 14px;
-  border-radius: 999px;
-  font: inherit; font-weight: 600;
-  border: 1px solid var(--laift-border);
-  background: transparent; color: var(--laift-text);
-}
-.atlas-update-bar-btn { background: var(--laift-accent, var(--laift-text)); color: var(--laift-on-accent, var(--laift-surface)); border-color: transparent; }

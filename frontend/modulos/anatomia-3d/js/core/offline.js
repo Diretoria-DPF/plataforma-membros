@@ -38,55 +38,59 @@ export function updateReady(reg, controller) {
 }
 
 /**
- * Avisa quando sai uma versão nova do atlas: o service worker novo fica esperando as abas fecharem, o que num
- * app instalado pode levar dias. `onReady(apply)` recebe a função que ativa o novo e recarrega UMA vez (nunca
- * recarrega sozinho: quem decide é a pessoa). Falhas nunca afetam o atlas.
+ * Atualização automática, sem aviso: quando um service worker novo termina de instalar e fica esperando, pede
+ * que assuma já (skip-waiting). Quem recarrega a página é `watchTakeover`. Falhas nunca afetam o atlas.
  */
-export function watchUpdates(reg, nav, win, onReady) {
-  if (!reg || typeof onReady !== 'function' || !nav || !nav.serviceWorker) return;
-  let offered = false;
-  const offer = () => {
-    if (offered || !updateReady(reg, nav.serviceWorker.controller)) return;
-    offered = true;
-    onReady(() => {
-      let reloaded = false;
-      if (nav.serviceWorker.addEventListener) {
-        nav.serviceWorker.addEventListener('controllerchange', () => { if (!reloaded) { reloaded = true; win.location.reload(); } });
-      }
-      try { reg.waiting.postMessage({ type: 'skip-waiting' }); } catch (e) { win.location.reload(); }
-    });
+export function watchUpdates(reg, nav) {
+  if (!reg || !nav || !nav.serviceWorker) return;
+  const activate = () => {
+    if (!updateReady(reg, nav.serviceWorker.controller)) return;
+    try { reg.waiting.postMessage({ type: 'skip-waiting' }); } catch (e) { /* ignora */ }
   };
-  offer();
+  activate();
   if (typeof reg.addEventListener === 'function') {
     reg.addEventListener('updatefound', () => {
       const worker = reg.installing;
-      if (worker && typeof worker.addEventListener === 'function') worker.addEventListener('statechange', () => { if (worker.state === 'installed') offer(); });
+      if (worker && typeof worker.addEventListener === 'function') worker.addEventListener('statechange', () => { if (worker.state === 'installed') activate(); });
     });
   }
   try { Promise.resolve(reg.update && reg.update()).catch(() => {}); } catch (e) { /* ignora */ }
 }
 
 /**
- * O service worker novo assume sozinho (skipWaiting no sw.js). Quem já estava com a página aberta sob um worker
- * antigo (`hadController`) recebe o aviso para recarregar; na 1ª visita (sem worker antigo) não há o que avisar.
- * `onReady(apply)` recebe a função que recarrega; nunca recarrega sozinho.
+ * Quando um worker novo assume uma página que já tinha controle (`hadController`), a página em memória é da versão
+ * antiga e os arquivos pedidos daqui em diante vêm da nova. Recarrega UMA vez, sem aviso, em momento seguro: quando
+ * a aba volta ao foco (ou já está visível e livre). `isBusy()` protege quiz, estudo e qualquer sessão em andamento:
+ * ocupado, espera o próximo retorno ao foco (ou a próxima abertura, que já vem atualizada).
  */
-export function watchTakeover(nav, win, onReady, hadController) {
-  if (!hadController || typeof onReady !== 'function' || !nav || !nav.serviceWorker || typeof nav.serviceWorker.addEventListener !== 'function') return;
-  let offered = false;
+export function watchTakeover(nav, win, isBusy, hadController) {
+  if (!hadController || !nav || !nav.serviceWorker || typeof nav.serviceWorker.addEventListener !== 'function') return;
+  const doc = win && win.document;
+  let pending = false;
+  let reloaded = false;
+  const busy = () => { try { return typeof isBusy === 'function' && !!isBusy(); } catch (e) { return true; } };
+  const tryReload = () => {
+    if (!pending || reloaded || busy()) return;
+    reloaded = true;
+    win.location.reload();
+  };
   nav.serviceWorker.addEventListener('controllerchange', () => {
-    if (offered) return;
-    offered = true;
-    onReady(() => win.location.reload());
+    pending = true;
+    if (doc && doc.visibilityState === 'hidden') return; // em segundo plano: recarrega ao voltar ao foco
+    tryReload();
   });
+  if (doc && typeof doc.addEventListener === 'function') {
+    doc.addEventListener('visibilitychange', () => { if (doc.visibilityState === 'visible') tryReload(); });
+  }
+  if (typeof win.addEventListener === 'function') win.addEventListener('focus', tryReload);
 }
 
-export function registerOffline(flags, nav = typeof navigator !== 'undefined' ? navigator : null, win = typeof window !== 'undefined' ? window : null, onUpdate = null) {
+export function registerOffline(flags, nav = typeof navigator !== 'undefined' ? navigator : null, win = typeof window !== 'undefined' ? window : null, isBusy = null) {
   if (!nav || !nav.serviceWorker || !win) return Promise.resolve(false);
   if (!flags || !flags.offline) return unregisterOffline(nav, win).then(() => false);
   const scopeUrl = new URL('./', win.location.href);
   const hadController = !!nav.serviceWorker.controller;
-  watchTakeover(nav, win, onUpdate, hadController);
+  watchTakeover(nav, win, isBusy, hadController);
   return nav.serviceWorker.register('./sw.js', { scope: './' })
     .then(() => nav.serviceWorker.ready)
     .then((reg) => {
@@ -94,7 +98,7 @@ export function registerOffline(flags, nav = typeof navigator !== 'undefined' ? 
       const urls = loadedResources(entries, win.location.origin, [scopeUrl.pathname, new URL('../shared/', scopeUrl).pathname]);
       urls.push(scopeUrl.pathname);
       if (reg.active) reg.active.postMessage({ type: 'cache-loaded', urls });
-      watchUpdates(reg, nav, win, onUpdate);
+      watchUpdates(reg, nav);
       return true;
     })
     .catch(() => false);

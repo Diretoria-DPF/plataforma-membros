@@ -12,7 +12,7 @@
  *    cache primeiro, atualizando em segundo plano (stale-while-revalidate).
  *  - O SW novo assume sozinho assim que termina de instalar (skipWaiting + clients.claim): num app instalado
  *    as abas quase nunca fecham todas, e esperar por isso deixava o aparelho preso numa versão antiga. A aba
- *    aberta recebe o aviso "Há uma versão nova" (js/ui/update-bar.js) e a próxima abertura já vem atualizada.
+ *    aberta recarrega sozinha, sem aviso, ao voltar ao foco e fora de quiz/estudo (js/core/offline.js).
  *  - O shell é guardado pela URL do diretório (`${SCOPE}`), nunca por `index.html`: o servidor responde 307 de
  *    index.html para o diretório, e uma resposta que passou por redirecionamento NÃO pode ser entregue a uma
  *    navegação (o navegador mostra "a página pode estar com problemas", ERR_FAILED). `plain()` ainda limpa
@@ -80,7 +80,7 @@ self.addEventListener('activate', (event) => {
 // A página manda os recursos que já baixou no 1º acesso (antes de o SW existir).
 self.addEventListener('message', (event) => {
   const d = event.data;
-  // A página pede a troca quando a pessoa toca em "Atualizar" (js/ui/update-bar.js); o SW novo assume e a página recarrega.
+  // A página pede a troca assim que vê um worker novo esperando (js/core/offline.js).
   if (!DEV && d && d.type === 'skip-waiting') { self.skipWaiting(); return; }
   if (DEV || !d || d.type !== 'cache-loaded' || !Array.isArray(d.urls)) return;
   event.waitUntil((async () => {
