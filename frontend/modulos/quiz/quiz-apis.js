@@ -99,7 +99,13 @@ const QuizAPIEngine = {
   },
 
   // 2. PubChem: Extração de Estrutura para Projeção Molecular 2D
+  // Estruturas já buscadas nesta sessão: voltar a uma questão do mesmo fármaco não gasta dados do celular.
+  // Só resultados com sucesso entram (falha de rede não fica guardada).
+  _cacheEstrutura: new Map(),
+
   async buscarEstruturaMolecular(nomeFarmaco) {
+    const chave = String(nomeFarmaco || '').trim().toLowerCase();
+    if (chave && this._cacheEstrutura.has(chave)) return this._cacheEstrutura.get(chave);
     try {
       // CanonicalSMILES/IsomericSMILES seguem aceitos como alias na requisição,
       // mas desde 2025 o PubChem devolve as propriedades como ConnectivitySMILES/SMILES.
@@ -110,13 +116,15 @@ const QuizAPIEngine = {
       const data = await res.json();
       const prop = data?.PropertyTable?.Properties?.[0];
 
-      return prop ? {
+      const estrutura = prop ? {
         smiles: prop.CanonicalSMILES || prop.ConnectivitySMILES || prop.SMILES || prop.IsomericSMILES || null,
         pesoMolecular: prop.MolecularWeight,
         formula: prop.MolecularFormula,
         iupac: prop.IUPACName,
         cid: prop.CID
       } : null;
+      if (estrutura && chave) this._cacheEstrutura.set(chave, estrutura);
+      return estrutura;
     } catch (e) {
       console.warn('[Quiz API] PubChem indisponível:', e);
       return null;
