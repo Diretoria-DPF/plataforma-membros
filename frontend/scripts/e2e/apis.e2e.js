@@ -400,8 +400,8 @@ module.exports = async function apis() {
     await frame.evaluate(() => window.desenharEstruturaSmiles('CC(=O)O.CCO', 'Composição Imagem E2E', 'ComposicaoImagemE2E', 'C4H10O3', 100));
     await frame.waitForFunction(() => {
       const img = document.getElementById('moleculeImg');
-      return !!img && /cactus\.nci\.nih\.gov/.test(img.src || '');
-    }, null, { timeout: 4000 }).catch(() => {});
+      return !!img && /cactus\.nci\.nih\.gov/.test(img.src || '') && img.style.display === 'block' && img.complete && img.naturalWidth > 0;
+    }, null, { timeout: 15000 }).catch(() => {});
     const imgInfo = await frame.evaluate(() => {
       const img = document.getElementById('moleculeImg');
       return { src: img.src, display: img.style.display };

@@ -17,6 +17,22 @@ const intersects = (a, b) => a.x < b.x + b.width && b.x < a.x + a.width && a.y <
 async function openModule(page, id) {
   await page.evaluate((moduleId) => { window.App.showPanel('panel-learn'); window.LaiftLearning.openModule(moduleId); }, id);
   await page.waitForSelector('#learn-viewer:not(.hidden)', { state: 'attached', timeout: 5000 });
+  await assentar(page);
+}
+
+/**
+ * Espera o layout assentar (estado, não tempo fixo): a folha home-v3.css (--v3-rail) já carregou, quando a flag está
+ * ligada, e nenhuma transição/animação CSS finita está rodando (as infinitas, como as folhas e o respirar da Guia, e as já concluídas não contam) por dois quadros seguidos. Sem isso, a medida cai no meio
+ * do deslizamento do módulo (x=516 -> 248) ou antes da folha (coluna com 1280 px), e o teste falha de vez em quando.
+ */
+async function assentar(page) {
+  await page.waitForFunction(() => {
+    const root = document.documentElement;
+    if (root.hasAttribute('data-flag-home-v2-enabled') && !getComputedStyle(root).getPropertyValue('--v3-rail').trim()) return false;
+    if (document.getAnimations().some((an) => an.playState === 'running' && an.effect && an.effect.getComputedTiming().iterations !== Infinity && an.effect.getComputedTiming().progress !== null)) { window.__quadrosParados = 0; return false; }
+    window.__quadrosParados = (window.__quadrosParados || 0) + 1;
+    return window.__quadrosParados >= 2;
+  }, null, { timeout: 8000, polling: 'raf' });
 }
 
 async function box(locator) {
@@ -58,6 +74,8 @@ async function scenarioRail() {
       check(!intersects(g, fs), id + ': a Guia não cobre "Tela cheia"');
       check(!intersects(g, await box(page.locator('#learn-back'))), id + ': a Guia não cobre "← Voltar"');
       if (id === 'lab') {
+        await page.frameLocator('#learn-frames iframe:not(.hidden)').locator('.m-nav-btn').first().waitFor({ state: 'attached', timeout: 15000 });
+        await assentar(page);
         const tabs = await page.frameLocator('#learn-frames iframe:not(.hidden)').locator('.m-nav-btn').evaluateAll((nodes) => nodes.map((n) => {
           const r = n.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height };
         }));
@@ -83,6 +101,7 @@ async function scenarioGuiaCelular() {
     const launcher = page.locator('#lia-launcher');
     await launcher.waitFor({ state: 'visible', timeout: 15000 });
     await page.frameLocator('#learn-frames iframe:not(.hidden)').locator('.m-nav-btn').first().waitFor({ state: 'attached', timeout: 15000 });
+    await assentar(page);
     const g = await box(launcher);
     const tabs = await page.frameLocator('#learn-frames iframe:not(.hidden)').locator('.m-nav-btn').evaluateAll((nodes) => nodes.map((n) => {
       const r = n.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height };
