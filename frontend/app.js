@@ -640,11 +640,17 @@
   // Com a flag desligada (ou depois do login) o script, se já carregado, devolve os formulários ao lugar original.
   function mountEntradaV2() {
     var on = document.documentElement.hasAttribute('data-flag-entrada-v2-enabled') && !state.sessionToken;
+    // data-ev2-aguardando (ux-v2.js) esconde a entrada antiga enquanto a nova não monta; sai em qualquer desfecho.
+    var liberar = function () { document.documentElement.removeAttribute('data-ev2-aguardando'); };
     if (!on) {
       if (window.LaiftEntradaV2) window.LaiftEntradaV2.reset();
+      liberar();
       return;
     }
-    withBundle('entradaV2', function () { if (window.LaiftEntradaV2 && !state.sessionToken) window.LaiftEntradaV2.mount(window.App, document); });
+    withBundle('entradaV2', function () {
+      if (window.LaiftEntradaV2 && !state.sessionToken) window.LaiftEntradaV2.mount(window.App, document);
+      liberar();
+    });
   }
 
   // Flags públicas -> atributos data-flag-* no <html> (ux-v2.js; docs/FEATURE_FLAGS.md).

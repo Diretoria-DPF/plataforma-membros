@@ -130,6 +130,7 @@
     var flag = function (on) { try { if (on) storage.setItem(SHELL_RETRY_KEY, '1'); else storage.removeItem(SHELL_RETRY_KEY); } catch (e) { /* sem storage */ } };
     if (!shellMissing(win)) { flag(false); return null; }
     var doc = win.document;
+    if (doc.documentElement) doc.documentElement.removeAttribute('data-ev2-aguardando');
     var box = el(doc, 'div', 'shell-error state state-error', '');
     box.setAttribute('role', 'alert');
     box.appendChild(el(doc, 'p', 'state-title', 'Não foi possível abrir o aplicativo'));
@@ -150,7 +151,45 @@
     else win.addEventListener('load', function () { checkShell(win, storage); });
   }
 
+  // Entrada v2 sem troca de tela: para quem não tem sessão guardada, o CSS e o script da entrada nova começam a
+  // baixar já no <head> (em paralelo com a casca) e a entrada antiga fica invisível até a nova montar. Sem isso, em
+  // rede lenta a pessoa via o cartão antigo e, segundos depois, a tela inteira trocava de lugar.
+  var ENTRADA_FLAG_ATTR = 'data-flag-entrada-v2-enabled';
+  var ENTRADA_WAIT_ATTR = 'data-ev2-aguardando';
+  var ENTRADA_WAIT_MAX_MS = 15000; // nunca prende a tela pública se a entrada nova não chegar
+  var SESSION_CACHE_KEY = 'pm_session'; // mesma chave do app.js
+
+  function hasCachedSession(storage, now) {
+    try {
+      var parsed = storage ? JSON.parse(storage.getItem(SESSION_CACHE_KEY) || 'null') : null;
+      return !!(parsed && parsed.token && parsed.expiresAt && parsed.expiresAt > now);
+    } catch (e) { return false; }
+  }
+
+  function headLink(doc, attrs) {
+    var link = doc.createElement('link');
+    Object.keys(attrs).forEach(function (k) { link.setAttribute(k, attrs[k]); });
+    doc.head.appendChild(link);
+    return link;
+  }
+
+  /** Devolve true quando a entrada nova foi adiantada (flag ligada, sem sessão guardada). */
+  function prepareEntrada(win, storage) {
+    var doc = win.document;
+    var html = doc.documentElement;
+    if (!html.hasAttribute(ENTRADA_FLAG_ATTR) || !doc.head || hasCachedSession(storage, Date.now())) return false;
+    if (!doc.querySelector('link[data-entrada-v2-css]')) headLink(doc, { rel: 'stylesheet', href: 'entrada-v2.css', 'data-entrada-v2-css': '1' });
+    headLink(doc, { rel: 'preload', as: 'script', href: 'entrada-v2.js' });
+    html.setAttribute(ENTRADA_WAIT_ATTR, '1');
+    win.setTimeout(function () { html.removeAttribute(ENTRADA_WAIT_ATTR); }, ENTRADA_WAIT_MAX_MS);
+    return true;
+  }
+
   var api = {
+    prepareEntrada: prepareEntrada,
+    hasCachedSession: hasCachedSession,
+    ENTRADA_WAIT_ATTR: ENTRADA_WAIT_ATTR,
+    ENTRADA_WAIT_MAX_MS: ENTRADA_WAIT_MAX_MS,
     checkShell: checkShell,
     shellMissing: shellMissing,
     SHELL_RETRY_KEY: SHELL_RETRY_KEY,
@@ -174,6 +213,7 @@
       var storage = null;
       try { storage = root.localStorage; } catch (e) { storage = null; }
       restoreFlags(root.document.documentElement, storage, BOOT_DEFAULT_FLAGS);
+      prepareEntrada(root, storage);
       createScrollGate(root, root.document.documentElement);
       var sessionStore = null;
       try { sessionStore = root.sessionStorage; } catch (e) { sessionStore = null; }

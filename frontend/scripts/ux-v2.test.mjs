@@ -415,3 +415,61 @@ test('restoreFlags com padrões: primeira abertura (sem cache) já nasce no visu
   // sem padrões o comportamento antigo se mantém
   assert.deepEqual(Ux.restoreFlags(fakeElement(), fakeStorage({})), []);
 });
+
+// --- Entrada v2 adiantada (sem troca de tela) --------------------------------
+
+function janelaEntrada({ flag = true, session = null } = {}) {
+  const html = fakeElement(flag ? { 'data-flag-entrada-v2-enabled': '1' } : {});
+  html.hasAttribute = (n) => Object.prototype.hasOwnProperty.call(html.attrs, n);
+  const links = [];
+  const timers = [];
+  const doc = {
+    documentElement: html,
+    head: { appendChild: (l) => links.push(l) },
+    querySelector: () => null,
+    createElement: () => { const a = {}; return { attrs: a, setAttribute: (k, v) => { a[k] = v; } }; },
+  };
+  const storage = fakeStorage(session ? { pm_session: JSON.stringify(session) } : {});
+  return { win: { document: doc, setTimeout: (fn, ms) => timers.push({ fn, ms }) }, html, links, timers, storage };
+}
+
+test('prepareEntrada: visitante com a flag adianta CSS e script e esconde a entrada antiga', () => {
+  const { win, html, links, timers, storage } = janelaEntrada();
+  assert.equal(Ux.prepareEntrada(win, storage), true);
+  assert.equal(html.attrs[Ux.ENTRADA_WAIT_ATTR], '1');
+  assert.deepEqual(links.map((l) => l.attrs), [
+    { rel: 'stylesheet', href: 'entrada-v2.css', 'data-entrada-v2-css': '1' },
+    { rel: 'preload', as: 'script', href: 'entrada-v2.js' },
+  ]);
+  assert.equal(timers.length, 1);
+  assert.equal(timers[0].ms, Ux.ENTRADA_WAIT_MAX_MS);
+  timers[0].fn(); // o limite de segurança devolve a entrada antiga
+  assert.equal(Ux.ENTRADA_WAIT_ATTR in html.attrs, false);
+});
+
+test('prepareEntrada: sem a flag ou com sessão guardada não faz nada', () => {
+  const semFlag = janelaEntrada({ flag: false });
+  assert.equal(Ux.prepareEntrada(semFlag.win, semFlag.storage), false);
+  assert.equal(semFlag.links.length, 0);
+  const logada = janelaEntrada({ session: { token: 't', expiresAt: Date.now() + 60000 } });
+  assert.equal(Ux.prepareEntrada(logada.win, logada.storage), false);
+  assert.equal(Ux.ENTRADA_WAIT_ATTR in logada.html.attrs, false);
+});
+
+test('hasCachedSession: sessão vencida, inválida ou storage bloqueado contam como visitante', () => {
+  assert.equal(Ux.hasCachedSession(fakeStorage({ pm_session: JSON.stringify({ token: 't', expiresAt: 5 }) }), 10), false);
+  assert.equal(Ux.hasCachedSession(fakeStorage({ pm_session: '{quebrado' }), 10), false);
+  assert.equal(Ux.hasCachedSession(null, 10), false);
+  assert.equal(Ux.hasCachedSession({ getItem() { throw new Error('bloqueado'); } }, 10), false);
+  assert.equal(Ux.hasCachedSession(fakeStorage({ pm_session: JSON.stringify({ token: 't', expiresAt: 20 }) }), 10), true);
+});
+
+test('entrada adiantada: CSS esconde a entrada antiga e o app.js libera em qualquer desfecho', () => {
+  const css = fs.readFileSync(path.join(root, 'frontend', 'styles.css'), 'utf8');
+  assert.match(css, /html\[data-ev2-aguardando\] #screen-welcome > \* \{ visibility: hidden; \}/);
+  const app = fs.readFileSync(path.join(root, 'frontend', 'app.js'), 'utf8');
+  const inicio = app.indexOf('function mountEntradaV2()');
+  const trecho = app.slice(inicio, inicio + 900);
+  assert.equal((trecho.match(/liberar\(\);/g) || []).length, 2);
+  assert.match(trecho, /removeAttribute\('data-ev2-aguardando'\)/);
+});
