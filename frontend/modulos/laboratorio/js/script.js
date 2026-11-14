@@ -299,7 +299,7 @@
     try {
       LaiftDom.clear(div3D);
       if (viewer3D) {
-        try { viewer3D.stopAnimate(); } catch(e) {}
+        pararRotacao3D(viewer3D);
       }
 
       viewer3D = $3Dmol.createViewer(div3D, { backgroundColor: '#020617' });
@@ -313,11 +313,24 @@
         viewer3D.zoomTo();
         viewer3D.render();
         viewer3D.resize();
-        viewer3D.animate({ loop: "backAndForth", step: 0.4 });
+        iniciarRotacao3D(viewer3D);
       }
     } catch (err3D) {
       console.warn('[3Dmol Bancada] Erro ao renderizar modelo:', err3D);
     }
+  }
+
+  // O animate() do 3Dmol percorre quadros (frames) com passo fracionado: em modelo de um quadro só (SDF/PDB único),
+  // setFrame(0.4) faz model.atoms = frames[0.4] = undefined e o render seguinte lança "reading 'length'" em
+  // GLModel.selectedAtoms. A rotação contínua usa spin(), que só gira a câmera; para parar, spin(false) + stopAnimate().
+  function iniciarRotacao3D(v) {
+    if (!v) return;
+    try { v.spin('y', 0.4); } catch (e) {}
+  }
+  function pararRotacao3D(v) {
+    if (!v) return;
+    try { v.spin(false); } catch (e) {}
+    try { v.stopAnimate(); } catch (e) {}
   }
 
   window.setModoVisualizacao = function(modo) {
@@ -334,7 +347,7 @@
     if (modo === '2D') {
       if (div3D) div3D.style.display = 'none';
       if (viewer3D) {
-        try { viewer3D.stopAnimate(); } catch(e) {}
+        pararRotacao3D(viewer3D);
       }
 
       if (img2D && img2D.getAttribute('data-active') === 'true') {
@@ -357,7 +370,7 @@
             } else if (viewer3D) {
               viewer3D.resize();
               viewer3D.render();
-              viewer3D.animate({ loop: "backAndForth", step: 0.4 });
+              iniciarRotacao3D(viewer3D);
             }
           }
         }, 60);

@@ -48,6 +48,19 @@ console.log(
 (function () {
   'use strict';
 
+  // animate() do 3Dmol troca quadros com passo fracionado: em modelo de um quadro só, setFrame(0.35) deixa
+  // model.atoms indefinido e o render seguinte lança "reading 'length'" (GLModel.selectedAtoms). Girar = spin().
+  function iniciarRotacao3D(v) {
+    if (!v) return;
+    try { v.spin('y', 0.35); } catch (e) {}
+  }
+  function pararRotacao3D(v) {
+    if (!v) return;
+    try { v.spin(false); } catch (e) {}
+    try { v.stopAnimate(); } catch (e) {}
+  }
+
+
   // DOM seguro (../../shared/safe-dom.js). Nomes de moléculas criadas pelo
   // usuário, dados do ChEMBL/UniChem/PubChem e do IndexedDB entram só por
   // html`` (escapa toda interpolação) ou textContent — o Estúdio roda na
@@ -170,6 +183,7 @@ console.log(
         while (activeContexts.length > DEVICE_PROFILE.maxWebGLContexts) {
           var antigo = activeContexts.shift();
           try {
+            pararRotacao3D(antigo.viewer);
             antigo.viewer.clear();
             console.log('[WebGL] Contexto descartado:', antigo.id);
           } catch (e) {}
@@ -178,6 +192,7 @@ console.log(
       destruir: function (id) {
         for (var i = activeContexts.length - 1; i >= 0; i--) {
           if (activeContexts[i].id === id) {
+            pararRotacao3D(activeContexts[i].viewer);
             try { activeContexts[i].viewer.clear(); } catch (e) {}
             activeContexts.splice(i, 1);
           }
@@ -2138,7 +2153,7 @@ console.log(
 
     if (STATE.cmpViewerA) {
       try {
-        STATE.cmpViewerA.stopAnimate();
+        pararRotacao3D(STATE.cmpViewerA);
         STATE.cmpViewerA.clear();
         WebGLManager.destruir('cmpA');
       } catch (e) {}
@@ -2146,7 +2161,7 @@ console.log(
     }
     if (STATE.cmpViewerB) {
       try {
-        STATE.cmpViewerB.stopAnimate();
+        pararRotacao3D(STATE.cmpViewerB);
         STATE.cmpViewerB.clear();
         WebGLManager.destruir('cmpB');
       } catch (e) {}
@@ -2596,7 +2611,7 @@ console.log(
         STATE.studioViewer.render();
 
         if (STATE.autoRotacaoAtiva) {
-          try { STATE.studioViewer.animate({ loop: 'backAndForth', step: 0.35 }); } catch (e) {}
+          try { iniciarRotacao3D(STATE.studioViewer); } catch (e) {}
         }
         return;
       } catch (reuseErr) {
@@ -2607,7 +2622,7 @@ console.log(
 
     try {
       if (STATE.studioViewer) {
-        try { STATE.studioViewer.stopAnimate(); } catch (e) {}
+        try { pararRotacao3D(STATE.studioViewer); } catch (e) {}
         try { STATE.studioViewer.clear(); } catch (e) {}
         STATE.studioViewer = null;
       }
@@ -2660,7 +2675,7 @@ console.log(
       }, 180);
 
       if (STATE.autoRotacaoAtiva) {
-        try { STATE.studioViewer.animate({ loop: 'backAndForth', step: 0.35 }); } catch (e) {}
+        try { iniciarRotacao3D(STATE.studioViewer); } catch (e) {}
       }
     } catch (errCena) {
       STATE.modeloCarregadoAtivo = false;
@@ -2916,8 +2931,8 @@ console.log(
     if (b) b.classList.toggle('active', STATE.autoRotacaoAtiva);
     if (STATE.studioViewer && STATE.modeloCarregadoAtivo) {
       try {
-        if (STATE.autoRotacaoAtiva) STATE.studioViewer.animate({ loop: 'backAndForth', step: 0.35 });
-        else STATE.studioViewer.stopAnimate();
+        if (STATE.autoRotacaoAtiva) iniciarRotacao3D(STATE.studioViewer);
+        else pararRotacao3D(STATE.studioViewer);
       } catch (e) {}
     }
     salvarPreferencias();
@@ -3365,11 +3380,11 @@ console.log(
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
       if (STATE.studioViewer && STATE.autoRotacaoAtiva) {
-        try { STATE.studioViewer.stopAnimate(); } catch (e) {}
+        try { pararRotacao3D(STATE.studioViewer); } catch (e) {}
       }
     } else {
       if (STATE.studioViewer && STATE.autoRotacaoAtiva && STATE.modeloCarregadoAtivo) {
-        try { STATE.studioViewer.animate({ loop: 'backAndForth', step: 0.35 }); } catch (e) {}
+        try { iniciarRotacao3D(STATE.studioViewer); } catch (e) {}
       }
       // Ao voltar para a aba, força redraw para restaurar WebGL se necessário
       if (STATE.sdfCacheLocal && STATE._lastSDF) {
