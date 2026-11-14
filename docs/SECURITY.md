@@ -139,7 +139,7 @@ Decisões:
   `'unsafe-eval'`/`'wasm-unsafe-eval'` também, em todas **exceto o Estúdio e
   o Atlas de Anatomia** (duas exceções únicas e documentadas abaixo).
   Conferido no **build** publicado (`frontend/dist/`),
-  incluindo o `app.js` ofuscado: o javascript-obfuscator não usa `eval` nem
+  incluindo o `app.js` minificado: o terser não introduz `eval` nem
   `new Function` com as opções do `scripts/build.js`.
 - **`style-src 'unsafe-inline'` fica, por justificativa.** Ainda há
   atributos `style=` nos módulos herdados (laboratório, anatomia, estúdio)

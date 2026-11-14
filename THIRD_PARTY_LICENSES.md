@@ -38,7 +38,7 @@ binário no histórico do git). Ele é carregado sob demanda só no Estúdio
 | pacotes `pg-*` e `postgres-*` (transitivos) | — | MIT / ISC |
 
 ## Somente desenvolvimento (não distribuídas ao usuário final)
-javascript-obfuscator (BSD-2-Clause), wrangler (MIT/Apache-2.0), jest (MIT),
+terser (BSD-2-Clause), wrangler (MIT/Apache-2.0), jest (MIT),
 ajv (MIT), axe-core (MPL-2.0), jsqr (Apache-2.0), @gltf-transform/core (MIT),
 Playwright (Apache-2.0). Licenças a confirmar no `package-lock.json`.
 
