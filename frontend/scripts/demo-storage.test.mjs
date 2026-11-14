@@ -147,5 +147,5 @@ test('F-006: frame-ancestors de terceiros só em /demo e /modulos/<nome>/*', () 
   const h = read('_headers');
   const blocos = h.split(/\n(?=\S)/).filter((b) => /frame-ancestors 'self' https:/.test(b));
   assert.ok(blocos.length > 0);
-  for (const b of blocos) assert.match(b.split('\n')[0], /^\/(demo|demo\.html|modulos\/\*)/);
+  for (const b of blocos) assert.match(b.split('\n')[0], /^\/(demo|demo\.html|modulos\/[a-z0-9-]+\/\*)/);
 });
