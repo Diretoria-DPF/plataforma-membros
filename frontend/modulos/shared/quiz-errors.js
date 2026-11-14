@@ -136,7 +136,8 @@
       var now = owner();
       var store;
       try { store = parse(storage ? storage.getItem(KEY) : null, now); } catch (e) { store = emptyStore(now); }
-      if (store.owner && now && store.owner !== now) return emptyStore(now);
+      // Registro sem dono (ex.: gravado pela demonstração antiga) nunca é adotado por uma conta (F-006).
+      if (now && store.owner !== now) return emptyStore(now);
       return store;
     }
 

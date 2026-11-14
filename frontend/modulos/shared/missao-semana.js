@@ -7,7 +7,7 @@
  * missao-semana.js — missão da semana e conquistas pessoais (A6), só no aparelho e só do próprio membro.
  *
  * Sem ranking, sem comparação entre pessoas e nada vai ao servidor: tudo fica em UMA chave do localStorage
- * (`laiftMissao`), com dono (hash local do e-mail) para não mostrar dados de outra conta no mesmo navegador.
+ * (`laiftMissao`), com dono (hash local do e-mail) para não mostrar dados de outra conta no mesmo navegador; registro sem dono não é adotado por conta.
  *
  *  - Missão: a cada semana (segunda a domingo, fuso de São Paulo) há uma tarefa por módulo ativo
  *    (`MISSION_MODULES`), com alvo de atividades. A missão termina sem culpa: semana não cumprida só sai da vista.
@@ -264,8 +264,8 @@
       var me = owner();
       var store;
       try { store = parse(storage ? storage.getItem(KEY) : null, me); } catch (e) { store = emptyStore(me); }
-      if (store.owner && me && store.owner !== me) return emptyStore(me);
-      if (!store.owner) store.owner = me;
+      // Registro sem dono (ex.: gravado pela demonstração antiga) nunca é adotado por uma conta (F-006).
+      if (me && store.owner !== me) return emptyStore(me);
       return store;
     }
 
