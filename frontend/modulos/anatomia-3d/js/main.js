@@ -49,7 +49,6 @@ import { createReviewStatus, SEARCH_BOOST } from './ui/review-status.js';
 import { mountNewReviewedChip, reviewedProgress, mountContinueChip } from './ui/discovery.js';
 import { lastStudiedSid } from './modes/study-io.js';
 import { registerOffline } from './core/offline.js';
-import { showUpdateBar } from './ui/update-bar.js';
 import { createTelemetry } from './core/telemetry.js';
 
 const params = new URLSearchParams(location.search);
@@ -1317,7 +1316,8 @@ async function boot() {
   // altera nada no motor; `getStats()` já existe em js/engine/renderer.js.
   window.__atlasPerf = Object.freeze({ getStats: () => rendererApi.getStats() });
   emit('atlas:ready', {});
-  registerOffline(ATLAS_FLAGS, undefined, undefined, (apply) => showUpdateBar(document, apply));
+  // Atualização automática e sem aviso; só recarrega fora de quiz, estudo e demais sessões (modo diferente de Explorar).
+  registerOffline(ATLAS_FLAGS, undefined, undefined, () => storeApi.get().mode !== 'explorar');
   createTelemetry({ bus, api: window.LaiftApi, flags: ATLAS_FLAGS, getMode: () => storeApi.get().mode });
 }
 

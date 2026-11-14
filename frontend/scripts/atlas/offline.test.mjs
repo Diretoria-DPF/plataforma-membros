@@ -15,7 +15,6 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { loadedResources, registerOffline, updateReady, watchTakeover, watchUpdates } from '../../modulos/anatomia-3d/js/core/offline.js';
-import { showUpdateBar, UPDATE_TEXT } from '../../modulos/anatomia-3d/js/ui/update-bar.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const A3D = path.resolve(here, '../../modulos/anatomia-3d');
@@ -114,52 +113,39 @@ test('updateReady: só com um worker novo esperando E a página já controlada p
 
 function fakeUpdateEnv(over = {}) {
   const sent = [];
-  const swListeners = {};
-  const reloaded = [];
   const reg = { waiting: { postMessage: (m) => sent.push(m) }, update: () => Promise.resolve(), addEventListener: () => {}, ...over };
-  const nav = { serviceWorker: { controller: {}, addEventListener: (n, f) => { swListeners[n] = f; } } };
-  const win = { location: { reload: () => reloaded.push(1) } };
-  return { reg, nav, win, sent, swListeners, reloaded };
+  const nav = { serviceWorker: { controller: {}, addEventListener: () => {} } };
+  return { reg, nav, sent };
 }
 
-test('watchUpdates: oferece a atualização; ao aplicar pede a troca e recarrega UMA vez quando o novo assume', () => {
+test('watchUpdates: worker novo esperando é ativado sozinho, sem aviso', () => {
   const env = fakeUpdateEnv();
-  let apply = null;
-  let offers = 0;
-  watchUpdates(env.reg, env.nav, env.win, (fn) => { offers += 1; apply = fn; });
-  assert.equal(offers, 1);
-  assert.equal(env.reloaded.length, 0, 'não recarrega sozinho');
-  apply();
+  watchUpdates(env.reg, env.nav);
   assert.deepEqual(env.sent, [{ type: 'skip-waiting' }]);
-  env.swListeners.controllerchange();
-  env.swListeners.controllerchange();
-  assert.equal(env.reloaded.length, 1);
 });
 
-test('watchUpdates: não oferece na 1ª visita, sem callback ou sem suporte; falhas não quebram', () => {
+test('watchUpdates: não ativa na 1ª visita; falhas e falta de suporte não quebram', () => {
   const first = fakeUpdateEnv();
   first.nav.serviceWorker.controller = null;
-  let offers = 0;
-  watchUpdates(first.reg, first.nav, first.win, () => { offers += 1; });
-  assert.equal(offers, 0);
-  assert.doesNotThrow(() => watchUpdates(first.reg, first.nav, first.win, null));
-  assert.doesNotThrow(() => watchUpdates(null, first.nav, first.win, () => {}));
-  assert.doesNotThrow(() => watchUpdates({ waiting: {}, update: () => { throw new Error('x'); } }, first.nav, first.win, () => {}));
+  watchUpdates(first.reg, first.nav);
+  assert.deepEqual(first.sent, []);
+  assert.doesNotThrow(() => watchUpdates(null, first.nav));
+  assert.doesNotThrow(() => watchUpdates({ waiting: {}, update: () => { throw new Error('x'); } }, first.nav));
 });
 
-test('watchUpdates: worker que termina de instalar depois também é oferecido', () => {
+test('watchUpdates: worker que termina de instalar depois também é ativado', () => {
   const env = fakeUpdateEnv({ waiting: null });
   const handlers = {};
   const worker = { state: 'installing', addEventListener: (n, f) => { handlers[n] = f; } };
   env.reg.installing = worker;
   env.reg.addEventListener = (n, f) => { handlers[`reg:${n}`] = f; };
-  let offers = 0;
-  watchUpdates(env.reg, env.nav, env.win, () => { offers += 1; });
+  watchUpdates(env.reg, env.nav);
   handlers['reg:updatefound']();
   worker.state = 'installed';
-  env.reg.waiting = {};
+  const sent = [];
+  env.reg.waiting = { postMessage: (m) => sent.push(m) };
   handlers.statechange();
-  assert.equal(offers, 1);
+  assert.deepEqual(sent, [{ type: 'skip-waiting' }]);
 });
 
 test('sw.js: a mensagem skip-waiting ativa o worker novo (com build; no desenvolvimento não faz nada)', () => {
@@ -242,50 +228,62 @@ test('sw.js: entrada de shell redirecionada deixada por versão antiga é entreg
   assert.equal(res.status, 200);
 });
 
-test('watchTakeover: avisa quem já tinha worker antigo quando o novo assume; recarrega só ao aplicar, uma vez', () => {
-  const listeners = {};
-  const nav = { serviceWorker: { addEventListener: (n, f) => { listeners[n] = f; } } };
-  const reloaded = [];
-  const win = { location: { reload: () => reloaded.push(1) } };
-  let offers = 0;
-  let apply = null;
-  watchTakeover(nav, win, (fn) => { offers += 1; apply = fn; }, true);
-  listeners.controllerchange();
-  listeners.controllerchange();
-  assert.equal(offers, 1);
-  assert.equal(reloaded.length, 0, 'não recarrega sozinho');
-  apply();
-  assert.equal(reloaded.length, 1);
+function takeoverEnv(visibility = 'visible') {
+  const sw = {}; const docL = {}; const winL = {}; const reloaded = [];
+  const nav = { serviceWorker: { addEventListener: (n, f) => { sw[n] = f; } } };
+  const doc = { visibilityState: visibility, addEventListener: (n, f) => { docL[n] = f; } };
+  const win = { document: doc, location: { reload: () => reloaded.push(1) }, addEventListener: (n, f) => { winL[n] = f; } };
+  return { nav, doc, win, sw, docL, winL, reloaded };
+}
+
+test('watchTakeover: aba visível e livre recarrega UMA vez, sem aviso', () => {
+  const e = takeoverEnv();
+  watchTakeover(e.nav, e.win, () => false, true);
+  e.sw.controllerchange();
+  e.sw.controllerchange();
+  e.winL.focus();
+  assert.equal(e.reloaded.length, 1);
 });
 
-test('watchTakeover: na 1ª visita (sem worker antigo), sem callback ou sem suporte não faz nada', () => {
-  const listeners = {};
-  const nav = { serviceWorker: { addEventListener: (n, f) => { listeners[n] = f; } } };
-  watchTakeover(nav, {}, () => {}, false);
-  watchTakeover(nav, {}, null, true);
-  assert.equal(listeners.controllerchange, undefined);
-  assert.doesNotThrow(() => watchTakeover({}, {}, () => {}, true));
-  assert.doesNotThrow(() => watchTakeover(null, {}, () => {}, true));
+test('watchTakeover: em segundo plano espera a aba voltar ao foco', () => {
+  const e = takeoverEnv('hidden');
+  watchTakeover(e.nav, e.win, () => false, true);
+  e.sw.controllerchange();
+  assert.equal(e.reloaded.length, 0);
+  e.docL.visibilitychange(); // ainda oculta
+  assert.equal(e.reloaded.length, 0);
+  e.doc.visibilityState = 'visible';
+  e.docL.visibilitychange();
+  assert.equal(e.reloaded.length, 1);
 });
 
-test('showUpdateBar: uma barra só, "Atualizar" aplica, "Depois" fecha, sem innerHTML', () => {
-  const made = [];
-  const el = (tag) => {
-    const node = { tag, children: [], listeners: {}, attrs: {}, textContent: '', appendChild(c) { node.children.push(c); }, setAttribute(k, v) { node.attrs[k] = v; }, addEventListener(n, f) { node.listeners[n] = f; }, remove() { node.removed = true; } };
-    Object.defineProperty(node, 'innerHTML', { set() { throw new Error('innerHTML proibido'); } });
-    made.push(node);
-    return node;
-  };
-  const doc = { body: { appendChild: (c) => { doc.mounted = c; } }, createElement: el, getElementById: () => doc.mounted || null };
-  let applied = 0;
-  const bar = showUpdateBar(doc, () => { applied += 1; });
-  assert.equal(showUpdateBar(doc, () => {}), bar, 'chamar de novo reaproveita a mesma barra');
-  assert.equal(bar.children[0].textContent, UPDATE_TEXT);
-  const [, update, later] = bar.children;
-  update.listeners.click();
-  assert.equal(applied, 1);
-  assert.equal(update.textContent, 'Atualizando…');
-  later.listeners.click();
-  assert.equal(bar.removed, true);
-  assert.doesNotMatch(fs.readFileSync(path.join(A3D, 'js/ui/update-bar.js'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, ''), /innerHTML|outerHTML|insertAdjacentHTML/);
+test('watchTakeover: quiz/sessão em andamento nunca é interrompido; recarrega no próximo foco livre', () => {
+  const e = takeoverEnv();
+  let busy = true;
+  watchTakeover(e.nav, e.win, () => busy, true);
+  e.sw.controllerchange();
+  e.docL.visibilitychange();
+  assert.equal(e.reloaded.length, 0);
+  busy = false;
+  e.docL.visibilitychange();
+  assert.equal(e.reloaded.length, 1);
+  const f = takeoverEnv();
+  watchTakeover(f.nav, f.win, () => { throw new Error('x'); }, true); // dúvida = ocupado
+  f.sw.controllerchange();
+  assert.equal(f.reloaded.length, 0);
+});
+
+test('watchTakeover: na 1ª visita ou sem suporte não faz nada', () => {
+  const e = takeoverEnv();
+  watchTakeover(e.nav, e.win, () => false, false);
+  assert.equal(e.sw.controllerchange, undefined);
+  assert.doesNotThrow(() => watchTakeover({}, {}, () => false, true));
+  assert.doesNotThrow(() => watchTakeover(null, {}, () => false, true));
+});
+
+test('sem aviso de versão nova: a barra e seus textos não existem mais', () => {
+  assert.equal(fs.existsSync(path.join(A3D, 'js/ui/update-bar.js')), false);
+  for (const f of ['js/main.js', 'js/core/offline.js', 'css/hints.css', 'sw.js']) {
+    assert.doesNotMatch(fs.readFileSync(path.join(A3D, f), 'utf8'), /update-bar|atlas-update|Há uma versão nova|showUpdateBar/);
+  }
 });
