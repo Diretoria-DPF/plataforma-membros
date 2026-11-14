@@ -771,3 +771,25 @@ export const MENTORING = Object.freeze({
   WRITE_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 }),
   READ_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 }),
 });
+
+// Cursos, prova, certificado e requisito de evento (Onda 1 da Educação; sql/056–058; docs/cursos-operacao.md).
+// Todas as flags nascem desligadas. A prova é sorteada e corrigida na Worker; o gabarito nunca sai em resposta.
+export const COURSES = Object.freeze({
+  FLAG: 'courses_enabled',
+  CERT_FLAG: 'certificates_enabled',
+  PREREQ_FLAG: 'event_prereq_enabled',
+  LIST_MAX: 100,                  // cursos por listagem
+  SUBMIT_GRACE_SECONDS: 60,       // folga de rede depois do prazo da tentativa
+  CERT_PREFIX: 'LAIFT',
+  CERT_ALPHABET: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', // 32 símbolos, sem 0/O/1/I
+  CERT_GROUP: 5,                  // LAIFT-XXXXX-XXXXX = 10 símbolos = 50 bits
+  CERT_KEY_DOMAIN: 'laift-certificate-v1',
+  REVOKE_REASON_MIN: 5,
+  REVOKE_REASON_MAX: 500,
+  EVENT_REQUIREMENTS_MAX: 10,
+  READ_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 300, WINDOW_SECONDS: 3600 }),
+  WRITE_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 }),
+  EXAM_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 20, WINDOW_SECONDS: 3600 }),
+  ADMIN_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 }),
+  VERIFY_IP_RATE_LIMIT: Object.freeze({ MAX_ATTEMPTS: 30, WINDOW_SECONDS: 600 }),
+});

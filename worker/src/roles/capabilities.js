@@ -46,7 +46,7 @@ export const FUNCTIONAL_ROLES = freezeList(Object.keys(ROLE_CAPS));
 
 /** Só o admin as tem; nenhum cargo as recebe. */
 export const ADMIN_ONLY_CAPABILITIES = freezeList([
-  'users.manage', 'flags', 'mfa.reset', 'audit.read', 'metrics.read', 'roles.grant', 'kb.reindex',
+  'users.manage', 'flags', 'mfa.reset', 'audit.read', 'metrics.read', 'roles.grant', 'kb.reindex', 'certificates.revoke',
 ]);
 
 export const CAPABILITIES = freezeList([
