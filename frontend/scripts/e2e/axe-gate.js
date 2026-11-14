@@ -18,8 +18,14 @@ const fs = require('fs');
 const path = require('path');
 const { check } = require('./harness');
 
-const AXE_FILE = path.join(__dirname, '..', '..', 'node_modules', 'axe-core', 'axe.min.js');
-const AXE_SRC = fs.existsSync(AXE_FILE) ? fs.readFileSync(AXE_FILE, 'utf8') : null;
+/** Caminho do axe.min.js: node_modules do front-end ou, na falta, a resolução normal de módulos (NODE_PATH, pasta acima). */
+function localizarAxe() {
+  const local = path.join(__dirname, '..', '..', 'node_modules', 'axe-core', 'axe.min.js');
+  if (fs.existsSync(local)) return local;
+  try { return require.resolve('axe-core/axe.min.js'); } catch (e) { return null; }
+}
+const AXE_FILE = localizarAxe();
+const AXE_SRC = AXE_FILE ? fs.readFileSync(AXE_FILE, 'utf8') : null;
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 const BLOCKING_IMPACTS = new Set(['serious', 'critical']);
 

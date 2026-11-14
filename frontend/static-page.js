@@ -15,7 +15,9 @@
   if (!field) return;
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+  var MAX_FOLHAS_TOQUE = 6; // mesma regra do app.js: menos animação em celular
   var count = Number(field.getAttribute('data-leaves')) || 10;
+  if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) count = Math.min(count, MAX_FOLHAS_TOQUE);
   var symbols = ['🍃', '🍂', '🌿'];
   for (var i = 0; i < count; i++) {
     var leaf = document.createElement('span');
