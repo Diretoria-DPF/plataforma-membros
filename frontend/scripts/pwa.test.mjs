@@ -123,3 +123,67 @@ test('sw.js: cache versionado com prefixo; versões antigas são identificadas p
   assert.equal(Sw.isStaleCache(Sw.CACHE_NAME), false);
   assert.equal(Sw.isStaleCache('outro-app-cache'), false, 'nunca apaga cache que não é nosso (ex.: o do Atlas)');
 });
+
+// ---- F-017: rede primeiro com tempo limite ----
+function swHarness({ netDelay, netFails = false, cached }) {
+  const Sw = require('../sw.js');
+  const timers = [];
+  const stores = [];
+  let netResolve;
+  const net = new Promise((res, rej) => { netResolve = () => (netFails ? rej(new Error('offline')) : res(netResponse)); });
+  const netResponse = { ok: true, type: 'basic', tag: 'rede', clone() { return { tag: 'copia' }; } };
+  const result = Sw.networkFirstWithTimeout({
+    fetchNetwork: () => net,
+    readCache: () => Promise.resolve(cached),
+    fallback: () => Promise.resolve(cached || { tag: 'erro' }),
+    store: (c) => { stores.push(c); return Promise.resolve(); },
+    timeoutMs: Sw.NETWORK_TIMEOUT_MS,
+    setTimer: (fn, ms) => { timers.push({ fn, ms, cleared: false }); return timers.length - 1; },
+    clearTimer: (id) => { timers[id].cleared = true; },
+  });
+  return { Sw, timers, stores, result, netResponse, finishNet: netResolve };
+}
+const tick = () => new Promise((r) => setImmediate(r));
+
+test('sw.js: o tempo limite da rede é uma constante nomeada de 3 s', () => {
+  assert.equal(require('../sw.js').NETWORK_TIMEOUT_MS, 3000);
+});
+
+test('sw.js F-017: rede rápida responde com a rede e atualiza o cache', async () => {
+  const h = swHarness({ cached: { tag: 'cache' } });
+  assert.equal(h.timers[0].ms, 3000);
+  h.finishNet();
+  assert.equal((await h.result.response).tag, 'rede');
+  await h.result.done;
+  assert.equal(h.stores.length, 1);
+  assert.equal(h.timers[0].cleared, true);
+});
+
+test('sw.js F-017: rede lenta com cache serve o cache aos 3 s e atualiza o cache depois', async () => {
+  const h = swHarness({ cached: { tag: 'cache' } });
+  h.timers[0].fn();
+  assert.equal((await h.result.response).tag, 'cache');
+  assert.equal(h.stores.length, 0, 'a rede ainda não terminou');
+  h.finishNet();
+  await h.result.done;
+  assert.equal(h.stores.length, 1, 'a rede terminou em segundo plano e atualizou o cache');
+});
+
+test('sw.js F-017: rede lenta sem cache continua esperando a rede', async () => {
+  const h = swHarness({ cached: undefined });
+  let settled = false;
+  h.result.response.then(() => { settled = true; });
+  h.timers[0].fn();
+  await tick();
+  assert.equal(settled, false);
+  h.finishNet();
+  assert.equal((await h.result.response).tag, 'rede');
+});
+
+test('sw.js F-017: rede que falha cai para o cache', async () => {
+  const h = swHarness({ netFails: true, cached: { tag: 'cache' } });
+  h.finishNet();
+  assert.equal((await h.result.response).tag, 'cache');
+  await h.result.done;
+  assert.equal(h.stores.length, 0);
+});

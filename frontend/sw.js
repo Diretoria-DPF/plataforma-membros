@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Service worker da plataforma: SÓ para o shell estático do próprio site.
-//  - estratégia "rede primeiro, cache de reserva": o usuário sempre recebe a
+//  - estratégia "rede primeiro (3 s), cache de reserva": o usuário sempre recebe a
 //    versão nova quando há conexão, e abre a tela inicial mesmo offline;
 //  - nunca intercepta a API (outra origem), POST, Range, o próprio sw.js nem o
 //    Atlas 3D (que tem service worker e cache próprios);
@@ -36,6 +36,9 @@
     'roles-ui.js', 'roles.css',
   ];
   var ATLAS_PATH = '/modulos/anatomia-3d/';
+  // Tempo máximo esperando a rede quando já há resposta em cache (F-017): passado esse prazo,
+  // serve o cache e deixa a rede terminar em segundo plano, atualizando o cache.
+  var NETWORK_TIMEOUT_MS = 3000;
 
   function shouldHandle(request, origin) {
     if (request.method !== 'GET') return false;
@@ -52,6 +55,34 @@
     return !!response && response.ok === true && response.type === 'basic';
   }
 
+  // Rede primeiro com tempo limite. Devolve { response, done }:
+  //  - response: Promise da resposta final (rede; ou cache se a rede passar do prazo/falhar);
+  //  - done: Promise que só termina quando a rede encerra e o cache foi atualizado (event.waitUntil).
+  // deps: fetchNetwork(), readCache() (hit ou undefined), fallback() (cache/casca/erro, usado se a rede falhar),
+  //       store(response) (grava, recebe cópia), timeoutMs, setTimer, clearTimer.
+  function networkFirstWithTimeout(deps) {
+    var timer;
+    var stored = Promise.resolve();
+    var network = Promise.resolve().then(deps.fetchNetwork).then(function (response) {
+      if (shouldStore(response)) {
+        // cache indisponível: segue só com a rede
+        stored = Promise.resolve().then(function () { return deps.store(response.clone()); }).catch(function () {});
+      }
+      return response;
+    });
+    var response = new Promise(function (resolve) {
+      timer = deps.setTimer(function () {
+        Promise.resolve().then(deps.readCache).then(function (hit) { if (hit) resolve(hit); }, function () {});
+      }, deps.timeoutMs);
+      network.then(function (r) { deps.clearTimer(timer); resolve(r); }, function () {
+        deps.clearTimer(timer);
+        resolve(Promise.resolve().then(deps.fallback));
+      });
+    });
+    var done = network.then(function () { return stored; }, function () {});
+    return { response: response, done: done };
+  }
+
   function isStaleCache(name) {
     return name.indexOf(CACHE_PREFIX) === 0 && name !== CACHE_NAME;
   }
@@ -60,6 +91,7 @@
     module.exports = {
       CACHE_PREFIX: CACHE_PREFIX, CACHE_NAME: CACHE_NAME, shouldHandle: shouldHandle,
       shouldStore: shouldStore, isStaleCache: isStaleCache,
+      networkFirstWithTimeout: networkFirstWithTimeout, NETWORK_TIMEOUT_MS: NETWORK_TIMEOUT_MS,
     };
     return;
   }
@@ -84,20 +116,22 @@
   root.addEventListener('fetch', function (event) {
     var request = event.request;
     if (!shouldHandle(request, root.location.origin)) return;
-    event.respondWith(
-      root.fetch(request).then(function (response) {
-        if (shouldStore(response)) {
-          var copy = response.clone();
-          root.caches.open(CACHE_NAME).then(function (cache) { return cache.put(request, copy); });
-        }
-        return response;
-      }).catch(function () {
+    var result = networkFirstWithTimeout({
+      fetchNetwork: function () { return root.fetch(request); },
+      readCache: function () { return root.caches.match(request); },
+      fallback: function () {
         return root.caches.match(request).then(function (hit) {
           if (hit) return hit;
           if (request.mode === 'navigate') return root.caches.match('./').then(function (home) { return home || Response.error(); });
           return Response.error();
         });
-      })
-    );
+      },
+      store: function (copy) { return root.caches.open(CACHE_NAME).then(function (cache) { return cache.put(request, copy); }); },
+      timeoutMs: NETWORK_TIMEOUT_MS,
+      setTimer: function (fn, ms) { return root.setTimeout(fn, ms); },
+      clearTimer: function (id) { root.clearTimeout(id); },
+    });
+    event.respondWith(result.response);
+    event.waitUntil(result.done);
   });
 })(typeof self !== 'undefined' ? self : globalThis);
