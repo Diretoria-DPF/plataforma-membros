@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 // Garante que o index.html do Atlas pré-carrega todo o grafo estático de módulos
 // (F-022: abertura em Fast 3G). Se este teste falhar, atualize os <link rel="modulepreload">.
 import { test } from 'node:test';
