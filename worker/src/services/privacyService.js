@@ -174,6 +174,15 @@ function ownRecordQueries(sql, id) {
       WHERE profile_id = ${id}::uuid ORDER BY created_at DESC LIMIT ${EXPORT_LIMIT}`,
     labBoletim: () => sql`SELECT competencia, acertos, erros, dicas, pulos, fora_de_ordem, sem_apoio, updated_at FROM lab_boletim_competencia
       WHERE profile_id = ${id}::uuid ORDER BY competencia LIMIT ${EXPORT_LIMIT}`,
+    // Cursos e certificados (sql/056–058). Sem gabarito e sem as respostas de cada questão.
+    courseProgress: () => sql`SELECT c.title, p.course_version, p.lessons_done, p.started_at, p.updated_at FROM course_progress p
+      JOIN courses c ON c.id = p.course_id WHERE p.profile_id = ${id}::uuid ORDER BY p.started_at DESC LIMIT ${EXPORT_LIMIT}`,
+    courseAttempts: () => sql`SELECT c.title, a.course_version, a.started_at, a.submitted_at, a.score_pct, a.passed FROM assessment_attempts a
+      JOIN courses c ON c.id = a.course_id WHERE a.profile_id = ${id}::uuid ORDER BY a.started_at DESC LIMIT ${EXPORT_LIMIT}`,
+    certificates: () => sql`SELECT code, holder_name, course_title, course_version, workload_minutes, score_pct, issued_at, valid_until,
+      public_consent, revoked_at FROM certificates WHERE profile_id = ${id}::uuid ORDER BY issued_at DESC LIMIT ${EXPORT_LIMIT}`,
+    eventWaivers: () => sql`SELECT e.title, w.reason, w.granted_at FROM event_requirement_waivers w JOIN events e ON e.id = w.event_id
+      WHERE w.profile_id = ${id}::uuid ORDER BY w.granted_at DESC LIMIT ${EXPORT_LIMIT}`,
     memoryConsent: () => sql`SELECT status, purpose_version, granted_at, revoked_at, updated_at FROM member_memory_consent
       WHERE profile_id = ${id}::uuid`,
     libraryStaff: () => sql`SELECT role, granted_at FROM library_staff WHERE profile_id = ${id}::uuid LIMIT ${EXPORT_LIMIT}`,
@@ -196,6 +205,10 @@ function ownRecordsOut(r) {
     assistantIncidents: r.assistantIncidents.map((i) => ({ kind: i.kind, detection: i.detection, levelAfter: i.level_after, createdAt: iso(i.created_at) })),
     agentTraces: r.agentTraces.map((t) => ({ persona: t.persona, feature: t.feature, model: t.model || null, tokensIn: t.tokens_in, tokensOut: t.tokens_out, outcome: t.outcome, memoryUsed: !!t.memory_used, createdAt: iso(t.created_at) })),
     labBoletim: r.labBoletim.map((b) => ({ competencia: b.competencia, acertos: b.acertos, erros: b.erros, dicas: b.dicas, pulos: b.pulos, foraDeOrdem: b.fora_de_ordem, semApoio: b.sem_apoio, updatedAt: iso(b.updated_at) })),
+    courseProgress: r.courseProgress.map((p) => ({ course: p.title, version: p.course_version, lessonsDone: (p.lessons_done || []).map(Number), startedAt: iso(p.started_at), updatedAt: iso(p.updated_at) })),
+    courseAttempts: r.courseAttempts.map((a) => ({ course: a.title, version: a.course_version, startedAt: iso(a.started_at), submittedAt: iso(a.submitted_at), scorePct: a.score_pct, passed: a.passed })),
+    certificates: r.certificates.map((c) => ({ code: c.code, holderName: c.holder_name, course: c.course_title, version: c.course_version, workloadMinutes: c.workload_minutes, scorePct: c.score_pct, issuedAt: iso(c.issued_at), validUntil: iso(c.valid_until), publicConsent: !!c.public_consent, revokedAt: iso(c.revoked_at) })),
+    eventWaivers: r.eventWaivers.map((w) => ({ event: w.title, reason: w.reason, grantedAt: iso(w.granted_at) })),
     memoryConsent: one(r.memoryConsent, (m) => ({ status: m.status, purposeVersion: m.purpose_version, grantedAt: iso(m.granted_at), revokedAt: iso(m.revoked_at), updatedAt: iso(m.updated_at) })),
     libraryStaff: r.libraryStaff.map((s) => ({ role: s.role, grantedAt: iso(s.granted_at) })),
     deletionRequests: r.deletionRequests.map((d) => ({ status: d.status, reason: d.reason || null, requestedAt: iso(d.requested_at), dueAt: iso(d.due_at), processedAt: iso(d.processed_at) })),

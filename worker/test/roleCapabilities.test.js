@@ -20,7 +20,7 @@ const EXPECTED = {
   mentor: ['mentoring.offer'],
   secretaria: ['attendance.manage'],
 };
-const ADMIN_ONLY = ['users.manage', 'flags', 'mfa.reset', 'audit.read', 'metrics.read', 'roles.grant', 'kb.reindex'];
+const ADMIN_ONLY = ['users.manage', 'flags', 'mfa.reset', 'audit.read', 'metrics.read', 'roles.grant', 'kb.reindex', 'certificates.revoke'];
 
 describe('capacidades — tabela', () => {
   test('cada cargo tem exatamente o seu conjunto', () => {
