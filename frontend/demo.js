@@ -73,11 +73,21 @@
     return n;
   }
 
+  // Pedido de fechar para quem embute a demo: só um sinal, sem nenhum dado; quem recebe confere a origem.
+  function pedirFechar(e) {
+    if (e.key !== 'Escape' || e.defaultPrevented || window.parent === window) return;
+    window.parent.postMessage({ tipo: 'laift-demo-fechar' }, '*');
+  }
+  if (embed) document.addEventListener('keydown', pedirFechar);
+
   function openModule(id) {
     var m = window.LaiftModules.byId(id);
     if (!m) return;
     frameBox.textContent = '';
-    frameBox.appendChild(el('iframe', { src: m.path, title: m.name, allow: 'fullscreen' }));
+    var f = el('iframe', { src: m.path, title: m.name, allow: 'fullscreen' });
+    // Embutido: o Esc dentro do módulo (mesma origem) também fecha a janela de quem embute, se o módulo não o usou.
+    if (embed) f.addEventListener('load', function () { try { f.contentWindow.addEventListener('keydown', pedirFechar); } catch (e) { /* outra origem */ } });
+    frameBox.appendChild(f);
     title.textContent = m.name;
     intro.hidden = true;
     stage.hidden = false;
