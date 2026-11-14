@@ -151,6 +151,32 @@ const zlib = require('zlib');
   }
 })(path.join(DIST, 'modulos', 'anatomia-3d')); // models/ e data/atlas/fixtures/models/
 
+// Atlas (F-022, Fast 3G): os 14 CSS da página viram um só arquivo no dist. No
+// servidor HTTP/1.1 do e2e (6 conexões) e em 3G cada pedido custa uma ida e
+// volta; 14 pedidos de CSS somavam >1 s. Mesma ordem, sem url()/@import
+// nesses arquivos. O index.html da fonte segue com os links originais (dev);
+// os CSS soltos continuam no dist para as demais páginas do módulo.
+(function bundleAtlasCss() {
+  const A3D = path.join(DIST, 'modulos', 'anatomia-3d');
+  const htmlPath = path.join(A3D, 'index.html');
+  if (!fs.existsSync(htmlPath)) return;
+  let html = fs.readFileSync(htmlPath, 'utf8');
+  const linkRe = /^[ \t]*<link rel="stylesheet" href="((?:\.\.\/shared\/|css\/)[^"]+\.css)">\r?\n/gm;
+  const hrefs = [...html.matchAll(linkRe)].map((m) => m[1]);
+  if (!hrefs.length) return;
+  const parts = hrefs.map((h) => {
+    const css = fs.readFileSync(path.join(A3D, h), 'utf8');
+    if (/url\(|@import/.test(css)) throw new Error(`bundleAtlasCss: ${h} usa url()/@import; ajuste o bundle.`);
+    return `/* ${h} */\n${css}`;
+  });
+  fs.writeFileSync(path.join(A3D, 'css', 'atlas.bundle.css'), parts.join('\n'));
+  let first = true;
+  html = html.replace(linkRe, () => { if (!first) return ''; first = false; return '  <link rel="stylesheet" href="css/atlas.bundle.css">\n'; });
+  html = html.replace(/^[ \t]*<link rel="preload" href="(?:\.\.\/shared\/|css\/)[^"]+\.css" as="style">\r?\n/gm, '');
+  html = html.replace('  <!-- Scripts clássicos e CSS do caminho crítico', '  <link rel="preload" href="css/atlas.bundle.css" as="style">\n  <!-- Scripts clássicos e CSS do caminho crítico');
+  fs.writeFileSync(htmlPath, html);
+})();
+
 // Atlas offline (Onda 3.5, A.1): hash do conteúdo de modulos/anatomia-3d (sem
 // o próprio sw.js e sem os .gz, que derivam dos .glb) → nome do cache do SW;
 // precache.json lista o que o SW baixa ao instalar (código, estilos e o
