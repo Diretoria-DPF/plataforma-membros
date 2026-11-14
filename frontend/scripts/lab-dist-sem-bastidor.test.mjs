@@ -19,7 +19,8 @@ const labFonte = path.join(frontend, 'modulos', 'laboratorio');
 const labDist = path.join(frontend, 'dist', 'modulos', 'laboratorio');
 const fila = require('./lab-nv-fila.js');
 
-const PROIBIDO = /\[NV\]|revisad[oa] por|rascunho|gerad[oa] por (ia|intelig)/i;
+// "revisado_por" é nome de campo (sempre null), não texto mostrado; por isso a palavra não pode ser seguida de "_".
+const PROIBIDO = /\[NV\]|revisad[oa](?!_)|rascunho|\bpor IA\b|gerad[oa] por (ia|intelig)|fila de reverifica/i;
 // Exceções conhecidas, só em código (não em dados): o validador cita as marcas para rejeitá-las; o aviso do
 // Preceptor sobre resposta gerada por IA aparece na tela e está registrado como pendência da revisão.
 const EXCECOES_CODIGO = new Set(['js/lab-motor-validador.js', 'js/lab-preceptor.js']);
@@ -68,6 +69,11 @@ test('sanitizarDist: cópia do Laboratório fica sem marcas e sem mudar valores 
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
+});
+
+test('.js do Laboratório (fonte, que o build copia) não trazem bastidor, nem o seed', () => {
+  const achados = varrer(labFonte).filter((a) => /^[^:]+\.js: /.test(a));
+  assert.deepEqual(achados, []);
 });
 
 test('build.js publica o Laboratório pela versão sanitizada', () => {

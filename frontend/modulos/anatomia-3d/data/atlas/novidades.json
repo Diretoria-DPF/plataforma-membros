@@ -14,10 +14,10 @@
     },
     {
       "data": "2026-10-02",
-      "titulo": "Conteúdo com fonte e selos de revisão",
+      "titulo": "Conteúdo com fontes indicadas",
       "notas": [
         "30 fármacos com gráficos de concentração e efeito, 15 processos e 19 vias com fontes.",
-        "Selos mostram o que o conselho editorial já revisou (✓), o que está em revisão (⏳) e o que ainda não foi revisado (○).",
+        "Cada conteúdo traz a fonte de onde vem, para você conferir a informação.",
         "Moléculas e Farmacologia funcionam sem serviços externos no navegador."
       ]
     }

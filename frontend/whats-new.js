@@ -25,7 +25,7 @@
     Object.freeze({ id: 'guia', text: 'A assistente agora se chama Guia. Ela explica as telas e responde dúvidas, e não altera seus dados.' }),
     Object.freeze({ id: 'dialogos', text: 'Avisos e confirmações dos módulos agora são diálogos acessíveis: funcionam com teclado e leitor de tela, e Esc fecha.' }),
     Object.freeze({ id: 'destaques', flag: 'highlights_enabled', text: 'A Início tem um bloco "Na Liga" com os destaques da Liga.' }),
-    Object.freeze({ id: 'demo', text: 'A Demonstração abre a plataforma sem conta e sem salvar nada. Serve para mostrar a LAIFT a outras pessoas.' }),
+    Object.freeze({ id: 'demo', text: 'A Demonstração não pede conta. Serve para mostrar a LAIFT a outras pessoas.' }),
     Object.freeze({ id: 'qr-rotativo', text: 'O QR de presença dos eventos agora é rotativo: ele troca com o tempo, e a contagem regressiva aparece na tela.' }),
   ]);
 
