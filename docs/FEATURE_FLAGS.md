@@ -110,6 +110,16 @@ Criadas pela 049 (`sql/049_ui_v2_flags.sql`), as duas **desligadas** e públicas
 | `home_v2_enabled` | sim | `FALSE` | `frontend/app.js` (atributo `data-flag-home-v2-enabled`): Início v3, navegação responsiva e "Meu desempenho" no Perfil; `docs/inicio-v3.md` |
 | `entrada_v2_enabled` | sim | `FALSE` | Tela de entrada nova (login e cadastro); só a flag foi criada aqui |
 
+## Flags da Educação (Onda 1: cursos, prova, certificado, requisito de evento)
+
+Nascem nas migrações 056–058 (escritas, **não aplicadas**). Operação e ordem de ligar: `docs/cursos-operacao.md`.
+
+| Flag | Pública | Estado depois da 058 | Onde é lida |
+|---|---|---|---|
+| `courses_enabled` | sim | `FALSE` | `courseService.js` e `assessmentService.js` (`apiLearnCourse*`); `frontend/modulos/cursos/`. Desligada: lista vazia e demais ações recusadas |
+| `certificates_enabled` | sim | `FALSE` | `certificateService.js` (`apiLearnCertificate*` e o público `apiCertificateVerify`); exige `CERTIFICATE_SECRET` no Worker. Desligada: não emite e a página `/certificado/<código>` responde "indisponível" |
+| `event_prereq_enabled` | não | `FALSE` | `eventPrereqService.js`, chamado por `apiRegisterForEvent` antes da inscrição e por `apiLearnEventPrereqStatus`. Desligada: a inscrição não muda |
+
 ## Histórico de decisões
 
 - **Mecanismo:** a tabela com rollout e auditoria é a fonte da verdade. Nenhuma variável de ambiente de flag foi criada: `featureFlagService.js` só lê a tabela.

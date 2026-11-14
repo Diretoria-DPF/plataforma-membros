@@ -53,6 +53,11 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminDeleteHighlight"
                 - "$ref": "#/components/schemas/apiAdminGrantRole"
                 - "$ref": "#/components/schemas/apiAdminLearnAtlasTelemetry"
+                - "$ref": "#/components/schemas/apiAdminLearnCertificateRevoke"
+                - "$ref": "#/components/schemas/apiAdminLearnCourseList"
+                - "$ref": "#/components/schemas/apiAdminLearnCourseSetStatus"
+                - "$ref": "#/components/schemas/apiAdminLearnEventSetRequirements"
+                - "$ref": "#/components/schemas/apiAdminLearnEventWaive"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryChangeStatus"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryClinicalReview"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryDecideRemoval"
@@ -117,6 +122,7 @@ paths:
                 - "$ref": "#/components/schemas/apiBlockProfile"
                 - "$ref": "#/components/schemas/apiCancelEventRegistration"
                 - "$ref": "#/components/schemas/apiCastVote"
+                - "$ref": "#/components/schemas/apiCertificateVerify"
                 - "$ref": "#/components/schemas/apiClearConversation"
                 - "$ref": "#/components/schemas/apiConfirmEmail"
                 - "$ref": "#/components/schemas/apiConfirmPasswordReset"
@@ -136,11 +142,20 @@ paths:
                 - "$ref": "#/components/schemas/apiLearnAtlasPdb"
                 - "$ref": "#/components/schemas/apiLearnAtlasPubchem"
                 - "$ref": "#/components/schemas/apiLearnAtlasTelemetry"
+                - "$ref": "#/components/schemas/apiLearnCertificateIssue"
+                - "$ref": "#/components/schemas/apiLearnCertificateListMine"
                 - "$ref": "#/components/schemas/apiLearnClinicalChat"
                 - "$ref": "#/components/schemas/apiLearnClinicalEpidemiology"
                 - "$ref": "#/components/schemas/apiLearnClinicalEvaluate"
                 - "$ref": "#/components/schemas/apiLearnClinicalGenerateCase"
                 - "$ref": "#/components/schemas/apiLearnClinicalLibrary"
+                - "$ref": "#/components/schemas/apiLearnCourseExamStart"
+                - "$ref": "#/components/schemas/apiLearnCourseExamSubmit"
+                - "$ref": "#/components/schemas/apiLearnCourseGet"
+                - "$ref": "#/components/schemas/apiLearnCourseLesson"
+                - "$ref": "#/components/schemas/apiLearnCourseList"
+                - "$ref": "#/components/schemas/apiLearnCourseMarkLesson"
+                - "$ref": "#/components/schemas/apiLearnEventPrereqStatus"
                 - "$ref": "#/components/schemas/apiLearnGetEngagement"
                 - "$ref": "#/components/schemas/apiLearnGetMyAiQuota"
                 - "$ref": "#/components/schemas/apiLearnGetMyAttendanceQr"
@@ -604,6 +619,85 @@ components:
       properties:
         action:
           const: "apiAdminLearnAtlasTelemetry"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnCertificateRevoke:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnCertificateRevoke"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnCourseList:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnCourseList"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminLearnCourseSetStatus:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnCourseSetStatus"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnEventSetRequirements:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnEventSetRequirements"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnEventWaive:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnEventWaive"
         args:
           type: "array"
           prefixItems:
@@ -1634,6 +1728,21 @@ components:
             - description: "complementText"
           minItems: 0
           maxItems: 4
+    apiCertificateVerify:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiCertificateVerify"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "input"
+          minItems: 0
+          maxItems: 1
     apiClearConversation:
       type: "object"
       required:
@@ -1933,6 +2042,37 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 2
+    apiLearnCertificateIssue:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnCertificateIssue"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnCertificateListMine:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnCertificateListMine"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
     apiLearnClinicalChat:
       type: "object"
       required:
@@ -2005,6 +2145,117 @@ components:
       properties:
         action:
           const: "apiLearnClinicalLibrary"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnCourseExamStart:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnCourseExamStart"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnCourseExamSubmit:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnCourseExamSubmit"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnCourseGet:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnCourseGet"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnCourseLesson:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnCourseLesson"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnCourseList:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnCourseList"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiLearnCourseMarkLesson:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnCourseMarkLesson"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnEventPrereqStatus:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnEventPrereqStatus"
         args:
           type: "array"
           prefixItems:
