@@ -116,6 +116,7 @@ header .subtitle {
   min-width: 0;
 }
 
+.section h2,
 .section h3 {
   color: var(--module-accent);
   font-size: 1rem;
@@ -558,6 +559,9 @@ header .subtitle {
 ========================================================= */
 @media (max-width: 900px) {
   body { padding: 8px; }
+  /* Iniciar sempre à vista no celular (clip não cria rolagem própria, então o sticky segue a janela). */
+  .container { overflow: clip; }
+  .start-bar { position: sticky; bottom: 0; z-index: 5; margin: 0 -14px -18px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: var(--laift-surface-alt); border-top: 1px solid var(--laift-border); }
   .container { min-height: calc(100dvh - 16px); }
   #mainInterface { grid-template-columns: minmax(0, 1fr); }
   .sidebar { border-right: 0; border-bottom: 1px solid var(--laift-border); padding: 18px 14px; }

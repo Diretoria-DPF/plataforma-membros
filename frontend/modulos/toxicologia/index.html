@@ -25,18 +25,18 @@
         <div id="mainInterface">
             <aside class="sidebar" aria-label="Configuração do simulado">
                 <div class="section">
-                    <h3 id="topicsHeading">📚 TÓPICOS DE TOXICOLOGIA</h3>
+                    <h2 id="topicsHeading">📚 TÓPICOS DE TOXICOLOGIA</h2>
                     <div class="topics-grid" id="topicsGrid" role="group" aria-labelledby="topicsHeading"></div>
                 </div>
                 <div class="section">
-                    <h3 id="modeHeading">🎮 MODO DE ESTUDO</h3>
+                    <h2 id="modeHeading">🎮 MODO DE ESTUDO</h2>
                     <div class="mode-selector" role="group" aria-labelledby="modeHeading">
                         <button type="button" class="mode-btn active" data-mode="study" aria-pressed="true">📖 Modo Estudo</button>
                         <button type="button" class="mode-btn" data-mode="exam" aria-pressed="false">📝 Modo Prova</button>
                     </div>
                 </div>
                 <div class="section">
-                    <h3 id="sizeHeading">🔢 TAMANHO DA SESSÃO</h3>
+                    <h2 id="sizeHeading">🔢 TAMANHO DA SESSÃO</h2>
                     <div class="mode-selector size-selector" role="group" aria-labelledby="sizeHeading">
                         <button type="button" class="size-btn" data-size="5" aria-pressed="false">5</button>
                         <button type="button" class="size-btn" data-size="10" aria-pressed="false">10</button>
@@ -45,10 +45,13 @@
                     </div>
                 </div>
 
+                <div class="start-bar">
+                    <button type="button" class="control-btn" id="startQuiz">🚀 Iniciar Simulado</button>
+                </div>
+
                 <div class="section">
-                    <h3>⚙️ CONTROLES</h3>
+                    <h2>⚙️ CONTROLES</h2>
                     <div class="control-buttons">
-                        <button type="button" class="control-btn" id="startQuiz">🚀 Iniciar Simulado</button>
                         <button type="button" class="control-btn secondary" id="selectAll">✅ Selecionar Todos</button>
                         <button type="button" class="control-btn secondary" id="deselectAll">❌ Limpar Seleção</button>
                         <button type="button" class="control-btn" id="continueBtn" hidden>↪️ Continuar de Onde Parei</button>
@@ -58,7 +61,7 @@
                     </div>
                 </div>
                 <div class="section">
-                    <h3>📊 ESTATÍSTICAS DO MÓDULO</h3>
+                    <h2>📊 ESTATÍSTICAS DO MÓDULO</h2>
                     <div id="stats">
                         <p>Total do Banco: <span id="totalQuestionsStat">240</span></p>
                         <p>Respondidas: <span id="answeredStat">0</span></p>
