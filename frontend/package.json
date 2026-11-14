@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "license": "SEE LICENSE IN ../LICENSE",
-  "description": "Build do front-end estático (ofusca app.js antes de publicar no GitHub Pages).",
+  "description": "Build do front-end estático (minifica app.js antes de publicar).",
   "scripts": {
     "build": "node scripts/build.js",
     "dev": "node dev-server.js",
@@ -17,7 +17,7 @@
     "@gltf-transform/core": "^4.5.0",
     "ajv": "^8.20.0",
     "axe-core": "^4.13.0",
-    "javascript-obfuscator": "^4.1.1",
-    "jsqr": "^1.4.0"
+    "jsqr": "^1.4.0",
+    "terser": "^5.51.2"
   }
 }

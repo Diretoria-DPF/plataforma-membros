@@ -91,7 +91,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Instala dependências do build (javascript-obfuscator)
+      - name: Instala dependências do build (terser)
         working-directory: frontend
         run: npm ci || npm install
 
