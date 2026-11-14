@@ -51,6 +51,15 @@ if (min.status !== 0) throw new Error('Build bloqueado: a minificação de app.j
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 
+// Conferência pública do certificado (cursos, Onda 1): /certificado/ e /certificado/<código>. O 404.html da pasta é a
+// mesma página: o Cloudflare serve o 404.html mais próximo para /certificado/LAIFT-..., e o script lê o código do endereço.
+{
+  const dir = path.join(DIST, 'certificado');
+  fs.mkdirSync(dir, { recursive: true });
+  ['index.html', 'certificado.js', 'certificado.css'].forEach((name) => fs.copyFileSync(path.join(ROOT, 'certificado', name), path.join(dir, name)));
+  fs.copyFileSync(path.join(ROOT, 'certificado', 'index.html'), path.join(dir, '404.html'));
+}
+
 // Cabeçalhos HTTP (Cloudflare Workers static assets): o runtime lê este arquivo
 // da raiz do diretório publicado. O GitHub Pages simplesmente o ignora.
 fs.copyFileSync(path.join(ROOT, '_headers'), path.join(DIST, '_headers'));

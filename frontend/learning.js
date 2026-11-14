@@ -517,16 +517,18 @@
   // ===========================================================================
   // Terminal fiscal (modo admin)
   // ===========================================================================
-  var fiscalFrame = null;
+  var formFrames = {};
 
-  function loadFiscalPanel() {
-    // camera: leitor de QR Code do check-in (html5-qrcode, getUserMedia).
-    if (!fiscalFrame) {
-      fiscalFrame = createFrame($('admin-fiscal-frame-wrap'), FISCAL_PATH, 'Terminal fiscal', 'fullscreen; camera');
-      fiscalFrame.classList.add('learn-frame-auto');
-      fiscalFrame.addEventListener('load', function () { fitFrameToContent(fiscalFrame); });
-    }
+  function loadFormFrame(wrapId, path, title, allow) {
+    if (formFrames[wrapId]) return;
+    var frame = formFrames[wrapId] = createFrame($(wrapId), path, title, allow);
+    frame.classList.add('learn-frame-auto');
+    frame.addEventListener('load', function () { fitFrameToContent(frame); });
   }
+
+  // camera: leitor de QR Code do check-in (html5-qrcode, getUserMedia).
+  function loadFiscalPanel() { loadFormFrame('admin-fiscal-frame-wrap', FISCAL_PATH, 'Terminal fiscal', 'fullscreen; camera'); }
+  function loadCoursesPanel() { loadFormFrame('courses-frame-wrap', 'modulos/cursos/index.html', 'Cursos'); }
 
   /**
    * O terminal fiscal é uma página de formulário (não um "app" de tela
@@ -562,7 +564,8 @@
     if (document.fullscreenElement) document.exitFullscreen().catch(function () {});
     Object.keys(frames).forEach(function (key) { frames[key].remove(); });
     frames = {};
-    if (fiscalFrame) { fiscalFrame.remove(); fiscalFrame = null; }
+    Object.keys(formFrames).forEach(function (key) { formFrames[key].remove(); });
+    formFrames = {};
     activeModuleId = null;
     Object.keys(frameStates).forEach(function (key) { window.clearTimeout(frameStates[key].timer); frameStates[key].overlay.remove(); });
     frameStates = {};
@@ -588,6 +591,7 @@
   window.LaiftLearning = {
     loadPanel: loadPanel,
     loadFiscalPanel: loadFiscalPanel,
+    loadCoursesPanel: loadCoursesPanel,
     openModule: openModule,
     openFirstQuiz: openFirstQuiz,
     startReview: startReview,

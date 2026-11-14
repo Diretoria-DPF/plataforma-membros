@@ -28,7 +28,7 @@ const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8');
 
 const BUDGET = {
-  shellGzipBytes: 295 * 1024,
+  shellGzipBytes: 296 * 1024, // +1 KB (Cursos, Onda 1): item do menu, painel e o carregador do iframe; o módulo em si fica fora do shell
   eagerJsRawBytes: 706 * 1024,
   precacheRawBytes: 950 * 1024,
   immutableMaxAgeSeconds: 31536000,
@@ -44,7 +44,7 @@ function shellFiles() {
 
 const gzipSize = (file) => zlib.gzipSync(fs.readFileSync(path.join(frontend, file)), { level: 9 }).length;
 
-test('orçamento: o shell (HTML + scripts + estilos do carregamento inicial) cabe em 295 KB gzip', () => {
+test('orçamento: o shell (HTML + scripts + estilos do carregamento inicial) cabe em 296 KB gzip', () => {
   const files = shellFiles();
   const total = files.reduce((sum, f) => sum + gzipSize(f), 0);
   assert.ok(total <= BUDGET.shellGzipBytes, `shell com ${(total / 1024).toFixed(1)} KB gzip; teto ${BUDGET.shellGzipBytes / 1024} KB`);

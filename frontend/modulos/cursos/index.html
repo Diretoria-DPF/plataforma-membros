@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <!-- CSP do módulo: só a própria origem; as chamadas à Worker passam pela plataforma (LaiftApi). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <script src="../shared/laift-identity.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Cursos · LAIFT</title>
+  <link rel="stylesheet" href="../shared/laift-tokens.css" />
+  <link rel="stylesheet" href="cursos.css" />
+</head>
+<body>
+  <main id="cr-app" class="cr-app" aria-live="polite">
+    <header class="cr-head no-print">
+      <button type="button" id="cr-back" class="cr-link hidden">&larr; Voltar</button>
+      <h1 id="cr-title" tabindex="-1">Cursos</h1>
+    </header>
+    <p id="cr-msg" class="cr-msg hidden" role="status"></p>
+    <section id="cr-view" class="cr-view"></section>
+  </main>
+  <script src="../../vendor/qrcode-generator.js" integrity="sha384-8FWZA6BGMXhsfO+BLtrJK0We6gg5o1JyO8xQm6peWDEUs17ACA5ziE/NIAkl9z2k" crossorigin="anonymous"></script>
+  <script src="cursos-core.js"></script>
+  <script src="cursos.js"></script>
+</body>
+</html>
