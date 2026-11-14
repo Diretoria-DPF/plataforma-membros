@@ -55,6 +55,10 @@ const COBERTAS = {
   'selection_applications.profile_id': 'selection',
   'account_deletion_requests.profile_id': 'deletionRequests',
   'lab_boletim_competencia.profile_id': 'labBoletim',
+  'course_progress.profile_id': 'courseProgress',
+  'assessment_attempts.profile_id': 'courseAttempts',
+  'certificates.profile_id': 'certificates',
+  'event_requirement_waivers.profile_id': 'eventWaivers',
 };
 
 const SEGREDO = 'segredo de segurança (hash, chave ou fator de autenticação): nunca sai da plataforma';
@@ -100,6 +104,10 @@ const EXCECOES = {
   'selection_applications.decided_by': INSTITUCIONAL,
   'account_deletion_requests.processed_by': INSTITUCIONAL,
   'home_highlights.created_by': INSTITUCIONAL,
+  'courses.published_by': INSTITUCIONAL,
+  'certificates.revoked_by': INSTITUCIONAL,
+  'event_requirements.created_by': INSTITUCIONAL,
+  'event_requirement_waivers.granted_by': INSTITUCIONAL,
   'memory_purge_queue.profile_ref': 'fila técnica de apagamento da memória de estudo; a linha some quando o apagamento termina',
 };
 
