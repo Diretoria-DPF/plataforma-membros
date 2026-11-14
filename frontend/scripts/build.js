@@ -186,4 +186,11 @@ const zlib = require('zlib');
   console.log(`Atlas offline: build ${build}, ${precache.length} arquivos no precache.`);
 }
 
+// CSP por ambiente (F-048): no deploy, tira da connect-src os hosts que o destino não chama (csp-ambiente.js).
+// Fica fora de modulos/ (o precache do Atlas acima já foi calculado) e não age sem LAIFT_DEPLOY_ENV.
+{
+  const paginas = require('./csp-ambiente.js').enxugarDist(DIST, process.env.LAIFT_DEPLOY_ENV);
+  if (paginas) console.log(`[csp] ${paginas} página(s) com a connect-src enxuta para ${process.env.LAIFT_DEPLOY_ENV}.`);
+}
+
 console.log('Build gerado em frontend/dist/ (app.js ofuscado; demais páginas, módulos e vendor copiados).');
