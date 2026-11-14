@@ -19,7 +19,7 @@
  *    mensagem fixa — o front mostra "Serviço de moléculas indisponível".
  */
 import { ValidationError } from '../errors.js';
-import { checkSafety } from '../ai/safetyBlocklist.js';
+import { checkSafety, isBlockedIdentifier } from '../ai/safetyBlocklist.js';
 
 export const PDB_ID_RE = /^[0-9][A-Za-z0-9]{3}$/;
 export const PDB_MAX_BYTES = 5 * 1024 * 1024;
@@ -29,6 +29,7 @@ export const UNAVAILABLE_MESSAGE = 'Serviço de moléculas indisponível.';
 export const PUBCHEM_PROPS = ['MolecularFormula', 'MolecularWeight', 'XLogP', 'CanonicalSMILES', 'IUPACName'];
 export const PUBCHEM_NAME_RE = /^[\p{L}\p{N}][\p{L}\p{N} ,'()\-]{0,79}$/u;
 const CACHE_ORIGIN = 'https://atlas-molecule-cache.internal';
+const BLOCKED_MESSAGE = 'Esta substância não é consultada pelo atlas.';
 
 export function unavailable() {
   return { success: false, unavailable: true, message: UNAVAILABLE_MESSAGE };
@@ -138,6 +139,8 @@ export async function getPubchem(input, { cache = defaultCache(), enforceLimit =
   if (src.cid !== undefined && src.cid !== null && src.cid !== '') {
     const cid = Number(src.cid);
     if (!Number.isInteger(cid) || cid <= 0 || cid > 999999999) throw ValidationError('CID inválido.');
+    // Identificador de agente da lista: recusa antes do cache e da rede.
+    if (isBlockedIdentifier({ cid })) return { success: false, blocked: true, message: BLOCKED_MESSAGE };
     path = 'cid/' + cid;
     keyPart = 'cid/' + cid;
   } else {
@@ -179,8 +182,8 @@ export async function getPubchem(input, { cache = defaultCache(), enforceLimit =
   };
   const cid = Number.isInteger(row.CID) ? row.CID : null;
   // Consulta por CID não traz nome: o nome devolvido pela fonte também passa pela lista de bloqueio.
-  if (props.IUPACName && checkSafety({ term: props.IUPACName }).reason === 'cbrn') {
-    return { success: false, blocked: true, message: 'Esta substância não é consultada pelo atlas.' };
+  if (isBlockedIdentifier({ cid }) || (props.IUPACName && checkSafety({ term: props.IUPACName }).reason === 'cbrn')) {
+    return { success: false, blocked: true, message: BLOCKED_MESSAGE };
   }
   await cachePut(cache, key, { cid, props });
   return { success: true, cid, props, cached: false };

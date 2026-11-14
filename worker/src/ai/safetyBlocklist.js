@@ -36,7 +36,45 @@ const AGENT_TERMS = [
 const AGENT_WORDS = ['vx', 'gb', 'ga', 'gd', 'gf', 'vr', 'hd'];
 /** Cloro em si é insumo comum: só bloqueia quando o texto o põe como arma ou gás de guerra. */
 const CHLORINE_WEAPON = /\b(cloro|chlorine)\b.*\b(arma|armas|weapon|weapons|guerra|war|combate|ataque|attack)\b|\b(arma|armas|weapon|weapons|guerra|war|combate|ataque|attack)\b.*\b(cloro|chlorine)\b/;
+/** "Ataque" clínico (asma, pânico, isquêmico...) não é arma: sai do texto antes da regra do cloro (F-050). */
+const CLINICAL_ATTACK = /\b(ataque|ataques|crise|crises) (de |do |da )?(asma|asmatic\w*|panico|ansiedade|tosse|angina|gota|enxaqueca|epilep\w*|cardiac\w*|isquemic\w*)\b|\b(asthma|panic|anxiety|heart|ischemic|ischaemic|gout|migraine) attacks?\b/g;
 const AGENT_WORD_CONTEXT = /\b(agente|agent|nerv\w*|guerra|war|chemical|quimic\w*)\b/;
+
+/**
+ * Identificadores dos mesmos agentes (PubChem CID e InChIKey, conferidos no PubChem em 2026-11-14).
+ * A consulta por identificador não traz nome na entrada e o nome sistemático devolvido pela fonte
+ * (ex.: "formonitrile") não casa com os termos acima; por isso a lista por identificador (F-049).
+ */
+const BLOCKED_COMPOUNDS = [
+  [7871, 'DYAHQFWOVKZOOW-UHFFFAOYSA-N'], // sarin
+  [7305, 'GRXKLBBBQUKJJZ-UHFFFAOYSA-N'], // soman
+  [6500, 'PJVJTCIRVMBVIA-UHFFFAOYSA-N'], // tabun
+  [64505, 'SNTRKUOVAPUGAY-UHFFFAOYSA-N'], // ciclosarin
+  [39793, 'JJIUCEJQJXNMHV-UHFFFAOYSA-N'], // VX
+  [178033, 'MNLAVFKVRUQAKW-UHFFFAOYSA-N'], // VR
+  [132472361, 'SBPSVLLDDYOPDZ-CSKARUKUSA-N'], // A-234
+  [10461, 'QKSKPIVNLNLAAV-UHFFFAOYSA-N'], // mostarda sulfurada
+  [5561, 'FDAYLTPAFBGXAB-UHFFFAOYSA-N'], // mostarda nitrogenada HN3
+  [10923, 'GIKLTQKNOXNBNY-UHFFFAOYSA-N'], // lewisita
+  [6371, 'YGYAWVDWMABLBF-UHFFFAOYSA-N'], // fosgênio
+  [10426, 'HCUYBXPSSCRKRF-UHFFFAOYSA-N'], // difosgênio
+  [6423, 'LFHISGNCFUNFFM-UHFFFAOYSA-N'], // cloropicrina
+  [768, 'LELOWRISYMNNSU-UHFFFAOYSA-N'], // cianeto de hidrogênio
+  [10477, 'QPJDMGCKMHUXFD-UHFFFAOYSA-N'], // cloreto de cianogênio
+  [23056, 'HGMITUYOCPPQLE-UHFFFAOYSA-N'], // BZ
+];
+const BLOCKED_CIDS = new Set(BLOCKED_COMPOUNDS.map((c) => c[0]));
+const BLOCKED_INCHIKEYS = new Set(BLOCKED_COMPOUNDS.map((c) => c[1]));
+
+/**
+ * Bloqueio por identificador, para a entrada (CID pedido) e para a resposta da fonte (CID e InChIKey).
+ * @param {{ cid?: number|string|null, inchiKey?: string|null }} ids
+ * @returns {boolean}
+ */
+export function isBlockedIdentifier({ cid, inchiKey } = {}) {
+  if (cid !== undefined && cid !== null && cid !== '' && BLOCKED_CIDS.has(Number(cid))) return true;
+  return typeof inchiKey === 'string' && BLOCKED_INCHIKEYS.has(inchiKey.trim().toUpperCase());
+}
 
 /** Drogas ilícitas e opioides/estimulantes de alto abuso: bloqueadas quando o pedido é de produção. */
 const ILLICIT_DRUGS = [
@@ -74,7 +112,7 @@ function mentionsAgent(norm) {
     // Burla por espaçamento ("s a r i n"): só para termos de uma palavra com 5+ letras.
     if (!term.includes(' ') && term.length >= 5 && squashed.includes(term)) return true;
   }
-  if (CHLORINE_WEAPON.test(norm)) return true;
+  if (CHLORINE_WEAPON.test(norm.replace(CLINICAL_ATTACK, ' '))) return true;
   const words = norm.split(' ');
   if (words.some((w) => AGENT_WORDS.includes(w)) && AGENT_WORD_CONTEXT.test(norm)) return true;
   // "VX" sozinho como agente nervoso é inequívoco no uso do laboratório.
