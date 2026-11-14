@@ -526,11 +526,11 @@ async function boot() {
   // ---- Ficha (infocard) — inspetor (tablet/desktop) e painel (celular) ----
   const infocard = createInfoCard(getSlot('inspector') || document.getElementById('atlas-inspector'), {
     isPinned: async (sid) => {
-      const st = await studyStorePromise;
+      const st = await getStudyStore();
       return !!st && (await st.listPins()).some((p) => p.sid === sid);
     },
     onAction: ({ action, sid }) => {
-      if (action === 'pin') return studyStorePromise.then((st) => (st ? st.togglePin({ sid, label: labelFor(sid) }) : false));
+      if (action === 'pin') return getStudyStore().then((st) => (st ? st.togglePin({ sid, label: labelFor(sid) }) : false));
       if (action === 'share') return shareStructure(sid);
       if (action === 'isolate') emit(EVENTS.VISIBILITY_ISOLATE, { sid });
       if (action === 'hide') emit(EVENTS.VISIBILITY_HIDE, { sid });
@@ -590,7 +590,10 @@ async function boot() {
     if (!seenSids.has(sid)) newSids.add(sid); else newSids.delete(sid);
     seenSids.add(sid);
   });
-  const studyStorePromise = import('./modes/study-store.js').then(async ({ createStudyStore }) => {
+  // Lazy: só começa depois do esqueleto pronto (ou quando a ficha/estudo pedir),
+  // para não disputar banda com o GLB em rede lenta (F-022).
+  let studyStorePromise = null;
+  const getStudyStore = () => studyStorePromise || (studyStorePromise = import('./modes/study-store.js').then(async ({ createStudyStore }) => {
     const studyStore = createStudyStore();
     const { attachRecorder } = await import('./modes/study.js');
     attachRecorder(bus, studyStore);
@@ -598,7 +601,7 @@ async function boot() {
       for (const h of await studyStore.listHistory()) if (h && h.type === 'select' && h.sid) seenSids.add(h.sid);
     } catch (e) { /* armazenamento indisponível: tudo conta como novo */ }
     return studyStore;
-  }).catch(() => null);
+  }).catch(() => null));
 
   // #atlas-inspector só existe (visualmente) em ≥600px (css/atlas.css) — no
   // celular o painel arrastável é a única superfície de conteúdo (ver
@@ -791,6 +794,7 @@ async function boot() {
   }) : null;
 
   await Promise.all(DEFAULT_SYSTEMS.map(loadSystem));
+  getStudyStore();
   if (slowWatcher && defaultsReady()) slowWatcher.done();
   fitWholeBody();
   requestRender();
@@ -1095,7 +1099,7 @@ async function boot() {
     farmacologia: () => import('./modes/pharmacology.js').then((m) => m.createPharmacologyMode({ bus, loadCompounds: () => fetchJson(`${CONTENT_BASE}compounds.json`), loadScenario: () => fetchJson(`${CONTENT_BASE}scenarios/crise-colinergica.json`) })),
     moleculas: () => import('./modes/molecules.js').then((m) => m.createMoleculesMode({ bus, loadProteins: () => fetchJson(`${CONTENT_BASE}proteins.json`) })),
     estudo: () => import('./modes/study.js').then(async (m) => {
-      const studyStore = (await studyStorePromise) || (await import('./modes/study-store.js')).createStudyStore();
+      const studyStore = (await getStudyStore()) || (await import('./modes/study-store.js')).createStudyStore();
       return m.createStudyMode({
         bus, store: studyStore, getLabel: labelFor, recordOwnHistory: false,
         getReviewed: async () => reviewedProgress(await studyStore.listHistory({ limit: 500 }), reviewStatus.statusOf, reviewStatus.counts.r),
@@ -1246,7 +1250,7 @@ async function boot() {
   }
   // A.3: além do aviso de 10 s, um chip fixo na barra enquanto nada foi aberto.
   (async () => {
-    const hist = await studyStorePromise.then((st) => (st ? st.listHistory({ limit: 50 }) : [])).catch(() => []);
+    const hist = await getStudyStore().then((st) => (st ? st.listHistory({ limit: 50 }) : [])).catch(() => []);
     const sid = (savedSession && savedSession.selectedSid) || lastStudiedSid(hist, (x) => !!contentStore.getEntry(x));
     if (!sid || storeGet().selectedSid) return;
     const chip = mountContinueChip({

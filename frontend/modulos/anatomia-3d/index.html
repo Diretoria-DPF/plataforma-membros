@@ -21,6 +21,30 @@
        pela Worker (apiLearnAtlasPdb/apiLearnAtlasPubchem), via ponte da
        plataforma. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob:; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <!-- Scripts clássicos e CSS do caminho crítico: o parser os pede um depois
+       do outro (cada um custa uma ida e volta de rede em 3G); aqui saem todos
+       de uma vez, antes dos arquivos grandes. -->
+  <link rel="preload" href="../shared/laift-identity.js" as="script">
+  <link rel="preload" href="../shared/safe-dom.js" as="script">
+  <link rel="preload" href="../shared/laift-dialog.js" as="script">
+  <link rel="preload" href="../shared/quiz-errors.js" as="script">
+  <link rel="preload" href="../shared/revisao-espacada.js" as="script">
+  <link rel="preload" href="js/ui/context-menu.js" as="script">
+  <link rel="preload" href="js/ui/credits.js" as="script">
+  <link rel="preload" href="../shared/laift-dialog.css" as="style">
+  <link rel="preload" href="../shared/laift-tokens.css" as="style">
+  <link rel="preload" href="css/tokens-atlas.css" as="style">
+  <link rel="preload" href="css/atlas.css" as="style">
+  <link rel="preload" href="css/labels.css" as="style">
+  <link rel="preload" href="css/infocard.css" as="style">
+  <link rel="preload" href="css/layers-panel.css" as="style">
+  <link rel="preload" href="css/navigator.css" as="style">
+  <link rel="preload" href="css/search-box.css" as="style">
+  <link rel="preload" href="css/toolbar.css" as="style">
+  <link rel="preload" href="css/credits.css" as="style">
+  <link rel="preload" href="css/progress-bar.css" as="style">
+  <link rel="preload" href="css/onboarding.css" as="style">
+  <link rel="preload" href="css/hints.css" as="style">
   <!-- Abertura em rede lenta: sem isto o GLB do esqueleto (≈1 MB, o item
        mais longo) só começava a baixar depois de toda a cadeia de módulos
        JS + three.js + JSONs (~11 s em "Fast 3G"). Os preloads disparam
@@ -35,6 +59,65 @@
   <link rel="modulepreload" href="js/main.js">
   <link rel="modulepreload" href="vendor/three/three.module.js">
   <link rel="modulepreload" href="vendor/three/three.core.js">
+  <!-- Grafo estático de módulos (main.js + legacy-api.js) pré-carregado de uma
+       vez: sem isto o navegador só descobre cada nível depois de baixar o
+       anterior, e em "Fast 3G" cada nível custa ~0,6 s de latência. Os modos
+       (quiz, estudo, fisiologia, moléculas, farmacologia) seguem sob demanda.
+       Ao criar/remover um import estático, atualize esta lista (teste
+       atlas-preload.test.mjs confere). -->
+  <link rel="modulepreload" href="js/compat/legacy-api.js">
+  <link rel="modulepreload" href="js/core/bus.js">
+  <link rel="modulepreload" href="js/core/contracts.js">
+  <link rel="modulepreload" href="js/core/flags.js">
+  <link rel="modulepreload" href="js/core/offline.js">
+  <link rel="modulepreload" href="js/core/store.js">
+  <link rel="modulepreload" href="js/core/telemetry.js">
+  <link rel="modulepreload" href="js/engine/assets.js">
+  <link rel="modulepreload" href="js/engine/camera-math.js">
+  <link rel="modulepreload" href="js/engine/camera-rig.js">
+  <link rel="modulepreload" href="js/engine/controls.js">
+  <link rel="modulepreload" href="js/engine/fallback.js">
+  <link rel="modulepreload" href="js/engine/fascia-rules.js">
+  <link rel="modulepreload" href="js/engine/gestures.js">
+  <link rel="modulepreload" href="js/engine/labels.js">
+  <link rel="modulepreload" href="js/engine/quality.js">
+  <link rel="modulepreload" href="js/engine/registry-explode.js">
+  <link rel="modulepreload" href="js/engine/registry-helpers.js">
+  <link rel="modulepreload" href="js/engine/registry-pick.js">
+  <link rel="modulepreload" href="js/engine/registry.js">
+  <link rel="modulepreload" href="js/engine/renderer.js">
+  <link rel="modulepreload" href="js/engine/selection.js">
+  <link rel="modulepreload" href="js/engine/visibility.js">
+  <link rel="modulepreload" href="js/engine/xray-clip.js">
+  <link rel="modulepreload" href="js/modes/study-io.js">
+  <link rel="modulepreload" href="js/ui/content-merge.js">
+  <link rel="modulepreload" href="js/ui/discovery.js">
+  <link rel="modulepreload" href="js/ui/explode-entry.js">
+  <link rel="modulepreload" href="js/ui/focus-nav.js">
+  <link rel="modulepreload" href="js/ui/hints.js">
+  <link rel="modulepreload" href="js/ui/infocard.js">
+  <link rel="modulepreload" href="js/ui/layers-panel.js">
+  <link rel="modulepreload" href="js/ui/legacy-link.js">
+  <link rel="modulepreload" href="js/ui/navigator.js">
+  <link rel="modulepreload" href="js/ui/onboarding.js">
+  <link rel="modulepreload" href="js/ui/progress-bar.js">
+  <link rel="modulepreload" href="js/ui/review-status.js">
+  <link rel="modulepreload" href="js/ui/search-box.js">
+  <link rel="modulepreload" href="js/ui/search-index.js">
+  <link rel="modulepreload" href="js/ui/session.js">
+  <link rel="modulepreload" href="js/ui/sheet.js">
+  <link rel="modulepreload" href="js/ui/shell.js">
+  <link rel="modulepreload" href="js/ui/slow-device.js">
+  <link rel="modulepreload" href="js/ui/structure-groups.js">
+  <link rel="modulepreload" href="js/ui/update-bar.js">
+  <link rel="modulepreload" href="vendor/three/controls/OrbitControls.js">
+  <link rel="modulepreload" href="vendor/three/libs/meshopt_decoder.module.js">
+  <link rel="modulepreload" href="vendor/three/loaders/DRACOLoader.js">
+  <link rel="modulepreload" href="vendor/three/loaders/GLTFLoader.js">
+  <link rel="modulepreload" href="vendor/three/utils/BufferGeometryUtils.js">
+  <link rel="modulepreload" href="vendor/three/utils/SkeletonUtils.js">
+  <link rel="preload" href="data/atlas/generated/review-status.json" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="data/atlas/legacy-id-map.json" as="fetch" crossorigin="anonymous">
   <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto
        fora dela; aplica <html data-theme> antes de qualquer pintura). -->
   <script src="../shared/laift-identity.js"></script>
