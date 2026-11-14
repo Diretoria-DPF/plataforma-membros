@@ -66,4 +66,4 @@ jobs:
       # "atlas" casa por prefixo: roda atlas, atlas-a11y (axe), atlas-assets,
       # atlas-perf (inclui 3G rápido) e atlas-responsive.
       - if: steps.escopo.outputs.run == 'true'
-        run: node scripts/e2e/run.js atlas smoke csp
+        run: node scripts/e2e/run.js atlas smoke csp quiz-mobile
