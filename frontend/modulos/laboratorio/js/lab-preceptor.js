@@ -515,10 +515,7 @@ ${linhaEquacao}
     try {
       const resposta = await this.consultarPreceptorRemoto(msgUsuario, sys, calcularpH, agitadorAtivo, termoSintese);
       this.ultimaRespostaDegradada = resposta.degraded === true;
-      const rodape = resposta.cached
-        ? '(🌐 Rota recuperada do acervo coletivo LAIFT — resposta gerada por IA)'
-        : '(👨‍🔬 Resposta gerada por IA — confira em fontes oficiais antes de aplicar numa bancada real)';
-      return `${resposta.texto}\n\n*${rodape}*`;
+      return resposta.texto;
     } catch (erro) {
       console.warn('[Preceptor] IA indisponível; mostrando parâmetros locais.');
       const temp = sys && typeof sys.temp === 'number' ? sys.temp.toFixed(1) : '25.0';

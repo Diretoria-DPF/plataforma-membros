@@ -21,9 +21,8 @@ const fila = require('./lab-nv-fila.js');
 
 // "revisado_por" é nome de campo (sempre null), não texto mostrado; por isso a palavra não pode ser seguida de "_".
 const PROIBIDO = /\[NV\]|revisad[oa](?!_)|rascunho|\bpor IA\b|gerad[oa] por (ia|intelig)|fila de reverifica/i;
-// Exceções conhecidas, só em código (não em dados): o validador cita as marcas para rejeitá-las; o aviso do
-// Preceptor sobre resposta gerada por IA aparece na tela e está registrado como pendência da revisão.
-const EXCECOES_CODIGO = new Set(['js/lab-motor-validador.js', 'js/lab-preceptor.js']);
+// Exceção conhecida, só em código (não em dados): o validador cita as marcas para rejeitá-las.
+const EXCECOES_CODIGO = new Set(['js/lab-motor-validador.js']);
 
 function arquivos(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {

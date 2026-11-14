@@ -244,14 +244,14 @@
         "ref": "Diretrizes de ressuscitação (AHA/ERC): vias de acesso para fármacos na parada cardiorrespiratória",
         "obraId": "goodman",
         "exception": true,
-        "justificativa": "Diretrizes de ressuscitação (AHA/ERC), não cobertas pelas obras listadas em fontes.json; referência normativa revisada à mão."
+        "justificativa": "Diretrizes de ressuscitação (AHA/ERC), não cobertas pelas obras listadas em fontes.json; referência normativa."
       },
       {
         "field": "clinicalNotes",
         "ref": "Diretrizes de ressuscitação (AHA/ERC): vias de acesso para fármacos na parada cardiorrespiratória",
         "obraId": "goodman",
         "exception": true,
-        "justificativa": "Diretrizes de ressuscitação (AHA/ERC), não cobertas pelas obras listadas em fontes.json; referência normativa revisada à mão."
+        "justificativa": "Diretrizes de ressuscitação (AHA/ERC), não cobertas pelas obras listadas em fontes.json; referência normativa."
       }
     ],
     "review": {
@@ -601,7 +601,7 @@
         "ref": "Diretrizes de ressuscitação (AHA/ERC): acesso intraósseo como alternativa ao acesso venoso",
         "obraId": "goodman",
         "exception": true,
-        "justificativa": "Diretrizes de ressuscitação (AHA/ERC), não cobertas pelas obras listadas em fontes.json; referência normativa revisada à mão."
+        "justificativa": "Diretrizes de ressuscitação (AHA/ERC), não cobertas pelas obras listadas em fontes.json; referência normativa."
       }
     ],
     "review": {
