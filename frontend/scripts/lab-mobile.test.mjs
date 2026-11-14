@@ -92,3 +92,11 @@ test('paisagem estreita (até 620 px): bancada e painel alternam; a casca tira a
   assert.match(shell, /body:has\(\.learn-viewer-immersive\[data-module="lab"\]:not\(\.hidden\)\) \.bottom-nav \{ display: none; \}/);
   assert.match(fs.readFileSync(path.join(lab, '..', '..', 'learning.js'), 'utf8'), /setAttribute\('data-module', id\)/);
 });
+
+test('chat do Laboratório no tema claro: sugestões com texto escuro (contraste 1,5:1 corrigido) e botão de enviar com 44 px', () => {
+  const css = ler(lab, 'style.css');
+  assert.match(css, /html\[data-theme="light"\] \.chat-chip \{[^}]*color:\s*#075985/);
+  assert.match(css, /html\[data-theme="light"\] \.btn-chat-action \{[^}]*color:\s*#334155/);
+  const guia = ler(lab, 'lab-guia.css');
+  assert.match(guia, /\.lab-chat-input button \{[^}]*min-width:\s*44px/);
+});

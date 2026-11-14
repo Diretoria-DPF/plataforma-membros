@@ -323,7 +323,8 @@ html[data-theme="light"] .btn-reset { color: #b91c1c; border-color: #b91c1c; }
 /* Toque: o controle deslizante da chama (16 px de altura) e os botões 2D/3D (43 px) chegam a 44 px. */
 @media (pointer: coarse), (max-width: 1023px) {
   input[type="range"] { min-height: 44px; }
-  #btnModo2D, #btnModo3D { min-height: 44px !important; }
+  #btnModo2D, #btnModo3D { min-height: 44px !important; min-width: 44px; }
+  .lab-chat-input button { min-width: 44px; min-height: 44px; }
 }
 
 /* ---------- Esqueleto de carga (rede lenta): a página aparece antes dos scripts chegarem ---------- */

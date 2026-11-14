@@ -856,7 +856,7 @@ summary:hover {
 .btn-chat-action {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid #334155;
-  color: #94a3b8;
+  color: #cbd5e1;
   border-radius: 4px;
   padding: 3px 8px;
   font-size: 0.75rem;
@@ -1733,6 +1733,10 @@ html[data-theme="light"] .manual-btn {
   color: var(--laift-text);
   border-color: var(--laift-border-strong);
 }
+/* Tema claro: as sugestões do chat tinham 1,5:1 (azul-claro sobre azul-claro); agora 7:1. */
+html[data-theme="light"] .chat-chip { color: #075985; background: #e0f2fe; border-color: #0369a1; }
+html[data-theme="light"] .btn-chat-action { color: #334155; background: #f1f5f9; border-color: #94a3b8; }
+html[data-theme="light"] .chat-chip:hover { color: #fff; background: #0369a1; }
 html[data-theme="light"] .btn-clear { color: var(--laift-text); border-color: var(--laift-border-strong); }
 html[data-theme="light"] .btn-clear:hover { color: #fff; }
 html[data-theme="light"] .btn-comece { background: #0a7a3f; color: #fff; }
