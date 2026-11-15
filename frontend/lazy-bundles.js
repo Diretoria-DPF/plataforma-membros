@@ -79,6 +79,8 @@
     novidades: ['modulos/shared/laift-dialog.js', 'whats-new.js'],
     // Créditos (toque triplo na versão em Perfil > Sobre): tela cheia com animação por CSS; o creditos.css é injetado pelo script.
     creditos: ['creditos.js'],
+    // Personagem do Tutor (3 variações): o script injeta o próprio CSS.
+    tutor: ['tutor-persona.js'],
     lia: [
       'modulos/shared/lia/lia-art.js', 'modulos/shared/lia/lia-states.js', 'modulos/shared/lia/lia-mood.js',
       'assistant-mood-glue.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia-props.js',

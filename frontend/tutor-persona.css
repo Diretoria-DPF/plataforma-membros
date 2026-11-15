@@ -1,0 +1,81 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Personagem do Tutor (tutor-persona.js, carregado sob demanda). Cores fixas dentro da arte: a figura tem fundo próprio
+   e contorno escuro, então lê igual no tema claro e no escuro. Movimento só com prefers-reduced-motion: no-preference. */
+.tut { --tut-ink: #1b2a3a; --tut-paper: #ffffff; display: inline-block; flex: none; line-height: 0; }
+.tut--avatar { width: 40px; height: 40px; }
+.tut--card { width: 72px; height: 72px; }
+.tut--tela { width: 144px; height: 144px; }
+.tut-svg { width: 100%; height: 100%; overflow: visible; }
+
+.tut[data-persona="atomo"] { --tut-main: #b9a7f5; --tut-soft: #f1ecff; --tut-accent: #5b3fd0; --tut-glass: #fff; }
+.tut[data-persona="coruja"] { --tut-main: #d9a35b; --tut-soft: #f8ecd3; --tut-accent: #e8782a; --tut-glass: #fff; }
+.tut[data-persona="frasco"] { --tut-main: #7cc5ef; --tut-soft: #fff; --tut-accent: #2b6cb0; --tut-glass: #eaf6fd; }
+
+.tut-o { stroke: var(--tut-ink); stroke-width: 2.5; stroke-linejoin: round; }
+.tut-main { fill: var(--tut-main); }
+.tut-soft { fill: var(--tut-soft); }
+.tut-glass { fill: var(--tut-glass); }
+.tut-accent { fill: var(--tut-accent); }
+.tut-orbit { fill: none; stroke: var(--tut-accent); stroke-width: 3; }
+.tut-ink { fill: var(--tut-ink); }
+.tut-hi { fill: var(--tut-paper); }
+.tut-blush { fill: #f4a6a0; }
+.tut-line { fill: none; stroke: var(--tut-ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.tut-badge { fill: var(--tut-paper); stroke: var(--tut-ink); stroke-width: 2.5; }
+.tut-dot { fill: var(--tut-ink); }
+.tut-wave { fill: none; stroke: var(--tut-ink); stroke-width: 2.5; stroke-linecap: round; }
+.tut-star { fill: #f5b301; stroke: var(--tut-ink); stroke-width: 1.4; stroke-linejoin: round; }
+
+/* Estado: cada estado mostra só as suas partes. */
+.tut-eyes-up, .tut-eyes-happy, .tut-m-smile, .tut-m-open, .tut-fx-think, .tut-fx-speak, .tut-fx-spark { display: none; }
+.tut[data-state="thinking"] .tut-eyes-open, .tut[data-state="celebrating"] .tut-eyes-open { display: none; }
+.tut[data-state="thinking"] .tut-eyes-up { display: inline; }
+.tut[data-state="thinking"] .tut-fx-think { display: inline; }
+.tut[data-state="speaking"] .tut-m-neutral, .tut[data-state="celebrating"] .tut-m-neutral { display: none; }
+.tut[data-state="speaking"] .tut-m-open { display: inline; }
+.tut[data-state="speaking"] .tut-fx-speak { display: inline; }
+.tut[data-state="celebrating"] .tut-eyes-happy, .tut[data-state="celebrating"] .tut-m-smile, .tut[data-state="celebrating"] .tut-fx-spark { display: inline; }
+
+/* Seletor "Escolha o seu tutor". */
+.tut-picker { margin: 0; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-alt); color: var(--text); min-width: 0; }
+.tut-picker legend { padding: 0 6px; font-weight: 700; }
+.tut-picker-preview { display: block; margin: 4px auto 8px; }
+.tut-picker-list { display: grid; gap: 8px; }
+.tut-opt { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); cursor: pointer; }
+.tut-opt:has(input:checked) { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
+.tut-opt:has(input:focus-visible) { outline: 3px solid var(--primary); outline-offset: 2px; }
+.tut-opt input { width: 24px; height: 24px; margin: 0; flex: none; accent-color: var(--primary); }
+.tut-opt-text { display: grid; gap: 2px; min-width: 0; }
+.tut-opt-about { font-size: 13px; color: var(--muted); }
+.tut-picker-hint { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+.tut-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .tut-body, .tut-eyes-open, .tut-m-open, .tut-fx-spark, .tut-fx-think .tut-dot, .tut-ring, .tut-bub { transform-box: fill-box; transform-origin: center; }
+  .tut[data-state="idle"] .tut-body { animation: tut-breathe 4s ease-in-out infinite; }
+  .tut[data-state="idle"] .tut-eyes-open { animation: tut-blink 5s infinite; }
+  .tut[data-state="thinking"] .tut-fx-think .tut-dot { animation: tut-pulse 1.2s ease-in-out infinite; }
+  .tut[data-state="thinking"] .tut-dot:nth-child(3) { animation-delay: .2s; }
+  .tut[data-state="thinking"] .tut-dot:nth-child(4) { animation-delay: .4s; }
+  .tut[data-persona="atomo"][data-state="thinking"] .tut-ring { animation: tut-spin 6s linear infinite; }
+  .tut[data-state="speaking"] .tut-m-open { animation: tut-talk .5s ease-in-out infinite; }
+  .tut[data-state="celebrating"] .tut-body { animation: tut-hop .7s ease-in-out infinite; }
+  .tut[data-state="celebrating"] .tut-fx-spark { animation: tut-pulse 1s ease-in-out infinite; }
+  .tut[data-persona="frasco"] .tut-bub { animation: tut-rise 3s ease-in infinite; }
+}
+@keyframes tut-breathe { 50% { transform: translateY(-1.5px); } }
+@keyframes tut-blink { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+@keyframes tut-pulse { 50% { opacity: .35; } }
+@keyframes tut-spin { to { transform: rotate(360deg); } }
+@keyframes tut-talk { 50% { transform: scaleY(.45); } }
+@keyframes tut-hop { 50% { transform: translateY(-4px); } }
+@keyframes tut-rise { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-14px); opacity: 0; } }
+
+/* Integração no cartão do Tutor (agents-tutor.js). */
+.agents-tutor-head { display: flex; align-items: center; gap: 12px; }
+.agents-tutor-who-avatar { display: flex; align-items: center; gap: 8px; }
+.agents-tutor-pick-sum { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 700; }

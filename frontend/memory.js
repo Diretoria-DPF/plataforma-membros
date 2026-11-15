@@ -318,7 +318,8 @@
   }
 
   function viewActive(doc, data) {
-    var nodes = [el(doc, 'p', 'memory-lead', TEXT.activeLead), itemsSection(doc, data.items, data.limits, onDeleteItem)];
+    var nodes = [el(doc, 'p', 'memory-lead', TEXT.activeLead), itemsSection(doc, data.items, data.limits, onDeleteItem), el(doc, 'div', 'memory-persona')];
+    if (root.LaiftLazy && doc.createElementNS) root.LaiftLazy.load('tutor').then(function () { nodes[2].appendChild(root.LaiftTutorPersona.buildPicker(doc)); }, function () {});
     if (data.vocabulary.topics.length) nodes.push(topicForm(doc, data));
     if (data.vocabulary.preferences.length) nodes.push(styleForm(doc, data));
     if (data.vocabulary.goals.length) nodes.push(goalForm(doc, data));
