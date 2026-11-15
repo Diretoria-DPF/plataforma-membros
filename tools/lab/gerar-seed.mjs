@@ -45,13 +45,12 @@ const DATA_PUBCHEM_CORRECAO = '2026-11-04';
 // reverificação com confiança 2; as marcas [NV] da fila estão em docs/LABORATORIO_NV_FILA.md.
 const FONTES = {
   curadoria_laift: {
-    nome: 'Curadoria LAIFT (valores herdados do catálogo, origem original não registrada)',
+    nome: 'Curadoria LAIFT',
     url: null,
     licenca: 'proprietaria-laift',
     atribuicao: null,
     redistribuivel: true,
     uso_comercial: null,
-    observacao: 'Valor de referência da curadoria LAIFT; a origem original não foi registrada.',
   },
   pubchem: {
     nome: 'PubChem (NCBI/NLM)',

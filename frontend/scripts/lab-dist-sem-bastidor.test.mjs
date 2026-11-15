@@ -75,6 +75,19 @@ test('.js do Laboratório (fonte, que o build copia) não trazem bastidor, nem o
   assert.deepEqual(achados, []);
 });
 
+// Dados publicados (seed e banco .js): além das expressões acima, nada de nota de curadoria sobre origem não rastreada.
+const BASTIDOR_DADOS = /sem fonte rastre[aá]vel|origem original n[aã]o|valores herdados|fila de reverifica/i;
+
+test('dados .js do Laboratório (seed e banco) não trazem nota de bastidor', () => {
+  const dados = path.join(labFonte, 'data');
+  const achados = fs.readdirSync(dados).filter((n) => n.endsWith('.js')).flatMap((n) => {
+    const txt = fs.readFileSync(path.join(dados, n), 'utf8');
+    const m = PROIBIDO.exec(txt) || BASTIDOR_DADOS.exec(txt);
+    return m ? [`${n}: "${m[0]}"`] : [];
+  });
+  assert.deepEqual(achados, []);
+});
+
 test('build.js publica o Laboratório pela versão sanitizada', () => {
   assert.match(fs.readFileSync(path.join(frontend, 'scripts', 'build.js'), 'utf8'), /lab-nv-fila\.js'\)\.sanitizarDist\(/);
 });
