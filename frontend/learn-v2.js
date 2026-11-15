@@ -687,7 +687,8 @@
     if (node) slot.appendChild(node);
   }
 
-  var SLOTS = ['focus', 'day', 'today', 'mission', 'weak', 'modules', 'overall', 'perf', 'badges', 'metrics', 'mine'];
+  // Até 5 blocos antes de "Conquistas e métricas": o que se faz agora vem primeiro; acompanhamento e conquistas depois.
+  var SLOTS = ['focus', 'day', 'today', 'modules', 'weak', 'metrics', 'mission', 'overall', 'perf', 'badges', 'mine'];
 
   function layout(doc) {
     var body = el(doc, 'div', 'l2-body');
