@@ -77,7 +77,10 @@ async function flowScenario(viewport) {
     await frame.waitForSelector('text=Leia todas as aulas');
     await layoutOk(frame, label + '/curso');
     await frame.click('text=1. Aula 1');
-    await frame.waitForSelector('.cr-lesson table');
+    // Primeiro o título (a aula abriu), depois o corpo e a tabela: se falhar, o erro diz qual passo faltou.
+    await frame.waitForSelector('#cr-title:has-text("1. Aula 1")', { timeout: 20000 });
+    await frame.waitForSelector('.cr-lesson', { state: 'attached', timeout: 20000 });
+    await frame.waitForSelector('.cr-lesson table', { state: 'attached', timeout: 20000 });
     check(await frame.locator('.cr-lesson strong').count() === 1, label + ': aula mostra negrito, lista e tabela');
     await layoutOk(frame, label + '/aula');
     await frame.click('text=Marcar como lida e seguir');
