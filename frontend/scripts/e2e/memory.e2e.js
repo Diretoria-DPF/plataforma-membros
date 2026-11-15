@@ -60,6 +60,12 @@ function memoryServer(initial) {
 const calls = (app, action) => app.calls.worker.filter((c) => c.action === action);
 const visible = (page, sel) => page.locator(sel).first().isVisible();
 
+// O cartão da memória é um acordeão e nasce fechado quando já está ativa: abre antes de usar.
+async function abrirCartao(page) {
+  await page.waitForSelector('#memory-card', { state: 'attached' });
+  await page.evaluate(() => { const c = document.getElementById('memory-card'); if (c) c.open = true; });
+}
+
 async function confirmar(page) {
   await page.waitForSelector('#modal-confirm:not(.hidden)');
   await page.click('#modal-confirm-ok');
@@ -103,6 +109,7 @@ async function ateOConsentimento(page) {
 async function ativar(app, server) {
   const page = app.page;
   await app.showPanel('panel-profile');
+  await abrirCartao(app.page);
   await page.waitForSelector('#memory-card');
   check(await page.locator('#memory-card [data-key="activate"]').count() === 0, 'o aceite não aparece antes do último passo');
   await ateOConsentimento(page);
@@ -204,6 +211,7 @@ async function textoMudou() {
   try {
     await app.login();
     await app.showPanel('panel-profile');
+    await abrirCartao(app.page);
     await app.page.waitForSelector('#memory-card');
     check(/O texto da memória de estudo mudou/.test(await app.page.textContent('#memory-card')), 'avisa que o texto mudou');
     check(await app.page.locator('#memory-card .memory-items').count() === 0, 'nada guardado é lido antes do novo aceite');
@@ -226,6 +234,7 @@ async function celular() {
   try {
     await app.login();
     await app.showPanel('panel-profile');
+    await abrirCartao(app.page);
     await app.page.waitForSelector('#memory-card [data-key="revoke"]');
     await app.page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await app.page.waitForTimeout(200);
@@ -253,6 +262,7 @@ async function jornadaNoCelular() {
     try {
       await app.login();
       await app.showPanel('panel-profile');
+      await abrirCartao(app.page);
       await app.page.waitForSelector('#memory-card [data-key="guide-next"]');
       const medida = () => app.page.evaluate(() => ({
         small: Array.from(document.querySelectorAll('#memory-card button, #memory-card label.memory-declaration')).filter((b) => b.getBoundingClientRect().height < 44).length,
@@ -269,6 +279,7 @@ async function jornadaNoCelular() {
       check(/opcional e está desativada/.test(await app.page.textContent('#memory-card')), `${width}px: "Agora não" recolhe a jornada`);
       await app.showPanel('panel-home');
       await app.showPanel('panel-profile');
+      await abrirCartao(app.page);
       check(/opcional e está desativada/.test(await app.page.textContent('#memory-card')), `${width}px: voltar ao Perfil na mesma sessão não reabre a jornada`);
       check(calls(app, 'apiMemorySetConsent').length === 0, `${width}px: recusar não envia nada`);
       check(app.errors.length === 0, `sem erros de página (${app.errors.join('; ')})`);

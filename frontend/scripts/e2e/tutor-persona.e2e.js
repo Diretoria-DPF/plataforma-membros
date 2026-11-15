@@ -80,6 +80,8 @@ async function cenario(viewport, rotulo) {
 
     // Perfil > Memória de estudo: a mesma escolha.
     await app.showPanel('panel-profile');
+    await page.waitForSelector('#memory-card', { state: 'attached' });
+    await page.evaluate(() => { document.getElementById('memory-card').open = true; });
     await page.waitForSelector('#memory-card .tut-picker', { state: 'attached' });
     await seletor(page, '#memory-card', `${rotulo} memória`);
     check(await page.locator('#memory-card .tut-picker input:checked').getAttribute('value') === 'coruja', `${rotulo}: o Perfil mostra a escolha salva`);

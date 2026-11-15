@@ -178,19 +178,21 @@
   }
 
   function buildCard(doc) {
-    var card = el(doc, 'section', 'card memory-card');
+    // Acordeão nativo (details): fechado quando a memória já está ativa, aberto enquanto falta consentir.
+    var card = el(doc, 'details', 'card memory-card');
     card.id = CARD_ID;
-    card.setAttribute('aria-labelledby', 'memory-card-title');
+    var summary = el(doc, 'summary', 'memory-summary');
     var title = el(doc, 'h3', 'memory-title', TEXT.title);
     title.id = 'memory-card-title';
     title.setAttribute('tabindex', '-1');
     title.setAttribute('data-key', 'title');
+    summary.appendChild(title);
     var body = el(doc, 'div', 'memory-body');
     var status = el(doc, 'div', 'status-msg memory-status');
     status.id = 'memory-status';
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
-    [title, body, status].forEach(function (node) { card.appendChild(node); });
+    [summary, body, status].forEach(function (node) { card.appendChild(node); });
     return { root: card, title: title, body: body, status: status };
   }
 
@@ -397,6 +399,13 @@
     var ui = state.ui;
     if (!ui) return;
     var key = preferKey || activeKey(ui);
+    // Só muda a abertura quando a tela muda de tipo; o que a pessoa abriu ou fechou à mão é respeitado.
+    var d = state.data;
+    var kind = !d ? 'error' : !d.available ? 'unavailable' : d.consent.needsReconsent ? 'reconsent' : d.consent.current ? (state.justActivated ? 'done' : 'active') : 'guide';
+    if (ui.kind !== kind) {
+      ui.kind = kind;
+      if (kind === 'active') ui.root.removeAttribute('open'); else ui.root.setAttribute('open', '');
+    }
     clearNode(ui.body);
     nodesFor(root.document, state).forEach(function (node) { ui.body.appendChild(node); });
     setBusy(state.busy);
