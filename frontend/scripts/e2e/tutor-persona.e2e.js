@@ -11,7 +11,7 @@
 const { startApp, check } = require('./harness');
 const { axeGate } = require('./axe-gate');
 
-const KEY = 'laift_tutor_persona_v1';
+const STORE_NAME = 'laift_tutor_persona_v1';
 const TUTOR = {
   id: 'tutor-clinico', name: 'Tutor Clínico', version: '1.0.0', description: 'Tutor de estudo.', capabilities: ['explicar_mecanismo'],
   quota: { used: 0, limit: 30, remaining: 30, resetsAt: null }, memory: { available: false },
@@ -60,7 +60,7 @@ async function cenario(viewport, rotulo) {
     // Teclado: foca a opção marcada e desce com a seta.
     await page.focus('#agents-tutor .tut-picker input:checked');
     await page.keyboard.press('ArrowDown');
-    const escolhido = await page.evaluate((k) => localStorage.getItem(k), KEY);
+    const escolhido = await page.evaluate((k) => localStorage.getItem(k), STORE_NAME);
     check(escolhido === 'coruja', `${rotulo}: a seta escolhe o segundo tutor e salva no aparelho (${escolhido})`);
     check(await page.getAttribute('#agents-tutor .tut--card', 'data-persona') === 'coruja', `${rotulo}: a figura do cartão muda na hora`);
     check((await page.textContent('#agents-tutor .tut-sr')).includes('Coruja'), `${rotulo}: o leitor de tela recebe a confirmação`);
@@ -84,7 +84,7 @@ async function cenario(viewport, rotulo) {
     await seletor(page, '#memory-card', `${rotulo} memória`);
     check(await page.locator('#memory-card .tut-picker input:checked').getAttribute('value') === 'coruja', `${rotulo}: o Perfil mostra a escolha salva`);
     await page.locator('#memory-card .tut-opt', { hasText: 'Frasco' }).click();
-    check(await page.evaluate((k) => localStorage.getItem(k), KEY) === 'frasco', `${rotulo}: escolher no Perfil salva`);
+    check(await page.evaluate((k) => localStorage.getItem(k), STORE_NAME) === 'frasco', `${rotulo}: escolher no Perfil salva`);
     await semRolagemHorizontal(page, `${rotulo} Perfil`);
     await axeGate(page, `Memória de estudo com seletor de tutor (${rotulo})`);
     await app.showPanel('panel-learn');

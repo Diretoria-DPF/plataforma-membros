@@ -15,7 +15,7 @@
   'use strict';
 
   var NS = 'http://www.w3.org/2000/svg';
-  var KEY = 'laift_tutor_persona_v1';
+  var STORE_NAME = 'laift_tutor_persona_v1';
   var EVENT = 'laift:tutor-persona';
   var STATES = ['idle', 'thinking', 'speaking', 'celebrating'];
   var SIZES = ['avatar', 'card', 'tela'];
@@ -140,7 +140,7 @@
   function getPersona() {
     var s = storage();
     var raw = null;
-    try { raw = s ? s.getItem(KEY) : null; } catch (e) { raw = null; }
+    try { raw = s ? s.getItem(STORE_NAME) : null; } catch (e) { raw = null; }
     return byId(raw) ? raw : (memory || DEFAULT_ID);
   }
 
@@ -193,7 +193,7 @@
   function setPersona(id, doc) {
     if (!byId(id)) return false;
     var s = storage();
-    try { if (s) s.setItem(KEY, id); } catch (e) { /* sem storage: vale só até fechar a página */ }
+    try { if (s) s.setItem(STORE_NAME, id); } catch (e) { /* sem storage: vale só até fechar a página */ }
     memory = id;
     var d = doc || root.document;
     if (d) {
@@ -309,7 +309,7 @@
   }
 
   var api = {
-    KEY: KEY, EVENT: EVENT, STATES: STATES, SIZES: SIZES, PERSONAS: PERSONAS, DEFAULT_ID: DEFAULT_ID, TEXT: TEXT,
+    STORE_NAME: STORE_NAME, EVENT: EVENT, STATES: STATES, SIZES: SIZES, PERSONAS: PERSONAS, DEFAULT_ID: DEFAULT_ID, TEXT: TEXT,
     getPersona: getPersona, setPersona: setPersona, render: render, setState: setState, buildPicker: buildPicker, decorateCard: decorateCard,
     figureLabel: figureLabel, refreshAll: refreshAll, art: ART,
   };
