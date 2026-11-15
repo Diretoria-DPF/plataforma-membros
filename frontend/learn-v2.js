@@ -567,6 +567,32 @@
     return section;
   }
 
+  /** Conquistas e métricas: bloco recolhível; o código das métricas só baixa na primeira abertura (pacote "metricas"). */
+  function buildMetrics(ctx) {
+    var doc = ctx.doc;
+    var details = el(doc, 'details', 'l2-perf l2-met');
+    details.setAttribute('data-l2-metrics', '1');
+    details.appendChild(el(doc, 'summary', 'l2-perf__summary', 'Conquistas e métricas'));
+    var body = el(doc, 'div', 'l2-perf__body');
+    details.appendChild(body);
+    var painted = false;
+    function paint() {
+      var lib = root.LaiftLearnMetricas;
+      if (!lib) { body.appendChild(el(doc, 'p', 'l2-note', 'Não foi possível carregar as métricas agora. Feche e abra o bloco para tentar de novo.')); painted = false; return; }
+      var eng = ctx.data && ctx.data.eng;
+      var model = lib.buildModel({ stats: ctx.stats, streak: eng && eng.streak, modules: MODULES, weak: ctx.weak || [], now: ctx.now });
+      lib.render(doc, body, model, { openModule: ctx.openModule, startFirst: function () { ctx.openModule('farmaco'); } });
+    }
+    details.addEventListener('toggle', function () {
+      if (!details.open || painted) return;
+      painted = true;
+      clear(body);
+      if (root.LaiftLearnMetricas || !root.LaiftLazy) { paint(); return; }
+      root.LaiftLazy.load('metricas').then(paint, paint);
+    });
+    return details;
+  }
+
   // ---------- Folha de detalhe do módulo ----------
 
   var sheet = null;
@@ -661,7 +687,7 @@
     if (node) slot.appendChild(node);
   }
 
-  var SLOTS = ['focus', 'day', 'today', 'mission', 'weak', 'modules', 'overall', 'perf', 'badges', 'mine'];
+  var SLOTS = ['focus', 'day', 'today', 'mission', 'weak', 'modules', 'overall', 'perf', 'badges', 'metrics', 'mine'];
 
   function layout(doc) {
     var body = el(doc, 'div', 'l2-body');
@@ -691,6 +717,7 @@
     setSlot(slots.overall, ctx.stats ? buildOverall(ctx) : null);
     setSlot(slots.perf, ctx.stats ? buildPerformance(ctx) : statsFailure(ctx));
     setSlot(slots.badges, ctx.stats ? buildBadges(ctx) : null);
+    setSlot(slots.metrics, ctx.stats ? buildMetrics(ctx) : null);
     setSlot(slots.mine, buildMyAchievements(ctx));
     var hasCard = !slots.focus.classList.contains('hidden') || !slots.day.classList.contains('hidden');
     ctx.host.classList.toggle('has-card', hasCard);
@@ -808,7 +835,7 @@
     streakLabel: streakLabel, focusModel: focusModel, todayItems: todayItems, reviewSummary: reviewSummary, weakItems: weakItems, buildWeak: buildWeak, moduleCards: moduleCards,
     overallChips: overallChips, badgeItems: badgeItems, sheetSummary: sheetSummary, ensureStyles: ensureStyles,
     buildTop: buildTop, buildFocus: buildFocus, buildDay: buildDay, buildToday: buildToday, buildModules: buildModules,
-    buildOverall: buildOverall, buildPerformance: buildPerformance, buildBadges: buildBadges, buildMission: buildMission, buildMyAchievements: buildMyAchievements, missionData: missionData,
+    buildOverall: buildOverall, buildPerformance: buildPerformance, buildBadges: buildBadges, buildMetrics: buildMetrics, buildMission: buildMission, buildMyAchievements: buildMyAchievements, missionData: missionData,
     load: load, reset: reset, closeSheet: closeSheet,
   };
 
