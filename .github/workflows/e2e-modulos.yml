@@ -64,4 +64,4 @@ jobs:
           liga entrada-v2 profile-v2 parsers apis assistant casca-robusta
           qa-mobile-clinica qa-mobile-cracha qa-mobile.
           lab-mobile lab-motor lab-tutor
-          cursos
+          cursos sem-sobreposicao

@@ -922,3 +922,7 @@ button.learn-card:focus-visible { outline-offset: 3px; }
 
 /* Entrada v2 a caminho (ux-v2.js): a entrada antiga não aparece para depois trocar de lugar. */
 html[data-ev2-aguardando] #screen-welcome > * { visibility: hidden; }
+
+/* Início, Aprender, Propostas e Tarefas ficavam com folhas decorativas cruzando títulos e botões (a "bagunça visual"
+   do dono): dentro do app autenticado elas não aparecem; seguem só nas telas públicas, onde não há conteúdo por cima. */
+body:has(#app-root:not(.hidden)) .leaf-field { display: none; }
