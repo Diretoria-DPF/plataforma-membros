@@ -311,6 +311,8 @@
     status.setAttribute('aria-live', 'polite');
     [title, el(doc, 'p', 'muted agents-tutor-intro', TEXT.intro), notice, log, form.form, wait, status]
       .forEach(function (node) { card.appendChild(node); });
+    // Personagem: pacote `tutor` sob demanda; sem ele o Tutor funciona igual.
+    if (root.LaiftLazy && doc.createElementNS) root.LaiftLazy.load('tutor').then(function () { root.LaiftTutorPersona.decorateCard(doc, card, title); }, function () {});
     return { root: card, log: log, form: form.form, input: form.input, count: form.count, send: form.send, clear: form.clear, wait: wait, status: status };
   }
 

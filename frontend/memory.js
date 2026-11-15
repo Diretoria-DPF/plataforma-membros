@@ -370,6 +370,9 @@
       nodes.push(el(doc, 'p', 'memory-lead', TEXT.activeLead));
     }
     nodes.push(itemsSection(doc, data.items, data.limits, onDeleteItem));
+    var personaSlot = el(doc, 'div', 'memory-persona');
+    nodes.push(personaSlot);
+    if (root.LaiftLazy && doc.createElementNS) root.LaiftLazy.load('tutor').then(function () { personaSlot.appendChild(root.LaiftTutorPersona.buildPicker(doc)); }, function () {});
     if (data.vocabulary.topics.length) nodes.push(topicForm(doc, data));
     if (data.vocabulary.preferences.length) nodes.push(styleForm(doc, data));
     if (data.vocabulary.goals.length) nodes.push(goalForm(doc, data));
