@@ -188,7 +188,7 @@
     toggle.setAttribute('type', 'button');
     toggle.id = 'pr2-toggle-form';
     toggle.setAttribute('aria-controls', FORM_BODY_ID);
-    toggle.appendChild(el(doc, 'span', 'pr2-sec__title', 'Enviar proposta'));
+    toggle.appendChild(el(doc, 'span', 'pr2-sec__title', 'Nova proposta'));
     toggle.appendChild(svg(doc, CHEVRON, 'pr2-sec__chevron'));
     heading.appendChild(toggle);
     var body = el(doc, 'div', 'pr2-sec__body');
