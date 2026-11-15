@@ -104,7 +104,7 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 | CON-02 | Plano operacional de revisão: revisor(es) nomeado(s), meta semanal, fonte obrigatória (`source`, `reviewed_by`, `reviewed_at`), checklist assinado | CRÍTICO | decisão na Fase 0; execução na Fase 5A | aberto | D | G | — | C5 |
 | LGPD-01 | Exclusão de conta self-service (efeito imediato; purga definitiva ≤ 30 dias; sujeita a parecer) | ALTO | exclusão hoje é manual, até 180 dias (Política §7) | aberto | D+J+A | G | — | C-LGPD |
 | LGPD-02 | Controle de idade e bloqueio de IA/memória a menores — **adiado por decisão do dono**; obrigatório antes de abrir amplamente/monetizar | ALTO | cadastro não coleta idade; Forms aceita 12–17 | aberto (adiado) | D+J | M | — | J7 |
-| LGPD-03 | Política v2 + re-aceite (Forms, Europe PMC, localStorage, memória, `activity_days`); consentimento da memória sai de RASCUNHO | ALTO | `docs/POLITICA_DE_PRIVACIDADE.md`, `docs/memoria-consentimento-RASCUNHO.md` | aberto | D+J | M | — | — |
+| LGPD-03 | Política v2 + re-aceite (Forms, Europe PMC, localStorage, memória, `activity_days`); consentimento da memória sai de RASCUNHO | ALTO | `docs/POLITICA_DE_PRIVACIDADE.md`, `docs/memoria-consentimento.md` | aberto | D+J | M | — | — |
 
 ### Cargos funcionais, mentoria e RLS (ROL)
 | ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |

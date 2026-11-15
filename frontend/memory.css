@@ -28,6 +28,10 @@
 .memory-term:first-child { margin-top: 0; }
 .memory-term-text { margin: 0; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
 
+/* Declaração de maioridade: alvo de toque >= 44 px */
+.memory-declaration { display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 14px; line-height: 1.4; color: var(--text); cursor: pointer; }
+.memory-declaration input { flex: none; width: 24px; height: 24px; margin: 0; }
+
 /* Itens guardados */
 .memory-subtitle { margin: 0 0 8px; font-size: 16px; }
 .memory-subtitle:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent); outline-offset: 4px; }

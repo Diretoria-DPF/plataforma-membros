@@ -138,7 +138,7 @@ test('fiação: pacote "novidades" (diálogo + script), CSS no index.html, app.j
   const app = read('app.js');
   assert.match(app, /withBundle\('novidades'/);
   assert.match(app, /LaiftWhatsNew\.show\(\)/);
-  assert.match(app, /showWhatsNew\(onboardingOpened\)/);
+  assert.match(app, /showWhatsNew\(opened\)/);
 });
 
 test('whats-new.js: sem innerHTML, eval, handler inline nem som', () => {

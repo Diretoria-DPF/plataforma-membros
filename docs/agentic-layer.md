@@ -74,7 +74,7 @@ Os temas do vocabulário (`memory/vocabulary.js`, ~23) vêm dos módulos de Apre
 - Tabela `member_memory_consent` (núcleo): `status` (`granted`/`revoked`), `purpose_version`, datas. Auditoria sem conteúdo em `audit_logs` (`MEMORY_CONSENT_GRANTED`, `MEMORY_CONSENT_REVOKED`, `MEMORY_ITEM_DELETED`, `MEMORY_ALL_DELETED`, `MEMORY_EXPORTED`, `MEMORY_ADMIN_PURGE`).
 - A **versão da finalidade** mora em `constants.js` (`MEMORY.PURPOSE_VERSION`). Mudou o texto do consentimento: aumente a versão. Quem aceitou a versão antiga passa a `needsReconsent`: **leitura e escrita fecham** até um novo aceite (os dados antigos não somem sozinhos; a pessoa pode apagar ou exportar). Para ativar, o cliente envia a versão que mostrou; se for outra, o servidor recusa (`VALIDATION`, `reason: 'version'`).
 - O consentimento é conferido **no núcleo a cada chamada do tutor** e nunca é cacheado: revogar vale na hora.
-- Texto proposto: `docs/memoria-consentimento-RASCUNHO.md` (aguarda aprovação do dono; **não** altera `LEGAL_VERSIONS` nem a política vigente).
+- Texto do consentimento e da Política: `docs/memoria-consentimento.md` (na tela, em `memory-core.js`; jornada guiada no Perfil e no onboarding; **não** altera `LEGAL_VERSIONS`, que sobe com a aprovação do dono).
 
 ### 2.5 O tutor lendo a memória
 

@@ -17,7 +17,7 @@
 //   - "Baixar meus dados" monta o JSON no próprio navegador (Blob + URL.createObjectURL, revogada logo depois): o arquivo
 //     não é enviado a lugar nenhum. As ações de memória NÃO entram na ponte dos módulos: o cartão roda no shell.
 //   - A parte pura (textos, CONSENT_SECTIONS, normalização, exportação) está em memory-core.js, carregado antes. O texto da
-//     finalidade é RASCUNHO PARA APROVAÇÃO DO DONO (docs/memoria-consentimento-RASCUNHO.md); a versão (purposeVersion) vem do
+//     finalidade está em docs/memoria-consentimento.md; a jornada guiada (3 passos + aceite com declaração de 18 anos) usa GUIDE_GROUPS; a versão (purposeVersion) vem do
 //     servidor e é devolvida no aceite.
 // Expõe window.LaiftMemory (ou module.exports, no Node, para os testes).
 (function (root) {
@@ -48,6 +48,7 @@
   var defaultEnv = Core.defaultEnv;
   var downloadJson = Core.downloadJson;
   var consentSections = Core.consentSections;
+  var GUIDE_GROUPS = Core.GUIDE_GROUPS;
 
 
   // ---------------------------------------------------------------------------
@@ -92,10 +93,10 @@
     return row;
   }
 
-  function termsList(doc, limits) {
+  function termsList(doc, limits, group) {
     var terms = el(doc, 'dl', 'memory-terms');
     terms.setAttribute('aria-label', TEXT.termsLabel);
-    consentSections(limits).forEach(function (s) {
+    consentSections(limits, group).forEach(function (s) {
       terms.appendChild(el(doc, 'dt', 'memory-term', s.title));
       terms.appendChild(el(doc, 'dd', 'memory-term-text', s.text));
     });
@@ -202,7 +203,7 @@
 
   function freshState(token) {
     generation += 1;
-    return { token: token, gen: generation, loaded: false, loading: null, hidden: false, data: null, error: '', busy: false, ui: null, revealPending: false };
+    return { token: token, gen: generation, loaded: false, loading: null, hidden: false, data: null, error: '', busy: false, ui: null, revealPending: false, guide: { step: 0, dismissed: false }, justActivated: false };
   }
 
   function update(patch) {
@@ -269,18 +270,61 @@
     return [el(doc, 'p', 'memory-lead', TEXT.unavailable), actionsRow(doc, buttons)];
   }
 
-  function viewConsent(doc, data, again) {
-    var nodes = [el(doc, 'p', 'memory-lead', again ? TEXT.reconsent : TEXT.lead)];
-    nodes.push(termsList(doc, data.limits));
-    nodes.push(el(doc, 'p', 'memory-footnote muted', TEXT.termsFooter));
+  /** Declaração de maioridade (18 anos): exigida no aceite; o servidor registra a data e a versão do texto aceito. */
+  function declarationRow(doc) {
+    var label = el(doc, 'label', 'memory-declaration');
+    var input = el(doc, 'input');
+    input.type = 'checkbox';
+    input.id = 'memory-adult';
+    input.setAttribute('data-ctl', '1');
+    input.setAttribute('data-key', 'adult');
+    label.appendChild(input);
+    label.appendChild(el(doc, 'span', '', TEXT.declaration));
+    return label;
+  }
+
+  /** Novo aceite (texto mudou): texto inteiro, sem jornada. */
+  function viewReconsent(doc, data) {
+    var nodes = [el(doc, 'p', 'memory-lead', TEXT.reconsent), termsList(doc, data.limits), el(doc, 'p', 'memory-footnote muted', TEXT.termsFooter)];
+    nodes.push(declarationRow(doc));
     var buttons = [];
-    if (data.consent.purposeVersion) buttons.push(btn(doc, again ? TEXT.reaccept : TEXT.activate, '', 'activate', onActivate));
+    if (data.consent.purposeVersion) buttons.push(btn(doc, TEXT.reaccept, '', 'activate', onActivate));
     else nodes.push(el(doc, 'p', 'memory-footnote', TEXT.unavailable));
-    if (again) {
-      buttons.push(btn(doc, TEXT.exportData, 'secondary', 'export', onExport));
-      buttons.push(btn(doc, TEXT.revokeErase, 'danger', 'revoke', onRevoke));
+    buttons.push(btn(doc, TEXT.exportData, 'secondary', 'export', onExport));
+    buttons.push(btn(doc, TEXT.revokeErase, 'danger', 'revoke', onRevoke));
+    nodes.push(actionsRow(doc, buttons));
+    return nodes;
+  }
+
+  /** "Agora não": uma linha e um botão; não volta a abrir a jornada sozinha na mesma sessão. */
+  function viewGuideLater(doc) {
+    return [el(doc, 'p', 'memory-lead', TEXT.guideLaterLead), actionsRow(doc, [btn(doc, TEXT.guideReopen, 'secondary', 'guide-reopen', onGuideReopen)])];
+  }
+
+  /** Jornada de 3 passos (o que é, o que será registrado, consentimento); ativar o Tutor vem logo depois do aceite. */
+  function viewGuide(doc, data) {
+    if (state.guide.dismissed) return viewGuideLater(doc);
+    var step = state.guide.step;
+    var last = step === GUIDE_GROUPS.length - 1;
+    var nodes = [el(doc, 'p', 'memory-footnote muted', TEXT.guideProgress.replace('{n}', String(step + 1)).replace('{total}', String(GUIDE_GROUPS.length)))];
+    var heading = el(doc, 'h4', 'memory-subtitle', TEXT.guideTitles[step]);
+    heading.setAttribute('tabindex', '-1');
+    heading.setAttribute('data-key', 'guide-title');
+    nodes.push(heading);
+    if (step === 0) nodes.push(el(doc, 'p', 'memory-lead', TEXT.lead));
+    nodes.push(termsList(doc, data.limits, GUIDE_GROUPS[step]));
+    var buttons = [];
+    if (last) {
+      nodes.push(el(doc, 'p', 'memory-footnote muted', TEXT.termsFooter));
+      nodes.push(declarationRow(doc));
+      if (data.consent.purposeVersion) buttons.push(btn(doc, TEXT.activate, '', 'activate', onActivate));
+      else nodes.push(el(doc, 'p', 'memory-footnote', TEXT.unavailable));
+    } else {
+      buttons.push(btn(doc, TEXT.guideNext, '', 'guide-next', function () { goGuide(1); }));
     }
-    if (buttons.length) nodes.push(actionsRow(doc, buttons));
+    if (step > 0) buttons.push(btn(doc, TEXT.guideBack, 'secondary', 'guide-back', function () { goGuide(-1); }));
+    buttons.push(btn(doc, TEXT.guideLater, 'secondary', 'guide-later', onGuideLater));
+    nodes.push(actionsRow(doc, buttons));
     return nodes;
   }
 
@@ -318,7 +362,14 @@
   }
 
   function viewActive(doc, data) {
-    var nodes = [el(doc, 'p', 'memory-lead', TEXT.activeLead), itemsSection(doc, data.items, data.limits, onDeleteItem)];
+    var nodes = [];
+    if (state.justActivated) {
+      nodes.push(el(doc, 'p', 'memory-lead', TEXT.doneLead));
+      nodes.push(actionsRow(doc, [btn(doc, TEXT.openTutor, '', 'open-tutor', onOpenTutor)]));
+    } else {
+      nodes.push(el(doc, 'p', 'memory-lead', TEXT.activeLead));
+    }
+    nodes.push(itemsSection(doc, data.items, data.limits, onDeleteItem));
     if (data.vocabulary.topics.length) nodes.push(topicForm(doc, data));
     if (data.vocabulary.preferences.length) nodes.push(styleForm(doc, data));
     if (data.vocabulary.goals.length) nodes.push(goalForm(doc, data));
@@ -334,9 +385,9 @@
   function nodesFor(doc, st) {
     if (!st.data) return viewError(doc, st.error || TEXT.generic);
     if (!st.data.available) return viewUnavailable(doc, st.data);
-    if (st.data.consent.needsReconsent) return viewConsent(doc, st.data, true);
+    if (st.data.consent.needsReconsent) return viewReconsent(doc, st.data);
     if (st.data.consent.current) return viewActive(doc, st.data);
-    return viewConsent(doc, st.data, false);
+    return viewGuide(doc, st.data);
   }
 
   function render(preferKey) {
@@ -454,12 +505,40 @@
     return next.purposeVersion ? next : Object.assign(next, { purposeVersion: fallback });
   }
 
+  function goGuide(delta) {
+    var step = Math.max(0, Math.min(GUIDE_GROUPS.length - 1, state.guide.step + delta));
+    update({ guide: { step: step, dismissed: false } });
+    render('guide-title');
+  }
+
+  function onGuideLater() {
+    update({ guide: { step: 0, dismissed: true } });
+    render('title');
+  }
+
+  function onGuideReopen() {
+    update({ guide: { step: 0, dismissed: false } });
+    render('guide-title');
+  }
+
+  function onOpenTutor() {
+    var shell = app();
+    if (shell && typeof shell.showPanel === 'function') shell.showPanel('panel-learn');
+  }
+
   function onActivate() {
+    var declared = findByKey(state.ui.root, 'adult');
+    if (!declared || declared.checked !== true) {
+      note(TEXT.declarationNeeded, 'error');
+      if (declared && typeof declared.focus === 'function') declared.focus();
+      return;
+    }
     confirmThen(TEXT.confirmActivate, function () {
       var version = state.data.consent.purposeVersion;
       act('apiMemorySetConsent', { granted: true, purposeVersion: version }, {
         ok: function (res) {
           patchData({ consent: consentFrom(res, version), items: [] });
+          update({ justActivated: true });
           render('title');
           note(TEXT.okActivated, 'success');
           quietReload();
@@ -604,6 +683,17 @@
     applyReveal();
   }
 
+  /**
+   * Primeiro acesso (onboarding): true se o cartão existe para esta pessoa e ela ainda não consentiu. Usa o mesmo
+   * apiMemoryGet do Perfil (nada novo é enviado); falha ou flag desligada = false, e a Guia não menciona a memória.
+   */
+  function probe() {
+    syncSession();
+    return ensureMemory().then(function () {
+      return !state.hidden && !!state.data && state.data.available === true && !state.data.consent.current;
+    }, function () { return false; });
+  }
+
   function onPanelChange(evt) {
     syncSession();
     if (evt && evt.detail && evt.detail.panel === PANEL) ensureMemory();
@@ -622,7 +712,7 @@
     CARD_ID: CARD_ID, TEXT: TEXT, ERRORS: Core.ERRORS, CONSENT_SECTIONS: Core.CONSENT_SECTIONS,
     consentSections: consentSections, normalizeState: normalizeState, normalizeItem: normalizeItem, classifyLoad: classifyLoad,
     errorMessage: errorMessage, describeItem: describeItem, exportText: exportText, exportFileName: exportFileName,
-    downloadJson: downloadJson, buildCard: buildCard, ensureMemory: ensureMemory, syncSession: syncSession, reset: reset, reveal: reveal,
+    downloadJson: downloadJson, buildCard: buildCard, ensureMemory: ensureMemory, probe: probe, syncSession: syncSession, reset: reset, reveal: reveal,
   };
 
   if (typeof module !== 'undefined' && module.exports) {
