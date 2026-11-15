@@ -173,7 +173,7 @@ test('créditos no LICENSE e no README', () => {
   assert.match(fs.readFileSync(path.join(repo, 'README.md'), 'utf8'), /dpflabs\.com/);
 });
 
-test('cache sobe uma vez: v51 no sw.js e no index.html', () => {
-  assert.match(read('sw.js'), /CACHE_PREFIX \+ 'v51'/);
-  assert.match(read('index.html'), /data-app-version="v51"/);
+test('cache sobe uma vez: v52 no sw.js e no index.html', () => {
+  assert.match(read('sw.js'), /CACHE_PREFIX \+ 'v52'/);
+  assert.match(read('index.html'), /data-app-version="v52"/);
 });
