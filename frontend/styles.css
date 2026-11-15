@@ -926,3 +926,12 @@ html[data-ev2-aguardando] #screen-welcome > * { visibility: hidden; }
 /* Início, Aprender, Propostas e Tarefas ficavam com folhas decorativas cruzando títulos e botões (a "bagunça visual"
    do dono): dentro do app autenticado elas não aparecem; seguem só nas telas públicas, onde não há conteúdo por cima. */
 body:has(#app-root:not(.hidden)) .leaf-field { display: none; }
+
+/* Cabeçalho fixo em telas muito estreitas (320–360 px): uma linha só, nome truncado, sem a linha de papel
+   (o papel segue visível no Perfil). Alvo do checklist de limpeza visual: ≤ 72 px de altura. */
+@media (max-width: 360px) {
+  .app-header { flex-wrap: nowrap; gap: 8px; padding: 10px 12px; }
+  .app-header .title-block { min-width: 0; flex: 1 1 auto; }
+  .app-header .title-block__linha { display: none; }
+  .app-header .title-block h2 { margin: 0 !important; font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
