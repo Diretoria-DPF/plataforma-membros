@@ -71,7 +71,7 @@ async function flagOnScenario(vp) {
     const toggles = await page.$$eval('.p2-sec__toggle', (n) => n.map((b) => [b.textContent.trim(), b.getAttribute('aria-expanded'), b.getAttribute('aria-controls')]));
     check(toggles.length === 7, 'sete seções recolhíveis (' + toggles.length + ')');
     check(toggles.every((t) => (t[1] === 'true' || t[1] === 'false') && t[2]), 'toda seção tem aria-expanded e aria-controls');
-    check(toggles.filter((t) => t[1] === 'true').map((t) => t[0]).join('|') === 'Meus dados|Preferências', 'abertas ao entrar: Meus dados e Preferências');
+    check(toggles.filter((t) => t[1] === 'true').map((t) => t[0]).join('|') === 'Meus dados', 'aberta ao entrar: só Meus dados');
     check(await page.locator('#profile-phone').isVisible(), 'campos de Meus dados visíveis');
     check(await page.locator('#mfa-card-body').isHidden(), 'Verificação em duas etapas começa recolhida');
 
@@ -168,7 +168,7 @@ async function flagOffScenario() {
     await page.waitForFunction(() => document.getElementById('profile-name').value === 'Ana Teste', null, { timeout: 8000 });
     check((await page.locator('.p2-hero, .p2-sec, .p2-col, .p2-list, [data-p2]').count()) === 0, 'nenhum elemento do Perfil v2');
     check((await page.locator('link[data-profile-v2-css]').count()) === 0, 'o CSS do Perfil v2 nem é carregado');
-    check((await page.locator('#profile-grid > .card').count()) === 7, 'sete cartões de sempre dentro da grade (perfil, verificação em duas etapas, métricas, preferências, privacidade, atualizar, sobre)');
+    check((await page.locator('#profile-grid > .card').count()) === 6, 'seis cartões de sempre dentro da grade (perfil, verificação em duas etapas, métricas, preferências, privacidade, atualizar)');
     check((await page.textContent('#panel-profile h2')) === 'Meu perfil', 'título de sempre "Meu perfil"');
     check(await page.locator('#profile-phone').isVisible() && await page.locator('#btn-whats-new').isVisible(), 'campos e botões de sempre visíveis');
     await shot(page, 'perfil-1280-flag-desligada');

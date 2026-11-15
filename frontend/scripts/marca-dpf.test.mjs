@@ -54,14 +54,14 @@ test('index.html: dpflabs.com só no Sobre do Perfil e no meta author, nunca em 
   assert.equal((html.match(/dpflabs\.com/g) || []).length, 3, 'meta author + link + texto do Sobre');
   assert.match(html, /<meta name="author" content="dpflabs\.com">/);
   assert.match(html, /<link rel="author" href="\/humans\.txt">/);
-  const sobre = /<div class="card sobre-card" id="about-card">([\s\S]*?)<\/div>/.exec(html);
+  const sobre = /<span class="sobre-rodape" id="about-card">([\s\S]*?)<\/span>/.exec(html);
   assert.ok(sobre, 'cartão Sobre existe');
   assert.match(sobre[1], /Plataforma desenvolvida por <a href="https:\/\/dpflabs\.com" target="_blank" rel="noopener noreferrer">dpflabs\.com<\/a>/);
   assert.match(sobre[1], /<button type="button" id="about-version"/);
-  for (const m of html.matchAll(/<footer[^>]*>([\s\S]*?)<\/footer>/g)) assert.ok(!/dpflabs/.test(m[1]), 'rodapé sem a marca');
-  // O Sobre é o último cartão do painel do Perfil.
-  const perfil = html.slice(html.indexOf('id="panel-profile"'));
-  assert.ok(perfil.indexOf('id="about-card"') > perfil.indexOf('id="btn-app-update"'));
+  // A marca fica na última linha (rodapé do app logado), só visível no Perfil; nenhum outro rodapé a traz.
+  const rodapes = [...html.matchAll(/<footer[^>]*>([\s\S]*?)<\/footer>/g)].filter((m) => /dpflabs/.test(m[1]));
+  assert.equal(rodapes.length, 1, 'só o rodapé do app logado traz a marca');
+  assert.ok(html.indexOf('id="about-card"') > html.indexOf('id="panel-profile"'));
 });
 
 test('páginas públicas e geradas do blog: rodapé sem o crédito', () => {

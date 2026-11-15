@@ -30,7 +30,7 @@ module.exports = async function marca() {
     await app.showPanel('panel-profile');
     const aberto = () => page.locator('#creditos').count().then((n) => n === 1);
     const textoVersao = await page.locator('#about-version').textContent();
-    check(/^Versão v\d+/.test(textoVersao), `marca: a versão aparece no Sobre (${textoVersao})`);
+    check(/^Versão v\d+/.test(textoVersao), `marca: a versão aparece no rodapé do Perfil (${textoVersao})`);
     check(await page.locator('#about-card a[href="https://dpflabs.com"][rel~="noopener"]').count() === 1, 'marca: linha "desenvolvida por" com link noopener');
 
     // Dois toques não abrem; o terceiro, dentro da janela, abre.

@@ -30,7 +30,7 @@
   var SECTIONS = [
     { key: 'dados', childId: 'form-profile', title: 'Meus dados', col: 'a', open: true },
     { key: 'metricas', childId: 'profile-metrics', title: 'Minhas métricas', col: 'a', open: false },
-    { key: 'preferencias', childId: 'form-preferences', title: 'Preferências', col: 'b', open: true },
+    { key: 'preferencias', childId: 'form-preferences', title: 'Preferências', col: 'b', open: false },
     { key: 'feedback', childId: 'form-feedback', title: 'Feedback', col: 'b', open: false },
     { key: 'mfa', childId: 'mfa-card-body', title: 'Verificação em duas etapas', col: 'b', open: false },
     { key: 'privacidade', childId: 'privacy-root', title: 'Meus dados e privacidade', col: 'b', open: false },
