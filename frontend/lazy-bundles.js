@@ -55,6 +55,8 @@
     inicio3: ['home-v3.js'],
     // Aprender v2: tela nova do hub, só com a flag learn_v2_enabled ligada (learning.js). O CSS é injetado pelo script.
     aprender2: ['modulos/shared/missao-semana.js', 'learn-v2.js'],
+    // Conquistas e métricas do Aprender v2: baixa só quando a pessoa abre o bloco (learn-v2.js); usa dados já carregados, sem requisição nova.
+    metricas: ['learn-metricas.js'],
     // Eventos v2: tela Eventos nova, só com a flag events_v2_enabled ligada (app.js; docs/eventos-v2.md).
     eventos2: ['events-v2.js'],
     // Perfil v2: reorganiza o Perfil de sempre (cabeçalho, colunas e seções recolhíveis), só com a flag profile_v2_enabled ligada (app.js).
