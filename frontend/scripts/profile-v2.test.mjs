@@ -45,11 +45,11 @@ test('bodyId e expandedValue', () => {
   assert.equal(p2.expandedValue(false), 'false');
 });
 
-test('seções: chaves únicas, todos os ids existem no index.html e só Dados e Preferências abrem', () => {
+test('seções: chaves únicas, todos os ids existem no index.html e só Dados abre', () => {
   const keys = p2.SECTIONS.map((s) => s.key);
   assert.equal(new Set(keys).size, keys.length);
   for (const s of p2.SECTIONS) assert.ok(HTML.includes(`id="${s.childId}"`), `${s.childId} deve existir no Perfil de sempre`);
-  assert.deepEqual(p2.SECTIONS.filter((s) => s.open).map((s) => s.key), ['dados', 'preferencias']);
+  assert.deepEqual(p2.SECTIONS.filter((s) => s.open).map((s) => s.key), ['dados']);
 });
 
 test('mount sem o painel não faz nada', () => {

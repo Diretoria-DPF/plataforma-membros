@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * sem-sobreposicao.e2e.js — nas telas Início, Aprender, Propostas e Tarefas, em celulares de 375 e 320 px,
+ * sem-sobreposicao.e2e.js — nas telas Início, Aprender, Propostas, Tarefas e Perfil (com Início v3 e Perfil v2), em celulares de 375 e 320 px, tablet e desktop de 1280 px,
  * nenhum par de elementos interativos visíveis (links, botões, campos, barra fixa, FAB, Guia) se sobrepõe,
  * e nada fica coberto pela barra fixa ao rolar até o fim. Mede por geometria (getBoundingClientRect).
  * E2E_OVERLAP_DEBUG=1 imprime os pares achados e salva capturas em /tmp.
@@ -12,13 +12,14 @@
 const { startApp, check } = require('./harness');
 
 const PHONES = [{ w: 375, h: 812 }, { w: 320, h: 568 }, { w: 768, h: 1024 }, { w: 1280, h: 800 }];
-const PANELS = [['Início', 'panel-home'], ['Aprender', 'panel-learn'], ['Propostas', 'panel-proposals'], ['Tarefas', 'panel-tasks']];
+const PANELS = [['Início', 'panel-home'], ['Aprender', 'panel-learn'], ['Propostas', 'panel-proposals'], ['Tarefas', 'panel-tasks'], ['Perfil', 'panel-profile']];
 const MIN_AREA = 16; // px² de interseção para contar como sobreposição
 const LONGO = 'Campanha de conscientização sobre o uso racional de medicamentos em comunidades ribeirinhas';
 const DESC = 'Descrição longa o bastante para quebrar em várias linhas no celular e testar o espaçamento entre blocos.';
 const iso = (d) => new Date(Date.now() + d * 86400000).toISOString();
 /** Dados fartos (títulos longos, vários itens) para expor sobreposição que as listas vazias escondem. */
 const HANDLERS = {
+  apiGetFeatureFlags: () => ({ success: true, flags: { home_v2_enabled: true, profile_v2_enabled: true } }),
   apiGetHomeSummary: () => ({ success: true, summary: {
     nextEvents: [{ id: 'e1', title: LONGO, startsAt: iso(2), location: 'Auditório do Centro de Ciências da Saúde' }, { id: 'e2', title: 'Aula aberta', startsAt: iso(5), location: 'Online' }],
     tasks: { myPendingCount: 3, availableCount: 4, next: { id: 't1', title: LONGO, dueDate: iso(3) } },

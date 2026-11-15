@@ -272,7 +272,8 @@ async function startApp(opts = {}) {
 
   async function showPanel(panelId) {
     if (MENU_PANELS.includes(panelId)) {
-      await page.click('#app-menu-btn');
+      // Na lateral larga (Início v3, 1100 px ou mais) o menu já está aberto na lateral e o hambúrguer some.
+      if (await page.locator('#app-menu-btn').isVisible()) await page.click('#app-menu-btn');
       await page.click(`#app-menu [data-panel="${panelId}"]`);
     } else {
       await page.click(`#app-nav [data-panel="${panelId}"]`);
