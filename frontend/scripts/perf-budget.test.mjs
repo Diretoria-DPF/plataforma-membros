@@ -14,7 +14,8 @@
 //   shell gzip   = 273 KB  -> teto 295 KB (+8%: cabe um módulo pequeno novo, não um painel inteiro)
 //   JS eager raw = 649 KB  -> teto 700 KB (706 KB desde a PR de robustez da casca: estado de erro e nova tentativa
 //                             com recuo para falha de script, ~6 KB de código que só roda na falha)
-//   precache raw = 879 KB  -> teto 950 KB
+//   precache raw = 879 KB  -> teto 960 KB (950 KB até o acordeão da Memória de estudo: +1,3 KB de CSS e JS já
+//                             no precache; o teto sobe 10 KB e o acordeão é CSS nativo, sem biblioteca)
 // Antes do MOB-04/07 eram 401 KB gzip, 1.059 KB de JS e 1.586 KB de precache. Se o teto estourar:
 // primeiro tente carregar sob demanda (lazy-bundles.js); só suba o teto com justificativa na PR.
 import { test } from 'node:test';
@@ -30,7 +31,7 @@ const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8');
 const BUDGET = {
   shellGzipBytes: 299 * 1024, // +3 KB (Memória de estudo: texto final do consentimento, jornada guiada e passo do onboarding, ~1,5 KB gzip); antes: +1 KB (Cursos, Onda 1): item do menu, painel e o carregador do iframe; o módulo em si fica fora do shell
   eagerJsRawBytes: 716 * 1024, // +10 KB (mesma mudança: texto do consentimento e jornada guiada em memory-core.js, memory.js, onboarding.js)
-  precacheRawBytes: 950 * 1024,
+  precacheRawBytes: 960 * 1024,
   immutableMaxAgeSeconds: 31536000,
 };
 
@@ -55,7 +56,7 @@ test('orçamento: o JavaScript do carregamento inicial cabe em 706 KB', () => {
   assert.ok(total <= BUDGET.eagerJsRawBytes, `JS eager com ${(total / 1024).toFixed(1)} KB; teto ${BUDGET.eagerJsRawBytes / 1024} KB`);
 });
 
-test('orçamento: o precache do service worker cabe em 950 KB (só o shell)', () => {
+test('orçamento: o precache do service worker cabe em 960 KB (só o shell)', () => {
   const m = /var PRECACHE = \[([\s\S]*?)\n  \];/.exec(read('sw.js'));
   const items = [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]).filter((x) => x !== './');
   const total = items.reduce((sum, f) => sum + fs.statSync(path.join(frontend, f)).size, 0);
