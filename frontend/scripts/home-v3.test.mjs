@@ -295,7 +295,7 @@ test('CSS: tudo atrás da flag; alvos de 44 px; foco visível; movimento reduzid
   assert.match(CSS, /--v3-rail: 88px/);
   assert.match(CSS, /--v3-rail: 248px/);
   assert.match(CSS, /@media \(min-width: 768px\)/);
-  assert.match(CSS, /@media \(min-width: 1100px\)/);
+  assert.match(CSS, /@media \(min-width: 900px\)/);
   assert.match(CSS, /scroll-snap-type: x proximity/);
   assert.match(CSS, /\.v3-icon-btn \{[^}]*width: 44px; height: 44px/);
   assert.match(CSS, /\.v3-chip \{[^}]*min-height: 44px/);

@@ -27,9 +27,9 @@
 :root[data-flag-tasks-v2-enabled] .t2-hero__kicker { margin: 0; font-size: 14px; color: rgba(255, 255, 255, .88); }
 :root[data-flag-tasks-v2-enabled] .t2-hero__title { margin: 0; font-size: 28px; line-height: 1.15; color: #fff; }
 
-/* ===== Resumo em destaque, sobreposto ao cabeçalho ===== */
+/* ===== Resumo em destaque, logo abaixo do cabeçalho ===== */
 :root[data-flag-tasks-v2-enabled] .t2-foco {
-  position: relative; margin: -56px 12px 0; padding: 20px; border-radius: var(--laift-radius-xl, 28px);
+  position: relative; margin: 16px 12px 0; padding: 20px; border-radius: var(--laift-radius-xl, 28px);
   background: var(--layer-1); color: var(--laift-text); box-shadow: 0 14px 34px rgba(8, 40, 36, .22), 0 2px 6px rgba(8, 40, 36, .1);
   display: grid; gap: 6px; overflow: hidden;
 }

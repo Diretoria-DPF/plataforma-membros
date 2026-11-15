@@ -49,9 +49,9 @@
 :root[data-flag-learn-v2-enabled] .l2-ico { width: 24px; height: 24px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 :root[data-flag-learn-v2-enabled] .l2-top :focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 
-/* Um foco só: o primeiro cartão sobe sobre o topo */
-:root[data-flag-learn-v2-enabled] #learn-v2.has-card .l2-top { padding-bottom: 76px; }
-:root[data-flag-learn-v2-enabled] #learn-v2.has-card .l2-body { margin-top: -56px; position: relative; z-index: 1; }
+/* Um foco só: o primeiro cartão fica logo abaixo do topo, sem sobrepor o banner */
+:root[data-flag-learn-v2-enabled] #learn-v2.has-card .l2-top { padding-bottom: 20px; }
+:root[data-flag-learn-v2-enabled] #learn-v2.has-card .l2-body { margin-top: 0; position: relative; z-index: 1; }
 :root[data-flag-learn-v2-enabled] .l2-focus {
   position: relative; overflow: hidden; padding: 20px; border-radius: var(--laift-radius-xl);
   background: var(--layer-1); color: var(--laift-text);
