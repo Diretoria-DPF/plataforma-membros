@@ -75,3 +75,29 @@ test('Worker de produção: ALLOWED_ORIGINS só com o domínio próprio (GitHub 
   const origens = topo.match(/^ALLOWED_ORIGINS\s*=\s*"([^"]+)"/m)[1].split(',');
   assert.deepEqual(origens, ['https://laift.com.br']);
 });
+
+// F-048: o endereço antigo *.workers.dev (desligado) não pode mais estar liberado na CSP-fonte nem no _headers.
+const paginasComCsp = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((item) => {
+  const alvo = path.join(dir, item.name);
+  if (item.isDirectory()) return ['dist', 'node_modules'].includes(item.name) ? [] : paginasComCsp(alvo);
+  return item.name.endsWith('.html') && /http-equiv="Content-Security-Policy"/.test(fs.readFileSync(alvo, 'utf8')) ? [alvo] : [];
+});
+
+test('F-048: nenhuma CSP-fonte nem o _headers liberam o endereço antigo workers.dev', () => {
+  const paginas = paginasComCsp(path.join(root, 'frontend'));
+  assert.ok(paginas.length >= 1, 'deveria haver páginas com CSP-meta');
+  for (const pagina of paginas) {
+    const html = fs.readFileSync(pagina, 'utf8');
+    assert.ok(!/http-equiv="Content-Security-Policy"[^>]*content="[^"]*workers\.dev/.test(html), path.relative(root, pagina));
+  }
+  const linhas = read('frontend/_headers').split('\n').filter((l) => /^\s*Content-Security-Policy:/.test(l));
+  assert.ok(linhas.length >= 1);
+  for (const linha of linhas) assert.ok(!linha.includes('workers.dev'), linha);
+});
+
+test('F-048: a CSP do index.html mantém as duas APIs laift.com.br', () => {
+  const csp = read('frontend/index.html').match(/http-equiv="Content-Security-Policy"[^>]*content="([^"]+)"/)[1];
+  const connect = csp.split(';').map((s) => s.trim()).find((s) => s.startsWith('connect-src'));
+  assert.ok(connect.includes('https://api.laift.com.br'));
+  assert.ok(connect.includes('https://staging-api.laift.com.br'));
+});
