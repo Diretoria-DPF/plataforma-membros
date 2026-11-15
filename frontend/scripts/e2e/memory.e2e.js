@@ -90,20 +90,38 @@ async function semCartao() {
   }
 }
 
+/** Jornada guiada: passo 1 (o que é) e 2 (o que será registrado) até o passo do consentimento. */
+async function ateOConsentimento(page) {
+  await page.waitForSelector('#memory-card [data-key="guide-next"]');
+  check(/Passo 1 de 3/.test(await page.textContent('#memory-card')), 'a jornada começa no passo 1 de 3');
+  await page.click('#memory-card [data-key="guide-next"]');
+  check(/O que não é guardado/.test(await page.textContent('#memory-card')), 'o passo 2 diz o que não é guardado');
+  await page.click('#memory-card [data-key="guide-next"]');
+  await page.waitForSelector('#memory-card [data-key="activate"]');
+}
+
 async function ativar(app, server) {
   const page = app.page;
   await app.showPanel('panel-profile');
   await page.waitForSelector('#memory-card');
+  check(await page.locator('#memory-card [data-key="activate"]').count() === 0, 'o aceite não aparece antes do último passo');
+  await ateOConsentimento(page);
   const text = await page.textContent('#memory-card');
-  check(/Para que serve/.test(text) && /O que NÃO guardamos/.test(text) && /180 dias sem uso/.test(text) && /Base legal/.test(text), 'a tela mostra o texto da finalidade com os prazos do servidor');
+  check(/Por quanto tempo/.test(text) && /Limite do Tutor/.test(text) && /180 dias sem uso/.test(text) && /Base legal/.test(text) && /Maioridade/.test(text), 'a tela mostra o texto da finalidade com os prazos do servidor');
   check(await page.locator('#memory-card .memory-items').count() === 0, 'sem consentimento nada guardado aparece');
   await axeGate(page, 'Memória de estudo: consentimento (claro, desktop)');
+  await page.click('#memory-card [data-key="activate"]');
+  check(await page.locator('#modal-confirm:not(.hidden)').count() === 0, 'sem a declaração de 18 anos não há confirmação');
+  check(/declaração de maioridade/.test(await page.textContent('#memory-status')), 'a tela pede a declaração de maioridade');
+  check(calls(app, 'apiMemorySetConsent').length === 0, 'sem a declaração nada é enviado');
+  await page.check('#memory-adult');
   await page.click('#memory-card [data-key="activate"]');
   await page.waitForSelector('#modal-confirm:not(.hidden)');
   check(calls(app, 'apiMemorySetConsent').length === 0, 'antes de confirmar nada é enviado');
   check(/nunca o texto das suas conversas/.test(await page.textContent('#modal-confirm-message')), 'a confirmação explica o que é guardado');
   await confirmar(page);
   await page.waitForSelector('#memory-card [data-key="revoke"]');
+  check(await page.locator('#memory-card [data-key="open-tutor"]').count() === 1, 'depois do aceite a Guia oferece abrir o Tutor');
   const set = calls(app, 'apiMemorySetConsent')[0];
   check(set.args[0] === 'e2e-session-token' && set.args[1].granted === true && set.args[1].purposeVersion === VERSION, 'o aceite leva a purposeVersion lida do servidor');
   check(server.state.current === true, 'o servidor registrou o consentimento');
@@ -158,7 +176,7 @@ async function apagarEDesligar(app) {
   await page.click('#memory-card [data-key="revoke"]');
   await page.waitForSelector('#modal-confirm:not(.hidden)');
   await confirmar(page);
-  await page.waitForSelector('#memory-card [data-key="activate"]');
+  await page.waitForSelector('#memory-card [data-key="guide-next"]');
   check(calls(app, 'apiMemorySetConsent')[1].args[1].granted === false, 'desligar revoga o consentimento');
   check(/desativada e apagada/.test(await page.textContent('#memory-status')), 'a pessoa é avisada do apagamento');
 }
@@ -191,6 +209,7 @@ async function textoMudou() {
     check(await app.page.locator('#memory-card .memory-items').count() === 0, 'nada guardado é lido antes do novo aceite');
     check((await app.page.textContent('#memory-card [data-key="activate"]')) === 'Aceitar o novo texto', 'o botão pede o novo aceite');
     await axeGate(app.page, 'Memória de estudo: texto mudou (escuro, desktop)');
+    await app.page.check('#memory-adult');
     await app.page.click('#memory-card [data-key="activate"]');
     await confirmar(app.page);
     await app.page.waitForSelector('#memory-card [data-key="revoke"]');
@@ -223,6 +242,39 @@ async function celular() {
     check(app.errors.length === 0, `sem erros de página (${app.errors.join('; ')})`);
   } finally {
     await app.close();
+  }
+}
+
+/** Jornada no celular (375 e 320): sem rolagem horizontal, alvos >= 44 px, axe nos 3 passos e "Agora não" sem reabrir. */
+async function jornadaNoCelular() {
+  for (const width of [375, 320]) {
+    const server = memoryServer();
+    const app = await startApp({ role: 'member', viewport: { width, height: 740 }, workerHandlers: server.handlers });
+    try {
+      await app.login();
+      await app.showPanel('panel-profile');
+      await app.page.waitForSelector('#memory-card [data-key="guide-next"]');
+      const medida = () => app.page.evaluate(() => ({
+        small: Array.from(document.querySelectorAll('#memory-card button, #memory-card label.memory-declaration')).filter((b) => b.getBoundingClientRect().height < 44).length,
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      }));
+      for (const passo of [1, 2, 3]) {
+        const r = await medida();
+        check(r.small === 0, `${width}px, passo ${passo}: botões e declaração com alvo de 44 px`);
+        check(r.overflow <= 0, `${width}px, passo ${passo}: sem rolagem horizontal`);
+        await axeGate(app.page, `Memória de estudo: jornada passo ${passo} (${width}px)`);
+        if (passo < 3) await app.page.click('#memory-card [data-key="guide-next"]');
+      }
+      await app.page.click('#memory-card [data-key="guide-later"]');
+      check(/opcional e está desativada/.test(await app.page.textContent('#memory-card')), `${width}px: "Agora não" recolhe a jornada`);
+      await app.showPanel('panel-home');
+      await app.showPanel('panel-profile');
+      check(/opcional e está desativada/.test(await app.page.textContent('#memory-card')), `${width}px: voltar ao Perfil na mesma sessão não reabre a jornada`);
+      check(calls(app, 'apiMemorySetConsent').length === 0, `${width}px: recusar não envia nada`);
+      check(app.errors.length === 0, `sem erros de página (${app.errors.join('; ')})`);
+    } finally {
+      await app.close();
+    }
   }
 }
 
@@ -260,5 +312,6 @@ module.exports = async function () {
   await fluxo();
   await textoMudou();
   await celular();
+  await jornadaNoCelular();
   await atalhoDoTutor();
 };

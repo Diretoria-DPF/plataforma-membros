@@ -118,7 +118,7 @@ test('app.js: todo painel admin garante o pacote antes de chamar o módulo; a Gu
     const m = new RegExp(`'${panel}': function \\(\\) \\{[\\s\\S]*?withBundle\\('admin'`).exec(app);
     assert.ok(m && m[0].length < 400, `${panel} não pede o pacote admin`);
   }
-  assert.match(app, /withBundle\('lia', function \(\) \{[\s\S]*?LaiftOnboarding\.maybeShow/);
+  assert.match(app, /withBundle\('lia', function \(\) \{[\s\S]*?openOnboarding\(perfilEntrada\)[\s\S]*?window\.LaiftOnboarding[\s\S]*?onboarding\.maybeShow/);
   // reset e refresh continuam seguros sem o módulo (cada chamada confere window.X antes).
   assert.match(app, /if \(window\.LaiftAdminAi\) window\.LaiftAdminAi\.reset\(\)/);
   assert.match(app, /if \(window\.LaiftAssistant\) window\.LaiftAssistant\.refresh\(\)/);

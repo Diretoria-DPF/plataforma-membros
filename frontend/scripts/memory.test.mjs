@@ -120,7 +120,10 @@ function setup(handlers) {
   const confirmLast = async () => { confirms.pop().cb(); await settle(); };
   const teardown = () => { Memory.reset(); delete globalThis.document; delete globalThis.App; session.sessionToken = ''; };
   const count = (action) => calls.filter((c) => c.action === action).length;
-  return { ...env, calls, confirms, login, cardOf, status, press, confirmLast, teardown, count };
+  // Jornada guiada: avança até o passo do consentimento e marca (ou não) a declaração de 18 anos.
+  const toConsent = async (card) => { await press(card, 'guide-next'); await press(cardOf(), 'guide-next'); return cardOf(); };
+  const declare = (card) => { find(card, byKey('adult')).checked = true; };
+  return { ...env, calls, confirms, login, cardOf, status, press, confirmLast, teardown, count, toConsent, declare };
 }
 
 async function openProfile(env, token) {
@@ -167,9 +170,17 @@ test('consentSections: texto da finalidade com os números do servidor, sem chav
   assert.match(all, /6 meses/);
   assert.match(all, /40 itens/);
   assert.doesNotMatch(all, /[{}]/);
-  assert.ok(sections.some((s) => s.title === 'O que NÃO guardamos'));
+  assert.ok(sections.some((s) => s.title === 'O que não é guardado'));
+  assert.ok(sections.some((s) => s.title === 'Maioridade' && /18 anos/.test(s.text)));
+  assert.ok(sections.some((s) => /Groq/.test(s.text)), 'diz quem recebe o texto');
+  assert.ok(sections.some((s) => /não substitui/i.test(s.text)), 'diz que não substitui orientação profissional');
+  assert.deepEqual(Memory.consentSections(undefined, [0]).map((s) => s.title), ['Para que serve']);
   assert.match(Memory.consentSections(undefined).map((s) => s.text).join(' '), /180 dias/);
-  assert.equal(Memory.CONSENT_SECTIONS.length, 9);
+  assert.equal(Memory.CONSENT_SECTIONS.length, 10);
+  const grouped = Core.GUIDE_GROUPS.reduce((acc, g) => acc.concat(g), []);
+  assert.deepEqual(grouped, Memory.CONSENT_SECTIONS.map((_s, i) => i), 'os 3 passos cobrem o texto inteiro, sem repetir seção');
+  const everything = Memory.CONSENT_SECTIONS.map((s) => s.text).join(' ');
+  assert.doesNotMatch(everything, /rascunho|revisado|gerad[oa] por IA/i, 'sem marca de rascunho');
 });
 
 test('describeItem: rótulos em português; slug desconhecido aparece como texto, sem quebrar', () => {
@@ -266,7 +277,7 @@ test('RATE_LIMIT na primeira carga mostra o cartão com aviso e "Tentar de novo"
     const card = await openProfile(env, 'rate-1');
     assert.match(textOf(card), /muitas operações/);
     await env.press(card, 'retry');
-    assert.match(textOf(env.cardOf()), /Ativar memória de estudo/);
+    assert.match(textOf(env.cardOf()), /O que é a memória de estudo/);
     assert.equal(env.count('apiMemoryGet'), 2);
   } finally {
     env.teardown();
@@ -296,13 +307,28 @@ test('sem consentimento: mostra o texto da finalidade e o botão; ativar pede co
   });
   try {
     const card = await openProfile(env, 'consent-1');
-    const text = textOf(card);
-    ['Para que serve', 'O que guardamos', 'O que NÃO guardamos', 'Onde fica', 'Por quanto tempo', 'Quem pode ver', 'Seus controles', 'Quem pode usar', 'Base legal']
+    assert.match(textOf(card), /Passo 1 de 3/);
+    assert.ok(textOf(card).includes('Para que serve'));
+    assert.equal(find(card, byKey('activate')), null, 'o aceite só aparece no último passo');
+    assert.ok(find(card, byKey('guide-later')), '"Agora não" em todos os passos');
+    await env.press(card, 'guide-next');
+    assert.match(textOf(env.cardOf()), /Passo 2 de 3/);
+    ['O que é guardado', 'O que não é guardado'].forEach((title) => assert.ok(textOf(env.cardOf()).includes(title), title));
+    await env.press(env.cardOf(), 'guide-back');
+    assert.match(textOf(env.cardOf()), /Passo 1 de 3/);
+    const last = await env.toConsent(env.cardOf());
+    const text = textOf(last);
+    ['Quem vê e para quem vai', 'Onde fica', 'Por quanto tempo', 'Apagar e baixar', 'Limite do Tutor', 'Maioridade', 'Base legal']
       .forEach((title) => assert.ok(text.includes(title), title));
     assert.match(text, /180 dias sem uso/);
-    assert.equal(find(card, byClass('memory-items')), null);
-    assert.equal(find(card, byKey('activate')).textContent, 'Ativar memória de estudo');
-    await env.press(card, 'activate');
+    assert.match(text, /Declaro que tenho 18 anos/);
+    assert.equal(find(last, byClass('memory-items')), null);
+    assert.equal(find(last, byKey('activate')).textContent, 'Ativar memória de estudo');
+    await env.press(last, 'activate');
+    assert.equal(env.confirms.length, 0, 'sem a declaração de 18 anos não há confirmação nem chamada');
+    assert.match(env.status().textContent, /declaração de maioridade/);
+    env.declare(env.cardOf());
+    await env.press(env.cardOf(), 'activate');
     assert.equal(env.count('apiMemorySetConsent'), 0, 'antes de confirmar nada vai ao servidor');
     assert.equal(env.confirms.length, 1);
     assert.match(env.confirms[0].msg, /nunca o texto das suas conversas/);
@@ -311,6 +337,7 @@ test('sem consentimento: mostra o texto da finalidade e o botão; ativar pede co
     const set = env.calls.find((c) => c.action === 'apiMemorySetConsent');
     assert.deepEqual(set.args, ['consent-1', { granted: true, purposeVersion: NEXT }]);
     assert.ok(find(env.cardOf(), byKey('revoke')), 'agora a tela é a da memória ativa');
+    assert.ok(find(env.cardOf(), byKey('open-tutor')), 'a Guia leva ao Tutor logo depois do aceite');
     assert.match(env.status().textContent, /ativada/);
     assert.equal(env.count('apiMemoryGet'), 1, 'recarrega os itens depois de ativar');
   } finally {
@@ -331,6 +358,8 @@ test('texto mudou (needsReconsent): avisa, não mostra nada guardado e só lê d
     assert.equal(find(card, byKey('activate')).textContent, 'Aceitar o novo texto');
     assert.ok(find(card, byKey('export')) && find(card, byKey('revoke')), 'dá para baixar ou apagar sem aceitar');
     assert.equal(find(card, byKey('delete-all')), null);
+    assert.equal(find(card, byKey('guide-next')), null, 'novo aceite não repete a jornada');
+    env.declare(card);
     await env.press(card, 'activate');
     await env.confirmLast();
     assert.deepEqual(env.calls.find((c) => c.action === 'apiMemorySetConsent').args, ['reconsent-1', { granted: true, purposeVersion: VERSION }]);
@@ -347,10 +376,13 @@ test('termo atualizado durante o aceite (VALIDATION/version): avisa e recarrega 
   });
   try {
     const card = await openProfile(env, 'ver-1');
-    await env.press(card, 'activate');
+    const last = await env.toConsent(card);
+    env.declare(last);
+    await env.press(last, 'activate');
     await env.confirmLast();
     assert.match(env.status().textContent, /texto da memória foi atualizado/);
     assert.equal(env.count('apiMemoryGet'), 2);
+    env.declare(env.cardOf());
     await env.press(env.cardOf(), 'activate');
     await env.confirmLast();
     assert.equal(env.calls.filter((c) => c.action === 'apiMemorySetConsent')[1].args[1].purposeVersion, 'v2');
@@ -432,7 +464,7 @@ test('"Desligar memória" exige confirmação, revoga e volta ao texto de consen
       assert.match(env.confirms[0].msg, /Desligar a memória/);
       await env.confirmLast();
       assert.deepEqual(env.calls.find((c) => c.action === 'apiMemorySetConsent').args, ['rev-' + erased, { granted: false }]);
-      assert.ok(find(env.cardOf(), byKey('activate')), 'volta a oferecer a ativação');
+      assert.ok(find(env.cardOf(), byKey('guide-next')), 'volta a oferecer a jornada de ativação');
       assert.equal(find(env.cardOf(), byClass('memory-items')), null);
       assert.match(env.status().textContent, erased ? /desativada e apagada/ : /até 3 meses/);
     } finally {
@@ -762,4 +794,41 @@ test('memory.js/.css estão no index.html, no build e no precache; o grid do Per
   const csp = html.match(/Content-Security-Policy" content="([^"]+)"/)[1];
   assert.doesNotMatch(csp, /memory|neon|groq/i);
   assert.match(csp, /script-src 'self' https:\/\/challenges\.cloudflare\.com;/);
+});
+
+test('"Agora não" recolhe a jornada, não reabre ao atualizar na mesma sessão e "Ver a memória de estudo" volta ao passo 1', async () => {
+  const env = setup({ apiMemoryGet: () => GET() });
+  try {
+    const card = await openProfile(env, 'later-1');
+    await env.press(card, 'guide-later');
+    assert.match(textOf(env.cardOf()), /opcional e está desativada/);
+    assert.equal(find(env.cardOf(), byKey('guide-next')), null);
+    assert.equal(find(env.cardOf(), byKey('activate')), null);
+    env.calls.length = 0;
+    Memory.ensureMemory();
+    await settle();
+    assert.match(textOf(env.cardOf()), /opcional e está desativada/, 'continua recolhida');
+    assert.equal(env.count('apiMemorySetConsent'), 0, 'recusar não grava nada');
+    await env.press(env.cardOf(), 'guide-reopen');
+    assert.match(textOf(env.cardOf()), /Passo 1 de 3/);
+  } finally {
+    env.teardown();
+  }
+});
+
+test('onboarding: o passo da memória só entra com memoryOn, nunca para visitante, e vem antes do crachá', () => {
+  const Onb = require('../onboarding.js');
+  assert.deepEqual(Onb.stepsFor('member', {}).map((x) => x.kind), ['intro', 'content', 'credential']);
+  assert.deepEqual(Onb.stepsFor('member', { chatbotOn: true, memoryOn: true }).map((x) => x.kind), ['intro', 'content', 'lia', 'memory', 'credential']);
+  const memory = Onb.stepsFor('admin', { memoryOn: true }).find((x) => x.kind === 'memory');
+  assert.match(memory.body, /Nada é ativado sem o seu aceite/);
+  assert.match(memory.body, /A Guia explica/);
+});
+
+test('privacidade.html: seções do Tutor, da memória de estudo e da verificação de certificados, sem marca de rascunho', () => {
+  const html = read('frontend/privacidade.html');
+  ['Tutor Clínico e memória de estudo', 'Página pública de verificação de certificados', 'dúvida recorrente', 'Groq, Inc.', 'art. 7º, I'].forEach((t) => assert.ok(html.includes(t), t));
+  assert.match(html, /180 dias sem uso/);
+  assert.match(html, /nome completo, o título e a versão do curso/);
+  assert.doesNotMatch(html, /rascunho|aguarda aprova|em revisão/i);
 });

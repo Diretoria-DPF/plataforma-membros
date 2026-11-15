@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Memória de estudo (ADR 0007, etapa 7): parte PURA de memory.js (sem DOM e sem rede): textos da tela, texto da finalidade
-// (CONSENT_SECTIONS: RASCUNHO PARA APROVAÇÃO DO DONO, docs/memoria-consentimento-RASCUNHO.md; única cópia no front),
+// (CONSENT_SECTIONS: docs/memoria-consentimento.md; única cópia no front),
 // mensagens por code de erro, normalização do que vem do servidor (dado não confiável), descrição dos itens, exportação
 // em JSON e download local por Blob. Expõe window.LaiftMemoryCore (ou module.exports, no Node, para os testes).
 (function (root) {
@@ -25,23 +25,40 @@
   var FALLBACK_LIMITS = { maxItems: 60, retentionUnusedDays: 180, retentionMaxMonths: 12 };
   var NETWORK_FAILURE = { success: false, networkUnavailable: true };
 
-  // Texto da finalidade (rascunho do dono). {maxItems}, {unusedDays} e {maxMonths} vêm de `limits` do servidor.
+  // Texto da finalidade (versão memoria-2026-10-v1). {maxItems}, {unusedDays} e {maxMonths} vêm de `limits` do servidor.
+  // Cada frase descreve o que o código faz (worker/src/memory/*, docs/agentic-layer.md §2): mudou o sentido, aumente
+  // MEMORY.PURPOSE_VERSION no worker. Os índices 0, 1-2 e 3-9 são os grupos da jornada guiada (GUIDE_GROUPS).
   var CONSENT_SECTIONS = [
-    { title: 'Para que serve', text: 'Se você ativar, o Tutor Clínico e a plataforma lembram, entre uma conversa e outra, do que ajuda a adaptar suas explicações ao seu jeito de estudar: em quais temas você está mais forte ou com mais dúvida, como prefere as explicações (exemplos, resumo, passo a passo) e o seu objetivo (prova, revisão, aprofundamento, monitoria). É opcional: o Tutor funciona igual sem a memória.' },
-    { title: 'O que guardamos', text: 'Só itens de uma lista fixa: tema de estudo (por exemplo, "Farmacocinética" ou "Antimicrobianos"), um nível de 1 a 5, uma marca de "dúvida recorrente" e as preferências e objetivos que você escolher. Eles vêm de três fontes: o resultado dos seus simulados, os temas que aparecem nas suas perguntas ao Tutor e o que você mesmo marcar.' },
-    { title: 'O que NÃO guardamos', text: 'O texto das suas perguntas, as respostas do Tutor, a conversa, seu nome, e-mail ou telefone, e nenhum dado de saúde, seu ou de outra pessoa. A memória não tem onde guardar texto livre.' },
+    { title: 'Para que serve', text: 'Se você ativar, o Tutor lembra de dados de estudo para adaptar as explicações: temas em que você tem mais domínio ou mais dúvida, como prefere estudar e qual é o seu objetivo. É opcional: o Tutor funciona sem a memória.' },
+    { title: 'O que é guardado', text: 'Itens de uma lista fixa: tema, nível de 1 a 5, marca de dúvida recorrente, preferências de estudo e objetivo. Vêm do resultado dos seus simulados, dos temas que aparecem nas suas perguntas ao Tutor e do que você escolher aqui. Ao ativar, você autoriza essas três origens.' },
+    { title: 'O que não é guardado', text: 'O texto das suas perguntas, as respostas do Tutor, a conversa, nome, e-mail, telefone e dados de saúde. A memória não tem campo de texto livre.' },
+    { title: 'Quem vê e para quem vai', text: 'Só você vê os itens, aqui no Perfil. A administração vê apenas totais e pode apagar a memória de uma pessoa a pedido dela; não lê o conteúdo. Nas conversas com o Tutor, os itens são enviados à Groq, Inc., sem identificar você, para gerar a resposta. Essa empresa pode estar fora do Brasil.' },
     { title: 'Onde fica', text: 'Em um banco de dados separado do restante da plataforma, ligado à sua conta por um código que, sozinho, não identifica você.' },
-    { title: 'Por quanto tempo', text: 'Cada item é apagado se ficar {unusedDays} dias sem uso, e em no máximo {maxMonths} meses depois de criado. Há um limite de {maxItems} itens por pessoa.' },
-    { title: 'Quem pode ver', text: 'Você, no seu Perfil. A administração não lê a sua memória (vê apenas números totais). A memória só é usada para montar as respostas do Tutor para você.' },
-    { title: 'Seus controles', text: 'Aqui no Perfil você pode ver tudo o que está guardado, apagar um item, apagar tudo, baixar uma cópia (JSON) e desativar a memória a qualquer momento. Desativar apaga a memória: a exclusão é imediata ou, se houver falha técnica, concluída em até 3 meses. Desativar não prejudica o uso da plataforma nem do Tutor.' },
-    { title: 'Quem pode usar', text: 'Somente maiores de 18 anos.' },
+    { title: 'Por quanto tempo', text: 'Cada item é apagado se ficar {unusedDays} dias sem uso e, no máximo, {maxMonths} meses depois de criado. O limite é de {maxItems} itens por pessoa. Se a sua conta for excluída, a memória é apagada em até 3 meses.' },
+    { title: 'Apagar e baixar', text: 'Aqui no Perfil você vê tudo o que está guardado, apaga um item, apaga tudo, baixa uma cópia (JSON) e desativa a memória quando quiser. Ao desativar, a memória é apagada na hora ou, se houver falha técnica, em até 3 meses; até lá, ela não é lida nem gravada. Desativar não prejudica o uso da plataforma nem do Tutor.' },
+    { title: 'Limite do Tutor', text: 'O Tutor é um recurso de estudo. Não substitui a orientação de professor, farmacêutico, médico ou outro profissional e não atende casos reais.' },
+    { title: 'Maioridade', text: 'Somente para maiores de 18 anos. Não há acesso ao Tutor nem à memória de estudo para menores de 18 anos.' },
     { title: 'Base legal', text: 'Seu consentimento (LGPD, art. 7º, I). Você pode revogá-lo quando quiser (art. 8º, § 5º), de forma tão fácil quanto foi dado.' },
   ];
+  // Jornada guiada: cada passo mostra um grupo de seções (índices de CONSENT_SECTIONS); o último inclui o aceite.
+  var GUIDE_GROUPS = [[0], [1, 2], [3, 4, 5, 6, 7, 8, 9]];
 
   var TEXT = {
     title: 'Memória de estudo',
     lead: 'Opcional. Se você ativar, o Tutor lembra do que ajuda a adaptar as explicações ao seu jeito de estudar. O Tutor funciona igual sem a memória.',
     termsLabel: 'Texto do consentimento da memória de estudo',
+    guideProgress: 'Passo {n} de {total}',
+    guideTitles: ['O que é a memória de estudo', 'O que será registrado', 'Consentimento'],
+    guideNext: 'Continuar',
+    guideBack: 'Voltar',
+    guideLater: 'Agora não',
+    guideReopen: 'Ver a memória de estudo',
+    guideLaterLead: 'A memória de estudo é opcional e está desativada. Você pode conhecê-la quando quiser.',
+    declaration: 'Declaro que tenho 18 anos ou mais e li o texto acima.',
+    declarationNeeded: 'Marque a declaração de maioridade para ativar.',
+    doneTitle: 'Memória de estudo ativada',
+    doneLead: 'Pronto. Abra o Tutor em Aprender para usar a memória. Abaixo você escolhe preferências, apaga itens ou desativa quando quiser.',
+    openTutor: 'Abrir o Tutor',
     termsFooter: 'Se este texto mudar, pediremos um novo aceite antes de voltar a usar ou gravar a memória.',
     activate: 'Ativar memória de estudo',
     reaccept: 'Aceitar o novo texto',
@@ -72,7 +89,7 @@
     pickTopic: 'Escolha um tema e um nível.',
     pickStyle: 'Escolha ao menos uma preferência.',
     pickGoal: 'Escolha um objetivo.',
-    confirmActivate: 'Ativar a memória de estudo? Guardaremos só temas, níveis e preferências de uma lista fixa, nunca o texto das suas conversas. Você pode desativar e apagar tudo quando quiser, aqui no Perfil.',
+    confirmActivate: 'Ativar a memória de estudo? Serão guardados só temas, níveis e preferências de uma lista fixa, nunca o texto das suas conversas. Você pode desativar e apagar tudo quando quiser, aqui no Perfil.',
     confirmItem: 'Apagar este item da sua memória de estudo? Isso não pode ser desfeito.',
     confirmAll: 'Apagar tudo da sua memória de estudo? Todos os itens guardados serão removidos e não poderão ser recuperados. A memória continua ativada.',
     confirmRevoke: 'Desligar a memória de estudo? Tudo o que está guardado será apagado e o Tutor deixa de usar a memória. Você pode ativar de novo depois.',
@@ -143,14 +160,15 @@
   }
 
   /** Texto da finalidade com os números de `limits` (do servidor). */
-  function consentSections(limits) {
+  function consentSections(limits, group) {
     var lim = isObject(limits) ? limits : FALLBACK_LIMITS;
     var numbers = {
       maxItems: intIn(lim.maxItems, 1, 1000, FALLBACK_LIMITS.maxItems),
       unusedDays: intIn(lim.retentionUnusedDays, 1, 3650, FALLBACK_LIMITS.retentionUnusedDays),
       maxMonths: intIn(lim.retentionMaxMonths, 1, 120, FALLBACK_LIMITS.retentionMaxMonths),
     };
-    return CONSENT_SECTIONS.map(function (s) {
+    var picked = Array.isArray(group) ? CONSENT_SECTIONS.filter(function (_s, i) { return group.indexOf(i) !== -1; }) : CONSENT_SECTIONS;
+    return picked.map(function (s) {
       return {
         title: s.title,
         text: s.text.replace(/\{(maxItems|unusedDays|maxMonths)\}/g, function (_all, key) { return String(numbers[key]); }),
@@ -303,7 +321,7 @@
 
   var api = {
     PANEL: PANEL, GRID_ID: GRID_ID, CARD_ID: CARD_ID, NETWORK_FAILURE: NETWORK_FAILURE, LEVELS: LEVELS, LEVEL_LABEL: LEVEL_LABEL,
-    PREF_LABEL: PREF_LABEL, VALUE_LABEL: VALUE_LABEL, GOAL_LABEL: GOAL_LABEL, TEXT: TEXT, ERRORS: ERRORS, CONSENT_SECTIONS: CONSENT_SECTIONS,
+    PREF_LABEL: PREF_LABEL, VALUE_LABEL: VALUE_LABEL, GOAL_LABEL: GOAL_LABEL, TEXT: TEXT, ERRORS: ERRORS, CONSENT_SECTIONS: CONSENT_SECTIONS, GUIDE_GROUPS: GUIDE_GROUPS,
     isObject: isObject, labelOr: labelOr, consentSections: consentSections, normalizeConsent: normalizeConsent, normalizeItem: normalizeItem,
     normalizeState: normalizeState, errorMessage: errorMessage, classifyLoad: classifyLoad, describeItem: describeItem,
     exportText: exportText, exportFileName: exportFileName, defaultEnv: defaultEnv, downloadJson: downloadJson,

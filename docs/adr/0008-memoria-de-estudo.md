@@ -17,5 +17,5 @@ O Tutor Clínico explica melhor quando sabe em que o estudante está forte, onde
 - Rollback por flag; `DATABASE_URL_MEMORY` ausente desliga tudo o que toca no banco de memória (inclusive o cron).
 - Custo no Neon Free: o banco só acorda com membro consentido ou na limpeza (que pula o banco quando não há consentimento nem fila). Alerta manual a 70 CU-h.
 - O tutor `tutor-clinico` passou a `1.1.0` (`memory: { read: true, write: true }` e a seção "USO DA MEMÓRIA" no prompt).
-- Passos do dono (criar o projeto, definir a senha do papel, secrets, flags): `docs/runbook-memoria.md`. Texto de consentimento e seções 5 e 7 da Política: `docs/memoria-consentimento-RASCUNHO.md` (aguarda aprovação).
+- Passos do dono (criar o projeto, definir a senha do papel, secrets, flags): `docs/runbook-memoria.md`. Texto de consentimento e seções 5 e 7 da Política: `docs/memoria-consentimento.md` (aguarda aprovação).
 - Fora desta decisão: memória semântica em texto livre (pgvector fica ligado e sem uso), serviço externo de memória, front da memória (outro worktree).

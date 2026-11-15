@@ -1213,11 +1213,24 @@
       if (!state.profile) return; // saiu da conta enquanto o pacote chegava
       if (liaJaCarregada && window.LaiftAssistant) window.LaiftAssistant.refresh();
       // Primeira entrada da pessoa: apresentação curta por papel (a Guia e o crachá); depois da Guia, que ela cita.
-      var onboardingOpened = window.LaiftOnboarding
-        ? window.LaiftOnboarding.maybeShow({ role: perfilEntrada.role, profileId: perfilEntrada.id })
-        : false;
-      showWhatsNew(onboardingOpened);
+      openOnboarding(perfilEntrada);
     });
+  }
+
+  // Onboarding: só quem ainda não viu consulta a memória de estudo (mesma chamada do Perfil, no máximo 1,5 s de espera);
+  // sem cartão disponível, o passo da memória não aparece e o resto segue igual.
+  var ONBOARDING_MEMORY_WAIT_MS = 1500;
+  function openOnboarding(perfilEntrada) {
+    var onboarding = window.LaiftOnboarding;
+    var finish = function (memoryOn) {
+      if (!state.profile) return;
+      var opened = onboarding ? onboarding.maybeShow({ role: perfilEntrada.role, profileId: perfilEntrada.id, memoryOn: memoryOn === true }) : false;
+      showWhatsNew(opened);
+    };
+    var wantsMemory = onboarding && onboarding.pending(perfilEntrada.id) && perfilEntrada.role !== 'visitor' && window.LaiftMemory && window.LaiftMemory.probe;
+    if (!wantsMemory) { finish(false); return; }
+    var timeout = new Promise(function (resolve) { setTimeout(function () { resolve(false); }, ONBOARDING_MEMORY_WAIT_MS); });
+    Promise.race([window.LaiftMemory.probe(), timeout]).then(finish, function () { finish(false); });
   }
 
   // Novidades (ENG-07): aviso curto, uma vez por versão. Quem acabou de ver o onboarding é pessoa nova na

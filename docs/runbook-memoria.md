@@ -110,7 +110,7 @@ Todas nascem desligadas. Sequência recomendada, **cada passo só depois de o an
 
 ## 8. Antes de abrir para membros (jurídico)
 
-- Aprove o texto do consentimento e as seções 5 e 7 da Política em `docs/memoria-consentimento-RASCUNHO.md`.
+- Aprove o texto do consentimento e as seções 5 e 7 da Política em `docs/memoria-consentimento.md`.
 - Atualize `docs/POLITICA_DE_PRIVACIDADE.md` e `LEGAL_VERSIONS.PRIVACY` (`worker/src/constants.js`) **juntos** (e o texto fixo em `frontend/index.html`).
 - Se mudar a finalidade/texto do consentimento depois, aumente `MEMORY.PURPOSE_VERSION`: todos terão que aceitar de novo.
 

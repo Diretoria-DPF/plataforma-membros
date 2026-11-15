@@ -351,6 +351,46 @@ async function inicioComHistoricoIgual() {
   }
 }
 
+const MEM_TITLE = 'Memória de estudo (opcional)';
+const MEM_GET = () => ({
+  success: true, alpha: true, available: true, consent: { status: 'none', current: false, needsReconsent: false, purposeVersion: 'memoria-2026-10-v1' },
+  items: [], vocabulary: { topics: [], preferences: [], goals: [] }, limits: { maxItems: 60, retentionUnusedDays: 180, retentionMaxMonths: 12 },
+});
+
+/** Passo da memória de estudo: só com o cartão disponível; leva ao Perfil; "Pular" é o "agora não" e não ativa nada. 375 e 320 px, axe. */
+async function passoDaMemoria() {
+  for (const width of [375, 320]) {
+    const handlers = Object.assign({}, comFlags(FLAGS_LIA), { apiMemoryGet: MEM_GET });
+    const app = await startApp({ role: 'member', firstLogin: true, viewport: { width, height: 812 }, workerHandlers: handlers });
+    try {
+      await app.login();
+      await esperaDialogo(app.page);
+      check((await progresso(app.page)) === 'Passo 1 de 5', `${width}px: com o cartão disponível são 5 passos`);
+      check(await irAte(app.page, MEM_TITLE), `${width}px: o passo "${MEM_TITLE}" é alcançado`);
+      const corpo = await app.page.textContent('#onboarding-body');
+      check(/A Guia explica/.test(corpo) && /Nada é ativado sem o seu aceite/.test(corpo), `${width}px: o texto é da Guia e diz que nada é ativado sem aceite`);
+      await checaMobile(app.page, `onboarding ${width}px (memória)`);
+      if (width === 375) await axeGate(app.page, 'onboarding 375x812 (memória)');
+      await app.page.click(`${DIALOG} button:has-text("Conhecer a memória de estudo")`);
+      await app.page.waitForSelector('#panel-profile:not(.hidden)');
+      await app.page.waitForSelector('#memory-card [data-key="guide-next"]');
+      check((await dialogoAberto(app.page)) === 0, `${width}px: o botão fecha o diálogo e leva ao cartão no Perfil`);
+      check(app.calls.worker.filter((c) => c.action === 'apiMemorySetConsent').length === 0, `${width}px: nada é ativado pelo onboarding`);
+      check(app.errors.length === 0, `sem erros de página (${app.errors.join('; ')})`);
+    } finally {
+      await app.close();
+    }
+  }
+  const sem = await startApp({ role: 'member', firstLogin: true, workerHandlers: comFlags(FLAGS_LIA) });
+  try {
+    await sem.login();
+    await esperaDialogo(sem.page);
+    check((await progresso(sem.page)) === 'Passo 1 de 4', 'sem o cartão (flag desligada) o passo da memória não aparece');
+  } finally {
+    await sem.close();
+  }
+}
+
 module.exports = async function onboarding() {
   await primeiroQuizNoOnboarding();
   await primeiroQuizNaInicio();
@@ -362,5 +402,6 @@ module.exports = async function onboarding() {
   await sessaoExpirada();
   await semLia();
   await botoesAbremLiaECracha();
+  await passoDaMemoria();
   await celularEAxe();
 };

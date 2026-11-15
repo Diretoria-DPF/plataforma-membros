@@ -21,7 +21,7 @@
   var ROLES = ['visitor', 'member', 'admin'];
   var TOUCH_SIZE = '44px';
   var QUIZ_LABEL = 'Fazer o primeiro quiz';
-  var ACTION_LABEL = { lia: 'Abrir a Guia', credential: 'Abrir meu crachá' };
+  var ACTION_LABEL = { lia: 'Abrir a Guia', memory: 'Conhecer a memória de estudo', credential: 'Abrir meu crachá' };
 
   var COPY = {
     visitor: {
@@ -40,6 +40,7 @@
       credential: ['Seu crachá', 'O crachá virtual tem o QR de presença. O terminal fiscal lê esse QR na portaria.'],
     },
   };
+  var MEMORY_COPY = ['Memória de estudo (opcional)', 'A Guia explica em 3 passos o que a memória de estudo guarda e o que não guarda, e você decide se ativa. Nada é ativado sem o seu aceite. Se preferir, deixe para depois: o cartão fica no Perfil.'];
   var LIA_COPY = ['Conheça a Guia', 'A Guia é a guia da plataforma: explica as telas e responde dúvidas. Ela não altera seus dados.'];
 
   function normalizeRole(role) {
@@ -55,6 +56,7 @@
     var copy = COPY[normalizeRole(role)];
     var steps = [step('intro', copy.intro), step('content', copy.content)];
     if (options && options.chatbotOn) steps.push(step('lia', LIA_COPY));
+    if (options && options.memoryOn) steps.push(step('memory', MEMORY_COPY));
     steps.push(step('credential', copy.credential));
     return steps;
   }
@@ -149,7 +151,7 @@
     }
 
     function renderAction(step) {
-      var isAction = step.kind === 'lia' || step.kind === 'credential';
+      var isAction = step.kind === 'lia' || step.kind === 'memory' || step.kind === 'credential';
       setHidden(nodes.action, !isAction);
       if (!isAction) return;
       nodes.action.textContent = ACTION_LABEL[step.kind];
@@ -260,6 +262,13 @@
       if (kind === 'lia' && win && win.LaiftAssistant && typeof win.LaiftAssistant.open === 'function') {
         win.LaiftAssistant.open();
       }
+      if (kind === 'memory') openMemoryCard();
+    }
+
+    /** Leva ao Perfil e põe o foco no cartão da memória de estudo, onde a Guia conduz os passos. */
+    function openMemoryCard() {
+      if (win && win.App && typeof win.App.showPanel === 'function') win.App.showPanel('panel-profile');
+      if (win && win.LaiftMemory && typeof win.LaiftMemory.reveal === 'function') win.LaiftMemory.reveal();
     }
 
     /** Fecha (grava "visto") e abre o primeiro quiz: um toque a partir do último passo. */
@@ -310,7 +319,7 @@
       var opts = options || {};
       if (state.current || !isUsableId(opts.profileId) || store.isSeen(opts.profileId)) return false;
       if (!ensureNodes()) return false;
-      state.current = { profileId: String(opts.profileId), steps: stepsFor(opts.role, { chatbotOn: chatbotOn() }), index: 0 };
+      state.current = { profileId: String(opts.profileId), steps: stepsFor(opts.role, { chatbotOn: chatbotOn(), memoryOn: opts.memoryOn === true && normalizeRole(opts.role) !== 'visitor' }), index: 0 };
       state.opener = doc.activeElement;
       renderStep();
       try { nodes.dialog.showModal(); }
@@ -325,7 +334,12 @@
       if (state.current) settle(false);
     }
 
-    return { maybeShow: maybeShow, reset: reset };
+    /** true se esta pessoa ainda não viu o onboarding (decide se vale consultar a memória antes de abrir). */
+    function pending(profileId) {
+      return isUsableId(profileId) && !store.isSeen(profileId);
+    }
+
+    return { maybeShow: maybeShow, reset: reset, pending: pending };
   }
 
   var api = {
@@ -341,6 +355,6 @@
     module.exports = api;
   } else if (root.document) {
     var instance = createOnboarding(root.document, root, createSeenStore(browserStorage(root)));
-    root.LaiftOnboarding = { maybeShow: instance.maybeShow, reset: instance.reset };
+    root.LaiftOnboarding = { maybeShow: instance.maybeShow, reset: instance.reset, pending: instance.pending };
   }
 })(typeof window !== 'undefined' ? window : globalThis);
