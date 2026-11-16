@@ -205,7 +205,7 @@
 
   function freshState(token) {
     generation += 1;
-    return { token: token, gen: generation, loaded: false, loading: null, hidden: false, data: null, error: '', busy: false, ui: null, revealPending: false, guide: { step: 0, dismissed: false }, justActivated: false };
+    return { token: token, gen: generation, loaded: false, loading: null, hidden: false, data: null, error: '', busy: false, ui: null, revealPending: false, guide: { step: 0, dismissed: false }, justActivated: false, prefs: null };
   }
 
   function update(patch) {
@@ -306,6 +306,7 @@
   /** Jornada de 3 passos (o que é, o que será registrado, consentimento); ativar o Tutor vem logo depois do aceite. */
   function viewGuide(doc, data) {
     if (state.guide.dismissed) return viewGuideLater(doc);
+    if (root.LaiftLazy && !journey()) root.LaiftLazy.load('memory-journey').then(null, function () {});
     var step = state.guide.step;
     var last = step === GUIDE_GROUPS.length - 1;
     var nodes = [el(doc, 'p', 'memory-footnote muted', TEXT.guideProgress.replace('{n}', String(step + 1)).replace('{total}', String(GUIDE_GROUPS.length)))];
@@ -328,6 +329,38 @@
     buttons.push(btn(doc, TEXT.guideLater, 'secondary', 'guide-later', onGuideLater));
     nodes.push(actionsRow(doc, buttons));
     return nodes;
+  }
+
+  // Jornada de preferências (memory-journey.js, sob demanda).
+  function journey() {
+    return root.LaiftMemoryJourney || (typeof require === 'function' ? require('./memory-journey.js') : null);
+  }
+
+  function setPrefs(next, key) {
+    update({ prefs: next });
+    render(key);
+  }
+
+  function endPrefs() {
+    update({ prefs: null });
+    render('title');
+  }
+
+  function onFinishPrefs() {
+    var payloads = journey().journeyPayloads(state.prefs);
+    if (!payloads.length) return endPrefs();
+    saveAll(payloads, 'title', TEXT.pickStyle).then(function (ok) { if (ok) endPrefs(); });
+  }
+
+  function prefsHelpers() {
+    return { el: el, btn: btn, actions: actionsRow, set: setPrefs, finish: onFinishPrefs, end: endPrefs };
+  }
+
+  function startJourney() {
+    var open = function () { update({ prefs: journey().newPrefs() }); render('title'); };
+    if (journey()) return open();
+    if (!root.LaiftLazy) return render('title');
+    root.LaiftLazy.load('memory-journey').then(function () { if (state.data && state.data.consent.current) open(); }, function () { render('title'); });
   }
 
   function currentValue(items, slug) {
@@ -364,6 +397,7 @@
   }
 
   function viewActive(doc, data) {
+    if (state.prefs && journey()) return journey().buildView(doc, prefsHelpers(), data, state.prefs);
     var nodes = [];
     if (state.justActivated) {
       nodes.push(el(doc, 'p', 'memory-lead', TEXT.doneLead));
@@ -401,7 +435,7 @@
     var key = preferKey || activeKey(ui);
     // Só muda a abertura quando a tela muda de tipo; o que a pessoa abriu ou fechou à mão é respeitado.
     var d = state.data;
-    var kind = !d ? 'error' : !d.available ? 'unavailable' : d.consent.needsReconsent ? 'reconsent' : d.consent.current ? (state.justActivated ? 'done' : 'active') : 'guide';
+    var kind = !d ? 'error' : !d.available ? 'unavailable' : d.consent.needsReconsent ? 'reconsent' : d.consent.current ? (state.prefs ? 'prefs' : state.justActivated ? 'done' : 'active') : 'guide';
     if (ui.kind !== kind) {
       ui.kind = kind;
       if (kind === 'active') ui.root.removeAttribute('open'); else ui.root.setAttribute('open', '');
@@ -551,7 +585,7 @@
         ok: function (res) {
           patchData({ consent: consentFrom(res, version), items: [] });
           update({ justActivated: true });
-          render('title');
+          startJourney();
           note(TEXT.okActivated, 'success');
           quietReload();
         },
@@ -654,9 +688,10 @@
       });
     });
     return chain.then(function (allOk) {
-      if (!allOk) return;
+      if (!allOk) return false;
       render(key);
       note(TEXT.okSaved, 'success');
+      return true;
     });
   }
 

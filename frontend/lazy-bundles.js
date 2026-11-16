@@ -83,6 +83,7 @@
     creditos: ['creditos.js'],
     // Personagem do Tutor (3 variações): o script injeta o próprio CSS.
     tutor: ['tutor-persona.js'],
+    'memory-journey': ['memory-journey.js'],
     lia: [
       'modulos/shared/lia/lia-art.js', 'modulos/shared/lia/lia-states.js', 'modulos/shared/lia/lia-mood.js',
       'assistant-mood-glue.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia-props.js',
