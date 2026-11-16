@@ -336,6 +336,11 @@ test('sem consentimento: mostra o texto da finalidade e o botão; ativar pede co
     await env.confirmLast();
     const set = env.calls.find((c) => c.action === 'apiMemorySetConsent');
     assert.deepEqual(set.args, ['consent-1', { granted: true, purposeVersion: NEXT }]);
+    assert.ok(find(env.cardOf(), byKey('prefs-title')), 'depois do aceite abre a jornada de preferências (uma pergunta por tela)');
+    assert.equal(find(env.cardOf(), byKey('revoke')), null, 'a jornada vem antes da tela de gestão');
+    for (const key of ['prefs-skip', 'prefs-skip', 'prefs-skip', 'prefs-skip']) await env.press(env.cardOf(), key);
+    assert.equal(env.count('apiMemorySetPreference'), 0, 'pular tudo não grava nada');
+    await env.press(env.cardOf(), 'prefs-finish-nosave');
     assert.ok(find(env.cardOf(), byKey('revoke')), 'agora a tela é a da memória ativa');
     assert.ok(find(env.cardOf(), byKey('open-tutor')), 'a Guia leva ao Tutor logo depois do aceite');
     assert.match(env.status().textContent, /ativada/);

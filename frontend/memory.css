@@ -65,3 +65,11 @@
 .memory-summary:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent); outline-offset: 2px; }
 .memory-card[open] > .memory-summary { margin-bottom: 10px; }
 @media (prefers-reduced-motion: reduce) { .memory-summary::after { transition: none; } }
+
+/* Jornada de preferências: uma pergunta por tela; escolhas em botões de alternância (aria-pressed). */
+.memory-area { margin: 8px 0 4px; font-size: var(--font-size-footnote, 13px); font-weight: 700; color: var(--laift-muted, var(--muted)); }
+.memory-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 6px; }
+.memory-chip { min-height: 44px; padding: 0 14px; border: 1px solid var(--field-border, var(--hairline)); border-radius: 999px; background: transparent; color: var(--laift-text, inherit); font-weight: 600; width: auto; }
+.memory-chip.is-suggested { border-style: dashed; }
+.memory-chip.is-on { background: var(--laift-primary-soft, var(--primary)); border-color: var(--primary); color: var(--primary); }
+.memory-chip:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent); outline-offset: 2px; }

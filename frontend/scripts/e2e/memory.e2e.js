@@ -106,6 +106,15 @@ async function ateOConsentimento(page) {
   await page.waitForSelector('#memory-card [data-key="activate"]');
 }
 
+/** Depois do aceite abre a jornada de preferências; pula todos os passos e sai sem salvar (nada é gravado). */
+async function pularJornada(page) {
+  await page.waitForSelector('#memory-card [data-key="prefs-title"]');
+  for (let i = 0; i < 6 && (await page.locator('#memory-card [data-key="prefs-skip"]').count()) > 0; i += 1) {
+    await page.click('#memory-card [data-key="prefs-skip"]');
+  }
+  await page.click('#memory-card [data-key="prefs-finish-nosave"]');
+}
+
 async function ativar(app, server) {
   const page = app.page;
   await app.showPanel('panel-profile');
@@ -127,6 +136,7 @@ async function ativar(app, server) {
   check(calls(app, 'apiMemorySetConsent').length === 0, 'antes de confirmar nada é enviado');
   check(/nunca o texto das suas conversas/.test(await page.textContent('#modal-confirm-message')), 'a confirmação explica o que é guardado');
   await confirmar(page);
+  await pularJornada(page);
   await page.waitForSelector('#memory-card [data-key="revoke"]');
   check(await page.locator('#memory-card [data-key="open-tutor"]').count() === 1, 'depois do aceite a Guia oferece abrir o Tutor');
   const set = calls(app, 'apiMemorySetConsent')[0];
@@ -183,7 +193,7 @@ async function apagarEDesligar(app) {
   await page.click('#memory-card [data-key="revoke"]');
   await page.waitForSelector('#modal-confirm:not(.hidden)');
   await confirmar(page);
-  await page.waitForSelector('#memory-card [data-key="guide-next"]');
+  await page.waitForSelector('#memory-card [data-key="activate"]');
   check(calls(app, 'apiMemorySetConsent')[1].args[1].granted === false, 'desligar revoga o consentimento');
   check(/desativada e apagada/.test(await page.textContent('#memory-status')), 'a pessoa é avisada do apagamento');
 }
@@ -220,6 +230,7 @@ async function textoMudou() {
     await app.page.check('#memory-adult');
     await app.page.click('#memory-card [data-key="activate"]');
     await confirmar(app.page);
+    await pularJornada(app.page);
     await app.page.waitForSelector('#memory-card [data-key="revoke"]');
     check(calls(app, 'apiMemorySetConsent')[0].args[1].purposeVersion === VERSION, 'o novo aceite leva a versão atual');
     check(app.errors.length === 0, `sem erros de página (${app.errors.join('; ')})`);
@@ -318,6 +329,52 @@ async function atalhoDoTutor() {
   }
 }
 
+/** Jornada de preferências (T2, opção B): uma pergunta por tela; só "Salvar e concluir" grava; 320 px e desktop, sem violação de acessibilidade. */
+async function jornadaDePreferencias(viewport, rotulo) {
+  const server = memoryServer();
+  const app = await startApp({ role: 'member', viewport, workerHandlers: server.handlers });
+  const page = app.page;
+  const next = '#memory-card [data-key="prefs-next"]';
+  try {
+    await app.login();
+    await app.showPanel('panel-profile');
+    await abrirCartao(page);
+    await ateOConsentimento(page);
+    await page.check('#memory-adult');
+    await page.click('#memory-card [data-key="activate"]');
+    await confirmar(page);
+    await page.waitForSelector('#memory-card [data-key="prefs-title"]');
+    check(await page.locator('#memory-card [data-key="revoke"]').count() === 0, `${rotulo}: depois do aceite abre a jornada antes da gestão`);
+    check(/Quais temas/.test(await page.textContent('#memory-card')), `${rotulo}: passo de temas, uma pergunta por tela`);
+    check(await page.locator('#memory-card .memory-chip[aria-pressed="true"]').count() === 0, `${rotulo}: nada vem marcado`);
+    check(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), `${rotulo}: sem rolagem horizontal na jornada`);
+    await axeGate(page, `Memória de estudo: jornada, temas (${rotulo})`);
+    await page.click('#memory-card [data-key="topic-farmacocinetica"]');
+    check((await page.getAttribute('#memory-card [data-key="topic-farmacocinetica"]', 'aria-pressed')) === 'true', `${rotulo}: tema escolhido fica marcado`);
+    await page.click(next);
+    await page.click('#memory-card [data-key="level-farmacocinetica-4"]');
+    await axeGate(page, `Memória de estudo: jornada, nível (${rotulo})`);
+    await page.click(next);
+    await page.click('#memory-card [data-key="pref-formato-exemplos"]');
+    await page.click(next);
+    await page.click('#memory-card [data-key="pref-ritmo-curto"]');
+    await page.click(next);
+    await page.click('#memory-card [data-key="pref-goal-prova"]');
+    await page.click(next);
+    check(await page.locator('#memory-card [data-key="prefs-finish"]').count() === 1, `${rotulo}: o resumo tem "Salvar e concluir"`);
+    check(calls(app, 'apiMemorySetPreference').length === 0, `${rotulo}: nada é gravado antes de concluir`);
+    await page.click('#memory-card [data-key="prefs-finish"]');
+    await page.waitForSelector('#memory-card [data-key="revoke"]');
+    const saved = calls(app, 'apiMemorySetPreference').map((c) => c.args[1]);
+    check(saved.length === 4, `${rotulo}: grava 4 itens (tema com nível, formato, ritmo, objetivo)`);
+    check(saved.some((x) => x.kind === 'topic_level' && x.slug === 'farmacocinetica' && x.level === 4), `${rotulo}: o nível escolhido é enviado`);
+    check(await page.locator('#memory-card [data-key="open-tutor"]').count() === 1, `${rotulo}: termina oferecendo o Tutor`);
+    check(app.errors.length === 0, `${rotulo}: sem erros de página (${app.errors.join('; ')})`);
+  } finally {
+    await app.close();
+  }
+}
+
 module.exports = async function () {
   await semCartao();
   await fluxo();
@@ -325,4 +382,6 @@ module.exports = async function () {
   await celular();
   await jornadaNoCelular();
   await atalhoDoTutor();
+  await jornadaDePreferencias({ width: 1280, height: 900 }, 'desktop');
+  await jornadaDePreferencias({ width: 320, height: 640 }, '320 px');
 };

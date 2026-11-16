@@ -29,8 +29,8 @@ const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8');
 
 const BUDGET = {
-  shellGzipBytes: 299 * 1024, // +3 KB (Memória de estudo: texto final do consentimento, jornada guiada e passo do onboarding, ~1,5 KB gzip); antes: +1 KB (Cursos, Onda 1): item do menu, painel e o carregador do iframe; o módulo em si fica fora do shell
-  eagerJsRawBytes: 716 * 1024, // +10 KB (mesma mudança: texto do consentimento e jornada guiada em memory-core.js, memory.js, onboarding.js)
+  shellGzipBytes: 300 * 1024, // +1 KB (T2: ponto de entrada da jornada de preferências em memory.js; a jornada em si é lazy: memory-journey.js); antes +3 KB (Memória de estudo: texto final do consentimento, jornada guiada e passo do onboarding, ~1,5 KB gzip); antes: +1 KB (Cursos, Onda 1): item do menu, painel e o carregador do iframe; o módulo em si fica fora do shell
+  eagerJsRawBytes: 717 * 1024, // +1 KB (T2, mesma mudança: só o ponto de entrada fica no shell); antes +10 KB (mesma mudança: texto do consentimento e jornada guiada em memory-core.js, memory.js, onboarding.js)
   precacheRawBytes: 960 * 1024,
   immutableMaxAgeSeconds: 31536000,
 };
