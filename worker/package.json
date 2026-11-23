@@ -15,7 +15,7 @@
     "gen:agents": "node scripts/gen-agent-registry.mjs"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.10.4"
+    "@neondatabase/serverless": "^1.2.1"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
